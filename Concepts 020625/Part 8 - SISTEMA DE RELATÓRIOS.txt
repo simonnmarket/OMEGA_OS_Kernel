@@ -1,0 +1,159 @@
+//+------------------------------------------------------------------+
+//| Institutional Analysis - Parte 8                                   |
+//|                                                                    |
+//| OBJETIVO: Implementar sistema de relatórios com:                   |
+//| - Relatórios Detalhados                                           |
+//| - Dashboard Interativo                                            |
+//| - Sistema de Alertas                                              |
+//| - Integração com TechnologyAdvances Reports                       |
+//+------------------------------------------------------------------+
+
+private:
+    // Estruturas de Relatórios
+    struct InstitutionalReporting {
+        // Configuração de Relatórios
+        struct ReportConfig {
+            bool enableDailyReports;     // Relatórios diários
+            bool enableWeeklyReports;    // Relatórios semanais
+            bool enableAlertReports;     // Relatórios de alertas
+            bool enablePerformanceStats; // Estatísticas de performance
+            string reportPath;           // Caminho dos relatórios
+        } config;
+        
+        // Dashboard
+        struct DashboardConfig {
+            int updateInterval;          // Intervalo de atualização
+            bool showSmartMoney;         // Mostrar Smart Money
+            bool showLiquidity;          // Mostrar Liquidez
+            bool showML;                 // Mostrar ML
+            color schemeColors[];        // Cores do esquema
+        } dashboard;
+        
+        // Sistema de Alertas
+        struct AlertSystem {
+            bool enablePriceAlerts;      // Alertas de preço
+            bool enableVolumeAlerts;     // Alertas de volume
+            bool enablePatternAlerts;    // Alertas de padrões
+            int priorityLevel;           // Nível de prioridade
+            datetime lastAlert;          // Último alerta
+        } alerts;
+    } m_reporting;
+    
+    void GenerateReports() {
+        if(!ValidateReportingState()) return;
+        
+        // Gerar relatórios periódicos
+        GeneratePeriodicReports();
+        
+        // Atualizar dashboard
+        UpdateDashboard();
+        
+        // Processar alertas
+        ProcessAlerts();
+        
+        // Integrar com TechnologyAdvances
+        UpdateReportingMetrics();
+    }
+    
+    void GeneratePeriodicReports() {
+        datetime current = TimeCurrent();
+        
+        // Relatório diário
+        if(m_reporting.config.enableDailyReports && 
+           NeedsDailyReport(current)) {
+            GenerateDailyReport();
+        }
+        
+        // Relatório semanal
+        if(m_reporting.config.enableWeeklyReports && 
+           NeedsWeeklyReport(current)) {
+            GenerateWeeklyReport();
+        }
+    }
+    
+    void GenerateDailyReport() {
+        // Criar relatório
+        InstitutionalReport* report = new InstitutionalReport();
+        
+        // Dados gerais
+        report.date = TimeCurrent();
+        report.symbol = _Symbol;
+        report.timeframe = PERIOD_CURRENT;
+        
+        // Métricas Smart Money
+        report.smartMoney = GetSmartMoneyMetrics();
+        
+        // Métricas de Liquidez
+        report.liquidity = GetLiquidityMetrics();
+        
+        // Métricas ML
+        report.ml = GetMLMetrics();
+        
+        // Salvar relatório
+        SaveReport(report, "daily");
+        
+        // Enviar para TechnologyAdvances
+        m_techManager.ProcessDailyReport(report);
+        
+        // Notificar equipe
+        NotifyTeam(FormatDailyReport(report));
+        
+        delete report;
+    }
+    
+    void UpdateDashboard() {
+        if(!ValidateDashboardState()) return;
+        
+        // Atualizar elementos visuais
+        UpdateDashboardVisuals();
+        
+        // Atualizar métricas
+        UpdateDashboardMetrics();
+        
+        // Atualizar alertas
+        UpdateDashboardAlerts();
+        
+        // Refresh
+        ChartRedraw();
+    }
+    
+    void UpdateDashboardVisuals() {
+        string prefix = "Institutional_Dashboard_";
+        
+        // Smart Money Panel
+        if(m_reporting.dashboard.showSmartMoney) {
+            CreateDashboardPanel(prefix + "SmartMoney", 10, 10, 200, 150);
+            DrawSmartMoneyData(prefix + "SmartMoney");
+        }
+        
+        // Liquidity Panel
+        if(m_reporting.dashboard.showLiquidity) {
+            CreateDashboardPanel(prefix + "Liquidity", 220, 10, 200, 150);
+            DrawLiquidityData(prefix + "Liquidity");
+        }
+        
+        // ML Panel
+        if(m_reporting.dashboard.showML) {
+            CreateDashboardPanel(prefix + "ML", 10, 170, 410, 150);
+            DrawMLData(prefix + "ML");
+        }
+    }
+    
+    void ProcessAlerts() {
+        // Verificar condições de alerta
+        if(m_reporting.alerts.enablePriceAlerts && IsPriceAlert()) {
+            CreatePriceAlert();
+        }
+        
+        if(m_reporting.alerts.enableVolumeAlerts && IsVolumeAlert()) {
+            CreateVolumeAlert();
+        }
+        
+        if(m_reporting.alerts.enablePatternAlerts && IsPatternAlert()) {
+            CreatePatternAlert();
+        }
+        
+        // Atualizar último alerta
+        m_reporting.alerts.lastAlert = TimeCurrent();
+    }
+};

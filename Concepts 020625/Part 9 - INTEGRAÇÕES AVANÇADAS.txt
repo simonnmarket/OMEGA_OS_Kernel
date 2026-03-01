@@ -1,0 +1,155 @@
+//+------------------------------------------------------------------+
+//| Institutional Analysis - Parte 9                                   |
+//|                                                                    |
+//| OBJETIVO: Implementar integrações avançadas com:                  |
+//| - Market Profile                                                  |
+//| - Order Flow                                                      |
+//| - PVSRA                                                           |
+//| - Sistema de Cache                                                |
+//+------------------------------------------------------------------+
+
+private:
+    // Estruturas de Integração
+    struct InstitutionalIntegration {
+        // Market Profile
+        struct MPIntegration {
+            CMarketProfileCategory* profile;  // Ponteiro para Market Profile
+            bool isConnected;                // Status da conexão
+            datetime lastSync;               // Última sincronização
+            double valueArea[];              // Cache de Value Area
+        } mp;
+        
+        // Order Flow
+        struct OFIntegration {
+            COrderFlowSystem* orderFlow;     // Ponteiro para Order Flow
+            bool isConnected;                // Status da conexão
+            datetime lastSync;               // Última sincronização
+            double deltaCache[];             // Cache de delta
+        } of;
+        
+        // PVSRA
+        struct PVSRAIntegration {
+            CPVSRASystem* pvsra;             // Ponteiro para PVSRA
+            bool isConnected;                // Status da conexão
+            datetime lastSync;               // Última sincronização
+            double volumeCache[];            // Cache de volume
+        } pvsra;
+        
+        // Cache System
+        struct CacheSystem {
+            double dataCache[];              // Cache principal
+            datetime timestamps[];           // Timestamps
+            int cacheSize;                   // Tamanho do cache
+            bool isValid;                    // Validação
+            datetime lastUpdate;             // Última atualização
+        } cache;
+    } m_integration;
+    
+    void InitializeIntegrations() {
+        // Inicializar Market Profile
+        InitializeMarketProfile();
+        
+        // Inicializar Order Flow
+        InitializeOrderFlow();
+        
+        // Inicializar PVSRA
+        InitializePVSRA();
+        
+        // Configurar cache
+        ConfigureCache();
+        
+        // Validar integrações
+        ValidateIntegrations();
+    }
+    
+    void UpdateIntegratedAnalysis() {
+        // Atualizar Market Profile
+        if(m_integration.mp.isConnected) {
+            UpdateMarketProfileIntegration();
+        }
+        
+        // Atualizar Order Flow
+        if(m_integration.of.isConnected) {
+            UpdateOrderFlowIntegration();
+        }
+        
+        // Atualizar PVSRA
+        if(m_integration.pvsra.isConnected) {
+            UpdatePVSRAIntegration();
+        }
+        
+        // Otimizar cache
+        OptimizeCache();
+    }
+    
+    void ProcessIntegratedSignals() {
+        if(!ValidateIntegratedData()) return;
+        
+        // Criar sinal combinado
+        CombinedSignal* signal = new CombinedSignal();
+        
+        // Integrar Market Profile
+        if(m_integration.mp.isConnected) {
+            signal.mpConfidence = GetMPConfidence();
+            signal.valueAreaValid = IsValueAreaValid();
+        }
+        
+        // Integrar Order Flow
+        if(m_integration.of.isConnected) {
+            signal.ofConfidence = GetOFConfidence();
+            signal.deltaValid = IsDeltaValid();
+        }
+        
+        // Integrar PVSRA
+        if(m_integration.pvsra.isConnected) {
+            signal.pvsraConfidence = GetPVSRAConfidence();
+            signal.volumeValid = IsVolumeValid();
+        }
+        
+        // Validar e processar sinal
+        if(ValidateCombinedSignal(signal)) {
+            ProcessFinalSignal(signal);
+        }
+        
+        delete signal;
+    }
+    
+    void OptimizeCache() {
+        // Verificar necessidade
+        if(!NeedsOptimization()) return;
+        
+        // Limpar dados antigos
+        ClearOldCacheData();
+        
+        // Otimizar arrays
+        OptimizeCacheArrays();
+        
+        // Validar cache
+        ValidateCache();
+        
+        // Atualizar estado
+        m_integration.cache.lastUpdate = TimeCurrent();
+        m_integration.cache.isValid = true;
+    }
+    
+    void ProcessFinalSignal(const CombinedSignal* signal) {
+        // Criar insight final
+        InsightSignal insight;
+        insight.type = SIGNAL_INSTITUTIONAL_COMBINED;
+        insight.confidence = CalculateCombinedConfidence(signal);
+        insight.strength = CalculateCombinedStrength(signal);
+        insight.timestamp = TimeCurrent();
+        insight.description = FormatCombinedSignal(signal);
+        
+        // Adicionar sinal
+        if(ValidateInsight(insight)) {
+            AddSignal(insight);
+            
+            // Notificar via TechnologyAdvances
+            m_techManager.ProcessCombinedSignal(insight);
+            
+            // Notificar equipe
+            NotifyTeam(FormatSignalNotification(insight));
+        }
+    }
+};

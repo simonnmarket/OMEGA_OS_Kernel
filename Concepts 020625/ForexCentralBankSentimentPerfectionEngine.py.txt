@@ -1,0 +1,209 @@
+# ForexCentralBankSentimentPerfectionEngine.py
+"""
+MOTOR DE ESTRATÉGIA: CENTRAL BANK SENTIMENT PERFECTION
+BASEADO EM: S-FOREX-20240120-2300000000-cbs8k4t1_v7
+STATUS: ELEVADO À PERFEIÇÃO PELO CONSELHO PLENO V3.0
+DATA: 2024-01-20
+CHECKSUM: SHA3-256: s7l9...h8i3
+"""
+
+import numpy as np
+import mpmath as mp
+from decimal import Decimal, getcontext
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Any, Tuple
+import logging
+from collections import deque
+
+# Importa os motores centrais do sistema Numeia v3.0
+from NUMEIA_TRADING_SYSTEM_v3_0_PERFEICAO import (
+    TradingSignalPerfeito, RossiDynamicKellyEngine,
+    MarketMastersPerfectionEngine
+)
+
+getcontext().prec = 100
+
+class ForexCentralBankSentimentPerfectionEngine:
+    """
+    MOTOR DE SENTIMENTO DE BANCO CENTRAL - FOREX
+    Uma fusão de Processamento de Linguagem Natural, modelagem de séries temporais e análise de impacto diferencial.
+    Síntese do Conselho Pleno aplicada à negociação de pares de moedas.
+    """
+    def __init__(self):
+        self.strategy_id = "CENTRAL_BANK_SENTIMENT_PERFECTION"
+        
+        # Instancia os motores de perfeição necessários
+        self.rossi_engine = RossiDynamicKellyEngine()
+        self.market_masters_engine = MarketMastersPerfectionEngine()
+        
+        # Universo de pares de moedas e seus bancos centrais
+        self.forex_pairs = {
+            'EUR/USD': ('ECB', 'FED'),
+            'GBP/USD': ('BOE', 'FED'),
+            'USD/JPY': ('FED', 'BOJ'),
+            'AUD/USD': ('RBA', 'FED'),
+            'USD/CAD': ('FED', 'BOC')
+        }
+        
+        # Parâmetros da estratégia validados pelo conselho
+        self.min_sentiment_threshold = 0.2
+        self.decay_rate = 0.9 # Taxa de decaimento do sentimento no tempo
+        
+        # Estado do motor (Modelo de Séries Temporais - Rossi)
+        self.sentiment_history = {bank: deque(maxlen=30) for bank, _ in self.forex_pairs.values()}
+        self.sentiment_trends = {} # Tendência de sentimento para cada banco
+
+        logging.info(f"🏛️ Motor {self.strategy_id} inicializado com análise de sentimento temporal.")
+
+    def analyze_and_generate_signal(self, market_data: Dict, system_intentional_state: str) -> Optional[TradingSignalPerfeito]:
+        """
+        Analisa o mercado e gera um sinal baseado no diferencial de sentimento dos bancos centrais.
+        """
+        # 1. Verificação de Intenção (Dr. Hale)
+        if system_intentional_state != "SCAN_OPPORTUNITIES":
+            return None
+
+        central_bank_data = market_data.get('central_banks', {})
+        if not central_bank_data:
+            return None
+
+        # 2. Análise de Sentimento e Atualização do Histórico
+        current_sentiments = self._analyze_and_update_sentiments(central_bank_data)
+        
+        # 3. Análise de Tendência de Sentimento (Rossi)
+        self._update_sentiment_trends()
+
+        best_opportunity = None
+        best_differential = 0
+
+        # 4. Cálculo do Diferencial de Sentimento Impacto
+        for pair, (base_bank, quote_bank) in self.forex_pairs.items():
+            if base_bank not in current_sentiments or quote_bank not in current_sentiments:
+                continue
+
+            # O diferencial não é apenas o sentimento atual, mas a tendência
+            base_trend = self.sentiment_trends.get(base_bank, 0)
+            quote_trend = self.sentiment_trends.get(quote_bank, 0)
+            
+            # Diferencial ponderado pela força da tendência
+            sentiment_differential = (current_sentiments[base_bank] + base_trend) - (current_sentiments[quote_bank] + quote_trend)
+            
+            if abs(sentiment_differential) > best_differential:
+                best_differential = abs(sentiment_differential)
+                best_opportunity = {
+                    'pair': pair,
+                    'base_bank': base_bank,
+                    'quote_bank': quote_bank,
+                    'differential': sentiment_differential
+                }
+
+        if not best_opportunity or best_differential < self.min_sentiment_threshold:
+            return None
+
+        # 5. Geração do Sinal Perfeito
+        action = "BUY" if best_opportunity['differential'] > 0 else "SELL"
+        confidence = Decimal(str(min(best_differential / 0.5, 0.95))) # Normaliza a confiança
+        risk_score = Decimal('0.3') # Risco moderado para Forex
+
+        signal = TradingSignalPerfeito(
+            strategy_id=self.strategy_id,
+            asset=best_opportunity['pair'],
+            action=action,
+            confidence=confidence,
+            risk_score=risk_score,
+            timestamp=int(time.time() * 1e6),
+            hale_intentional_state=system_intentional_state,
+            # Metadados da perfeição
+            rossi_dynamic_kelly_fraction=self.rossi_engine.update_and_calculate(Decimal('300')),
+            # Metadados específicos da estratégia
+            metadata={
+                'sentiment_differential': float(best_opportunity['differential']),
+                'base_bank': best_opportunity['base_bank'],
+                'quote_bank': best_opportunity['quote_bank'],
+                'base_sentiment': float(current_sentiments[best_opportunity['base_bank']]),
+                'quote_sentiment': float(current_sentiments[best_opportunity['quote_bank']]),
+                'base_trend': float(self.sentiment_trends.get(best_opportunity['base_bank'], 0)),
+                'quote_trend': float(self.sentiment_trends.get(best_opportunity['quote_bank'], 0))
+            }
+        )
+        
+        logging.info(f"✅ [{self.strategy_id}] Sinal de {action} para {best_opportunity['pair']}. Differential: {best_opportunity['differential']:.2f}.")
+        return signal
+
+    def _analyze_and_update_sentiments(self, central_bank_data: Dict) -> Dict[str, float]:
+        """Analisa dados brutos e atualiza o histórico de sentimentos."""
+        current_sentiments = {}
+        
+        for bank, data in central_bank_data.items():
+            # Em um sistema real, aqui aplicariamos um modelo de NLP sofisticado
+            # Por ora, simulamos um score de sentimento baseado em palavras-chave
+            text = data.get('text', '').lower()
+            sentiment_score = 0.0
+            
+            hawkish_words = ['inflation', 'hike', 'tighten', 'strong']
+            dovish_words = ['growth', 'cut', 'easing', 'support']
+            
+            for word in hawkish_words:
+                if word in text:
+                    sentiment_score += 0.1
+            for word in dovish_words:
+                if word in text:
+                    sentiment_score -= 0.1
+            
+            # Normaliza o score para [-1, 1]
+            sentiment_score = max(-1.0, min(1.0, sentiment_score))
+            
+            # Atualiza o histórico
+            self.sentiment_history[bank].append(sentiment_score)
+            current_sentiments[bank] = sentiment_score
+            
+        return current_sentiments
+
+    def _update_sentiment_trends(self):
+        """Atualiza a tendência de sentimento para cada banco (Rossi)."""
+        for bank, history in self.sentiment_history.items():
+            if len(history) < 5:
+                self.sentiment_trends[bank] = 0
+                continue
+            
+            # Calcula a tendência como a inclinação de uma regressão linear simples
+            x = np.arange(len(history))
+            y = np.array(history)
+            
+            # Evita divisão por zero se x for constante
+            if np.ptp(x) == 0:
+                trend = 0
+            else:
+                # A tendência é o coeficiente angular da regressão
+                trend = np.polyfit(x, y, 1)[0]
+            
+            # Aplica um fator de decaimento para suavizar a mudança de tendência
+            if bank in self.sentiment_trends:
+                self.sentiment_trends[bank] = self.decay_rate * self.sentiment_trends[bank] + (1 - self.decay_rate) * trend
+            else:
+                self.sentiment_trends[bank] = trend
+
+# Função de demonstração
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    engine = ForexCentralBankSentimentPerfectionEngine()
+    
+    # Dados de mercado simulados
+    market_data = {
+        'central_banks': {
+            'FED': {'text': 'We are concerned about elevated inflation and may need to hike rates further.'},
+            'ECB': {'text': 'Economic growth in the Eurozone is slowing, we remain prepared to act.'},
+            'BOE': {'text': 'The UK economy faces headwinds, but we see a path to sustainable growth.'},
+            'BOJ': {'text': 'We will continue our ultra-loose monetary policy to support the economy.'}
+        }
+    }
+    
+    # Simula múltiplos pontos no tempo
+    for i in range(5):
+        signal = engine.analyze_and_generate_signal(market_data, system_intentional_state="SCAN_OPPORTUNITIES")
+        if signal:
+            print(f"Sinal Gerado: {signal.asset} - Ação: {signal.action} - Confiança: {signal.confidence}")
+            break
+        # Simula uma pequena mudança no sentimento
+        for bank in market_data['central_banks']:
+            market_data['central_banks'][bank]['text'] += " " + np.random.choice(['inflation', 'growth', 'rates'])

@@ -1,0 +1,112 @@
+1. Diversificação e Alocação de Ativos (Estratégia Passiva como Vanguard)
+Conceito: Diversificar para reduzir volatilidade, usando rebalanceamento automático.
+pythonimport numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Dados fictícios: retornos históricos de ativos (ex.: ações, bonds, imóveis)
+assets = ['Ações (S&P500)', 'Bonds (Treasury)', 'Imóveis (REIT)']
+returns = np.array([[0.12, 0.05, 0.08],  # Ano 1
+                    [0.15, 0.04, 0.07],  # Ano 2
+                    [-0.05, 0.06, 0.03]])  # Ano 3
+
+# Matriz de covariância para medir risco (correlações entre ativos)
+cov_matrix = np.cov(returns, rowvar=False)
+
+# Função para calcular retorno e risco de um portfólio
+def portfolio_performance(weights, mean_returns, cov_matrix):
+    returns = np.dot(weights, mean_returns)
+    std_dev = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
+    return returns, std_dev
+
+# Média de retornos
+mean_returns = np.mean(returns, axis=0)
+
+# Exemplo de pesos diversificados (igual peso)
+weights = np.array([1/3, 1/3, 1/3])
+ret, risk = portfolio_performance(weights, mean_returns, cov_matrix)
+print(f"Retorno esperado: {ret:.2%} | Risco (desvio padrão): {risk:.2%}")
+
+# Visualização
+plt.bar(assets, weights)
+plt.title('Alocação Diversificada')
+plt.show()
+Lógica: Calcula retorno ponderado e risco via covariância. Para o projeto, adicione rebalanceamento anual: se um ativo crescer mais, ajuste pesos.
+2. Otimização de Portfólio (Modelo de Markowitz - Usado por BlackRock)
+Conceito: Encontrar a alocação eficiente que maximiza retorno para um risco dado.
+pythonfrom scipy.optimize import minimize
+
+# Função objetivo: Minimizar risco para um retorno alvo
+def minimize_risk(weights, mean_returns, cov_matrix, target_return):
+    return np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))  # Risco
+
+# Restrições: soma pesos = 1, retorno >= target
+constraints = ({'type': 'eq', 'fun': lambda w: np.sum(w) - 1},
+               {'type': 'ineq', 'fun': lambda w: np.dot(w, mean_returns) - target_return})
+
+# Limites: pesos entre 0 e 1
+bounds = tuple((0, 1) for _ in range(len(assets)))
+
+# Otimização
+target_return = 0.08  # Exemplo: 8% retorno alvo
+initial_weights = np.array([1/len(assets)] * len(assets))
+result = minimize(lambda w: minimize_risk(w, mean_returns, cov_matrix, target_return),
+                  initial_weights, method='SLSQP', bounds=bounds, constraints=constraints)
+
+optimal_weights = result.x
+print(f"Pesos otimizados: {dict(zip(assets, optimal_weights))}")
+ret, risk = portfolio_performance(optimal_weights, mean_returns, cov_matrix)
+print(f"Retorno: {ret:.2%} | Risco: {risk:.2%}")
+Lógica: Usa otimização quadrática para fronteira eficiente. Integre com dados reais para simular cenários (ex.: Monte Carlo para variações).
+3. Gerenciamento de Risco (Análise como no Aladdin - VaR)
+Conceito: Medir risco potencial de perda (Value at Risk).
+pythonfrom scipy.stats import norm
+
+# Simulação de retornos normais (para VaR)
+def calculate_var(portfolio_returns, confidence_level=0.95):
+    mean = np.mean(portfolio_returns)
+    std = np.std(portfolio_returns)
+    var = norm.ppf(1 - confidence_level, mean, std)  # VaR paramétrico
+    return var
+
+# Retornos do portfólio (usando pesos otimizados do exemplo anterior)
+portfolio_returns = np.dot(returns, optimal_weights)
+var_95 = calculate_var(portfolio_returns)
+print(f"VaR 95%: {var_95:.2%} (perda máxima esperada em 95% dos casos)")
+
+# Simulação Monte Carlo para riscos
+sim_returns = np.random.normal(np.mean(portfolio_returns), np.std(portfolio_returns), 10000)
+plt.hist(sim_returns, bins=50)
+plt.title('Simulação de Retornos (Monte Carlo)')
+plt.show()
+Lógica: VaR quantifica risco; Monte Carlo simula cenários. Para Aladdin-like, integre com big data (ex.: pandas para processar CSV de mercado).
+4. Sistema Simples como Aladdin (Integração e Automação)
+Conceito: Plataforma unificada para análise, risco e trading simulado.
+pythonclass SimpleAladdin:
+    def __init__(self, assets, returns, cov_matrix):
+        self.assets = assets
+        self.mean_returns = np.mean(returns, axis=0)
+        self.cov_matrix = cov_matrix
+    
+    def optimize_portfolio(self, target_return):
+        # (Código de otimização similar ao acima)
+        constraints = ({'type': 'eq', 'fun': lambda w: np.sum(w) - 1},
+                       {'type': 'ineq', 'fun': lambda w: np.dot(w, self.mean_returns) - target_return})
+        bounds = tuple((0, 1) for _ in range(len(self.assets)))
+        initial_weights = np.array([1/len(self.assets)] * len(self.assets))
+        result = minimize(lambda w: np.sqrt(np.dot(w.T, np.dot(self.cov_matrix, w))),
+                          initial_weights, method='SLSQP', bounds=bounds, constraints=constraints)
+        return result.x
+    
+    def assess_risk(self, weights):
+        ret, risk = portfolio_performance(weights, self.mean_returns, self.cov_matrix)
+        var = calculate_var(np.dot(returns, weights))  # Usando dados globais
+        return ret, risk, var
+
+# Exemplo de uso
+system = SimpleAladdin(assets, returns, cov_matrix)
+optimal = system.optimize_portfolio(0.08)
+ret, risk, var = system.assess_risk(optimal)
+print(f"Retorno: {ret:.2%} | Risco: {risk:.2%} | VaR: {var:.2%}")
+Lógica: Classe modular simula Aladdin: otimiza, avalia risco. Expanda com APIs para dados reais, IA (ex.: scikit-learn para predições) e conformidade (logs).
+Esses códigos são bases para o seu projeto. Teste e expanda! Se precisar de mais detalhes, como integração com ESG ou dados reais, ou ajustes, é só pedir. Para rodar simulações avançadas, use o tool de code_execution se quiser validar outputs.2.4s

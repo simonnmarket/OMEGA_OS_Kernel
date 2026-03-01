@@ -1,0 +1,39 @@
+Sistema Multi-Ativos com DNA Genético ao sistema Apollo11 com as seguintes melhorias:
+
+Estrutura MarketDNA Aprimorada:
+30+ parâmetros genéticos
+Métodos de mutação e crossover
+Rastreamento de gerações
+Fitness adaptativo
+Algoritmo Genético Avançado:
+Seleção por torneio
+Mutação gaussiana adaptativa
+Crossover uniforme
+Verificação de convergência
+Otimização Multi-Ativos:
+Backtest em nuvem
+Avaliação de fitness multi-dimensional
+Scores quânticos e de correlação
+Monitoramento de gerações
+Novos Parâmetros Genéticos:
+Taxas de mutação e crossover
+Pressão de seleção
+Taxa de aprendizado
+Fator de momento
+Sensibilidades adaptativas
+Sistema de Avaliação:
+Score quântico
+Score de correlação
+Fitness adaptativo
+Threshold dinâmico
+Monitoramento:
+Status do portfólio
+Evolução das gerações
+Convergência genética
+Logs detalhados
+O sistema agora pode:
+Otimizar parâmetros por par
+Adaptar-se a diferentes condições de mercado
+Evoluir estrategicamente
+Manter diversificação
+Fornecer relatórios detalhados

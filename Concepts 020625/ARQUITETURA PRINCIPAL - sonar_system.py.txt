@@ -1,0 +1,917 @@
+#!/usr/bin/env python3
+"""
+SONAR 4.0 - Sistema Autônomo de Trading de Alta Frequência
+Arquitetura: 3 Camadas Temporais (HFT, Tática, Estratégica)
+Autor: Sistema de IA Avançada
+Data: 06/10/2025
+"""
+
+import asyncio
+import numpy as np
+import pandas as pd
+import json
+import time
+import logging
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional, Deque, Tuple
+from collections import deque
+from sortedcontainers import SortedDict
+from concurrent.futures import ThreadPoolExecutor
+import websockets
+from scipy.stats import norm, trim_mean
+from statsmodels.tsa.stattools import adfuller, grangercausalitytests
+import warnings
+warnings.filterwarnings('ignore')
+
+# Configuração de Logging Avançado
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',
+    handlers=[
+        logging.FileHandler('sonar_system.log', encoding='utf-8'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger("SONAR")
+
+@dataclass
+class OrderbookLevel:
+    """Nível individual do book de ofertas"""
+    price: float
+    quantity: float
+    timestamp: float
+    exchange: str
+    sequence_id: int
+
+@dataclass
+class Orderbook:
+    """Book de ofertas completo sincronizado"""
+    bids: List[OrderbookLevel]
+    asks: List[OrderbookLevel]
+    exchange: str
+    symbol: str
+    timestamp: float
+    sequence_id: int
+    
+    def get_bid_ask_spread(self) -> float:
+        """Calcula spread bid-ask com validação"""
+        if not self.bids or not self.asks:
+            return 0.0
+        return self.asks[0].price - self.bids[0].price
+    
+    def get_mid_price(self) -> float:
+        """Calcula preço médio com validação"""
+        if not self.bids or not self.asks:
+            return 0.0
+        return (self.bids[0].price + self.asks[0].price) / 2.0
+    
+    def get_weighted_mid_price(self, depth: int = 5) -> float:
+        """Preço médio ponderado pelo volume"""
+        if not self.bids or not self.asks:
+            return 0.0
+            
+        total_volume = 0
+        weighted_price = 0
+        
+        for level in self.bids[:depth]:
+            weighted_price += level.price * level.quantity
+            total_volume += level.quantity
+            
+        for level in self.asks[:depth]:
+            weighted_price += level.price * level.quantity
+            total_volume += level.quantity
+            
+        return weighted_price / total_volume if total_volume > 0 else self.get_mid_price()
+
+class PrecisionTimeProtocol:
+    """Protocolo de sincronização temporal distribuída"""
+    
+    def __init__(self):
+        self.clock_offsets: Dict[str, float] = {}
+        self.clock_drifts: Dict[str, float] = {}
+        self.calibration_history: Dict[str, Deque] = {}
+        
+    async def calibrate_exchange_time(self, exchange: str, websocket) -> bool:
+        """Calibração NTP-like para exchanges"""
+        try:
+            calibration_rounds = 5
+            offsets = []
+            
+            for _ in range(calibration_rounds):
+                t1 = time.time()
+                
+                # Enviar ping e medir round-trip
+                await websocket.ping()
+                pong = await websocket.recv()
+                t4 = time.time()
+                
+                # Assumir simetria (t2 ≈ t3)
+                offset = (t4 - t1) / 2.0
+                offsets.append(offset)
+                
+                await asyncio.sleep(0.01)
+            
+            # Usar mediana para reduzir outliers
+            final_offset = np.median(offsets)
+            self.clock_offsets[exchange] = final_offset
+            
+            logger.info(f"Calibração temporal {exchange}: offset {final_offset:.6f}s")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Falha calibração temporal {exchange}: {e}")
+            return False
+
+class TemporalOrderbookBuffer:
+    """Buffer temporal com sincronização rigorosa"""
+    
+    def __init__(self, max_latency_ms: int = 50):
+        self.buffer = SortedDict()  # {(timestamp, sequence_id, exchange): Orderbook}
+        self.max_latency_ms = max_latency_ms
+        self.latest_timestamps: Dict[str, float] = {}
+        self.ptp = PrecisionTimeProtocol()
+        
+    def add_orderbook(self, orderbook: Orderbook):
+        """Adiciona orderbook com controle de sequência temporal"""
+        try:
+            # Aplicar correção de offset temporal
+            corrected_timestamp = orderbook.timestamp + self.ptp.clock_offsets.get(orderbook.exchange, 0)
+            
+            # Validar monotonicidade por exchange
+            exchange_key = f"{orderbook.exchange}_{orderbook.symbol}"
+            last_timestamp = self.latest_timestamps.get(exchange_key, 0)
+            
+            if corrected_timestamp < last_timestamp:
+                logger.warning(f"Timestamp não monotônico {exchange_key}: {corrected_timestamp} < {last_timestamp}")
+                return
+                
+            self.latest_timestamps[exchange_key] = corrected_timestamp
+            
+            # Chave composta para ordenação global
+            composite_key = (corrected_timestamp, orderbook.sequence_id, exchange_key)
+            self.buffer[composite_key] = orderbook
+            
+            # Manter apenas dados dentro da janela de latência
+            self._prune_old_data()
+            
+        except Exception as e:
+            logger.error(f"Erro ao adicionar orderbook: {e}")
+    
+    def get_synchronized_mid_price(self, tolerance_ms: int = 10) -> Optional[float]:
+        """Preço médio sincronizado com tolerância temporal"""
+        try:
+            if not self.buffer:
+                return None
+                
+            # Timestamp de referência
+            reference_time = time.time() - (tolerance_ms / 1000.0)
+            
+            # Coletar orderbooks dentro da tolerância
+            recent_books = []
+            for key, book in self.buffer.items():
+                if key[0] >= reference_time:  # key[0] é timestamp corrigido
+                    recent_books.append(book)
+            
+            if not recent_books:
+                return None
+                
+            # Média ponderada pelos volumes
+            total_volume = 0
+            weighted_price = 0
+            
+            for book in recent_books:
+                mid_price = book.get_weighted_mid_price()
+                volume = sum(level.quantity for level in book.bids[:3]) + \
+                         sum(level.quantity for level in book.asks[:3])
+                
+                weighted_price += mid_price * volume
+                total_volume += volume
+            
+            return weighted_price / total_volume if total_volume > 0 else None
+            
+        except Exception as e:
+            logger.error(f"Erro no cálculo de preço sincronizado: {e}")
+            return None
+    
+    def _prune_old_data(self):
+        """Remove dados fora da janela de latência"""
+        try:
+            cutoff_time = time.time() - (self.max_latency_ms / 1000.0)
+            keys_to_remove = []
+            
+            for key in self.buffer:
+                if key[0] < cutoff_time:
+                    keys_to_remove.append(key)
+                else:
+                    break  # SortedDict ordenado
+                    
+            for key in keys_to_remove:
+                del self.buffer[key]
+                
+        except Exception as e:
+            logger.error(f"Erro ao limpar buffer: {e}")
+
+class HFTLayer:
+    """Camada de Alta Frequência - Processamento em Tempo Real"""
+    
+    def __init__(self, config: Dict):
+        self.config = config
+        self.temporal_buffer = TemporalOrderbookBuffer(max_latency_ms=50)
+        self.signals: Deque = deque(maxlen=1000)
+        self.websocket_connections = {}
+        self.running = False
+        
+        # Otimização: Pré-alocar arrays para cálculos
+        self.price_buffer = deque(maxlen=100)
+        self.volume_buffer = deque(maxlen=100)
+        
+    async def start(self):
+        """Inicia camada HFT"""
+        self.running = True
+        logger.info("Iniciando camada HFT")
+        
+        # Conectar às exchanges em paralelo
+        tasks = []
+        for exchange in self.config['exchanges']:
+            task = asyncio.create_task(self._connect_exchange(exchange))
+            tasks.append(task)
+        
+        await asyncio.gather(*tasks, return_exceptions=True)
+        
+    async def _connect_exchange(self, exchange: str):
+        """Conexão robusta com exchange"""
+        max_retries = 3
+        
+        for attempt in range(max_retries):
+            try:
+                ws_url = self._get_websocket_url(exchange)
+                
+                async with websockets.connect(
+                    ws_url,
+                    ping_interval=30,
+                    ping_timeout=10,
+                    close_timeout=10
+                ) as websocket:
+                    
+                    # Calibrar tempo da exchange
+                    await self.temporal_buffer.ptp.calibrate_exchange_time(exchange, websocket)
+                    
+                    self.websocket_connections[exchange] = websocket
+                    logger.info(f"Conectado à {exchange}")
+                    
+                    # Processar stream
+                    await self._process_exchange_stream(websocket, exchange)
+                    
+            except Exception as e:
+                logger.error(f"Tentativa {attempt+1} falhou para {exchange}: {e}")
+                if attempt == max_retries - 1:
+                    logger.error(f"Falha definitiva para {exchange}")
+                    return
+                await asyncio.sleep(2 ** attempt)  # Backoff exponencial
+    
+    async def _process_exchange_stream(self, websocket, exchange: str):
+        """Processa stream de dados da exchange"""
+        try:
+            async for message in websocket:
+                if not self.running:
+                    break
+                    
+                try:
+                    data = json.loads(message)
+                    orderbook = self._parse_orderbook_data(data, exchange)
+                    
+                    if orderbook:
+                        self.temporal_buffer.add_orderbook(orderbook)
+                        
+                        # Calcular sinais em tempo real
+                        signals = self.calculate_microstructure_signals()
+                        if signals:
+                            self.signals.append({
+                                'timestamp': time.time(),
+                                'signals': signals,
+                                'exchange': exchange
+                            })
+                            
+                except json.JSONDecodeError as e:
+                    logger.warning(f"JSON inválido de {exchange}: {e}")
+                except Exception as e:
+                    logger.error(f"Erro processando mensagem {exchange}: {e}")
+                    
+        except Exception as e:
+            logger.error(f"Erro no stream {exchange}: {e}")
+    
+    def _parse_orderbook_data(self, data: Dict, exchange: str) -> Optional[Orderbook]:
+        """Parser robusto de dados de orderbook"""
+        try:
+            # Adaptar para diferentes formatos de exchange
+            if exchange == "binance":
+                return self._parse_binance_orderbook(data, exchange)
+            elif exchange == "bybit":
+                return self._parse_bybit_orderbook(data, exchange)
+            else:
+                return self._parse_generic_orderbook(data, exchange)
+                
+        except Exception as e:
+            logger.error(f"Erro parsing orderbook {exchange}: {e}")
+            return None
+    
+    def _parse_binance_orderbook(self, data: Dict, exchange: str) -> Orderbook:
+        """Parser específico para Binance"""
+        bids = [OrderbookLevel(float(b[0]), float(b[1]), time.time(), exchange, i) 
+                for i, b in enumerate(data.get('bids', []))]
+        asks = [OrderbookLevel(float(a[0]), float(a[1]), time.time(), exchange, i) 
+                for i, a in enumerate(data.get('asks', []))]
+        
+        return Orderbook(
+            bids=bids,
+            asks=asks,
+            exchange=exchange,
+            symbol=data.get('s', 'BTCUSDT'),
+            timestamp=time.time(),
+            sequence_id=data.get('u', 0)
+        )
+    
+    def calculate_microstructure_signals(self) -> Dict[str, float]:
+        """Calcula sinais de microestrutura em tempo real"""
+        try:
+            synchronized_price = self.temporal_buffer.get_synchronized_mid_price()
+            if synchronized_price is None:
+                return {}
+            
+            self.price_buffer.append(synchronized_price)
+            
+            if len(self.price_buffer) < 10:
+                return {}
+            
+            signals = {
+                'liquidity_imbalance': self._calculate_liquidity_imbalance(),
+                'momentum_acceleration': self._calculate_momentum_acceleration(),
+                'volatility_regime': self._calculate_volatility_regime(),
+                'spread_ratio': self._calculate_spread_ratio()
+            }
+            
+            # Aplicar filtro de qualidade
+            valid_signals = {k: v for k, v in signals.items() if not np.isnan(v) and np.isfinite(v)}
+            return valid_signals
+            
+        except Exception as e:
+            logger.error(f"Erro cálculo sinais microestrutura: {e}")
+            return {}
+    
+    def _calculate_liquidity_imbalance(self) -> float:
+        """Calcula desequilíbrio de liquidez"""
+        try:
+            if not self.temporal_buffer.buffer:
+                return 0.0
+                
+            total_bid_volume = 0
+            total_ask_volume = 0
+            
+            for book in self.temporal_buffer.buffer.values():
+                total_bid_volume += sum(level.quantity for level in book.bids[:5])
+                total_ask_volume += sum(level.quantity for level in book.asks[:5])
+            
+            if total_ask_volume == 0:
+                return 1.0 if total_bid_volume > 0 else 0.0
+                
+            imbalance = (total_bid_volume - total_ask_volume) / (total_bid_volume + total_ask_volume)
+            return np.tanh(imbalance)  # Normalizar para [-1, 1]
+            
+        except Exception as e:
+            logger.error(f"Erro cálculo imbalance: {e}")
+            return 0.0
+    
+    def _calculate_momentum_acceleration(self) -> float:
+        """Calcula aceleração do momentum (segunda derivada)"""
+        try:
+            if len(self.price_buffer) < 15:
+                return 0.0
+                
+            prices = np.array(list(self.price_buffer))
+            returns = np.diff(np.log(prices))
+            
+            if len(returns) < 10:
+                return 0.0
+                
+            # Primeira derivada (momentum)
+            momentum = returns[-1] - returns[-5]
+            
+            # Segunda derivada (aceleração)
+            acceleration = momentum - (returns[-6] - returns[-10])
+            
+            return float(acceleration * 1000)  # Escalar para melhor visualização
+            
+        except Exception as e:
+            logger.error(f"Erro cálculo aceleração: {e}")
+            return 0.0
+    
+    def _calculate_volatility_regime(self) -> float:
+        """Identifica regime de volatilidade"""
+        try:
+            if len(self.price_buffer) < 20:
+                return 0.0
+                
+            prices = np.array(list(self.price_buffer))
+            returns = np.diff(np.log(prices))
+            
+            # Volatilidade de curto prazo
+            short_vol = np.std(returns[-5:]) if len(returns) >= 5 else 0
+            
+            # Volatilidade de longo prazo
+            long_vol = np.std(returns) if len(returns) > 0 else 0
+            
+            if long_vol == 0:
+                return 0.0
+                
+            # Razão de volatilidade (normalizada)
+            vol_ratio = short_vol / long_vol
+            return float(np.tanh(vol_ratio - 1))  # Centrado em 1
+            
+        except Exception as e:
+            logger.error(f"Erro cálculo volatilidade: {e}")
+            return 0.0
+    
+    def _calculate_spread_ratio(self) -> float:
+        """Calcula razão de spread normalizada"""
+        try:
+            if not self.temporal_buffer.buffer:
+                return 0.0
+                
+            spreads = []
+            mid_prices = []
+            
+            for book in self.temporal_buffer.buffer.values():
+                spread = book.get_bid_ask_spread()
+                mid_price = book.get_mid_price()
+                
+                if spread > 0 and mid_price > 0:
+                    spreads.append(spread)
+                    mid_prices.append(mid_price)
+            
+            if not spreads:
+                return 0.0
+                
+            # Spread relativo normalizado
+            avg_spread = np.mean(spreads)
+            avg_mid_price = np.mean(mid_prices)
+            
+            if avg_mid_price == 0:
+                return 0.0
+                
+            relative_spread = avg_spread / avg_mid_price
+            return float(relative_spread * 10000)  # Em basis points
+            
+        except Exception as e:
+            logger.error(f"Erro cálculo spread: {e}")
+            return 0.0
+    
+    def _get_websocket_url(self, exchange: str) -> str:
+        """Retorna URLs WebSocket para exchanges"""
+        urls = {
+            "binance": "wss://stream.binance.com:9443/ws/btcusdt@depth",
+            "bybit": "wss://stream.bybit.com/v5/public/linear",
+            "coinbase": "wss://ws-feed.pro.coinbase.com"
+        }
+        return urls.get(exchange, "")
+
+class OnlineRegimeDetector:
+    """Detector de Regime com Filtro de Partículas Online"""
+    
+    def __init__(self, n_regimes: int = 4, n_particles: int = 500):
+        self.n_regimes = n_regimes
+        self.n_particles = n_particles
+        self.particles = None
+        self.weights = None
+        self.regime_params = None
+        self.returns_buffer = deque(maxlen=1000)
+        self.initialized = False
+        
+    def initialize_with_data(self, initial_returns: np.ndarray):
+        """Inicialização com dados históricos"""
+        try:
+            # Estimativa inicial via K-means para regimes
+            from sklearn.cluster import KMeans
+            
+            returns_reshaped = initial_returns.reshape(-1, 1)
+            kmeans = KMeans(n_clusters=self.n_regimes, random_state=42)
+            labels = kmeans.fit_predict(returns_reshaped)
+            
+            # Parâmetros iniciais por regime
+            self.regime_params = []
+            for i in range(self.n_regimes):
+                regime_returns = initial_returns[labels == i]
+                if len(regime_returns) > 0:
+                    params = {
+                        'mean': np.mean(regime_returns),
+                        'std': np.std(regime_returns),
+                        'weight': len(regime_returns) / len(initial_returns)
+                    }
+                else:
+                    params = {'mean': 0, 'std': 1, 'weight': 1/self.n_regimes}
+                self.regime_params.append(params)
+            
+            # Inicializar partículas
+            self._initialize_particles()
+            self.initialized = True
+            
+            logger.info("Detector de regime inicializado com sucesso")
+            
+        except Exception as e:
+            logger.error(f"Erro inicialização detector regime: {e}")
+    
+    def _initialize_particles(self):
+        """Inicializa partículas distribuídas pelos regimes"""
+        self.particles = np.random.choice(self.n_regimes, size=self.n_particles)
+        self.weights = np.ones(self.n_particles) / self.n_particles
+    
+    def update(self, new_return: float):
+        """Atualização online via filtro de partículas"""
+        if not self.initialized:
+            return
+            
+        try:
+            # Predição: transição suave entre regimes
+            transition_noise = 0.05
+            for i in range(self.n_particles):
+                current_regime = self.particles[i]
+                # Transição com pequena probabilidade de mudança
+                if np.random.random() < transition_noise:
+                    self.particles[i] = np.random.choice(self.n_regimes)
+            
+            # Atualização: probabilidade baseada na observação
+            for i in range(self.n_particles):
+                regime = self.particles[i]
+                mean = self.regime_params[regime]['mean']
+                std = self.regime_params[regime]['std'] + 1e-6  # Evitar divisão zero
+                
+                # Likelihood gaussiana
+                likelihood = norm.pdf(new_return, loc=mean, scale=std)
+                self.weights[i] *= likelihood
+            
+            # Normalizar pesos
+            weight_sum = np.sum(self.weights)
+            if weight_sum > 0:
+                self.weights /= weight_sum
+            else:
+                self.weights = np.ones(self.n_particles) / self.n_particles
+            
+            # Reamostragem sistemática
+            self._systematic_resampling()
+            
+            # Atualizar buffer
+            self.returns_buffer.append(new_return)
+            
+        except Exception as e:
+            logger.error(f"Erro atualização detector regime: {e}")
+    
+    def _systematic_resampling(self):
+        """Reamostragem sistemática para evitar degeneração"""
+        try:
+            N = self.n_particles
+            indices = []
+            positions = (np.arange(N) + np.random.random()) / N
+            cumulative_sum = np.cumsum(self.weights)
+            
+            i, j = 0, 0
+            while i < N:
+                if positions[i] < cumulative_sum[j]:
+                    indices.append(j)
+                    i += 1
+                else:
+                    j += 1
+            
+            self.particles = self.particles[indices]
+            self.weights = np.ones(N) / N
+            
+        except Exception as e:
+            logger.error(f"Erro reamostragem: {e}")
+            self._initialize_particles()
+    
+    @property
+    def current_regime(self) -> int:
+        """Regime atual baseado na moda das partículas"""
+        if not self.initialized:
+            return 0
+            
+        try:
+            regime_counts = np.bincount(self.particles, weights=self.weights)
+            return np.argmax(regime_counts)
+        except:
+            return 0
+    
+    def get_regime_confidence(self) -> float:
+        """Confiança na detecção do regime atual"""
+        if not self.initialized:
+            return 0.0
+            
+        try:
+            regime_counts = np.bincount(self.particles, weights=self.weights)
+            return np.max(regime_counts)
+        except:
+            return 0.0
+
+class DynamicRiskManager:
+    """Gerenciador de Risco Dinâmico com Kelly Corrigido"""
+    
+    def __init__(self, initial_capital: float = 100000.0):
+        self.initial_capital = initial_capital
+        self.current_capital = initial_capital
+        self.positions: Dict[str, float] = {}
+        self.returns_history = deque(maxlen=252)  # 1 ano de dados
+        self.var_confidence = 0.95
+        
+        # Parâmetros conservadores
+        self.max_position_size = 0.02  # 2% do capital
+        self.max_daily_loss = 0.02     # 2% drawdown diário
+        self.kelly_fraction = 0.25     # Kelly fracionário
+        
+    def calculate_position_size(self, signal_strength: float, volatility: float, 
+                              correlation_penalty: float = 0.0) -> float:
+        """Calcula tamanho de posição com Kelly corrigido"""
+        try:
+            if volatility <= 0:
+                return 0.0
+            
+            # Kelly fraction correta: f* = μ / σ²
+            expected_return = signal_strength * 0.01  # Converter para retorno esperado
+            
+            # Ajustar pelo histórico de performance
+            historical_sharpe = self._calculate_historical_sharpe()
+            edge_adjustment = np.tanh(historical_sharpe)  # Normalizar para [-1, 1]
+            
+            raw_kelly = (expected_return * edge_adjustment) / (volatility ** 2 + 1e-6)
+            
+            # Kelly fracionário conservador
+            fractional_kelly = raw_kelly * self.kelly_fraction
+            
+            # Aplicar penalidade de correlação
+            correlation_adjusted = fractional_kelly * (1 - correlation_penalty)
+            
+            # Limites conservadores
+            final_allocation = min(
+                max(correlation_adjusted, 0.005),  # Mínimo 0.5%
+                self.max_position_size             # Máximo 2%
+            )
+            
+            # Converter para valor em capital
+            position_value = self.current_capital * final_allocation
+            
+            return position_value
+            
+        except Exception as e:
+            logger.error(f"Erro cálculo tamanho posição: {e}")
+            return 0.0
+    
+    def _calculate_historical_sharpe(self) -> float:
+        """Calcula Sharpe ratio histórico"""
+        if len(self.returns_history) < 2:
+            return 0.0
+            
+        returns = np.array(list(self.returns_history))
+        excess_returns = returns  # Assumindo risco livre = 0
+        
+        if np.std(excess_returns) == 0:
+            return 0.0
+            
+        return np.mean(excess_returns) / np.std(excess_returns)
+    
+    def update_performance(self, pnl: float):
+        """Atualiza performance e ajusta risco"""
+        self.current_capital += pnl
+        self.returns_history.append(pnl / self.initial_capital)
+    
+    def should_reduce_risk(self) -> bool:
+        """Verifica se deve reduzir risco devido a drawdown"""
+        if len(self.returns_history) < 5:
+            return False
+            
+        recent_returns = list(self.returns_history)[-5:]
+        cumulative_loss = sum([r for r in recent_returns if r < 0])
+        
+        return cumulative_loss < -self.max_daily_loss
+
+class SONARSystem:
+    """Sistema SONAR 4.0 - Integração Completa"""
+    
+    def __init__(self, config: Dict):
+        self.config = config
+        self.hft_layer = HFTLayer(config)
+        self.regime_detector = OnlineRegimeDetector()
+        self.risk_manager = DynamicRiskManager()
+        self.running = False
+        
+        # Monitoramento
+        self.performance_metrics = {
+            'total_trades': 0,
+            'winning_trades': 0,
+            'total_pnl': 0.0,
+            'sharpe_ratio': 0.0,
+            'max_drawdown': 0.0
+        }
+        
+        logger.info("Sistema SONAR 4.0 inicializado")
+    
+    async def start(self):
+        """Inicia o sistema completo"""
+        self.running = True
+        
+        try:
+            # Inicializar componentes
+            await self.hft_layer.start()
+            
+            # Aguardar dados para inicializar regime detector
+            await asyncio.sleep(10)
+            
+            # Inicializar com dados iniciais
+            initial_returns = self._generate_initial_returns()
+            self.regime_detector.initialize_with_data(initial_returns)
+            
+            # Iniciar loop principal
+            await self._main_loop()
+            
+        except Exception as e:
+            logger.error(f"Erro inicialização sistema: {e}")
+            await self.stop()
+    
+    async def _main_loop(self):
+        """Loop principal de trading"""
+        logger.info("Iniciando loop principal de trading")
+        
+        while self.running:
+            try:
+                # Processar sinais HFT
+                if self.hft_layer.signals:
+                    latest_signal = self.hft_layer.signals[-1]
+                    await self._process_trading_signal(latest_signal)
+                
+                # Atualizar regime
+                await self._update_regime_detection()
+                
+                # Gerenciar risco
+                self._manage_risk()
+                
+                # Log de status
+                if self.performance_metrics['total_trades'] % 100 == 0:
+                    self._log_performance()
+                
+                await asyncio.sleep(0.001)  # 1ms entre iterações
+                
+            except Exception as e:
+                logger.error(f"Erro loop principal: {e}")
+                await asyncio.sleep(0.1)
+    
+    async def _process_trading_signal(self, signal_data: Dict):
+        """Processa sinal de trading com gestão de risco"""
+        try:
+            signals = signal_data['signals']
+            
+            if not signals:
+                return
+            
+            # Combinar sinais (média ponderada)
+            signal_strength = np.mean(list(signals.values()))
+            
+            # Obter volatilidade atual
+            volatility = self._get_current_volatility()
+            
+            # Verificar regime atual
+            regime = self.regime_detector.current_regime
+            regime_confidence = self.regime_detector.get_regime_confidence()
+            
+            # Ajustar sinal pela confiança do regime
+            adjusted_signal = signal_strength * regime_confidence
+            
+            # Calcular tamanho da posição
+            position_size = self.risk_manager.calculate_position_size(
+                adjusted_signal, volatility
+            )
+            
+            # Executar trade se dentro dos limites
+            if abs(adjusted_signal) > 0.1 and position_size > 0:  # Threshold mínimo
+                await self._execute_trade(adjusted_signal, position_size, signal_data)
+                
+        except Exception as e:
+            logger.error(f"Erro processamento sinal: {e}")
+    
+    async def _execute_trade(self, signal: float, size: float, signal_data: Dict):
+        """Executa trade simulado (substituir por API real)"""
+        try:
+            # Simulação de execução
+            entry_price = self.hft_layer.temporal_buffer.get_synchronized_mid_price() or 50000
+            direction = 1 if signal > 0 else -1
+            
+            # Simular P&L (substituir por execução real)
+            exit_price = entry_price * (1 + direction * 0.001)  # 0.1% de movimento
+            pnl = size * direction * (exit_price - entry_price) / entry_price
+            
+            # Atualizar métricas
+            self.performance_metrics['total_trades'] += 1
+            self.performance_metrics['total_pnl'] += pnl
+            
+            if pnl > 0:
+                self.performance_metrics['winning_trades'] += 1
+            
+            # Atualizar gerenciador de risco
+            self.risk_manager.update_performance(pnl)
+            
+            logger.info(f"Trade executado: Size=${size:.2f}, PnL=${pnl:.2f}, Signal={signal:.3f}")
+            
+        except Exception as e:
+            logger.error(f"Erro execução trade: {e}")
+    
+    async def _update_regime_detection(self):
+        """Atualiza detecção de regime com dados recentes"""
+        try:
+            if len(self.hft_layer.price_buffer) < 10:
+                return
+                
+            # Calcular retorno mais recente
+            prices = list(self.hft_layer.price_buffer)
+            recent_return = (prices[-1] - prices[-2]) / prices[-2] if len(prices) >= 2 else 0
+            
+            # Atualizar detector
+            self.regime_detector.update(recent_return)
+            
+        except Exception as e:
+            logger.error(f"Erro atualização regime: {e}")
+    
+    def _get_current_volatility(self) -> float:
+        """Calcula volatilidade atual"""
+        try:
+            if len(self.hft_layer.price_buffer) < 20:
+                return 0.01  # Volatilidade padrão
+            
+            prices = np.array(list(self.hft_layer.price_buffer))
+            returns = np.diff(np.log(prices))
+            
+            return np.std(returns) if len(returns) > 0 else 0.01
+            
+        except Exception as e:
+            logger.error(f"Erro cálculo volatilidade: {e}")
+            return 0.01
+    
+    def _manage_risk(self):
+        """Aplica gestão de risco proativa"""
+        if self.risk_manager.should_reduce_risk():
+            logger.warning("Condição de risco elevado detectada - reduzindo exposição")
+            # Implementar redução de posições
+    
+    def _log_performance(self):
+        """Log de performance do sistema"""
+        win_rate = (self.performance_metrics['winning_trades'] / 
+                   self.performance_metrics['total_trades'] if 
+                   self.performance_metrics['total_trades'] > 0 else 0)
+        
+        logger.info(
+            f"Performance: Trades={self.performance_metrics['total_trades']}, "
+            f"WinRate={win_rate:.1%}, PnL=${self.performance_metrics['total_pnl']:.2f}, "
+            f"Regime={self.regime_detector.current_regime}"
+        )
+    
+    def _generate_initial_returns(self) -> np.ndarray:
+        """Gera retornos iniciais para inicialização"""
+        # Retornos sintéticos baseados em distribuição normal
+        return np.random.normal(0, 0.01, 1000)
+    
+    async def stop(self):
+        """Para o sistema gracefulmente"""
+        self.running = False
+        self.hft_layer.running = False
+        logger.info("Sistema SONAR parando...")
+
+# Configuração do Sistema
+CONFIG = {
+    'exchanges': ['binance', 'bybit'],
+    'symbols': ['BTCUSDT'],
+    'max_leverage': 1.0,
+    'risk_parameters': {
+        'max_drawdown': 0.02,
+        'var_confidence': 0.95,
+        'position_limits': 0.02
+    }
+}
+
+async def main():
+    """Função principal"""
+    logger.info("=== INICIANDO SONAR 4.0 - SISTEMA DE TRADING AUTÔNOMO ===")
+    
+    try:
+        # Inicializar sistema
+        sonar_system = SONARSystem(CONFIG)
+        
+        # Iniciar sistema
+        await sonar_system.start()
+        
+    except KeyboardInterrupt:
+        logger.info("Interrupção por usuário detectada")
+    except Exception as e:
+        logger.error(f"Erro fatal: {e}")
+    finally:
+        if 'sonar_system' in locals():
+            await sonar_system.stop()
+        
+    logger.info("=== SONAR 4.0 FINALIZADO ===")
+
+if __name__ == "__main__":
+    # Executar sistema
+    asyncio.run(main())
