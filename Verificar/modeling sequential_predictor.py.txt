@@ -1,0 +1,98 @@
+# modeling/sequential_predictor.py
+import numpy as np
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout, Input
+from tensorflow.keras.optimizers import Adam
+from sklearn.metrics import accuracy_score
+import tensorflow as tf
+from typing import Tuple, Dict
+
+class SequencePredictor:
+    """LSTM predictor with corrected temporal alignment"""
+    
+    def __init__(self, config: Dict):
+        self.config = config
+        self.model = None
+        self.sequence_length = config['data']['sequence_length']
+        self.n_features = None
+        self.n_classes = config['model']['n_classes']
+    
+    def build_model(self, input_shape: Tuple[int, int]) -> Sequential:
+        """Build LSTM model architecture"""
+        model = Sequential([
+            Input(shape=input_shape),
+            LSTM(64, return_sequences=True, dropout=0.2, recurrent_dropout=0.2),
+            LSTM(32, dropout=0.2, recurrent_dropout=0.2),
+            Dense(16, activation='relu'),
+            Dropout(0.3),
+            Dense(self.n_classes, activation='softmax')
+        ])
+        
+        model.compile(
+            optimizer=Adam(learning_rate=0.001, clipvalue=0.5),
+            loss='sparse_categorical_crossentropy',
+            metrics=['accuracy']
+        )
+        return model
+    
+    def create_sequences(self, X: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        Create sequences for LSTM training with PERFECT temporal alignment.
+        Uses sequence X[t-L:t] to predict label y[t] (not y[t+1]).
+        """
+        sequences_X, sequences_y = [], []
+        
+        for i in range(len(X) - self.sequence_length):
+            # Use sequence from [i, i+sequence_length-1] to predict label at i+sequence_length-1
+            sequences_X.append(X[i:i+self.sequence_length])
+            sequences_y.append(y[i+self.sequence_length-1])  # CORREÇÃO CRÍTICA: -1 para alinhamento perfeito
+        
+        return np.array(sequences_X), np.array(sequences_y)
+    
+    def train(self, X: np.ndarray, y: np.ndarray) -> None:
+        """Train the LSTM model with corrected alignment"""
+        if self.n_features is None:
+            self.n_features = X.shape[1]
+        
+        X_seq, y_seq = self.create_sequences(X, y)
+        
+        if len(X_seq) > 0:
+            self.model = self.build_model((self.sequence_length, self.n_features))
+            
+            self.model.fit(
+                X_seq, y_seq,
+                epochs=self.config['model']['epochs'],
+                batch_size=32,
+                validation_split=0.2,
+                verbose=0,
+                callbacks=[
+                    tf.keras.callbacks.EarlyStopping(patience=5, restore_best_weights=True),
+                    tf.keras.callbacks.ReduceLROnPlateau(factor=0.5, patience=3)
+                ]
+            )
+    
+    def predict_single(self, X_sequence: np.ndarray) -> int:
+        """
+        Make a single prediction from a sequence
+        Perfect for walk-forward validation
+        """
+        if self.model is None:
+            raise ValueError("Model must be trained before prediction")
+        
+        if X_sequence.shape[0] != self.sequence_length:
+            raise ValueError(f"Sequence must have length {self.sequence_length}, got {X_sequence.shape[0]}")
+        
+        prediction = self.model.predict(X_sequence.reshape(1, self.sequence_length, -1), verbose=0)
+        return np.argmax(prediction, axis=1)[0]
+    
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        """Batch prediction (for evaluation)"""
+        X_seq, _ = self.create_sequences(X, np.zeros(len(X)))
+        predictions = self.model.predict(X_seq, verbose=0)
+        return np.argmax(predictions, axis=1)
+    
+    def evaluate(self, X: np.ndarray, y: np.ndarray) -> float:
+        """Evaluate model accuracy with corrected alignment"""
+        predictions = self.predict(X)
+        y_aligned = y[self.sequence_length-1:]  # Aligned with predictions
+        return accuracy_score(y_aligned, predictions)

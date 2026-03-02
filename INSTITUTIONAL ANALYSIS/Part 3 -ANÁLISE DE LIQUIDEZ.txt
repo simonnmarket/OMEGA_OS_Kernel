@@ -1,0 +1,174 @@
+//+------------------------------------------------------------------+
+//| Institutional Analysis - Parte 3                                   |
+//|                                                                    |
+//| OBJETIVO: Implementar análise de liquidez institucional com:       |
+//| - Detecção de Pools de Liquidez                                   |
+//| - Análise de Vazios de Liquidez                                   |
+//| - Movimentos de Liquidez                                          |
+//| - Integração com Order Flow                                       |
+//+------------------------------------------------------------------+
+
+private:
+    // Estruturas de Liquidez
+    struct LiquidityAnalyzer {
+        // Pools de Liquidez
+        struct LiquidityPools {
+            double levels[];            // Níveis dos pools
+            double volumes[];           // Volumes dos pools
+            double strength[];          // Força dos pools
+            bool isActive[];            // Estado ativo
+            datetime lastHit[];         // Último toque
+        } pools;
+        
+        // Vazios de Liquidez
+        struct LiquidityVoids {
+            double upperLevels[];       // Níveis superiores
+            double lowerLevels[];       // Níveis inferiores
+            double depth[];             // Profundidade
+            bool isFilled[];           // Estado preenchido
+            datetime created[];         // Data de criação
+        } voids;
+        
+        // Métricas de Liquidez
+        struct LiquidityMetrics {
+            double buyerStrength;       // Força compradora
+            double sellerStrength;      // Força vendedora
+            double netFlow;             // Fluxo líquido
+            double efficiency;          // Eficiência
+            bool isBalanced;           // Estado balanceado
+        } metrics;
+    } m_liquidity;
+    
+    void AnalyzeLiquidity() {
+        if(!ValidateLiquidityData()) return;
+        
+        // Detectar pools
+        DetectLiquidityPools();
+        
+        // Analisar vazios
+        AnalyzeLiquidityVoids();
+        
+        // Calcular métricas
+        CalculateLiquidityMetrics();
+        
+        // Processar movimentos
+        ProcessLiquidityMovements();
+    }
+    
+    void DetectLiquidityPools() {
+        // Reset pools antigos
+        ResetExpiredPools();
+        
+        // Analisar níveis
+        for(int i = 0; i < 100; i++) {
+            if(IsLiquidityPool(i)) {
+                AddLiquidityPool(i);
+            }
+        }
+        
+        // Validar pools
+        ValidatePools();
+    }
+    
+    bool IsLiquidityPool(const int shift) {
+        // Verificar volume significativo
+        if(!HasSignificantVolume(shift)) return false;
+        
+        // Verificar concentração de ordens
+        if(!HasOrderConcentration(shift)) return false;
+        
+        // Verificar histórico do nível
+        if(!HasHistoricalSignificance(shift)) return false;
+        
+        return true;
+    }
+    
+    void AddLiquidityPool(const int shift) {
+        // Calcular parâmetros do pool
+        double level = CalculatePoolLevel(shift);
+        double volume = CalculatePoolVolume(shift);
+        double strength = CalculatePoolStrength(shift);
+        
+        // Adicionar novo pool
+        int index = ArraySize(m_liquidity.pools.levels);
+        ArrayResize(m_liquidity.pools.levels, index + 1);
+        ArrayResize(m_liquidity.pools.volumes, index + 1);
+        ArrayResize(m_liquidity.pools.strength, index + 1);
+        ArrayResize(m_liquidity.pools.isActive, index + 1);
+        ArrayResize(m_liquidity.pools.lastHit, index + 1);
+        
+        // Configurar pool
+        ConfigurePool(index, level, volume, strength);
+    }
+    
+    void AnalyzeLiquidityVoids() {
+        // Detectar novos vazios
+        DetectNewVoids();
+        
+        // Atualizar vazios existentes
+        UpdateExistingVoids();
+        
+        // Verificar preenchimentos
+        CheckVoidFills();
+    }
+    
+    void DetectNewVoids() {
+        for(int i = 0; i < 100; i++) {
+            if(IsLiquidityVoid(i)) {
+                AddLiquidityVoid(i);
+            }
+        }
+    }
+    
+    void ProcessLiquidityMovements() {
+        // Analisar movimentos
+        AnalyzeMovements();
+        
+        // Detectar sweeps
+        DetectLiquiditySweeps();
+        
+        // Verificar absorção
+        CheckLiquidityAbsorption();
+        
+        // Gerar sinais
+        GenerateLiquiditySignals();
+    }
+    
+    void GenerateLiquiditySignals() {
+        // Verificar condições
+        if(!ValidateLiquidityConditions()) return;
+        
+        // Criar sinal
+        InsightSignal signal;
+        signal.type = SIGNAL_LIQUIDITY;
+        signal.price = SymbolInfoDouble(_Symbol, SYMBOL_BID);
+        signal.strength = CalculateLiquiditySignalStrength();
+        signal.timestamp = TimeCurrent();
+        signal.description = FormatLiquiditySignal();
+        
+        // Adicionar sinal
+        if(ValidateLiquiditySignal(signal)) {
+            AddSignal(signal);
+            
+            // Notificar via TechnologyAdvances
+            m_techManager.ProcessLiquiditySignal(signal);
+            
+            // Atualizar Order Flow
+            UpdateOrderFlowWithLiquidity(signal);
+        }
+    }
+    
+    void UpdateOrderFlowWithLiquidity(const InsightSignal &signal) {
+        // Criar pacote de atualização
+        LiquidityUpdate update;
+        update.signal = signal;
+        update.metrics = m_liquidity.metrics;
+        update.pools = GetActivePools();
+        update.voids = GetActiveVoids();
+        
+        // Enviar para Order Flow
+        if(m_orderFlow) {
+            m_orderFlow.ProcessLiquidityUpdate(update);
+        }
+    }
+};

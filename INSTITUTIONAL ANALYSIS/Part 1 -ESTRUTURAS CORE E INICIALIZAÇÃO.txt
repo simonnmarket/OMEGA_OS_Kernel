@@ -1,0 +1,136 @@
+//+------------------------------------------------------------------+
+//| Institutional Analysis - Parte 1                                   |
+//|                                                                    |
+//| OBJETIVO: Implementar análise institucional com:                   |
+//| - Smart Money Concepts                                            |
+//| - Análise de Liquidez                                             |
+//| - Detecção de Acumulação/Distribuição                            |
+//| - Identificação de Movimentos Institucionais                      |
+//+------------------------------------------------------------------+
+
+class CInstitutionalAnalysis : public CBaseCategoryAnalyzer {
+private:
+    // Estruturas Core
+    struct InstitutionalData {
+        // Smart Money
+        struct SmartMoney {
+            double entryZones[];         // Zonas de entrada
+            double exitZones[];          // Zonas de saída
+            double stopZones[];          // Zonas de stop
+            bool isAccumulating;         // Estado de acumulação
+            bool isDistributing;         // Estado de distribuição
+            double confidence;           // Confiança da análise
+        } smart;
+        
+        // Liquidez
+        struct LiquidityData {
+            double buyLiquidity[];       // Liquidez compradora
+            double sellLiquidity[];      // Liquidez vendedora
+            double voids[];              // Vazios de liquidez
+            double pools[];              // Pools de liquidez
+            bool isLiquidityDriven;      // Movimento por liquidez
+            double strength;             // Força do movimento
+        } liquidity;
+        
+        // Ordem de Fluxo Institucional
+        struct InstitutionalFlow {
+            double largeOrders[];        // Ordens grandes
+            double absorption;           // Nível de absorção
+            double distribution;         // Nível de distribuição
+            bool isInstitutional;        // Movimento institucional
+            datetime lastUpdate;         // Última atualização
+        } flow;
+    } m_data;
+    
+    // Configurações
+    struct Config {
+        // Parâmetros Smart Money
+        double minOrderSize;            // Tamanho mínimo de ordem
+        int accumulationPeriod;         // Período de acumulação
+        double confidenceThreshold;      // Threshold de confiança
+        bool useAdaptiveThresholds;     // Thresholds adaptativos
+        
+        // Parâmetros de Liquidez
+        double liquidityThreshold;       // Threshold de liquidez
+        int voidDetectionPeriod;        // Período de detecção
+        double poolStrengthMin;         // Força mínima do pool
+        bool trackHistoricalPools;      // Rastrear pools históricos
+    } m_config;
+
+public:
+    CInstitutionalAnalysis(CTechnologyManager* techManager) 
+        : CBaseCategoryAnalyzer("Institutional") {
+        Initialize(techManager);
+    }
+    
+    ~CInstitutionalAnalysis() {
+        Cleanup();
+    }
+    
+    bool Initialize() {
+        if(!CBaseCategoryAnalyzer::Initialize()) return false;
+        
+        // Inicializar componentes
+        if(!InitializeComponents()) return false;
+        
+        // Configurar parâmetros
+        if(!ConfigureParameters()) return false;
+        
+        // Validar integrações
+        if(!ValidateIntegrations()) return false;
+        
+        return true;
+    }
+
+private:
+    bool InitializeComponents() {
+        // Inicializar Smart Money
+        if(!InitializeSmartMoney()) return false;
+        
+        // Inicializar Análise de Liquidez
+        if(!InitializeLiquidity()) return false;
+        
+        // Inicializar Flow Institucional
+        if(!InitializeInstitutionalFlow()) return false;
+        
+        return true;
+    }
+    
+    bool ConfigureParameters() {
+        // Configurar Smart Money
+        m_config.minOrderSize = 100;
+        m_config.accumulationPeriod = 20;
+        m_config.confidenceThreshold = 0.85;
+        m_config.useAdaptiveThresholds = true;
+        
+        // Configurar Liquidez
+        m_config.liquidityThreshold = 1.5;
+        m_config.voidDetectionPeriod = 10;
+        m_config.poolStrengthMin = 0.75;
+        m_config.trackHistoricalPools = true;
+        
+        return true;
+    }
+    
+    bool ValidateIntegrations() {
+        // Validar TechnologyAdvances
+        if(!m_techManager) {
+            LogError("TechnologyAdvances não inicializado");
+            return false;
+        }
+        
+        // Validar Order Flow
+        if(!ValidateOrderFlow()) {
+            LogError("Order Flow não disponível");
+            return false;
+        }
+        
+        // Validar PVSRA
+        if(!ValidatePVSRA()) {
+            LogError("PVSRA não disponível");
+            return false;
+        }
+        
+        return true;
+    }
+};

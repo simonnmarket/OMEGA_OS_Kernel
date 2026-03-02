@@ -16,11 +16,39 @@ class OmegaScaleManager:
         Divide a entrada em 3 fragmentos com SL curto para baratear custo e surfar a tendência.
         """
         import MetaTrader5 as mt5
+        import omega_regime_detector
         info = mt5.symbol_info(symbol)
         if not info: return False
         
         point = info.point
         price = mt5.symbol_info_tick(symbol).ask if action == 'BUY' else mt5.symbol_info_tick(symbol).bid
+        
+        # 1. Auditoria de Regime de Mercado (Numeia Safe-Mode Ported)
+        regime_detector = omega_regime_detector.MarketRegimeDetector()
+        regime_status = regime_detector.detect_regime(symbol)
+        
+        risk_factor = regime_status.get('risk_factor', 1.0)
+        state_log = regime_status.get('state', 'UNKNOWN')
+        
+        print(f"      [REGIME] {symbol} -> {state_log} | Risk Factor: x{risk_factor} | Vol Z: {regime_status.get('volatility_z')} | ADX: {regime_status.get('adx')}")
+        
+        # Kelly Criterion Adaptativo (Physics HFT SONAR Inspired)
+        # f* = (Edge / Volatilide^2) * Kelly_Fraction
+        # Aqui convertemos de forma simples: Confiança da Operação versus a Volatilidade
+        # Sem ordem certa do motor ML, usamos 0.50 como Edge standard.
+        edge_standard = 0.50 
+        vol_penalization = max(1.0, abs(regime_status.get('volatility_z', 0))) 
+        
+        kelly_fraction = 0.25 # Conservador Institucional 
+        kelly_multiplier = (edge_standard / vol_penalization) * kelly_fraction
+        
+        # Combinar Kelly Fractional com a proteção base de Risco do Numeia
+        final_multiplier = risk_factor * max(0.5, min(1.5, kelly_multiplier * 4))
+        
+        lotes_ajustados = [max(0.01, round(vol * final_multiplier, 2)) for vol in self.lotes_progressivos]
+        
+        if state_log == "CHAOTIC":
+             print(f"      [SAFE-MODE] Mercado Caótico (Vol Z: {vol_penalization:.1f}). Kelly Score e Numeia ativados. Lotes mitigados.")
         
         # O Baseline Original mandava Lote 0.04 com SL = 30 pts.
         # Nós vamos mandar 3 lotes:
@@ -46,7 +74,7 @@ class OmegaScaleManager:
         tickets_abertos = []
         
         for i in range(3):
-            vol = self.lotes_progressivos[i]
+            vol = lotes_ajustados[i]
             sl_pts = sl_distances[i]
             tp_pts = tp_distances[i]
             
@@ -59,6 +87,15 @@ class OmegaScaleManager:
                 tp = price - (tp_pts * point)
                 order_type = mt5.ORDER_TYPE_SELL
                 
+            # Determinando dinamicamente o Filling Mode suportado pela Corretora (Para evitar bug BTCEUR)
+            filling_type = mt5.ORDER_FILLING_FOK # Default
+            if info.filling_mode & 1:
+                filling_type = mt5.ORDER_FILLING_FOK
+            elif info.filling_mode & 2:
+                filling_type = mt5.ORDER_FILLING_IOC
+            else:
+                filling_type = mt5.ORDER_FILLING_RETURN
+
             request = {
                 "action": mt5.TRADE_ACTION_DEAL,
                 "symbol": symbol,
@@ -71,12 +108,13 @@ class OmegaScaleManager:
                 "magic": 999111 + i, # Magicos separados para gestão
                 "comment": f"OMEGA_SCALE_{i+1}",
                 "type_time": mt5.ORDER_TIME_GTC,
-                "type_filling": mt5.ORDER_FILLING_IOC,
+                "type_filling": filling_type,
             }
             
             res = mt5.order_send(request)
             if res.retcode != mt5.TRADE_RETCODE_DONE:
-                request["type_filling"] = mt5.ORDER_FILLING_RETURN
+                # Fallback de segurança Hantec
+                request["type_filling"] = mt5.ORDER_FILLING_IOC if filling_type == mt5.ORDER_FILLING_FOK else mt5.ORDER_FILLING_RETURN
                 res = mt5.order_send(request)
                 
             if res.retcode == mt5.TRADE_RETCODE_DONE:

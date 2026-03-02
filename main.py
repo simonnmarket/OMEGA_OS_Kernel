@@ -253,12 +253,20 @@ class OmegaKernel:
                 strat_instances.append(self.strategies['prometheus_guardian'].PrometheusGuardianStrategy(symbol=sym))
             if 'apollo11_agent' in self.strategies and sym == 'XAGUSD':
                 strat_instances.append(self.strategies['apollo11_agent'].Apollo11Agent(symbol=sym))
+            if 'quantum_gap_detector' in self.strategies:
+                strat_instances.append(self.strategies['quantum_gap_detector'].QuantumGapDetector(symbol=sym))
+        
+        import omega_macro_007
+        agent_007 = omega_macro_007.OmegaMacroAgent007()
         
         cycles = 0
         while True:
             try:
                 cycles += 1
                 print(f"\n[Ciclo {cycles} - {time.strftime('%H:%M:%S')}] Varredura do Mercado...")
+                
+                # A cada ciclo, 007 analisa Ações/Ouro/Petróleo para o contexto intermarket
+                dossier_007 = agent_007.scan_environment()
                 
                 if self.risk_engine:
                     status = self.risk_engine.get_health_status()
@@ -314,9 +322,15 @@ class OmegaKernel:
                     if buys == 0 and sells == 0:
                         continue
                         
-                    # Filtro Numeia Treasury (Max Open Trades Hard Cap)
-                    total_positions = mt5.positions_total()
-                    if total_positions >= 3:
+                    # Filtro Numeia Treasury (Max Open Trades Hard Cap OMEGA-only)
+                    all_positions = mt5.positions_get()
+                    if all_positions is None:
+                        total_omega_trades = 0
+                    else:
+                        # Cada disparo tem 3 tickets (fragmentação). Contamos 1 trade ativo por Símbolo OMEGA
+                        total_omega_trades = len(set(p.symbol for p in all_positions if p.magic and 999111 <= p.magic <= 999115))
+                        
+                    if total_omega_trades >= 3:
                         print(f"   -> [{sym}] ⛔ TREASURY LOCK: Sistema atingiu Limite de Correlacao Simultanea (Max 3 Posicoes). Entrada Ignorada.")
                         continue
                         
@@ -356,6 +370,15 @@ class OmegaKernel:
                                 print(f"      [🛡️] CONFLITO COM O GUARDIÃO ❌: O Guardião diz {g_action} e o Conselho diz {winner_action}. Ordem Abortada.")
                             else:
                                 print(f"      [🛡️] PERMISSÃO DE AÇÃO CONCEDIDA ✅: O Guardião aceita a operação ({g_sig.get('confidence',0)*100:.1f}% Força Multi-Timeframe).")
+                                
+                    # Invocar Agente 007 Macro - Divergencia Analytics
+                    if veto_passed:
+                        safe_007, msg_007 = agent_007.assess_trade_safety(sym, winner_action, dossier_007)
+                        if not safe_007:
+                            veto_passed = False
+                            print(f"      [🕵️‍♂️] VETO DO AGENTE 007 ❌: {msg_007}")
+                        else:
+                            print(f"      [🕵️‍♂️] MACRO CLEARANCE CONCEDIDA ✅")
                     
                     # Regra Militar 3: Disparo Seco ou Escalonado (Para Baratear SL e Surfar)
                     if veto_passed:
@@ -387,6 +410,7 @@ class OmegaKernel:
                             # Registar na Memória Episódica para Feedback Loop do ML
                             if tickets_abertos:
                                 meta_agent = self.meta_agent_manager.get_or_create_agent(sym, bot_decisor)
+                                print(f"      [🧠] Meta-Agent {meta_agent.agent_id} ativado. Confiança Histórica: {meta_agent.confidence*100:.1f}%.")
                                 for tk in tickets_abertos:
                                     self.meta_agent_manager.register_new_ticket(tk, meta_agent.agent_id)
                                     

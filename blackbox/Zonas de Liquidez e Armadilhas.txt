@@ -1,0 +1,126 @@
+//+------------------------------------------------------------------+
+//| Expert initialization function                                     |
+//+------------------------------------------------------------------+
+int OnInit()
+{
+    // Inicialização do Expert Advisor
+    return(INIT_SUCCEEDED);
+}
+
+//+------------------------------------------------------------------+
+//| Expert deinitialization function                                   |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+{
+    // Limpeza ao desativar o Expert Advisor
+}
+
+//+------------------------------------------------------------------+
+//| Função para identificar zonas de liquidez                          |
+//+------------------------------------------------------------------+
+void IdentifyLiquidityZones()
+{
+    double volumeThreshold = 1000; // Limite de volume para identificar zonas
+    double priceLevel;
+    
+    for (int i = 1; i < 100; i++) // Verifica os últimos 100 ticks
+    {
+        priceLevel = Close[i];
+        if (Volume[i] > volumeThreshold)
+        {
+            // Marcar a zona de liquidez
+            Print("Zona de Liquidez Identificada em: ", priceLevel, " com volume: ", Volume[i]);
+            // Aqui você pode adicionar lógica para desenhar a zona no gráfico
+        }
+    }
+}
+
+//+------------------------------------------------------------------+
+//| Função para verificar rejeição em zonas de liquidez               |
+//+------------------------------------------------------------------+
+bool CheckRejection(double priceLevel)
+{
+    double high = iHigh(NULL, 0, 1); // Máximo do último candle
+    double low = iLow(NULL, 0, 1); // Mínimo do último candle
+
+    // Verifica se o preço atual está dentro da zona de liquidez
+    if (priceLevel >= low && priceLevel <= high)
+    {
+        return true; // Rejeição detectada
+    }
+    return false; // Nenhuma rejeição
+}
+
+//+------------------------------------------------------------------+
+//| Função para verificar varredura de liquidez                      |
+//+------------------------------------------------------------------+
+bool CheckLiquiditySweep(double priceLevel)
+{
+    double previousClose = Close[1];
+    double currentClose = Close[0];
+
+    // Verifica se houve um movimento significativo
+    if (MathAbs(currentClose - previousClose) > 0.001) // Ajuste o valor conforme necessário
+    {
+        return true; // Varredura de liquidez detectada
+    }
+    return false; // Nenhuma varredura detectada
+}
+
+//+------------------------------------------------------------------+
+//| Função para identificar armadilhas                                 |
+//+------------------------------------------------------------------+
+bool CheckTrap(double priceLevel)
+{
+    double previousHigh = iHigh(NULL, 0, 1); // Máximo do último candle
+    double previousLow = iLow(NULL, 0, 1); // Mínimo do último candle
+
+    // Verifica se o preço ultrapassou a zona de liquidez e voltou rapidamente
+    if (Close[0] > previousHigh && Close[1] < previousHigh)
+    {
+        Print("Armadilha detectada acima de: ", previousHigh);
+        return true; // Armadilha detectada
+    }
+    else if (Close[0] < previousLow && Close[1] > previousLow)
+    {
+        Print("Armadilha detectada abaixo de: ", previousLow);
+        return true; // Armadilha detectada
+    }
+    return false; // Nenhuma armadilha detectada
+}
+
+//+------------------------------------------------------------------+
+//| Função para executar uma ordem de compra                          |
+//+------------------------------------------------------------------+
+void ExecuteBuyOrder(double priceLevel)
+{
+    double lotSize = 1.0; // Tamanho da posição
+    double stopLoss = priceLevel - 50 * Point; // Stop loss de 50 pips
+    double takeProfit = priceLevel + 100 * Point; // Take profit de 100 pips
+
+    // Envia a ordem de compra
+    if (OrderSend(Symbol(), OP_BUY, lotSize, Ask, 2, stopLoss, takeProfit, "Compra", 0, 0, clrGreen) < 0)
+    {
+        Print("Erro ao enviar ordem: ", GetLastError());
+    }
+}
+
+//+------------------------------------------------------------------+
+//| Expert tick function                                             |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+    IdentifyLiquidityZones(); // Chama a função para identificar zonas de liquidez
+
+    double priceLevel = Close[1]; // Usando o preço do último candle
+
+    // Verifica rejeição
+    if (CheckRejection(priceLevel))
+    {
+        // Verifica se houve uma varredura de liquidez
+        if (CheckLiquiditySweep(priceLevel))
+        {
+            // Verifica se há uma armadilha
+            if (CheckTrap(priceLevel))
+            {
+                ExecuteBuyOrder(priceLevel); // Executa a ordem de compra se houver rejeição e armad
