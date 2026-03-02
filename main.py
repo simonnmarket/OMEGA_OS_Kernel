@@ -109,6 +109,10 @@ class OmegaKernel:
             orch_mod = load_module("ORCHESTRATOR", "prometheus_master_control_v5.1.py")
             self.prometheus_controller = orch_mod
             self.position_manager = orch_mod.PositionManager()
+            import omega_scale_manager
+            import omega_agent_manager
+            self.scale_manager = omega_scale_manager.OmegaScaleManager(self)
+            self.meta_agent_manager = omega_agent_manager.OmegaAgentManager()
             print("OK. (Trailing Stop e Break-Even ativos)")
         except Exception as e:
             print(f"FALHA! {e}")
@@ -189,11 +193,28 @@ class OmegaKernel:
             
         print("[*] INICIANDO STRESS TEST: Mapeando múltiplos mercados...")
         all_symbols = mt5.symbols_get()
+        # PROMETHEUS v3.0 INTELLIGENT EXPANSION - ATIVOS ESTRATÉGICOS
+        ativos_estrategicos = [
+            'EURUSD', 'USDJPY', 'GBPUSD', 'AUDUSD', # Forex Core
+            'US30', 'US100', 'US500', 'GER40',      # Indices
+            'XAUUSD', 'USOIL',                      # Commodities
+            'BTCUSD', 'ETHUSD', 'BTCEUR'            # Crypto
+        ]
+        
+        ativas = []
         if all_symbols:
-            # Filtro ávido: Moedas, Cryptos Destaque e Ouros
-            ativas = [s.name for s in all_symbols if ('USD' in s.name or 'EUR' in s.name or 'JPY' in s.name or 'BTC' in s.name or 'ETH' in s.name or 'XAU' in s.name)]
-            # Retiramos duplicações e limitamos aos 40 ativos mais robustos para não haver 'Rate Limit' imediato do MT5
-            ativas = list(set(ativas))[:40]
+            # Capturar nomes reais na corretora que correspondam aos Estratégicos (alguns podem ter sufixos ex: EURUSD.m)
+            symbol_names = [s.name for s in all_symbols]
+            for target in ativos_estrategicos:
+                # Tenta match direto
+                if target in symbol_names:
+                    ativas.append(target)
+                else:
+                    # Tenta encontrar com algum sufixo comum
+                    for s in symbol_names:
+                        if s.startswith(target) and len(s) <= len(target) + 3:
+                            ativas.append(s)
+                            break
         else:
             ativas = ["EURUSD", "BTCUSD", "XAUUSD", "USDJPY"]
 
@@ -228,6 +249,10 @@ class OmegaKernel:
                 strat_instances.append(self.strategies['fimathe_core'].FimatheCoreStrategy(symbol=sym))
             if 'pullback_v6' in self.strategies:
                 strat_instances.append(self.strategies['pullback_v6'].PullbackDetector(symbol=sym))
+            if 'prometheus_guardian' in self.strategies:
+                strat_instances.append(self.strategies['prometheus_guardian'].PrometheusGuardianStrategy(symbol=sym))
+            if 'apollo11_agent' in self.strategies and sym == 'XAGUSD':
+                strat_instances.append(self.strategies['apollo11_agent'].Apollo11Agent(symbol=sym))
         
         cycles = 0
         while True:
@@ -246,68 +271,129 @@ class OmegaKernel:
                     # Move para Break-Even ou atualiza o Trailing Stop dinamicamente
                     self.position_manager.manage_open_positions()
 
+                # --- CONSELHO DE DECISÃO TIER-0 ---
+                signals_by_symbol = {}
+                guardian_instances = {}
+
+                # Fase 1: Coletar Intenções
                 for strat in strat_instances:
                      try:
                          sym = strat.symbol
                          name = strat.__class__.__name__
                          
-                         if name == 'GorilaSacramento':
-                             sig = strat.run_gorila_analysis()
-                             status = sig['status']
-                             print(f"   -> [{sym}] [Gorila] Status: {status}")
-                             if status != "NO_SIGNAL":
-                                 action = "BUY" if "LONG" in status else "SELL"
-                                 self.execute_mt5_order(sym, action, 0.01, 150, 300)
-                                 
-                         elif name == 'VascoSegundaFalha':
-                             sig = strat.execute()
-                             status = sig['status']
-                             print(f"   -> [{sym}] [Vasco] Status: {status}")
-                             if status != "NO_SIGNAL":
-                                 action = "BUY" if "LONG" in status else "SELL"
-                                 self.execute_mt5_order(sym, action, 0.01, 100, 500)
-                                 
-                         elif name == 'NasaIntegratedStrategy':
-                             sig = strat.execute()
-                             status = sig['status']
-                             print(f"   -> [{sym}] [NASA] Status: {status}")
-                             if status != "NO_SIGNAL":
-                                 action = "BUY" if "LONG" in status else "SELL"
-                                 print(f"      [~] Confiança: {sig.get('confidence', 0):.2f} | Motivo: {sig.get('reasons', '')}")
-                                 self.execute_mt5_order(sym, action, 0.01, int(sig.get('atr', 2)*2/0.00001), int(sig.get('atr', 2)*3.5/0.00001))
-                                 
-                         elif name == 'RaioXWaveStrategy':
-                             sig = strat.execute()
-                             status = sig['status']
-                             print(f"   -> [{sym}] [RaioX] Status: {status}")
-                             if status != "NO_SIGNAL":
-                                 action = "BUY" if "LONG" in status else "SELL"
-                                 print(f"      [~] Onda: {sig.get('wave_type')} | Momentum: {sig.get('momentum'):.5f}")
-                                 self.execute_mt5_order(sym, action, 0.01, 120, 350)
-                                 
-                         elif name == 'FimatheCoreStrategy':
-                             sig = strat.execute()
-                             status = sig['status']
-                             print(f"   -> [{sym}] [Fimathe] Status: {status}")
-                             if status != "NO_SIGNAL":
-                                 action = "BUY" if "LONG" in status else "SELL"
-                                 range_pontos = int(sig.get('canal_range', 0.001) / mt5.symbol_info(sym).point)
-                                 print(f"      [~] Canal Range: {range_pontos} pts | ATR Dinâmico: {sig.get('atr', 0):.5f}")
-                                 self.execute_mt5_order(sym, action, 0.01, max(30, range_pontos), max(60, range_pontos * 2))
+                         if sym not in signals_by_symbol:
+                             signals_by_symbol[sym] = {'BUY': 0, 'SELL': 0, 'details': []}
 
-                         elif name == 'PullbackDetector':
-                             sig = strat.execute()
-                             status = sig['status']
-                             print(f"   -> [{sym}] [Pullback] Status: {status}")
-                             if status != "NO_SIGNAL":
-                                 action = "BUY" if "LONG" in status else "SELL"
-                                 print(f"      [~] 🔬 Edge de: {sig.get('confidence',0)*100:.1f}% | Força M15: {sig.get('strength'):.5f}")
-                                 atr_pts = int(sig.get('atr', 20) / mt5.symbol_info(sym).point)
-                                 self.execute_mt5_order(sym, action, 0.01, max(40, int(atr_pts * 1.5)), max(80, int(atr_pts * 3.5)))
+                         # O Guardião não vota, ele tem o poder de Veto. Separamo-lo.
+                         if name == 'PrometheusGuardianStrategy':
+                             guardian_instances[sym] = strat
+                             continue
 
+                         # Estratégias Base processam
+                         sig = strat.execute()
+                         status = sig.get('status', 'NO_SIGNAL')
+                         
+                         # Se houver outro tipo especifico: Gorila, Vasco, NASA, RaioX, Fimathe, Pullback, Apollo11
+                         if status != "NO_SIGNAL":
+                             action = "BUY" if "LONG" in status else "SELL"
+                             signals_by_symbol[sym][action] += 1
+                             signals_by_symbol[sym]['details'].append({
+                                 'bot': name,
+                                 'action': action,
+                                 'data': sig
+                             })
+                                 
                      except Exception as e:
                          pass # Skip errors on uninitialized ticks
-                         
+
+                # Fase 2: Tribunal e Execução
+                for sym, votes in signals_by_symbol.items():
+                    buys = votes['BUY']
+                    sells = votes['SELL']
+                    
+                    if buys == 0 and sells == 0:
+                        continue
+                        
+                    # Filtro Numeia Treasury (Max Open Trades Hard Cap)
+                    total_positions = mt5.positions_total()
+                    if total_positions >= 3:
+                        print(f"   -> [{sym}] ⛔ TREASURY LOCK: Sistema atingiu Limite de Correlacao Simultanea (Max 3 Posicoes). Entrada Ignorada.")
+                        continue
+                        
+                    # Projeção de Margem (Apenas se passar o Lock de Posições, antes do conselho)
+                    acc_info = mt5.account_info()
+                    if acc_info and acc_info.margin_free < acc_info.balance * 0.20:
+                        print(f"   -> [{sym}] ⛔ MARGIN CALL PROTECTION: Margem livre < 20%. Entrada Ignorada.")
+                        continue
+                        
+                    print(f"\n   -> [{sym}] 🏛️ CONSELHO REUNIDO: {buys} BUYs vs {sells} SELLs")
+                    
+                    # Regra Militar 1: Fogo Cruzado DENTRO da mesma moeda = Abortar
+                    if buys > 0 and sells > 0:
+                        print(f"      [~] ❌ CONFLITO DETETADO no Conselho. Ordem ABORTADA por Segurança (Risco de Hedging Involuntário).")
+                        continue
+                        
+                    # Regra Militar 2: Avaliação do Vencedor e Veto
+                    winner_action = "BUY" if buys > 0 else "SELL"
+                    best_signal = max(votes['details'], key=lambda k: k['data'].get('confidence', 0)) # Pega na que emitir dados maiores
+                    bot_decisor = best_signal['bot']
+                    sig_data = best_signal['data']
+                    
+                    # Invocar Guardião da Tendencia para VETO FINAL
+                    guardian = guardian_instances.get(sym)
+                    veto_passed = True
+                    if guardian:
+                        g_sig = guardian.execute()
+                        g_status = g_sig.get('status', 'NO_SIGNAL')
+                        if g_status == "NO_SIGNAL":
+                            veto_passed = False
+                            print(f"      [🛡️] VETO DO GUARDIÃO ❌: {sym} {winner_action} bloqueado. Estrutura ou Volume não são favoráveis (Pullback Falso / Falta Edge).")
+                        else:
+                            # Confirmar se o Guardião concorda com a direção
+                            g_action = "BUY" if "LONG" in g_status else "SELL"
+                            if g_action != winner_action:
+                                veto_passed = False
+                                print(f"      [🛡️] CONFLITO COM O GUARDIÃO ❌: O Guardião diz {g_action} e o Conselho diz {winner_action}. Ordem Abortada.")
+                            else:
+                                print(f"      [🛡️] PERMISSÃO DE AÇÃO CONCEDIDA ✅: O Guardião aceita a operação ({g_sig.get('confidence',0)*100:.1f}% Força Multi-Timeframe).")
+                    
+                    # Regra Militar 3: Disparo Seco ou Escalonado (Para Baratear SL e Surfar)
+                    if veto_passed:
+                        print(f"      [🔥] AUTORIZAÇÃO SUPREMA DADA! Artilharia do bot {bot_decisor} pronta.")
+                        try:
+                            # Calcular TP/SL médios ou pelo ATR do Bot Decisor
+                            if 'canal_range' in sig_data:
+                                range_pontos = int(sig_data['canal_range'] / mt5.symbol_info(sym).point)
+                                sl_pts, tp_pts = max(30, range_pontos), max(60, range_pontos * 2)
+                            else:
+                                raw_atr = sig_data.get('atr', 0.005)
+                                atr_pts = int(raw_atr / mt5.symbol_info(sym).point)
+                                
+                                # Goldman Sachs Surgical Execution
+                                # Asymmetric Risk: SL = ATR * 1.5 | TP = ATR * 3.0
+                                spread_pts = mt5.symbol_info(sym).spread
+                                min_sl = max(50, spread_pts * 3) # Espaço vital contra spread killing (Hantec)
+                                
+                                base_sl = int(atr_pts * 1.5)
+                                base_tp = int(atr_pts * 3.0)
+                                
+                                # Aplicar limites matemáticos para a ordem não ser liquidada instantaneamente
+                                sl_pts = max(min_sl, base_sl)
+                                tp_pts = max(min_sl * 2, base_tp)
+                                     
+                            # Disparar Morteiro Dividido (Lotes Progressivos - SL Barato)
+                            tickets_abertos = self.scale_manager.execute_progressive_scale(sym, winner_action, sl_pts, tp_pts)
+                            
+                            # Registar na Memória Episódica para Feedback Loop do ML
+                            if tickets_abertos:
+                                meta_agent = self.meta_agent_manager.get_or_create_agent(sym, bot_decisor)
+                                for tk in tickets_abertos:
+                                    self.meta_agent_manager.register_new_ticket(tk, meta_agent.agent_id)
+                                    
+                        except Exception as e:
+                            print(f"      [-] Erro a criar a bala: {e}")
+                            if self.execute_mt5_order(sym, winner_action, 0.01, 50, 100):
+                                pass # Fallback sem meta-registo para evitar quebrar o runtime
                 time.sleep(15)  # Throttle para Live Data
             except KeyboardInterrupt:
                 print("\n>> Desligamento seguro iniciado pelo utilizador (SIGINT).")
