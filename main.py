@@ -194,11 +194,12 @@ class OmegaKernel:
         print("[*] INICIANDO STRESS TEST: Mapeando múltiplos mercados...")
         all_symbols = mt5.symbols_get()
         # PROMETHEUS v3.0 INTELLIGENT EXPANSION - ATIVOS ESTRATÉGICOS
+        # PROMETHEUS V5.1 AUTOPSY FIX: Removidos GBPUSD, USDJPY, BTCUSD (Sangramento Correlacional), Adicionado XAGUSD (Prata) 
         ativos_estrategicos = [
-            'EURUSD', 'USDJPY', 'GBPUSD', 'AUDUSD', # Forex Core
+            'EURUSD', 'AUDUSD',                     # Forex Core Vencedor
             'US30', 'US100', 'US500', 'GER40',      # Indices
-            'XAUUSD', 'USOIL',                      # Commodities
-            'BTCUSD', 'ETHUSD', 'BTCEUR'            # Crypto
+            'XAUUSD', 'XAGUSD', 'USOIL',            # Commodities + Nova Fonte de Alfa
+            'ETHUSD', 'BTCEUR'                      # Crypto Purificada
         ]
         
         ativas = []
@@ -330,8 +331,8 @@ class OmegaKernel:
                         # Cada disparo tem 3 tickets (fragmentação). Contamos 1 trade ativo por Símbolo OMEGA
                         total_omega_trades = len(set(p.symbol for p in all_positions if p.magic and 999111 <= p.magic <= 999115))
                         
-                    if total_omega_trades >= 3:
-                        print(f"   -> [{sym}] ⛔ TREASURY LOCK: Sistema atingiu Limite de Correlacao Simultanea (Max 3 Posicoes). Entrada Ignorada.")
+                    if total_omega_trades >= 15:
+                        print(f"   -> [{sym}] ⛔ TREASURY LOCK: Sistema atingiu Limite de Correlacao Simultanea (Max 15 Posicoes). Entrada Ignorada.")
                         continue
                         
                     # Projeção de Margem (Apenas se passar o Lock de Posições, antes do conselho)

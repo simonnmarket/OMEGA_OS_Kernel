@@ -3,7 +3,7 @@ import sqlite3
 import numpy as np
 import threading
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 import MetaTrader5 as mt5
 
 class TradingAgent:
