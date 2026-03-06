@@ -14,6 +14,17 @@ import time
 from pathlib import Path
 import importlib.util
 
+# ==============================================================================
+# 0. SINGLE INSTANCE GUARD (PREVENÇÃO DE RACE CONDITIONS)
+# ==============================================================================
+import msvcrt
+_LOCK_FILE = open(os.path.join(os.getenv('TEMP') or '/tmp', 'omega_kernel.lock'), 'w')
+try:
+    msvcrt.locking(_LOCK_FILE.fileno(), msvcrt.LK_NBLCK, 1)
+except OSError:
+    print("FATAL: instância de main.py (Orquestrador) já em execução. Abortando colisão de processo.")
+    sys.exit(1)
+
 # -----------------------------------------------------------------------------
 # 1. MAPEAMENTO DE PASTAS (BAU_DO_TESOURO)
 # -----------------------------------------------------------------------------
