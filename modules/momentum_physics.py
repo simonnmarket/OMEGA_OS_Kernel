@@ -40,6 +40,16 @@ from enum import Enum
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
+import sys
+import os
+
+# Tier-0 Integration
+try:
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from omega_integration_gate import OmegaBaseAgent, RiskParameters
+    HAS_OMEGA_CORE = True
+except ImportError:
+    HAS_OMEGA_CORE = False
 
 logger = logging.getLogger("OMEGA.Modules.MomentumPhysics")
 
@@ -595,6 +605,66 @@ def _run_tests() -> bool:
     )
     print("=" * 68)
     return FAIL == 0
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  AGENTE BLINDADO OMEGA TIER-0 (O.I.G. v3.0)
+# ─────────────────────────────────────────────────────────────────────────────
+if HAS_OMEGA_CORE:
+    class OmegaMomentumAgent(OmegaBaseAgent):
+        """
+        Wrapper Tier-0 que processa as 3 Derivadas Cinemáticas (Vel, Acel, Jerk)
+        e Z-Scores de Reversão para emitir sinais seguros sob a tutela do Gatekeeper.
+        """
+        def __init__(self, config: Optional[MomentumConfig] = None):
+            super().__init__()
+            self.engine = MomentumPhysicsEngine(config)
+            
+        def execute(self, market_data: np.ndarray, context: dict = None) -> dict:
+            """
+            Avalia o frame de mercado simulado como OHLCV ou dicts.
+            """
+            if len(market_data) < 30: 
+                return {"direction": 0, "action": "HOLD"}
+                
+            # Extração simples simulando um Candle (O Agente lida com arrays bidimensionais)
+            # Vamos assumir que recebemos o ultimo frame da matriz
+            # Aqui simulamos que a engine lida iterativamente e passamos a última barra
+            recent_bar = market_data[-1]
+            close_p, high_p, low_p, vol_p = recent_bar[0], recent_bar[1], recent_bar[2], recent_bar[3]
+            
+            bar_dict = {"close": close_p, "high": high_p, "low": low_p, "volume": vol_p}
+            state = self.engine.update("GLOBAL_T0", bar_dict)
+            
+            direction_signal = 0
+            if state.signal in (MomentumSignal.STRONG_BUY, MomentumSignal.BUY):
+                direction_signal = 1
+            elif state.signal in (MomentumSignal.STRONG_SELL, MomentumSignal.SELL):
+                direction_signal = -1
+                
+            return {
+                "direction": direction_signal,
+                "velocity": state.velocity,
+                "acceleration": state.acceleration,
+                "jerk": state.jerk,
+                "regime": state.regime.value,
+                "half_life": state.half_life,
+                "emergency_halt": False
+            }
+            
+        def get_risk_parameters(self) -> RiskParameters:
+            return RiskParameters(
+                max_risk_per_trade=0.012,
+                max_drawdown_daily=0.035,
+                kelly_fraction=0.04,
+                max_leverage=2.5,
+                min_sharpe_required=1.1,
+                proposed_tp_distance=200.0  # Momentum aguenta carregar posicoes maiores
+            )
+            
+        async def force_halt(self, reason: str) -> bool:
+            logging.getLogger("OmegaMomentumAgent").critical(f"🔴 MOMENTUM EMERGENCY HALT: {reason}")
+            return True
 
 
 if __name__ == "__main__":

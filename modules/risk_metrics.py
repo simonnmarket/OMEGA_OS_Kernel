@@ -42,6 +42,16 @@ from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
+import sys
+import os
+
+# Tier-0 Integration
+try:
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from omega_integration_gate import OmegaBaseAgent, RiskParameters
+    HAS_OMEGA_CORE = True
+except ImportError:
+    HAS_OMEGA_CORE = False
 
 logger = logging.getLogger("OMEGA.Modules.RiskMetrics")
 
@@ -510,6 +520,61 @@ def returns_from_ohlcv(df: pd.DataFrame,
         rets = prices.pct_change().dropna()
 
     return rets
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  AGENTE BLINDADO OMEGA TIER-0 (O.I.G. v3.0)
+# ─────────────────────────────────────────────────────────────────────────────
+if HAS_OMEGA_CORE:
+    class OmegaRiskAgent(OmegaBaseAgent):
+        """
+        Wrapper Tier-0 que transforma as métricas fiduciárias num Agente
+        Operacional protegido por Hash Forense e validado pelo Gatekeeper.
+        """
+        def __init__(self, config: Optional[RiskConfig] = None):
+            super().__init__() # Imprime o Contrato Forense (Hash)
+            self.engine = RiskMetricsEngine(config)
+            
+        def execute(self, market_data: np.ndarray) -> Dict:
+            """
+            Avalia array unidimensional de precos e emite veredito de risco.
+            """
+            returns = pd.Series(market_data).pct_change().dropna()
+            
+            if len(returns) < 30:
+                return {"direction": 0, "action": "HOLD", "reason": "insufficient_data"}
+            
+            # Submete a base inteira à Metralhadora Quantitativa  
+            snap = self.engine.full_snapshot(returns)
+            
+            # Se o Risco estiver Crítico, direção forçada é 0 (fechar torneiras)
+            # Se Risco Baixo, libera exposição (direction 1 no engine simulado do mock)
+            direction = 1 if snap.consensus_risk_level in (RiskLevel.LOW, RiskLevel.MODERATE) else 0
+            
+            return {
+                "direction": direction,
+                "var_consensus": snap.consensus_var,
+                "risk_level": snap.consensus_risk_level.value,
+                "emergency_halt": (snap.consensus_risk_level == RiskLevel.CRITICAL)
+            }
+            
+        def get_risk_parameters(self) -> RiskParameters:
+            """
+            Configurações conservadoras para garantir que este módulo de Risco
+            NUNCA vai alavancar o sistema.
+            """
+            return RiskParameters(
+                max_risk_per_trade=0.005,  # Meio por cento
+                max_drawdown_daily=0.02,   # 2% global fund kill switch
+                kelly_fraction=0.01,
+                max_leverage=1.0,          # Sem alavancagem alocada pelo vigia
+                min_sharpe_required=1.0,
+                proposed_tp_distance=0.0   # Módulo Analítico não tem TP
+            )
+            
+        async def force_halt(self, reason: str) -> bool:
+            logger.critical(f"[OmegaRiskAgent] 🔴 EMERGENCY HALT ACIONADO: {reason}")
+            return True
 
 
 # ─────────────────────────────────────────────────────────────────────────────

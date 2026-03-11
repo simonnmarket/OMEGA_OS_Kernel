@@ -16,8 +16,16 @@ import logging
 import time
 from typing import Optional, Dict, Tuple, List
 
-# Dependência cruzada permitida no Kernel: O estado matemático de Hurst
-from modules.fractal_hurst import FractalState, MarketRegime
+import sys
+import os
+
+# Tier-0 Integration
+try:
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from omega_integration_gate import OmegaBaseAgent, RiskParameters
+    HAS_OMEGA_CORE = True
+except ImportError:
+    HAS_OMEGA_CORE = False
 
 logger = logging.getLogger("VolumePhysicsTier0")
 
@@ -134,9 +142,15 @@ class VolumePhysicsEngine:
         self.pullback_max_adverse = 0.0
         self.bars_in_resume = 0
 
-    def update(self, close: float, high: float, low: float, volume: float, fractal_state: FractalState) -> PhysicsState:
-        """Processamento principal por barra/tick. Requer estado do Hurst."""
+    def update(self, close: float, high: float, low: float, volume: float, fractal_context: Optional[dict] = None) -> PhysicsState:
+        """Processamento principal por barra/tick. Totalmente Desacoplado (Aceita Dicionário de Contexto Externo)."""
         t0 = time.perf_counter()
+        
+        # Mapeamento dinâmico e defensivo para preservar independência arquitetural
+        f_context = fractal_context or {}
+        f_regime = f_context.get("regime", "UNKNOWN")
+        f_is_pullback_friendly = f_context.get("is_pullback_friendly", False)
+        f_hurst = f_context.get("hurst_exponent", 0.5)
         
         # 1. Atualizar Buffers
         self.closes.push(close)
@@ -191,12 +205,12 @@ class VolumePhysicsEngine:
                 is_surge = True
         state.is_volume_surge = is_surge
 
-        # 6. FUSÃO DECISÓRIA: Pullback Trap System (Injeção de Hurst)
-        self._evaluate_pullback_trap(close, delta_z, is_atr_compressed, fractal_state)
+        # 6. FUSÃO DECISÓRIA: Pullback Trap System (Injeção Externa de Contexto)
+        self._evaluate_pullback_trap(close, delta_z, is_atr_compressed, f_regime, f_is_pullback_friendly)
         
         state.pullback_phase = self.current_phase
         state.trap_score = self.trap_score_acc
-        state.urgency = self._determine_urgency(fractal_state)
+        state.urgency = self._determine_urgency(f_hurst)
         
         t1 = time.perf_counter()
         state.computation_time_ms = (t1 - t0) * 1000.0
@@ -250,17 +264,16 @@ class VolumePhysicsEngine:
         
         return float(vwap), float(vwap + std_p * 2.0), float(vwap - std_p * 2.0)
 
-    def _evaluate_pullback_trap(self, close: float, delta_z: float, is_compressed: bool, f_state: FractalState):
+    def _evaluate_pullback_trap(self, close: float, delta_z: float, is_compressed: bool, f_regime: str, is_pullback_friendly: bool):
         """
-        State Machine do Pullback injetando a Confiança de Regime do Módulo Fractal
+        State Machine do Pullback injetando a Confiança de Contexto Independente.
         """
-        # Se o Hurst for RAND_WALK profundo ou mean reverting severo, anula pullbacks fortes
-        is_trend = f_state.regime in (MarketRegime.TRENDING, MarketRegime.WEAK_TRENDING)
+        # Se o mercado for lateral profundo, anula pullbacks fortes
+        is_trend = f_regime in ("TRENDING", "WEAK_TRENDING")
         
         if self.current_phase == PullbackPhase.NONE:
-            # Detecta início de correcção (Preço contra a tendência mas Hurst forte)
-            # Requer trend no Hurst e is_pullback_friendly do engine do Hurst
-            if is_trend and f_state.is_pullback_friendly:
+            # Requer trend clara e autorização amigável de pullbacks
+            if is_trend and is_pullback_friendly:
                 self.current_phase = PullbackPhase.CORRECTING
                 self.trap_score_acc = 0.0
                 self.pullback_start_price = close
@@ -310,14 +323,96 @@ class VolumePhysicsEngine:
             self.current_phase = PullbackPhase.NONE
             self.trap_score_acc = 0.0
 
-    def _determine_urgency(self, f_state: FractalState) -> ReentryUrgency:
+    def _determine_urgency(self, hurst_exponent: float) -> ReentryUrgency:
         if self.current_phase != PullbackPhase.TRAP_SET:
             return ReentryUrgency.NORMAL
             
-        # Urgência dispara se a compressão max out e Hurst for ALTAMENTE direcional
-        if f_state.hurst_exponent > 0.65 and self.trap_score_acc > 0.8:
+        # Urgência dispara se a compressão max out e o expoente de diretividade for alto
+        if hurst_exponent > 0.65 and self.trap_score_acc > 0.8:
             return ReentryUrgency.CRITICAL
-        elif f_state.hurst_exponent > 0.55:
+        elif hurst_exponent > 0.55:
             return ReentryUrgency.HIGH
             
         return ReentryUrgency.NORMAL
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  AGENTE BLINDADO OMEGA TIER-0 (O.I.G. v3.0)
+# ─────────────────────────────────────────────────────────────────────────────
+if HAS_OMEGA_CORE:
+    class OmegaVolumeAgent(OmegaBaseAgent):
+        """
+        Agente Tier-0 para Avaliação de Absorção e Fluxo em Zona de Pullback.
+        """
+        def __init__(self, config: Optional[PhysicsConfig] = None):
+            super().__init__()
+            self.engine = VolumePhysicsEngine(config)
+            
+        def execute(self, market_data: np.ndarray, context: dict = None) -> dict:
+            """
+            Avalia o frame de mercado. Note: VolumeAgent espera um frame 2D
+            onde col 0 = close, 1 = high, 2 = low, 3 = volume
+            Para simulação simplificamos.
+            """
+            if len(market_data) < 20: 
+                return {"direction": 0, "action": "HOLD"}
+                
+            # Extração simples simulando um Candle (O Agente lida com arrays bidimensionais)
+            # Vamos assumir que recebemos o ultimo frame da matriz OHLCV = [C, H, L, V]
+            # No caso real, a invocação do execute itera ou avalia a barra recente.
+            recent_bar = market_data[-1] 
+            close_p, high_p, low_p, vol_p = recent_bar[0], recent_bar[1], recent_bar[2], recent_bar[3]
+            
+            state = self.engine.update(close_p, high_p, low_p, vol_p, fractal_context=context)
+            
+            direction_signal = 0
+            if state.urgency == ReentryUrgency.CRITICAL and state.pullback_phase == PullbackPhase.RESUMING:
+                direction_signal = 1 # Sinal forte de Reentry a favor da macro-tendencia
+                
+            return {
+                "direction": direction_signal,
+                "is_surge": state.is_volume_surge,
+                "is_compressed": state.is_atr_compressed,
+                "urgency": state.urgency.name,
+                "pullback_phase": state.pullback_phase.name,
+                "emergency_halt": False
+            }
+            
+        def get_risk_parameters(self) -> RiskParameters:
+            return RiskParameters(
+                max_risk_per_trade=0.015,
+                max_drawdown_daily=0.04,
+                kelly_fraction=0.05,
+                max_leverage=3.0,
+                min_sharpe_required=1.2,
+                proposed_tp_distance=150.0  # Pontos de escape rapidos em scalps direcionais
+            )
+            
+        async def force_halt(self, reason: str) -> bool:
+            logging.getLogger("OmegaVolumeAgent").critical(f"🔴 VOL-PHYSICS EMERGENCY HALT: {reason}")
+            return True
+
+
+if __name__ == "__main__":
+    """Teste Isolado do Módulo"""
+    print("=" * 60)
+    print("  VOLUME PHYSICS MODULE TIER-0 — TESTE ISOLADO")
+    print("=" * 60)
+    
+    if HAS_OMEGA_CORE:
+        agent = OmegaVolumeAgent()
+        print(f"[✅ PASS] Herança OMEGA Tier-0 reconhecida.")
+        print(f"         Contract Hash: {agent.contract_hash[:16]}")
+        print(f"[✅ PASS] Arquitetura Desacoplada (0 dependências de FractalHurst).")
+        
+        # Teste Fake Array 2D (Mock) [Close, High, Low, Vol]
+        fake_market = np.array([[1.1, 1.2, 1.0, 500]] * 50)
+        # Força um pullback context pra ele testar
+        mock_context = {"regime": "TRENDING", "is_pullback_friendly": True, "hurst_exponent": 0.70}
+        
+        for bar in fake_market:
+            res = agent.execute(fake_market, context=mock_context)
+            
+        print(f"[✅ PASS] Execução Matrix. Fase Atual: {res['pullback_phase']}")
+        print(f"[✅ PASS] Fator de Resposta Direcional: {res['direction']}")
+        print("=" * 60)

@@ -47,6 +47,16 @@ from enum import Enum
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
+import sys
+import os
+
+# Tier-0 Integration
+try:
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from omega_integration_gate import OmegaBaseAgent, RiskParameters
+    HAS_OMEGA_CORE = True
+except ImportError:
+    HAS_OMEGA_CORE = False
 
 logger = logging.getLogger("OMEGA.Modules.ZoneNavigator")
 
@@ -681,6 +691,59 @@ def _run_tests() -> bool:
     )
     print("=" * 68)
     return FAIL == 0
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  AGENTE BLINDADO OMEGA TIER-0 (O.I.G. v3.0)
+# ─────────────────────────────────────────────────────────────────────────────
+if HAS_OMEGA_CORE:
+    class OmegaZoneAgent(OmegaBaseAgent):
+        """
+        Agente Tier-0 para Mapeamento de Fases NICER de Mercado e Score de Combustível.
+        """
+        def __init__(self, config: Optional[ZoneConfig] = None):
+            super().__init__()
+            self.engine = ZoneNavigator(config)
+            
+        def execute(self, market_data: np.ndarray, context: dict = None) -> dict:
+            if len(market_data) < 20: 
+                return {"direction": 0, "action": "HOLD"}
+                
+            recent_bar = market_data[-1] 
+            close_p, high_p, low_p, vol_p = recent_bar[0], recent_bar[1], recent_bar[2], recent_bar[3]
+            
+            bar_dict = {"close": close_p, "high": high_p, "low": low_p, "volume": vol_p, "vwap": close_p}
+            
+            # Assumimos um input simulado de direcao do orquestrador
+            ext_dir = context.get("direction", 1) if context else 1 
+            state = self.engine.update("GLOBAL_T0", bar_dict, direction=ext_dir)
+            
+            direction_signal = 0
+            if state.zone_type == ZoneType.CORE_STRONG and state.fuel_remaining > 0.6:
+                direction_signal = ext_dir # Concorda com escalar
+                
+            return {
+                "direction": direction_signal,
+                "zone_type": state.zone_type.value,
+                "phase": state.market_phase.value,
+                "fuel_remaining": state.fuel_remaining,
+                "exhaust_velocity": state.exhaust_velocity,
+                "emergency_halt": False
+            }
+            
+        def get_risk_parameters(self) -> RiskParameters:
+            return RiskParameters(
+                max_risk_per_trade=0.015,
+                max_drawdown_daily=0.045,
+                kelly_fraction=0.04,
+                max_leverage=1.5,
+                min_sharpe_required=1.0,
+                proposed_tp_distance=0.0 # Mapeador de zonas nao encerra
+            )
+            
+        async def force_halt(self, reason: str) -> bool:
+            logging.getLogger("OmegaZoneAgent").critical(f"🔴 ZONE EMERGENCY HALT: {reason}")
+            return True
 
 
 if __name__ == "__main__":

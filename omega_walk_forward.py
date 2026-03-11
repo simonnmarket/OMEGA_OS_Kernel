@@ -51,7 +51,10 @@ class WalkForwardValidator:
         print(f"\n[VALIDATING] {symbol}")
         try:
             data = pd.read_csv(data_file)
-            data['datetime'] = pd.to_datetime(data['time'], unit='s') if 'time' in data.columns else pd.to_datetime(data['datetime'])
+            if 'time' in data.columns:
+                data['datetime'] = pd.to_datetime(data['time'], errors='coerce')
+            else:
+                data['datetime'] = pd.to_datetime(data['datetime'], errors='coerce')
         except Exception as e:
             print(f"Erro ao carregar {data_file}: {e}")
             return {'symbol': symbol, 'error': str(e)}
