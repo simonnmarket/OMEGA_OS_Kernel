@@ -15,7 +15,7 @@ from test_production_profitability import (
 from run_full_real_data import GoldenMarketProfileEngine
 from modules.v_flow_microstructure import VFlowReversalEngine, MacroBias
 from modules.fimathe_core import FimatheCoreTIER0
-from modules.fractal_hurst import FractalEngineV2
+from modules.omega_kernel_v5_1_refined import OMEGAKernelV51Refined
 
 class OmegaAICControllerV5:
     """
@@ -28,23 +28,16 @@ class OmegaAICControllerV5:
         self.kalman_engine = OmegaKalmanPullbackEngine()
         self.squeeze_engine = SqueezeDetector(window=20)
         self.fimathe_engine = FimatheCoreTIER0()
-        self.fractal_engine = FractalEngineV2()
+        self.omega_kernel = OMEGAKernelV51Refined()
         
     def get_thrust_vector(self, window_data, current_candle_dict, macro_bias):
         """Calcula o Thrust Scalar Vector"""
-        # 1. Update VFR
-        self.vfr_engine.update_statistics(window_data)
-        vfr_signal = self.vfr_engine.vfr_core(window_data[-1], window_data)
+        # 1. Passo do Kernel Refinado (Confluência Macro+Micro)
+        # ohlcv: np.ndarray shape (N,5) [O, H, L, C, V]
+        kernel_state = self.omega_kernel.engine_step(window_data)
         
-        # Override VFR para Aerospace (1.8s, 1.5s, 60 min score)
-        score = 0
-        if abs(vfr_signal.z_price) > 1.8: score += 25
-        if vfr_signal.z_volume > 1.5: score += 25
-        if vfr_signal.absorption_ratio > 1.5: score += 20
-        if abs(vfr_signal.delta_imbalance) > 1.2: score += 15
-        
-        vfr_score = min(100, score)
-        vfr_direction = -int(np.sign(vfr_signal.z_price)) if vfr_score >= 60 else 0
+        vfr_score = kernel_state.signal_strength * 100
+        vfr_direction = 1 if kernel_state.bias == "BUY" else -1 if kernel_state.bias == "SELL" else 0
         
         # 2. Perfil de Mercado
         profile = self.golden_profile.calculate_dynamic_poc(window_data)
@@ -129,7 +122,8 @@ class OmegaAICControllerV5:
             "thrust_score": final_score,
             "squeeze_boost": squeeze_res["boost_multiplier"],
             "kalman_break": kalman_res["is_structural_break"],
-            "trigger_type": trigger_type
+            "trigger_type": trigger_type,
+            "kernel_details": kernel_state.details
         }
 
 def run_master_aerospace_validation():
