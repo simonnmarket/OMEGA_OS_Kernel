@@ -27,7 +27,7 @@ class GoldenMarketProfileEngine:
         """
         highs = data[:, 1]
         lows = data[:, 2]
-        volumes = data[:, 3]
+        volumes = data[:, 4]
         
         abs_max = np.max(highs)
         abs_min = np.min(lows)

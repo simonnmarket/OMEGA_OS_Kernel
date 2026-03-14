@@ -52,19 +52,19 @@ class OmegaAICControllerV5:
         channel_direction = 0
         channel_score = 0
         # Venda no topo do canal (Range Diagonal Superior)
-        if c >= top_zone and vfr_signal.z_price > 0.5: 
+        if c >= top_zone and kernel_state.details.get('z_price', 0) > 0.5: 
             channel_direction = -1
             channel_score = 85
         # Compra no fundo do canal (Range Diagonal Inferior)
-        elif c <= bottom_zone and vfr_signal.z_price < -0.5:
+        elif c <= bottom_zone and kernel_state.details.get('z_price', 0) < -0.5:
             channel_direction = 1
             channel_score = 85
             
         # 4. Golden Trap Expandida (0.50 - 0.886)
-        golden_trap = self.golden_profile.evaluate_golden_trap(profile, window_data[-1][0], vfr_direction)
+        golden_trap = self.golden_profile.evaluate_golden_trap(profile, window_data[-1][3], vfr_direction)
         
         # 5. Kalman Avionics
-        kalman_res = self.kalman_engine.execute(window_data.tolist())
+        kalman_res = self.kalman_engine.execute(window_data)
         is_kalman_ok = not kalman_res["is_structural_break"]
         
         # 4. Squeeze Afterburner (XAUUSD Volume Imbalance)
@@ -72,7 +72,7 @@ class OmegaAICControllerV5:
         
         # 7. NOVO: FIMATHE CORE & DIAGONAL RANGE (PSA TIER-0)
         # Convert window_data (which might be the target_data slice) to DataFrame for Fimathe
-        df_window = pd.DataFrame(window_data, columns=['close', 'high', 'low', 'volume'])
+        df_window = pd.DataFrame(window_data, columns=['open', 'high', 'low', 'close', 'volume'])
         fimathe_signal = self.fimathe_engine.get_signal(df_window)
         diagonal_res = self.fimathe_engine.detect_diagonal_range(window_data)
         

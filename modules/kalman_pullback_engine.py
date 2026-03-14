@@ -67,8 +67,8 @@ class OmegaKalmanPullbackEngine(OmegaBaseAgent):
         window_data: OHLCV array.
         Returns the probability of a Pullback Reversal (P_rev) at the current candle.
         """
-        current_close = float(window_data[-1][0])
-        current_vol = float(window_data[-1][3]) # Vol is index 3 in our [C, H, L, V] array
+        current_close = float(window_data[-1, 3])
+        current_vol = float(window_data[-1, 4]) # Vol is index 4 in our [O, H, L, C, V] array
         
         
         # Calculate recent delta for liquidity energy update

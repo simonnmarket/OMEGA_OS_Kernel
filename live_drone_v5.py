@@ -186,6 +186,29 @@ class HFTExecutor:
                 if new_sl < p.sl - (atr * 0.1):
                     mt5.order_send({"action": mt5.TRADE_ACTION_SLTP, "position": p.ticket, "sl": new_sl, "tp": p.tp})
 
+    def hft_order_close_all(self, symbol: str):
+        """Fechamento total de emergência do símbolo"""
+        positions = mt5.positions_get(symbol=symbol)
+        if not positions: return
+        for p in positions:
+            if p.magic == self.magic:
+                order_type = mt5.ORDER_TYPE_SELL if p.type == mt5.ORDER_TYPE_BUY else mt5.ORDER_TYPE_BUY
+                price = mt5.symbol_info_tick(symbol).bid if order_type == mt5.ORDER_TYPE_SELL else mt5.symbol_info_tick(symbol).ask
+                request = {
+                    "action": mt5.TRADE_ACTION_DEAL,
+                    "symbol": symbol,
+                    "volume": p.volume,
+                    "type": order_type,
+                    "position": p.ticket,
+                    "price": price,
+                    "deviation": 20,
+                    "magic": self.magic,
+                    "comment": "OMEGA_CIRCUIT_BREAKER",
+                    "type_time": mt5.ORDER_TIME_GTC,
+                    "type_filling": mt5.ORDER_FILLING_IOC,
+                }
+                mt5.order_send(request)
+
 # =============================================================================
 # DEPLOY PRINCIPAL (Tech Lead Resiliência Loop)
 # =============================================================================
@@ -207,7 +230,7 @@ def live_deploy_alfa_18():
         
         controllers = {s: OmegaAICControllerV5() for s in active_symbols}
         scalers = {s: TacticalScaler() for s in active_symbols}
-        executor = HFTExecutor(base_lot=0.05)
+        executor = HFTExecutor(base_lot=0.01) # Reduzido para 0.01 para conta Demo $1k
         
         try:
             while True:
@@ -216,8 +239,8 @@ def live_deploy_alfa_18():
                 if acc and (acc.equity - acc.balance) / acc.balance < -0.03:
                     log_print("🚨 CIRCUIT BREAKER: DRAWDOWN DIÁRIO 3% EXCEDIDO. HALT GLOBAL.")
                     for s in active_symbols:
-                        executor.hft_order_close_all(s) # Implementado no sensei
-                    time.sleep(3600)
+                        executor.hft_order_close_all(s)
+                    time.sleep(300) # 5 min para teste demo
                     continue
 
                 for symbol in active_symbols:
@@ -237,11 +260,19 @@ def live_deploy_alfa_18():
                         bias = MacroBias(
                             hurst=macro_state.details.get('hfd', 0.5),
                             kalman_trend=1 if ctrl.kalman_engine.execute(ohlcv_m15)['velocity'] > 0 else -1,
+                            horizon="DAY",
                             strength=macro_state.signal_strength
                         )
                         
                         latest = rates_m1[-1]
-                        thrust = ctrl.get_thrust_vector(ohlcv_m1, {'close': latest['close']}, bias)
+                        candle_dict = {
+                            'open': latest['open'],
+                            'high': latest['high'],
+                            'low': latest['low'],
+                            'close': latest['close'],
+                            'volume': float(latest['tick_volume'])
+                        }
+                        thrust = ctrl.get_thrust_vector(ohlcv_m1, candle_dict, bias)
                         
                         # Scaler Update
                         scaling = scalers[symbol].update(thrust['thrust_score'], datetime.now())
@@ -274,6 +305,10 @@ def live_deploy_alfa_18():
                         log_print(f"❌ Erro em {symbol}: {e}")
                         continue
                 
+                # Feedback de monitoramento (PSA)
+                if int(time.time()) % 60 < 10:
+                    log_print(f"🛰️ Monitorando {active_symbols} | Equity: {mt5.account_info().equity:.2f}")
+
                 # Adaptive Sleep (Tech Lead Issue #9)
                 time.sleep(10) # 10s para M1 HFT
                 
@@ -281,10 +316,5 @@ def live_deploy_alfa_18():
             log_print("🛑 Shutdown.")
         finally:
             mt5.shutdown()
-
 if __name__ == "__main__":
     live_deploy_alfa_18()
-n()
-
-if __name__ == "__main__":
-    live_aerospace_deploy_multi()

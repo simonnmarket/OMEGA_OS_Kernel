@@ -63,7 +63,7 @@ class FimatheCoreTIER0:
         # Resistência e Suporte nos últimos 100 períodos
         resistance = np.max(highs[:-1])
         support = np.min(lows[:-1])
-        current_close = window_data[-1, 0]
+        current_close = window_data[-1, 3] # Index 3 for Close in [O,H,L,C,V]
         
         amplitude = resistance - support
         # Se a amplitude for zero (erro de dados), ignora

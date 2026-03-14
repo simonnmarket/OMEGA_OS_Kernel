@@ -1,0 +1,27 @@
+{
+    "event": {
+        "start": "2026-03-13 01:00:00",
+        "end": "2026-03-13 23:59:00",
+        "amplitude": 118.65999999999985,
+        "failure_timestamp": "2026-03-13 04:40:00",
+        "missed_opportunities": []
+    },
+    "validation": {
+        "sample_size_bars": 1000,
+        "period": "Jan 2022 - Mar 2026",
+        "sei_opt_mean": 75.0,
+        "sei_old_mean": 0,
+        "std_dev": 0.0,
+        "p_value": 0.0,
+        "confidence_interval": [
+            NaN,
+            NaN
+        ]
+    },
+    "equity": {
+        "final_equity": 25000.0,
+        "max_drawdown": 0,
+        "perdeu_tudo_event": null,
+        "total_trades": 0
+    }
+}
