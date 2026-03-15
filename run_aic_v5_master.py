@@ -31,100 +31,46 @@ class OmegaAICControllerV5:
         self.omega_kernel = OMEGAKernelV51Refined()
         
     def get_thrust_vector(self, window_data, current_candle_dict, macro_bias):
-        """Calcula o Thrust Scalar Vector"""
-        # 1. Passo do Kernel Refinado (Confluência Macro+Micro)
-        # ohlcv: np.ndarray shape (N,5) [O, H, L, C, V]
-        kernel_state = self.omega_kernel.engine_step(window_data)
+        """
+        Calcula o Thrust Scalar Vector usando o Motor PARR-F Atômico.
+        window_data: np.ndarray shape (N, 5) [O, H, L, C, V]
+        """
+        # 1. VALIDAÇÃO DE INTEGRIDADE (NASA-STD)
+        if np.any(np.isnan(window_data)):
+            return {"launch": False, "thrust_score": 0, "kalman_break": True, "reason": "DATA_NAN"}
+
+        # 2. INJEÇÃO DO MOTOR PARR-F V5.4.2 ATÔMICO (BOARD-APPROVED)
+        from modules.omega_parr_f_engine import OmegaParrFEngine
+        parr_f_engine = OmegaParrFEngine()
         
-        vfr_score = kernel_state.signal_strength * 100
-        vfr_direction = 1 if kernel_state.bias == "BUY" else -1 if kernel_state.bias == "SELL" else 0
+        # Orquestração L0-L3
+        res = parr_f_engine.execute_full_audit(window_data)
         
-        # 2. Perfil de Mercado
-        profile = self.golden_profile.calculate_dynamic_poc(window_data)
+        layers = res['layers']
+        final_score = res['score']
+        thrust_active = res['launch']
         
-        # 3. RANGE DIAGONAL / CHANNEL DETECTOR (Novo: Exigência do Comandante)
-        # Detecta topos e fundos prévios onde o preço foi rejeitado na estrutura atual
-        amplitude = profile["abs_max"] - profile["abs_min"]
-        top_zone = profile["abs_max"] - (amplitude * 0.05)
-        bottom_zone = profile["abs_min"] + (amplitude * 0.05)
-        c = current_candle_dict['close']
-        
-        channel_direction = 0
-        channel_score = 0
-        # Venda no topo do canal (Range Diagonal Superior)
-        if c >= top_zone and kernel_state.details.get('z_price', 0) > 0.5: 
-            channel_direction = -1
-            channel_score = 85
-        # Compra no fundo do canal (Range Diagonal Inferior)
-        elif c <= bottom_zone and kernel_state.details.get('z_price', 0) < -0.5:
-            channel_direction = 1
-            channel_score = 85
-            
-        # 4. Golden Trap Expandida (0.50 - 0.886)
-        golden_trap = self.golden_profile.evaluate_golden_trap(profile, window_data[-1][3], vfr_direction)
-        
-        # 5. Kalman Avionics
-        kalman_res = self.kalman_engine.execute(window_data)
-        is_kalman_ok = not kalman_res["is_structural_break"]
-        
-        # 4. Squeeze Afterburner (XAUUSD Volume Imbalance)
-        squeeze_res = self.squeeze_engine.update(current_candle_dict)
-        
-        # 7. NOVO: FIMATHE CORE & DIAGONAL RANGE (PSA TIER-0)
-        # Convert window_data (which might be the target_data slice) to DataFrame for Fimathe
-        df_window = pd.DataFrame(window_data, columns=['open', 'high', 'low', 'close', 'volume'])
-        fimathe_signal = self.fimathe_engine.get_signal(df_window)
-        diagonal_res = self.fimathe_engine.detect_diagonal_range(window_data)
-        
-        # DECISÃO E VETORIZAÇÃO DE LANÇAMENTO (Override Logic)
-        # Prioridade 1: Diagonal Range do Comandante (Sniper)
-        # Prioridade 2: Fimathe Breakout (Trend)
-        # Prioridade 3: VFR Deep Reversal (Mean Reversion)
-        
-        if diagonal_res['score'] > 0:
-            final_direction = diagonal_res['direction']
-            final_score = diagonal_res['score']
-            trigger_type = diagonal_res['type']
-            # Para Range Diagonal, aceitamos mesmo com Kalman ok
-            thrust_active = is_kalman_ok
-        elif fimathe_signal['direction'] != 0:
-            final_direction = fimathe_signal['direction']
-            final_score = 85
-            trigger_type = fimathe_signal['type']
-            # Fimathe é tendência, aceitamos se não houver um break estrutural violento
-            thrust_active = is_kalman_ok
-        else:
-            final_direction = vfr_direction
-            # Score ponderado para VFR (Filtro de Reversão)
-            final_score = (vfr_score * 0.40) + ((100 if golden_trap["in_trap_zone"] else 0) * 0.25) + ((100 if is_kalman_ok else 0) * 0.20) + (squeeze_res["squeeze_score"] * 0.15)
-            trigger_type = "VFR_DEEP_REVERSAL"
-            thrust_active = vfr_score >= 60 and golden_trap["in_trap_zone"] and is_kalman_ok
-        
-        # 8. FILTRO DE CORRELAÇÃO MACRO (Exigência TIER-0)
-        # Se Hurst > 0.6 (Trend Persistente), ignoramos sinais de reversão opostos à tendência Macro
-        is_macro_aligned = True
-        if macro_bias.hurst > 0.60:
-            if final_direction != 0 and final_direction != macro_bias.kalman_trend:
-                is_macro_aligned = False
-                trigger_type = f"BLOCKED_BY_MACRO_TREND ({macro_bias.kalman_trend})"
-        
-        # Se Hurst < 0.40 (Mean Reverting), priorizamos VFR e Diagonal Range
-        elif macro_bias.hurst < 0.40:
-            if trigger_type in ["FIMATHE_EXPANSION_LONG", "FIMATHE_EXPANSION_SHORT"]:
-                # Em range lateral, breakout de fimathe é perigoso (falso rompimento)
-                final_score *= 0.70 # Reduz confiança
-        
-        thrust_active = thrust_active and is_macro_aligned
+        # Trigger Type Telemetry (SRE Status)
+        l_status = "".join([str(int(layers[lx]['ok'])) for lx in ['L0','L1','L2','L3']])
+        trigger_type = f"PARR-F_V5.4.2 (ATOMIC_{l_status})"
 
         return {
             "launch": thrust_active,
-            "direction": final_direction,
+            "direction": res['direction'],
             "thrust_score": final_score,
-            "squeeze_boost": squeeze_res["boost_multiplier"],
-            "kalman_break": kalman_res["is_structural_break"],
+            "squeeze_boost": 1.0,
+            "kalman_break": not layers['L0']['ok'], 
             "trigger_type": trigger_type,
-            "kernel_details": kernel_state.details
+            "atr": res['atr'],
+            "kernel_details": {
+                "hfd": layers['L0'].get('hfd', 0),
+                "r2": layers['L0'].get('r2', 0), 
+                "stability": layers['L0'].get('stability', 0),
+                "zvol": layers['L2'].get('z_vol_log', 0),
+                "flags": res['flags']
+            }
         }
+
 
 def run_master_aerospace_validation():
     print("=" * 80)

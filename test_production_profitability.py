@@ -21,14 +21,14 @@ def load_xauusd_historical(filepath: str) -> np.ndarray:
     df = pd.read_csv(filepath)
     # df tem as colunas: time, open, high, low, close, volume
     
-    # Extrair OHLV
+    opens = df['open'].values
     closes = df['close'].values
     highs = df['high'].values
     lows = df['low'].values
     vols = df['volume'].values
     times = df['time'].values
     
-    return np.array([[closes[i], highs[i], lows[i], vols[i]] for i in range(len(df))]), times
+    return np.array([[opens[i], highs[i], lows[i], closes[i], vols[i]] for i in range(len(df))]), times
 
 def test_profitability_ensemble():
     print("=" * 70)
