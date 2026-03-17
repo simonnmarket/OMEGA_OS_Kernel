@@ -1,0 +1,22 @@
+=== PROVA DE UNICIDADE OMEGA V5.5.0 ===
+Data: 2026-03-17 20:15:51
+
+--- SAÍDA INSTÂNCIA BETA ---
+Traceback (most recent call last):
+  File "C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\omega_v550_realtime_mt5.py", line 60, in __enter__
+    self.sock.bind(('127.0.0.1', self.port))
+OSError: [WinError 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\omega_v550_realtime_mt5.py", line 285, in <module>
+    with SingletonLock(port=55555):
+  File "C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\omega_v550_realtime_mt5.py", line 64, in __enter__
+    print("\U0001f6ab OMEGA V5.5.0: OUTRA INSTÂNCIA DETECTADA. ABORTANDO.")
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f6ab' in position 0: character maps to <undefined>
+
+--- FIM DA SAÍDA ---

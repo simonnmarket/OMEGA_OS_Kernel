@@ -1,0 +1,31 @@
+[
+  {
+    "file": "REPLAY_STRUCTURAL_V550_RIGOROUS.csv",
+    "sha256": "7e74a38a1ec32b79d8cfb12304470ad0c1c6375fdb241c769b4e28b871a27122",
+    "symbol": "ALL",
+    "fx_rate": 1.0,
+    "trades": 7,
+    "wins": 0,
+    "winrate_pct": 0.0,
+    "pnl": -67.01080000000007,
+    "gross_pos": 0.0,
+    "gross_neg": -67.01080000000007,
+    "pf": 0.0,
+    "churn_le_3s": 0,
+    "median_duration_s": 28800.0,
+    "mean_duration_s": 562114.2857142857,
+    "max_dd_abs": 63.5038999999997,
+    "max_dd_pct": 0.635261779953609,
+    "equity_final": 9932.9892,
+    "cagr_est_pct": -1.4252568867933912,
+    "start_ts": "2016-05-24 01:00:00",
+    "end_ts": "2016-11-11 00:00:00",
+    "reason_counts": {
+      "STOP_LOSS": 7
+    },
+    "fr_total": 0.14059673963002964,
+    "alerts": [
+      "FAIL: pf=0.00 < 1.2"
+    ]
+  }
+]

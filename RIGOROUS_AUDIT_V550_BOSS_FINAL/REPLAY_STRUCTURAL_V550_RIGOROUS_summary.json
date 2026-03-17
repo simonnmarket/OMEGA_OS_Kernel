@@ -1,0 +1,33 @@
+[
+  {
+    "file": "REPLAY_STRUCTURAL_V550_RIGOROUS.csv",
+    "sha256": "5b250bf438099707254d281735b1d9a313f9115258208a9bb4d21ad27851d1da",
+    "symbol": "ALL",
+    "fx_rate": 1.0,
+    "trades": 417,
+    "wins": 152,
+    "winrate_pct": 36.45,
+    "pnl": -648.1900000000002,
+    "gross_pos": 1997.4099999999999,
+    "gross_neg": -2645.6,
+    "pf": 0.754993196250378,
+    "churn_le_3s": 0,
+    "median_duration_s": 32400.0,
+    "mean_duration_s": 76869.06474820143,
+    "max_dd_abs": 852.3700000000008,
+    "max_dd_pct": 8.372624365940968,
+    "equity_final": 9351.81,
+    "cagr_est_pct": -0.4849402911063283,
+    "start_ts": "2012-05-24 00:00:00",
+    "end_ts": "2026-03-03 19:00:00",
+    "reason_counts": {
+      "ALPHA_EJECT": 274,
+      "STOP_LOSS": 111,
+      "TAKE_PROFIT": 32
+    },
+    "fr_total": 0.6480507258674153,
+    "alerts": [
+      "FAIL: pf=0.75 < 1.0"
+    ]
+  }
+]

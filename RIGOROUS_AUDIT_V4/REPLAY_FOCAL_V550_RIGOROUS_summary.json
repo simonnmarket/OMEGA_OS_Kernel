@@ -1,0 +1,30 @@
+[
+  {
+    "file": "REPLAY_FOCAL_V550_RIGOROUS.csv",
+    "sha256": "2a9448c8d93c547974e200035bfed08cb2de54bb0c7dd210ac659bc1f7f71a79",
+    "symbol": "ALL",
+    "fx_rate": 1.0,
+    "trades": 7,
+    "wins": 3,
+    "winrate_pct": 42.86,
+    "pnl": 29.590400000001416,
+    "gross_pos": 70.18250000000018,
+    "gross_neg": -40.592099999998766,
+    "pf": 1.7289694300123006,
+    "churn_le_3s": 0,
+    "median_duration_s": 480.0,
+    "mean_duration_s": 797.1428571428571,
+    "max_dd_abs": 25.832499999998618,
+    "max_dd_pct": 0.2580528574565125,
+    "equity_final": 10029.590400000001,
+    "cagr_est_pct": 55.827645895281485,
+    "start_ts": "2026-03-02 09:09:00",
+    "end_ts": "2026-03-04 19:30:00",
+    "reason_counts": {
+      "ALPHA_EJECT": 5,
+      "STOP_LOSS": 2
+    },
+    "fr_total": 0.1757056342597515,
+    "alerts": []
+  }
+]

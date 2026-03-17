@@ -1,0 +1,2 @@
+ts_open,ts_close,duration_s,dir,size,open_price,close_price,pnl_gross,spread_cost,slippage_cost,commission_cost,swap_cost,total_cost,pnl_net,reason_exit,z_price,state,pnl_net_fx,is_win,churn_flag,equity,dd,dd_pct
+2016-05-24 01:00:00,2016-11-23,15807600.0,buy,0.1,1249.3,1187.9,-613.9999999999986,2.5,0.5,0.7,274.4375,278.1375,-892.1374999999987,STOP_LOSS,-0.4936208064858597,AUDITED,-892.1374999999987,False,False,9107.862500000001,0.0,0.0

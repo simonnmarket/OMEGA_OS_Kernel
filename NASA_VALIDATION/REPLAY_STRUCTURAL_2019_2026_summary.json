@@ -1,0 +1,31 @@
+[
+  {
+    "file": "REPLAY_STRUCTURAL_2019_2026.csv",
+    "sha256": "2af24ccb2065d48ee2654d81777a5daf356fe82478dc7fb9286349e26dae8da5",
+    "symbol": "ALL",
+    "fx_rate": 1.0,
+    "trades": 370,
+    "wins": 207,
+    "winrate_pct": 55.95,
+    "pnl": 355082.9999999996,
+    "gross_pos": 853541.9999999999,
+    "gross_neg": -498459.00000000023,
+    "pf": 1.712361498137258,
+    "churn_le_3s": 0,
+    "median_duration_s": 432000.0,
+    "mean_duration_s": 519178.3783783784,
+    "max_dd_abs": 44657.99999999989,
+    "max_dd_pct": 76.30063729091555,
+    "equity_final": 365082.9999999998,
+    "cagr_est_pct": 76.00503343901343,
+    "start_ts": "2019-10-31 16:00:00",
+    "end_ts": "2026-03-11 08:00:00",
+    "reason_counts": {
+      "ALPHA_LOSS": 370
+    },
+    "fr_total": null,
+    "alerts": [
+      "FAIL: max_dd_pct=76.30% > 30.0%"
+    ]
+  }
+]

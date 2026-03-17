@@ -1,0 +1,31 @@
+[
+  {
+    "file": "REPLAY_STRUCTURAL_V550_RIGOROUS.csv",
+    "sha256": "0d9a27a5940af16951e88af55429ececc9e3fd083c591c9aaceedf890b30da14",
+    "symbol": "ALL",
+    "fx_rate": 1.0,
+    "trades": 28,
+    "wins": 16,
+    "winrate_pct": 57.14,
+    "pnl": 160.64,
+    "gross_pos": 325.81,
+    "gross_neg": -165.17000000000004,
+    "pf": 1.9725737119331592,
+    "churn_le_3s": 0,
+    "median_duration_s": 50400.0,
+    "mean_duration_s": 196714.2857142857,
+    "max_dd_abs": 92.19000000000051,
+    "max_dd_pct": 0.8991663765028827,
+    "equity_final": 10160.64,
+    "cagr_est_pct": 0.33932457606367095,
+    "start_ts": "2016-05-24 01:00:00",
+    "end_ts": "2021-02-04 04:00:00",
+    "reason_counts": {
+      "ALPHA_EJECT": 17,
+      "STOP_LOSS": 9,
+      "TAKE_PROFIT": 2
+    },
+    "fr_total": 0.2481947211155378,
+    "alerts": []
+  }
+]

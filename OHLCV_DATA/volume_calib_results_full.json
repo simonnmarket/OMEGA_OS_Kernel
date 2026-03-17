@@ -1,0 +1,149 @@
+{
+  "results": [
+    {
+      "symbol_tf": "US100_US100_H4",
+      "vol_z_threshold": 1.5,
+      "min_confidence": 0.4,
+      "vwap_std_mult": 2.0,
+      "metrics": {
+        "trades": 3307,
+        "win_rate": 0.5192016933776837,
+        "expectancy": 5.404953296622326e-05,
+        "profit_factor": 1.0284913536427795,
+        "sharpe": 0.47587680064499577,
+        "sortino": 0.5896258316778934,
+        "max_drawdown": -0.243534343066489,
+        "total_return": 0.11969682512042779,
+        "alpha_total": -26.933234640511305,
+        "p_value": 2.629884773938944e-06,
+        "t_statistic": -4.702027166178276,
+        "ci_low": null,
+        "ci_high": null,
+        "is_significant": true
+      },
+      "walk_forward": {
+        "validated": true,
+        "mean_sharpe_is": -0.052921881556652006,
+        "mean_sharpe_oos": 0.4130767511332512,
+        "overfitting_score": -4659986326.899032,
+        "is_robust": true,
+        "details_is": [
+          -0.3554090523378522,
+          0.05149972685880394,
+          -0.13986748346936073,
+          -0.05413733409524912,
+          0.2333047352603981
+        ],
+        "details_oos": [
+          0.7418412841241653,
+          0.011187100840649779,
+          0.448077812791799,
+          0.6023229224457791,
+          0.261954635463863
+        ]
+      },
+      "checksum": "b0fdc8cdbdee56dcc226e3296fc4b4927b7b25b548faef05a0f03a8b310dec2e"
+    },
+    {
+      "symbol_tf": "US100_US100_H4",
+      "vol_z_threshold": 1.5,
+      "min_confidence": 0.4,
+      "vwap_std_mult": 2.5,
+      "metrics": {
+        "trades": 3562,
+        "win_rate": 0.5196518809657495,
+        "expectancy": 4.5478087756825516e-05,
+        "profit_factor": 1.0246799155892439,
+        "sharpe": 0.42794237772511984,
+        "sortino": 0.5200396928434124,
+        "max_drawdown": -0.2494313963088628,
+        "total_return": 0.0957654514141737,
+        "alpha_total": -69.2104349145132,
+        "p_value": 2.9405884823521525e-09,
+        "t_statistic": -5.942673678292251,
+        "ci_low": null,
+        "ci_high": null,
+        "is_significant": true
+      },
+      "walk_forward": {
+        "validated": true,
+        "mean_sharpe_is": -0.030229507883688667,
+        "mean_sharpe_oos": 0.318773799814282,
+        "overfitting_score": -3490033076.979707,
+        "is_robust": true,
+        "details_is": [
+          -0.2666878624383993,
+          0.06015304999001119,
+          -0.12295685799820993,
+          -0.06319446184629511,
+          0.24153859287444984
+        ],
+        "details_oos": [
+          0.5728721443169533,
+          -0.0074410490038125795,
+          0.30223509754137734,
+          0.6743914152506271,
+          0.05181139096626498
+        ]
+      },
+      "checksum": "12e30c9cc98f9726ce918ebe117305d8f8489acfe9a3a4f4051b9439451048de"
+    },
+    {
+      "symbol_tf": "US100_US100_H4",
+      "vol_z_threshold": 1.5,
+      "min_confidence": 0.4,
+      "vwap_std_mult": 1.5,
+      "metrics": {
+        "trades": 2808,
+        "win_rate": 0.5235042735042735,
+        "expectancy": 2.8761268723358213e-05,
+        "profit_factor": 1.0162931199370282,
+        "sharpe": 0.2539961054625941,
+        "sortino": 0.31629824184558925,
+        "max_drawdown": -0.26391259177976656,
+        "total_return": 0.020129938536675773,
+        "alpha_total": -9.08949018720175,
+        "p_value": 0.0003716276166062574,
+        "t_statistic": -3.5617160509968415,
+        "ci_low": null,
+        "ci_high": null,
+        "is_significant": true
+      },
+      "walk_forward": {
+        "validated": true,
+        "mean_sharpe_is": -0.26332320123577607,
+        "mean_sharpe_oos": 0.3087061970510685,
+        "overfitting_score": -5720293982.868445,
+        "is_robust": true,
+        "details_is": [
+          -0.5132296232028789,
+          -0.1901030418903854,
+          -0.3366000995981525,
+          -0.22464104740520371,
+          -0.052042194082259935
+        ],
+        "details_oos": [
+          0.4693132659842813,
+          0.10812935697977985,
+          0.5686467064470858,
+          0.21609714582692285,
+          0.1813445100172729
+        ]
+      },
+      "checksum": "a8dcea5e052d087732bcc95a6d6eb066d6a893f30614515dfaedd25ffa568d96"
+    }
+  ],
+  "bonferroni": {
+    "alpha": 0.05,
+    "alpha_corrected": 0.0002314814814814815,
+    "n_tests": 216,
+    "significant_after": 68
+  },
+  "fdr": {
+    "alpha": 0.05,
+    "n_tests": 216,
+    "significant": true,
+    "cutoff_p": 0.018185731557693204
+  },
+  "checksum": "0f5e699b80204d618d3ed7835049a883ed23177e49b381af857c268975284146"
+}

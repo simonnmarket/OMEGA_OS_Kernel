@@ -1,0 +1,29 @@
+[
+  {
+    "file": "REPLAY_FOCAL_M1_2026.csv",
+    "sha256": "acace7ce2d4e9cdf31851da63347b56256c11e363464ef6b523ff66475c99fac",
+    "symbol": "ALL",
+    "fx_rate": 1.0,
+    "trades": 49,
+    "wins": 25,
+    "winrate_pct": 51.02,
+    "pnl": 6978.000000000247,
+    "gross_pos": 17750.0,
+    "gross_neg": -10771.999999999753,
+    "pf": 1.6477905681396592,
+    "churn_le_3s": 0,
+    "median_duration_s": 480.0,
+    "mean_duration_s": 723.6734693877551,
+    "max_dd_abs": 3639.9999999996908,
+    "max_dd_pct": 23.473270136065494,
+    "equity_final": 16978.000000000247,
+    "cagr_est_pct": 5.268391619616862e+32,
+    "start_ts": "2026-03-09 05:28:00",
+    "end_ts": "2026-03-11 23:01:00",
+    "reason_counts": {
+      "ALPHA_LOSS": 49
+    },
+    "fr_total": null,
+    "alerts": []
+  }
+]
