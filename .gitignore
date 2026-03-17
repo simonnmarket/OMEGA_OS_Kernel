@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.log
+.DS_Store
+.idea/
+.vscode/
+*.png
+*.csv
+# OHLCV_DATA/ # Keeping this if user wants exact replicability, but usually too big
+# OMEGA_INTELLIGENCE_OS/ # Check if this is part of the core
