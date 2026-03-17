@@ -1,0 +1,171 @@
+//+------------------------------------------------------------------+
+//| Institutional Analysis - Parte 4                                   |
+//|                                                                    |
+//| OBJETIVO: Implementar análise de volume e preço institucional com: |
+//| - Análise de Volume Institucional                                 |
+//| - Padrões de Preço                                               |
+//| - Correlações Avançadas                                          |
+//| - Integração com PVSRA                                           |
+//+------------------------------------------------------------------+
+
+private:
+    // Estruturas de Análise Volume/Preço
+    struct VolumeAnalyzer {
+        // Volume Institucional
+        struct InstitutionalVolume {
+            double levels[];            // Níveis de volume
+            double delta[];             // Delta por nível
+            double absorption[];        // Absorção por nível
+            bool isInstitutional[];     // Flag institucional
+            datetime timestamps[];      // Timestamps
+        } volume;
+        
+        // Padrões de Preço
+        struct PricePatterns {
+            bool isBreakout;           // Rompimento
+            bool isReversal;           // Reversão
+            bool isAccumulation;       // Acumulação
+            bool isDistribution;       // Distribuição
+            double confidence;         // Confiança
+            ENUM_PATTERN_TYPE type;    // Tipo do padrão
+        } patterns;
+        
+        // Correlações
+        struct Correlations {
+            double priceVolume;        // Correlação preço/volume
+            double volumeDelta;        // Correlação volume/delta
+            double priceAction;        // Correlação preço/ação
+            double significance;       // Significância
+            bool isValid;             // Validação
+        } correlation;
+    } m_volumeAnalyzer;
+    
+    void AnalyzeInstitutionalVolume() {
+        if(!ValidateVolumeData()) return;
+        
+        // Analisar volume
+        ProcessVolumeAnalysis();
+        
+        // Detectar padrões
+        DetectPricePatterns();
+        
+        // Calcular correlações
+        CalculateCorrelations();
+        
+        // Integrar com PVSRA
+        UpdatePVSRAIntegration();
+    }
+    
+    void ProcessVolumeAnalysis() {
+        // Reset dados antigos
+        ResetVolumeData();
+        
+        // Analisar níveis
+        for(int i = 0; i < 100; i++) {
+            if(IsInstitutionalVolume(i)) {
+                ProcessVolumeLevel(i);
+            }
+        }
+        
+        // Validar análise
+        ValidateVolumeAnalysis();
+    }
+    
+    bool IsInstitutionalVolume(const int shift) {
+        // Verificar tamanho
+        if(!IsLargeVolume(shift)) return false;
+        
+        // Verificar contexto
+        if(!HasInstitutionalContext(shift)) return false;
+        
+        // Verificar padrão
+        if(!HasVolumePattern(shift)) return false;
+        
+        return true;
+    }
+    
+    void ProcessVolumeLevel(const int shift) {
+        // Calcular métricas
+        double level = CalculateVolumeLevel(shift);
+        double delta = CalculateVolumeDelta(shift);
+        double absorption = CalculateAbsorption(shift);
+        
+        // Adicionar nível
+        int index = ArraySize(m_volumeAnalyzer.volume.levels);
+        ArrayResize(m_volumeAnalyzer.volume.levels, index + 1);
+        ArrayResize(m_volumeAnalyzer.volume.delta, index + 1);
+        ArrayResize(m_volumeAnalyzer.volume.absorption, index + 1);
+        ArrayResize(m_volumeAnalyzer.volume.isInstitutional, index + 1);
+        ArrayResize(m_volumeAnalyzer.volume.timestamps, index + 1);
+        
+        // Configurar nível
+        ConfigureVolumeLevel(index, level, delta, absorption);
+    }
+    
+    void DetectPricePatterns() {
+        // Reset padrões
+        ResetPricePatterns();
+        
+        // Detectar padrões
+        m_volumeAnalyzer.patterns.isBreakout = DetectBreakout();
+        m_volumeAnalyzer.patterns.isReversal = DetectReversal();
+        m_volumeAnalyzer.patterns.isAccumulation = DetectAccumulation();
+        m_volumeAnalyzer.patterns.isDistribution = DetectDistribution();
+        
+        // Calcular confiança
+        m_volumeAnalyzer.patterns.confidence = CalculatePatternConfidence();
+        
+        // Determinar tipo
+        m_volumeAnalyzer.patterns.type = DeterminePatternType();
+    }
+    
+    void CalculateCorrelations() {
+        // Calcular correlações
+        m_volumeAnalyzer.correlation.priceVolume = CalculatePriceVolumeCorr();
+        m_volumeAnalyzer.correlation.volumeDelta = CalculateVolumeDeltaCorr();
+        m_volumeAnalyzer.correlation.priceAction = CalculatePriceActionCorr();
+        
+        // Calcular significância
+        m_volumeAnalyzer.correlation.significance = CalculateSignificance();
+        
+        // Validar correlações
+        m_volumeAnalyzer.correlation.isValid = ValidateCorrelations();
+    }
+    
+    void UpdatePVSRAIntegration() {
+        if(!m_pvsra) return;
+        
+        // Criar pacote de atualização
+        VolumeUpdate update;
+        update.volume = GetVolumeData();
+        update.patterns = GetPatternData();
+        update.correlation = GetCorrelationData();
+        
+        // Enviar para PVSRA
+        m_pvsra.ProcessVolumeUpdate(update);
+        
+        // Processar sinais combinados
+        ProcessCombinedSignals();
+    }
+    
+    void ProcessCombinedSignals() {
+        if(!ValidateCombinedData()) return;
+        
+        // Criar sinal
+        InsightSignal signal;
+        signal.type = SIGNAL_INSTITUTIONAL;
+        signal.price = SymbolInfoDouble(_Symbol, SYMBOL_BID);
+        signal.strength = CalculateSignalStrength();
+        signal.confidence = m_volumeAnalyzer.patterns.confidence;
+        signal.timestamp = TimeCurrent();
+        signal.description = FormatSignalDescription();
+        
+        // Adicionar sinal
+        if(ValidateSignal(signal)) {
+            AddSignal(signal);
+            
+            // Notificar via TechnologyAdvances
+            m_techManager.ProcessInstitutionalSignal(signal);
+        }
+    }
+};

@@ -1,0 +1,170 @@
+//+------------------------------------------------------------------+
+//| Institutional Analysis - Parte 6                                   |
+//|                                                                    |
+//| OBJETIVO: Implementar gestão de risco institucional com:          |
+//| - Controle de Risco Adaptativo                                    |
+//| - Otimização de Posições                                          |
+//| - Proteção de Capital                                             |
+//| - Integração com TechnologyAdvances Risk                          |
+//+------------------------------------------------------------------+
+
+private:
+    // Estruturas de Gestão de Risco
+    struct InstitutionalRisk {
+        // Controle de Risco
+        struct RiskControl {
+            double maxRiskPerTrade;     // Risco máximo por trade
+            double maxDailyRisk;        // Risco máximo diário
+            double currentExposure;     // Exposição atual
+            double riskMultiplier;      // Multiplicador de risco
+            bool isRiskExceeded;        // Risco excedido
+        } control;
+        
+        // Otimização de Posição
+        struct PositionOptimizer {
+            double optimalSize;         // Tamanho ótimo
+            double optimalEntry;        // Entrada ótima
+            double optimalStop;         // Stop ótimo
+            double optimalTarget;       // Alvo ótimo
+            bool isOptimized;          // Estado otimizado
+        } position;
+        
+        // Proteção de Capital
+        struct CapitalProtection {
+            double maxDrawdown;         // Drawdown máximo
+            double currentDrawdown;     // Drawdown atual
+            double safetyBuffer;        // Buffer de segurança
+            bool isProtectionActive;    // Proteção ativa
+            datetime lastCheck;         // Última verificação
+        } protection;
+    } m_risk;
+    
+    void ManageInstitutionalRisk() {
+        if(!ValidateRiskState()) return;
+        
+        // Atualizar controle de risco
+        UpdateRiskControl();
+        
+        // Otimizar posições
+        OptimizePositions();
+        
+        // Gerenciar proteção
+        ManageCapitalProtection();
+        
+        // Integrar com TechnologyAdvances
+        UpdateRiskMetrics();
+    }
+    
+    void UpdateRiskControl() {
+        // Calcular exposição atual
+        CalculateCurrentExposure();
+        
+        // Atualizar multiplicador
+        UpdateRiskMultiplier();
+        
+        // Verificar limites
+        CheckRiskLimits();
+        
+        // Ajustar parâmetros
+        AdjustRiskParameters();
+    }
+    
+    void CalculateCurrentExposure() {
+        double positionValue = 0;
+        
+        if(PositionSelect(_Symbol)) {
+            positionValue = PositionGetDouble(POSITION_VOLUME) * 
+                          PositionGetDouble(POSITION_PRICE_CURRENT);
+        }
+        
+        m_risk.control.currentExposure = positionValue / 
+            AccountInfoDouble(ACCOUNT_EQUITY);
+    }
+    
+    void OptimizePositions() {
+        if(!NeedsPositionOptimization()) return;
+        
+        // Calcular tamanho ótimo
+        m_risk.position.optimalSize = CalculateOptimalSize();
+        
+        // Calcular níveis ótimos
+        CalculateOptimalLevels();
+        
+        // Validar otimização
+        ValidateOptimization();
+        
+        // Aplicar ajustes
+        if(m_risk.position.isOptimized) {
+            ApplyPositionOptimization();
+        }
+    }
+    
+    void CalculateOptimalLevels() {
+        // Entrada ótima
+        m_risk.position.optimalEntry = CalculateOptimalEntry();
+        
+        // Stop ótimo baseado em níveis institucionais
+        m_risk.position.optimalStop = CalculateOptimalStop();
+        
+        // Alvo ótimo baseado em níveis institucionais
+        m_risk.position.optimalTarget = CalculateOptimalTarget();
+    }
+    
+    void ManageCapitalProtection() {
+        // Calcular drawdown atual
+        CalculateCurrentDrawdown();
+        
+        // Verificar limites
+        if(IsDrawdownExceeded()) {
+            ActivateCapitalProtection();
+        }
+        
+        // Atualizar buffer de segurança
+        UpdateSafetyBuffer();
+        
+        // Registrar verificação
+        m_risk.protection.lastCheck = TimeCurrent();
+    }
+    
+    void ActivateCapitalProtection() {
+        m_risk.protection.isProtectionActive = true;
+        
+        // Reduzir exposição
+        ReduceExposure();
+        
+        // Ajustar parâmetros
+        AdjustProtectionParameters();
+        
+        // Notificar
+        NotifyProtectionActivation();
+    }
+    
+    void UpdateRiskMetrics() {
+        // Criar pacote de métricas
+        RiskMetrics metrics;
+        metrics.exposure = m_risk.control.currentExposure;
+        metrics.drawdown = m_risk.protection.currentDrawdown;
+        metrics.riskMultiplier = m_risk.control.riskMultiplier;
+        metrics.isProtectionActive = m_risk.protection.isProtectionActive;
+        
+        // Enviar para TechnologyAdvances
+        m_techManager.UpdateRiskMetrics(metrics);
+        
+        // Notificar equipe se necessário
+        if(ShouldNotifyRisk()) {
+            NotifyRiskStatus(metrics);
+        }
+    }
+    
+    void NotifyRiskStatus(const RiskMetrics &metrics) {
+        string message = StringFormat(
+            "Risk Alert\nExposure: %.2f%%\nDrawdown: %.2f%%\nProtection: %s",
+            metrics.exposure * 100,
+            metrics.drawdown * 100,
+            metrics.isProtectionActive ? "Active" : "Inactive"
+        );
+        
+        // Notificar via TeamStructure
+        m_teamManager.NotifyTeam(TEAM_RISK, message);
+    }
+};

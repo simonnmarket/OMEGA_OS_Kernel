@@ -1,0 +1,18 @@
+Sistema Multi-Ativos (DNA Genético por Par)
+
+// GeneticAlgorithm.mqh  
+struct MarketDNA {  
+    string symbol;  
+    double risk;  
+    double atrMultiplier;  
+    // ... (30+ parâmetros)  
+};  
+
+void OptimizePortfolio(MarketDNA &portfolio[]) {  
+    for(int i=0; i<ArraySize(portfolio); i++) {  
+        // Backtest em nuvem (MT5 Cloud)  
+        double fitness = RunBacktest(portfolio[i]);  
+        if(fitness < 0.5) MutateDNA(portfolio[i]);  
+    }  
+}  
+

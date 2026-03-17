@@ -1,0 +1,211 @@
+#property copyright "Apollo11 Foguete Quântico-Relativístico + Dev MP"
+#property link      "https://xai.com"
+#property version   "1.13"
+
+// --- Variáveis Globais do Apollo11 ---
+double volumeForce = 0.0, Ve = 0.0, Cd = 0.0, a = 0.0, gravForce = 0.0, sphereEnergy = 0.0, POC = 0.0;
+double sphereEnergyLast = 0.0, monthlyHigh = 0.0, monthlyLow = 0.0, weeklyHigh = 0.0, weeklyLow = 0.0;
+datetime lastTime = 0, lastTradeTime = 0;
+double ATR41[], ATR20[], ATRW1[], ATRM1[];
+int atr41Handle, atr20Handle, atrW1Handle, atrM1Handle;
+int plotCounter = 0, orderCount = 0;
+ENUM_TIMEFRAMES tfArray[] = {PERIOD_D1, PERIOD_H4, PERIOD_H1, PERIOD_M3, PERIOD_M1};
+
+// --- Variáveis do Developing Market Profile ---
+input int marketProfileLength = 200; // Lookback
+input int amountOfColumns = 32; // Resolução (máx 32)
+input int distLastCandle = 1; // Distância do perfil
+input int minSize = 2; // Tamanho mínimo do histograma
+
+double mpTop = 0.0, mpBottom = 0.0, columnSize = 0.0;
+double mpLevels[], occurenceArray[];
+double denseLevel = 0.0; // Nível de maior ocorrência
+
+int OnInit() {
+   IndicatorSetInteger(INDICATOR_DIGITS, 5);
+   ArraySetAsSeries(ATR41, true);
+   ArraySetAsSeries(ATR20, true);
+   ArraySetAsSeries(ATRW1, true);
+   ArraySetAsSeries(ATRM1, true);
+
+   atr41Handle = iATR(_Symbol, PERIOD_CURRENT, 41);
+   atr20Handle = iATR(_Symbol, PERIOD_CURRENT, 20);
+   atrW1Handle = iATR(_Symbol, PERIOD_W1, 41);
+   atrM1Handle = iATR(_Symbol, PERIOD_M1, 41);
+
+   ArrayResize(mpLevels, amountOfColumns + 2);
+   ArrayResize(occurenceArray, amountOfColumns + 1);
+   ResetMarketProfile();
+   return(INIT_SUCCEEDED);
+}
+
+void OnTick() {
+   datetime nyTime = TimeLocal() - 4 * 3600; // NY (UTC-4)
+   MqlDateTime nyStruct;
+   TimeToStruct(nyTime, nyStruct);
+   int hour = nyStruct.hour;
+   bool isNight = (hour >= 19 || hour <= 11);
+
+   CopyBuffer(atr41Handle, 0, 0, 1, ATR41);
+   CopyBuffer(atr20Handle, 0, 0, 1, ATR20);
+   CopyBuffer(atrW1Handle, 0, 0, 1, ATRW1);
+   CopyBuffer(atrM1Handle, 0, 0, 1, ATRM1);
+
+   UpdateMarketData();
+   CalculatePhysics();
+   UpdateMarketProfile();
+
+   bool isBuy = CheckDirection(true) && (TimeCurrent() - lastTradeTime) > 60 && (isNight || orderCount < 50);
+   bool isSell = CheckDirection(false) && (TimeCurrent() - lastTradeTime) > 60 && (isNight || orderCount < 50);
+   if (isBuy) ExecuteTrade(true, CalculateLots(isNight));
+   if (isSell) ExecuteTrade(false, CalculateLots(isNight));
+}
+
+void UpdateMarketData() {
+   long volumeArray[];
+   ArraySetAsSeries(volumeArray, true);
+   if (CopyTickVolume(_Symbol, 0, 0, 10, volumeArray) > 0) {
+      double volumeAvg = 0;
+      for (int i = 0; i < 10; i++) volumeAvg += (double)volumeArray[i];
+      volumeAvg /= 10.0;
+      double currentVolume = (double)volumeArray[0];
+      volumeForce = currentVolume / volumeAvg;
+   }
+}
+
+void CalculatePhysics() {
+   Ve = volumeForce;
+   Cd = 0.0;
+   a = Ve / 100.0;
+   gravForce = volumeForce * 1000; // Ajustar com occurenceArray[maxIdx] no futuro
+   sphereEnergy = volumeForce * 2.0;
+   POC = denseLevel; // Usar nível de maior ocorrência como POC
+}
+
+void ResetMarketProfile() {
+   mpTop = 0.0;
+   mpBottom = 0.0;
+   columnSize = 0.0;
+   ArrayFill(mpLevels, 0, ArraySize(mpLevels), 0.0);
+   ArrayFill(occurenceArray, 0, ArraySize(occurenceArray), 0.0);
+   denseLevel = 0.0;
+}
+
+void UpdateMarketProfile() {
+   mpTop = iHighest(_Symbol, PERIOD_M1, PRICE_HIGH, marketProfileLength);
+   mpBottom = iLowest(_Symbol, PERIOD_M1, PRICE_LOW, marketProfileLength);
+   columnSize = (mpTop - mpBottom) / amountOfColumns;
+
+   // Preencher níveis
+   mpLevels[0] = mpTop;
+   for (int i = 1; i <= amountOfColumns; i++) {
+      mpLevels[i] = mpLevels[i-1] - columnSize;
+   }
+
+   // Contar ocorrências
+   for (int i = 0; i <= amountOfColumns; i++) {
+      double upLimit = mpLevels[i];
+      double bottomLimit = i < amountOfColumns ? mpLevels[i+1] : mpBottom;
+      int count = 0;
+      for (int j = 0; j < marketProfileLength; j++) {
+         double high = iHigh(_Symbol, PERIOD_M1, j);
+         double low = iLow(_Symbol, PERIOD_M1, j);
+         if ((low > bottomLimit && low < upLimit) || (high > bottomLimit && high < upLimit) || (low <= bottomLimit && high >= upLimit)) {
+            count++;
+         }
+      }
+      occurenceArray[i] = count;
+   }
+
+   // Encontrar nível mais denso
+   int maxIdx = ArrayMaximum(occurenceArray);
+   if (maxIdx >= 0) {
+      denseLevel = (mpLevels[maxIdx] + mpLevels[maxIdx + 1]) / 2; // Média da coluna mais densa
+   }
+}
+
+bool CheckDirection(bool isBuy) {
+   double h1 = iClose(_Symbol, PERIOD_H1, 1) - iClose(_Symbol, PERIOD_H1, 2);
+   double m1 = iClose(_Symbol, PERIOD_M1, 1) - iClose(_Symbol, PERIOD_M1, 2);
+   double price = isBuy ? SymbolInfoDouble(_Symbol, SYMBOL_ASK) : SymbolInfoDouble(_Symbol, SYMBOL_BID);
+   double distanceToDense = MathAbs(price - denseLevel);
+   bool nearDense = distanceToDense < columnSize; // Entrar perto do nível denso
+   if (isBuy) return (h1 > 0 && m1 > 0 && nearDense);
+   return (h1 < 0 && m1 < 0 && nearDense);
+}
+
+double CalculateLots(bool isNight) {
+   double balance = AccountInfoDouble(ACCOUNT_BALANCE);
+   double riskPercent = isNight ? 0.01 : 0.005;
+   double baseLot = balance * riskPercent / (ATRM1[0] * 10000);
+   double lots[] = {0.1, 0.5, 1.0};
+   static int lotIndex = 0;
+   if (gravForce > 2000) lotIndex = 2;
+   else if (gravForce > 1500) lotIndex = 1;
+   else lotIndex = 0;
+   return NormalizeDouble(lots[lotIndex], 2);
+}
+
+double CalculateTakeProfit(bool isBuy) {
+   double price = isBuy ? SymbolInfoDouble(_Symbol, SYMBOL_ASK) : SymbolInfoDouble(_Symbol, SYMBOL_BID);
+   double tpDistance = columnSize * 2; // 2 colunas como alvo
+   return isBuy ? NormalizeDouble(price + tpDistance, 5) : NormalizeDouble(price - tpDistance, 5);
+}
+
+double CalculateStopLoss(bool isBuy) {
+   double price = isBuy ? SymbolInfoDouble(_Symbol, SYMBOL_BID) : SymbolInfoDouble(_Symbol, SYMBOL_ASK);
+   double referencePoint = denseLevel; // Usar nível denso como referência
+   double minDistance = 60 * SymbolInfoDouble(_Symbol, SYMBOL_POINT);
+   double maxDistance = 100 * SymbolInfoDouble(_Symbol, SYMBOL_POINT);
+   double slDistance = isBuy ? price - referencePoint : referencePoint - price;
+   slDistance = MathMax(minDistance, MathMin(slDistance, maxDistance));
+   return isBuy ? NormalizeDouble(price - slDistance, 5) : NormalizeDouble(price + slDistance, 5);
+}
+
+void ExecuteTrade(bool isBuy, double lot) {
+   if (orderCount >= 50) {
+      Print("Limite de ordens atingido: ", orderCount);
+      return;
+   }
+   double Ask = SymbolInfoDouble(_Symbol, SYMBOL_ASK);
+   double Bid = SymbolInfoDouble(_Symbol, SYMBOL_BID);
+   double sl = CalculateStopLoss(isBuy);
+   double tp = CalculateTakeProfit(isBuy);
+   
+   double minStopLevel = SymbolInfoInteger(_Symbol, SYMBOL_TRADE_STOPS_LEVEL) * SymbolInfoDouble(_Symbol, SYMBOL_POINT);
+   double price = isBuy ? Ask : Bid;
+   
+   if (isBuy) {
+      if (Ask - sl < minStopLevel || tp - Ask < minStopLevel) {
+         Print("Ordem rejeitada (Compra): SL/TP inválido - Ask: ", Ask, " SL: ", sl, " TP: ", tp, " MinStopLevel: ", minStopLevel);
+         return;
+      }
+   } else {
+      if (sl - Bid < minStopLevel || Bid - tp < minStopLevel) {
+         Print("Ordem rejeitada (Venda): SL/TP inválido - Bid: ", Bid, " SL: ", sl, " TP: ", tp, " MinStopLevel: ", minStopLevel);
+         return;
+      }
+   }
+
+   MqlTradeRequest request;
+   request.action = TRADE_ACTION_DEAL;
+   request.symbol = _Symbol;
+   request.volume = lot;
+   request.type = isBuy ? ORDER_TYPE_BUY : ORDER_TYPE_SELL;
+   request.price = isBuy ? Ask : Bid;
+   request.sl = sl;
+   request.tp = tp;
+   request.deviation = 10;
+   MqlTradeResult result;
+   if (!OrderSend(request, result)) {
+      Print("Erro ao executar trade: ", result.retcode, " - Ask: ", Ask, " Bid: ", Bid, " SL: ", sl, " TP: ", tp);
+   } else {
+      Print("Trade executado: ", isBuy ? "Compra" : "Venda", ", Lote: ", lot, " SL: ", sl, " TP: ", tp);
+      lastTradeTime = TimeCurrent();
+      orderCount++;
+   }
+}
+
+void OnDeinit(const int reason) {
+   // Limpeza, se necessário
+}

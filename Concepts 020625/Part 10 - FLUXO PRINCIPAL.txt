@@ -1,0 +1,171 @@
+//+------------------------------------------------------------------+
+//| Institutional Analysis - Parte 10 (Final)                          |
+//|                                                                    |
+//| OBJETIVO: Implementar fluxo principal e controle do sistema com:   |
+//| - Ciclo Principal                                                 |
+//| - Gestão de Estado                                                |
+//| - Controle de Erros                                               |
+//| - Integração Final                                                |
+//+------------------------------------------------------------------+
+
+class CInstitutionalSystem : public CQuantumState {
+private:
+    // Estado Global do Sistema
+    struct SystemState {
+        bool isInitialized;          // Sistema inicializado
+        bool isRunning;              // Sistema em execução
+        bool isPaused;               // Sistema pausado
+        bool isError;                // Estado de erro
+        datetime lastUpdate;         // Última atualização
+        int errorCount;             // Contador de erros
+    } m_state;
+    
+    // Componentes do Sistema
+    CInstitutionalAnalysis* m_analysis;       // Análise principal
+    CInstitutionalML* m_mlSystem;             // Sistema ML
+    CInstitutionalMonitor* m_monitor;         // Monitoramento
+    CInstitutionalReporting* m_reporting;     // Relatórios
+    
+public:
+    CInstitutionalSystem(CTechnologyManager* techManager) {
+        Initialize(techManager);
+    }
+    
+    ~CInstitutionalSystem() {
+        Cleanup();
+    }
+    
+    void OnTick() {
+        if(!ValidateSystemState()) return;
+        
+        try {
+            // 1. Atualizar estado
+            UpdateSystemState();
+            
+            // 2. Processar dados
+            ProcessMarketData();
+            
+            // 3. Executar análise
+            ExecuteAnalysis();
+            
+            // 4. Gerenciar sinais
+            ManageSignals();
+            
+            // 5. Atualizar relatórios
+            UpdateReports();
+            
+        } catch(const int error) {
+            HandleSystemError(error);
+        }
+    }
+
+private:
+    void Initialize(CTechnologyManager* techManager) {
+        // Inicializar componentes
+        m_analysis = new CInstitutionalAnalysis(techManager);
+        m_mlSystem = new CInstitutionalML(techManager);
+        m_monitor = new CInstitutionalMonitor(techManager);
+        m_reporting = new CInstitutionalReporting(techManager);
+        
+        // Configurar estado inicial
+        m_state.isInitialized = false;
+        m_state.isRunning = false;
+        m_state.isPaused = false;
+        m_state.isError = false;
+        m_state.errorCount = 0;
+        
+        // Inicializar sistema
+        if(InitializeSystem()) {
+            m_state.isInitialized = true;
+            m_state.isRunning = true;
+            LogMessage("Sistema Institutional Analysis inicializado com sucesso", LOG_INFO);
+        }
+    }
+    
+    bool InitializeSystem() {
+        // Validar componentes
+        if(!ValidateComponents()) return false;
+        
+        // Carregar configurações
+        if(!LoadConfigurations()) return false;
+        
+        // Inicializar análise
+        if(!m_analysis.Initialize()) return false;
+        
+        // Inicializar ML
+        if(!m_mlSystem.Initialize()) return false;
+        
+        // Inicializar monitoramento
+        if(!m_monitor.Initialize()) return false;
+        
+        // Configurar relatórios
+        if(!m_reporting.Initialize()) return false;
+        
+        return true;
+    }
+    
+    void ProcessMarketData() {
+        // Atualizar dados de mercado
+        m_analysis.UpdateMarketData();
+        
+        // Processar análise institucional
+        m_analysis.ProcessInstitutionalAnalysis();
+        
+        // Atualizar integrações
+        m_analysis.UpdateIntegratedAnalysis();
+    }
+    
+    void ExecuteAnalysis() {
+        // Executar análise principal
+        if(m_analysis.ExecuteAnalysis()) {
+            // Processar sinais
+            ProcessSignals();
+            
+            // Atualizar métricas
+            UpdateMetrics();
+        }
+    }
+    
+    void ManageSignals() {
+        // Validar sinais ativos
+        ValidateActiveSignals();
+        
+        // Processar novos sinais
+        ProcessNewSignals();
+        
+        // Atualizar status
+        UpdateSignalStatus();
+    }
+    
+    void HandleSystemError(const int error) {
+        m_state.isError = true;
+        m_state.errorCount++;
+        
+        string errorMsg = StringFormat(
+            "Erro do Sistema Institutional: %d\nContagem: %d\nÚltima Atualização: %s",
+            error,
+            m_state.errorCount,
+            TimeToString(m_state.lastUpdate)
+        );
+        
+        LogMessage(errorMsg, LOG_ERROR);
+        NotifyTeam(errorMsg);
+        
+        if(m_state.errorCount > MAX_ERROR_COUNT) {
+            EmergencyShutdown();
+        }
+    }
+    
+    void EmergencyShutdown() {
+        LogMessage("Iniciando desligamento de emergência", LOG_ERROR);
+        
+        // Salvar estado
+        SaveSystemState();
+        
+        // Notificar equipe
+        NotifyEmergencyShutdown();
+        
+        // Parar sistema
+        m_state.isRunning = false;
+    }
+};

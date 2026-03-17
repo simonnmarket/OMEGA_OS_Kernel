@@ -1,0 +1,54 @@
+{
+  "magic_number": 20251203,
+  "risk": {
+    "confidence_level": 0.95,
+    "lookback_window": 252,
+    "kill_switch_threshold": 0.15
+  },
+  "filters": {
+    "FOREX": {
+      "max_spread": 3,
+      "sessions": [
+        "LONDON",
+        "NY"
+      ],
+      "min_volume": 0.01,
+      "max_volume": 1.0
+    },
+    "CRYPTO": {
+      "max_spread": 100,
+      "sessions": [
+        "ALL"
+      ],
+      "min_volume": 0.01,
+      "max_volume": 0.5
+    },
+    "METALS": {
+      "max_spread": 50,
+      "sessions": [
+        "LONDON",
+        "NY"
+      ],
+      "min_volume": 0.01,
+      "max_volume": 0.1
+    }
+  },
+  "trading": {
+    "max_positions": 3,
+    "risk_per_trade": 0.02,
+    "default_timeframe": "M5",
+    "lookback_bars": 200
+  },
+  "symbols": {
+    "FOREX": [
+      "EURUSD",
+      "GBPUSD"
+    ],
+    "CRYPTO": [
+      "BTCUSD"
+    ],
+    "METALS": [
+      "XAUUSD"
+    ]
+  }
+}

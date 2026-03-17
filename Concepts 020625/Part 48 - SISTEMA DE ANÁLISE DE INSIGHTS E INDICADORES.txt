@@ -1,0 +1,406 @@
+//+------------------------------------------------------------------+
+//| Sistema de Análise de Insights e Indicadores                      |
+//+------------------------------------------------------------------+
+
+class CInsightsAndIndicatorsAnalyzer {
+private:
+    // Componentes principais
+    CTechnologyManager* m_tech_manager;
+    CTeamStructure* m_team_structure;
+    CQuantumLogger* m_logger;
+    
+    struct MarketInsights {
+        double trend_strength;
+        double reversal_probability;
+        double breakout_potential;
+        datetime last_analysis;
+    };
+
+    struct TradingSignals {
+        double entry_strength;
+        double exit_confidence;
+        double risk_reward_ratio;
+        int signal_count;
+    };
+
+    struct ProfitMetrics {
+        double success_rate;
+        double profit_factor;
+        double expected_return;
+        double risk_exposure;
+    };
+
+    MarketInsights m_insights;
+    TradingSignals m_signals;
+    ProfitMetrics m_profits;
+    
+    // Arrays para análise
+    double m_price_data[];
+    double m_volume_data[];
+    double m_indicator_data[];
+    
+    // Constantes
+    const double MIN_SIGNAL_STRENGTH = 0.75;
+    const double MIN_PROFIT_FACTOR = 1.5;
+    const int ANALYSIS_INTERVAL = 60; // 1 minuto
+
+public:
+    CInsightsAndIndicatorsAnalyzer(
+        CTechnologyManager* tech_manager,
+        CTeamStructure* team_structure,
+        CQuantumLogger* logger
+    ) : m_tech_manager(tech_manager),
+        m_team_structure(team_structure),
+        m_logger(logger) {
+        Initialize();
+    }
+
+    bool Initialize() {
+        if(!ValidateComponents()) {
+            m_logger.Log("Failed to validate insights analyzer components", LOG_ERROR, "InsightsAnalyzer");
+            return false;
+        }
+
+        InitializeAnalyzer();
+        return true;
+    }
+
+    bool AnalyzeMarket() {
+        // Verificar necessidade de análise
+        if(!NeedsAnalysis()) return true;
+
+        // Coletar dados de mercado
+        if(!CollectMarketData()) return false;
+
+        // Gerar insights
+        if(!GenerateInsights()) return false;
+
+        // Identificar sinais de trading
+        if(!IdentifySignals()) return false;
+
+        // Calcular métricas de profit
+        if(!CalculateProfitMetrics()) return false;
+
+        // Atualizar e distribuir resultados
+        return UpdateAndDistributeResults();
+    }
+
+private:
+    bool ValidateComponents() {
+        if(m_tech_manager == NULL || 
+           m_team_structure == NULL || 
+           m_logger == NULL) {
+            return false;
+        }
+        return true;
+    }
+
+    void InitializeAnalyzer() {
+        // Inicializar insights de mercado
+        m_insights.trend_strength = 0.0;
+        m_insights.reversal_probability = 0.0;
+        m_insights.breakout_potential = 0.0;
+        m_insights.last_analysis = TimeCurrent();
+
+        // Inicializar sinais de trading
+        m_signals.entry_strength = 0.0;
+        m_signals.exit_confidence = 0.0;
+        m_signals.risk_reward_ratio = 0.0;
+        m_signals.signal_count = 0;
+
+        // Inicializar métricas de profit
+        m_profits.success_rate = 0.0;
+        m_profits.profit_factor = 0.0;
+        m_profits.expected_return = 0.0;
+        m_profits.risk_exposure = 0.0;
+
+        // Inicializar arrays de dados
+        ArrayResize(m_price_data, 1000);
+        ArrayResize(m_volume_data, 1000);
+        ArrayResize(m_indicator_data, 1000);
+    }
+
+    bool NeedsAnalysis() {
+        return (TimeCurrent() - m_insights.last_analysis >= ANALYSIS_INTERVAL);
+    }
+
+    bool CollectMarketData() {
+        // Coletar dados de preço
+        if(!CollectPriceData()) return false;
+
+        // Coletar dados de volume
+        if(!CollectVolumeData()) return false;
+
+        // Coletar dados de indicadores
+        return CollectIndicatorData();
+    }
+
+    bool CollectPriceData() {
+        for(int i = 0; i < 1000; i++) {
+            m_price_data[i] = iClose(Symbol(), PERIOD_CURRENT, i);
+        }
+        return true;
+    }
+
+    bool CollectVolumeData() {
+        for(int i = 0; i < 1000; i++) {
+            m_volume_data[i] = iVolume(Symbol(), PERIOD_CURRENT, i);
+        }
+        return true;
+    }
+
+    bool CollectIndicatorData() {
+        // Implementar coleta de dados de indicadores específicos
+        return true; // Placeholder
+    }
+
+    bool GenerateInsights() {
+        // Analisar força da tendência
+        m_insights.trend_strength = AnalyzeTrendStrength();
+        
+        // Analisar probabilidade de reversão
+        m_insights.reversal_probability = AnalyzeReversalProbability();
+        
+        // Analisar potencial de breakout
+        m_insights.breakout_potential = AnalyzeBreakoutPotential();
+
+        return ValidateInsights();
+    }
+
+    double AnalyzeTrendStrength() {
+        double strength = 0.0;
+        
+        // Análise de tendência usando múltiplos timeframes
+        double trend_m1 = CalculateTrendStrength(PERIOD_M1);
+        double trend_m5 = CalculateTrendStrength(PERIOD_M5);
+        double trend_m15 = CalculateTrendStrength(PERIOD_M15);
+        
+        strength = (trend_m1 * 0.2 + trend_m5 * 0.3 + trend_m15 * 0.5);
+        
+        return strength;
+    }
+
+    double CalculateTrendStrength(ENUM_TIMEFRAMES timeframe) {
+        // Implementar cálculo de força da tendência
+        return 0.85; // Placeholder
+    }
+
+    double AnalyzeReversalProbability() {
+        // Análise de divergências
+        double rsi_divergence = AnalyzeRSIDivergence();
+        double volume_divergence = AnalyzeVolumeDivergence();
+        double price_action = AnalyzePriceAction();
+        
+        return (rsi_divergence * 0.4 + 
+                volume_divergence * 0.3 + 
+                price_action * 0.3);
+    }
+
+    double AnalyzeRSIDivergence() {
+        // Implementar análise de divergência RSI
+        return 0.75; // Placeholder
+    }
+
+    double AnalyzeVolumeDivergence() {
+        // Implementar análise de divergência de volume
+        return 0.80; // Placeholder
+    }
+
+    double AnalyzePriceAction() {
+        // Implementar análise de price action
+        return 0.85; // Placeholder
+    }
+
+    double AnalyzeBreakoutPotential() {
+        // Análise de níveis importantes
+        double support_resistance = AnalyzeSupportResistance();
+        double volume_pressure = AnalyzeVolumePressure();
+        double volatility = AnalyzeVolatility();
+        
+        return (support_resistance * 0.4 + 
+                volume_pressure * 0.3 + 
+                volatility * 0.3);
+    }
+
+    bool ValidateInsights() {
+        if(m_insights.trend_strength < MIN_SIGNAL_STRENGTH) {
+            LogInsightWarning("Trend strength below threshold");
+            return false;
+        }
+
+        return true;
+    }
+
+    bool IdentifySignals() {
+        // Identificar força do sinal de entrada
+        m_signals.entry_strength = CalculateEntryStrength();
+        
+        // Identificar confiança do sinal de saída
+        m_signals.exit_confidence = CalculateExitConfidence();
+        
+        // Calcular razão risco/retorno
+        m_signals.risk_reward_ratio = CalculateRiskRewardRatio();
+        
+        // Contar sinais ativos
+        m_signals.signal_count = CountActiveSignals();
+
+        return ValidateSignals();
+    }
+
+    double CalculateEntryStrength() {
+        return (m_insights.trend_strength * 0.4 +
+                (1.0 - m_insights.reversal_probability) * 0.3 +
+                m_insights.breakout_potential * 0.3);
+    }
+
+    double CalculateExitConfidence() {
+        // Implementar cálculo de confiança de saída
+        return 0.85; // Placeholder
+    }
+
+    double CalculateRiskRewardRatio() {
+        // Implementar cálculo de razão risco/retorno
+        return 2.5; // Placeholder
+    }
+
+    int CountActiveSignals() {
+        int count = 0;
+        
+        if(m_signals.entry_strength >= MIN_SIGNAL_STRENGTH) count++;
+        if(m_signals.exit_confidence >= MIN_SIGNAL_STRENGTH) count++;
+        if(m_signals.risk_reward_ratio >= MIN_PROFIT_FACTOR) count++;
+        
+        return count;
+    }
+
+    bool ValidateSignals() {
+        if(m_signals.entry_strength < MIN_SIGNAL_STRENGTH) {
+            LogSignalWarning("Entry signal strength below threshold");
+            return false;
+        }
+
+        return true;
+    }
+
+    bool CalculateProfitMetrics() {
+        // Calcular taxa de sucesso
+        m_profits.success_rate = CalculateSuccessRate();
+        
+        // Calcular fator de lucro
+        m_profits.profit_factor = CalculateProfitFactor();
+        
+        // Calcular retorno esperado
+        m_profits.expected_return = CalculateExpectedReturn();
+        
+        // Calcular exposição ao risco
+        m_profits.risk_exposure = CalculateRiskExposure();
+
+        return ValidateProfitMetrics();
+    }
+
+    double CalculateSuccessRate() {
+        return (m_signals.entry_strength * 0.4 +
+                m_signals.exit_confidence * 0.3 +
+                (m_signals.risk_reward_ratio / 3.0) * 0.3);
+    }
+
+    double CalculateProfitFactor() {
+        return m_signals.risk_reward_ratio * m_profits.success_rate;
+    }
+
+    double CalculateExpectedReturn() {
+        return (m_profits.profit_factor - 1.0) * 
+               m_profits.success_rate * 100.0;
+    }
+
+    double CalculateRiskExposure() {
+        return (1.0 - m_profits.success_rate) * 
+               (1.0 / m_signals.risk_reward_ratio) * 100.0;
+    }
+
+    bool ValidateProfitMetrics() {
+        if(m_profits.profit_factor < MIN_PROFIT_FACTOR) {
+            LogProfitWarning("Profit factor below threshold");
+            return false;
+        }
+
+        return true;
+    }
+
+    bool UpdateAndDistributeResults() {
+        // Atualizar timestamp
+        m_insights.last_analysis = TimeCurrent();
+
+        // Distribuir resultados
+        if(!DistributeInsights()) return false;
+        if(!DistributeSignals()) return false;
+        if(!DistributeProfitMetrics()) return false;
+
+        // Log dos resultados
+        LogAnalysisResults();
+
+        return true;
+    }
+
+    bool DistributeInsights() {
+        // Implementar distribuição de insights
+        return true; // Placeholder
+    }
+
+    bool DistributeSignals() {
+        // Implementar distribuição de sinais
+        return true; // Placeholder
+    }
+
+    bool DistributeProfitMetrics() {
+        // Implementar distribuição de métricas
+        return true; // Placeholder
+    }
+
+    void LogInsightWarning(string message) {
+        m_logger.Log(message, LOG_WARNING, "InsightsAnalyzer");
+    }
+
+    void LogSignalWarning(string message) {
+        m_logger.Log(message, LOG_WARNING, "SignalsAnalyzer");
+    }
+
+    void LogProfitWarning(string message) {
+        m_logger.Log(message, LOG_WARNING, "ProfitAnalyzer");
+    }
+
+    void LogAnalysisResults() {
+        m_logger.Log(
+            StringFormat(
+                "Market Analysis Results:\n" +
+                "Market Insights:\n" +
+                "- Trend Strength: %.2f%%\n" +
+                "- Reversal Probability: %.2f%%\n" +
+                "- Breakout Potential: %.2f%%\n" +
+                "Trading Signals:\n" +
+                "- Entry Strength: %.2f%%\n" +
+                "- Exit Confidence: %.2f%%\n" +
+                "- Risk/Reward: %.2f\n" +
+                "- Active Signals: %d\n" +
+                "Profit Metrics:\n" +
+                "- Success Rate: %.2f%%\n" +
+                "- Profit Factor: %.2f\n" +
+                "- Expected Return: %.2f%%\n" +
+                "- Risk Exposure: %.2f%%",
+                m_insights.trend_strength * 100,
+                m_insights.reversal_probability * 100,
+                m_insights.breakout_potential * 100,
+                m_signals.entry_strength * 100,
+                m_signals.exit_confidence * 100,
+                m_signals.risk_reward_ratio,
+                m_signals.signal_count,
+                m_profits.success_rate * 100,
+                m_profits.profit_factor,
+                m_profits.expected_return,
+                m_profits.risk_exposure
+            ),
+            LOG_INFO,
+            "InsightsAnalyzer"
+        );
+    }
+};

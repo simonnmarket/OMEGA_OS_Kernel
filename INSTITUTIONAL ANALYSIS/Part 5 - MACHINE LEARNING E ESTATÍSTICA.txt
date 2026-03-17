@@ -1,0 +1,165 @@
+//+------------------------------------------------------------------+
+//| Institutional Analysis - Parte 5                                   |
+//|                                                                    |
+//| OBJETIVO: Implementar machine learning e análise estatística com:  |
+//| - Previsão de Movimentos                                          |
+//| - Análise Estatística                                             |
+//| - Otimização de Parâmetros                                        |
+//| - Integração com TechnologyAdvances ML                            |
+//+------------------------------------------------------------------+
+
+private:
+    // Estruturas de ML e Estatística
+    struct InstitutionalML {
+        // Machine Learning
+        struct MLSystem {
+            double features[];         // Features para ML
+            double predictions[];      // Previsões
+            double probabilities[];    // Probabilidades
+            double confidence[];       // Confiança
+            bool isValid;             // Validação
+        } ml;
+        
+        // Análise Estatística
+        struct Statistics {
+            double mean;              // Média
+            double stdDev;            // Desvio padrão
+            double skewness;          // Assimetria
+            double kurtosis;          // Curtose
+            double correlation;       // Correlação
+            bool isNormal;           // Distribuição normal
+        } stats;
+        
+        // Otimização
+        struct Optimization {
+            double parameters[];      // Parâmetros
+            double results[];         // Resultados
+            double bestFitness;      // Melhor fitness
+            int generations;         // Gerações
+            bool isOptimized;        // Estado otimizado
+        } optimization;
+    } m_mlSystem;
+    
+    void ProcessMachineLearning() {
+        if(!ValidateMLData()) return;
+        
+        // Preparar features
+        PrepareMLFeatures();
+        
+        // Executar previsões
+        ExecutePredictions();
+        
+        // Analisar estatísticas
+        AnalyzeStatistics();
+        
+        // Otimizar parâmetros
+        OptimizeParameters();
+    }
+    
+    void PrepareMLFeatures() {
+        ArrayResize(m_mlSystem.ml.features, 10);
+        
+        // Features de Volume
+        m_mlSystem.ml.features[0] = GetVolumeFeature();
+        m_mlSystem.ml.features[1] = GetDeltaFeature();
+        
+        // Features de Preço
+        m_mlSystem.ml.features[2] = GetPriceFeature();
+        m_mlSystem.ml.features[3] = GetVolatilityFeature();
+        
+        // Features Institucionais
+        m_mlSystem.ml.features[4] = GetInstitutionalFeature();
+        m_mlSystem.ml.features[5] = GetLiquidityFeature();
+        
+        // Features Técnicas
+        m_mlSystem.ml.features[6] = GetTechnicalFeature();
+        m_mlSystem.ml.features[7] = GetMomentumFeature();
+        
+        // Features de Mercado
+        m_mlSystem.ml.features[8] = GetMarketFeature();
+        m_mlSystem.ml.features[9] = GetSentimentFeature();
+    }
+    
+    void ExecutePredictions() {
+        // Obter previsão do TechnologyAdvances
+        MLPrediction prediction;
+        prediction.features = m_mlSystem.ml.features;
+        prediction.timestamp = TimeCurrent();
+        
+        if(m_techManager.GetMLPrediction(prediction)) {
+            ProcessMLPrediction(prediction);
+        }
+    }
+    
+    void ProcessMLPrediction(const MLPrediction &prediction) {
+        // Atualizar arrays
+        int index = ArraySize(m_mlSystem.ml.predictions);
+        ArrayResize(m_mlSystem.ml.predictions, index + 1);
+        ArrayResize(m_mlSystem.ml.probabilities, index + 1);
+        ArrayResize(m_mlSystem.ml.confidence, index + 1);
+        
+        // Armazenar resultados
+        m_mlSystem.ml.predictions[index] = prediction.value;
+        m_mlSystem.ml.probabilities[index] = prediction.probability;
+        m_mlSystem.ml.confidence[index] = prediction.confidence;
+        
+        // Validar previsão
+        m_mlSystem.ml.isValid = ValidateMLPrediction(prediction);
+        
+        // Gerar sinal se confiável
+        if(prediction.confidence > 0.85) {
+            CreateMLSignal(prediction);
+        }
+    }
+    
+    void AnalyzeStatistics() {
+        // Calcular estatísticas
+        m_mlSystem.stats.mean = CalculateMean();
+        m_mlSystem.stats.stdDev = CalculateStdDev();
+        m_mlSystem.stats.skewness = CalculateSkewness();
+        m_mlSystem.stats.kurtosis = CalculateKurtosis();
+        m_mlSystem.stats.correlation = CalculateCorrelation();
+        
+        // Testar normalidade
+        m_mlSystem.stats.isNormal = TestNormality();
+        
+        // Atualizar TechnologyAdvances
+        UpdateStatisticalMetrics();
+    }
+    
+    void OptimizeParameters() {
+        if(!NeedsOptimization()) return;
+        
+        // Configurar otimização
+        ConfigureOptimization();
+        
+        // Executar otimização
+        for(int gen = 0; gen < m_mlSystem.optimization.generations; gen++) {
+            RunOptimizationGeneration(gen);
+        }
+        
+        // Aplicar melhores parâmetros
+        ApplyOptimalParameters();
+        
+        // Atualizar estado
+        m_mlSystem.optimization.isOptimized = true;
+    }
+    
+    void CreateMLSignal(const MLPrediction &prediction) {
+        InsightSignal signal;
+        signal.type = SIGNAL_ML_INSTITUTIONAL;
+        signal.direction = prediction.value > 0 ? SIGNAL_BUY : SIGNAL_SELL;
+        signal.strength = prediction.probability;
+        signal.confidence = prediction.confidence;
+        signal.timestamp = TimeCurrent();
+        signal.description = FormatMLSignal(prediction);
+        
+        // Adicionar sinal
+        if(ValidateMLSignal(signal)) {
+            AddSignal(signal);
+            
+            // Notificar via TechnologyAdvances
+            m_techManager.ProcessMLSignal(signal);
+        }
+    }
+};

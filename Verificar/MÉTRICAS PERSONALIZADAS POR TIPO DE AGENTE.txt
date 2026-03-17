@@ -1,0 +1,54 @@
+# agent_specific_metrics.py
+"""
+Métricas específicas para diferentes tipos de agentes
+"""
+class AnalysisAgentMetrics:
+    """Métricas específicas para agentes de análise"""
+    
+    def __init__(self, agent_name: str):
+        self.pattern_recognition = Gauge(
+            f'{agent_name}_pattern_recognition_score',
+            'Pattern recognition accuracy score',
+            ['pattern_type']
+        )
+        
+        self.prediction_accuracy = Histogram(
+            f'{agent_name}_prediction_accuracy',
+            'Prediction accuracy distribution',
+            ['horizon'],
+            buckets=[0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+        )
+
+class ExecutionAgentMetrics:
+    """Métricas específicas para agentes de execução"""
+    
+    def __init__(self, agent_name: str):
+        self.order_fill_rate = Gauge(
+            f'{agent_name}_order_fill_rate',
+            'Order fill rate percentage',
+            ['order_type']
+        )
+        
+        self.slippage_control = Histogram(
+            f'{agent_name}_slippage_control',
+            'Slippage control performance',
+            ['market_condition'],
+            buckets=[0.0001, 0.0005, 0.001, 0.005, 0.01]
+        )
+
+class RiskAgentMetrics:
+    """Métricas específicas para agentes de risco"""
+    
+    def __init__(self, agent_name: str):
+        self.risk_detection = Gauge(
+            f'{agent_name}_risk_detection_score',
+            'Risk detection accuracy',
+            ['risk_type']
+        )
+        
+        self.exposure_control = Histogram(
+            f'{agent_name}_exposure_control',
+            'Exposure control effectiveness',
+            ['portfolio_segment'],
+            buckets=[0.1, 0.2, 0.3, 0.4, 0.5]
+        )

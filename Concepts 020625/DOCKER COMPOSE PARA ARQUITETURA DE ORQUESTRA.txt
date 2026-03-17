@@ -1,0 +1,136 @@
+# docker-compose-orchestra.yml
+version: '3.8'
+
+services:
+  # Núcleo Maestro
+  maestro-core:
+    build:
+      context: .
+      dockerfile: Dockerfile.maestro
+    ports:
+      - "9091:9091"  # Métricas Prometheus
+      - "8080:8080"  # API de orquestração
+    environment:
+      - PROMETHEUS_ENABLED=true
+      - METRICS_PORT=9091
+      - ORCHESTRATION_MODE=TIER-0
+    networks:
+      - orchestra-network
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+
+  # Agentes Especializados
+  agent-alpha:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    environment:
+      - AGENT_NAME=alpha
+      - AGENT_TYPE=analysis
+      - MAESTRO_URL=maestro-core:8080
+    networks:
+      - orchestra-network
+    depends_on:
+      - maestro-core
+
+  agent-beta:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    environment:
+      - AGENT_NAME=beta
+      - AGENT_TYPE=execution
+      - MAESTRO_URL=maestro-core:8080
+    networks:
+      - orchestra-network
+    depends_on:
+      - maestro-core
+
+  agent-gamma:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    environment:
+      - AGENT_NAME=gamma
+      - AGENT_TYPE=risk
+      - MAESTRO_URL=maestro-core:8080
+    networks:
+      - orchestra-network
+    depends_on:
+      - maestro-core
+
+  # Sistemas de Filtro
+  filter-precision:
+    build:
+      context: .
+      dockerfile: Dockerfile.filter
+    environment:
+      - FILTER_NAME=precision
+      - FILTER_TYPE=quality
+      - MAESTRO_URL=maestro-core:8080
+    networks:
+      - orchestra-network
+    depends_on:
+      - maestro-core
+
+  filter-velocity:
+    build:
+      context: .
+      dockerfile: Dockerfile.filter
+    environment:
+      - FILTER_NAME=velocity
+      - FILTER_TYPE=speed
+      - MAESTRO_URL=maestro-core:8080
+    networks:
+      - orchestra-network
+    depends_on:
+      - maestro-core
+
+  # Sistemas de Calibração
+  calibration-main:
+    build:
+      context: .
+      dockerfile: Dockerfile.calibration
+    environment:
+      - CALIBRATION_NAME=main
+      - MAESTRO_URL=maestro-core:8080
+    networks:
+      - orchestra-network
+    depends_on:
+      - maestro-core
+
+  # Prometheus com configuração de orquestra
+  prometheus-orchestra:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./orchestra-prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./orchestra-alerts/:/etc/prometheus/alerts/
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.enable-lifecycle'
+    networks:
+      - orchestra-network
+
+  # Grafana com dashboards de orquestra
+  grafana-orchestra:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./orchestra-dashboards/:/var/lib/grafana/dashboards/
+    networks:
+      - orchestra-network
+    depends_on:
+      - prometheus-orchestra
+
+networks:
+  orchestra-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24

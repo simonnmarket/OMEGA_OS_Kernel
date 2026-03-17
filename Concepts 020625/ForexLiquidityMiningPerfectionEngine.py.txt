@@ -1,0 +1,224 @@
+# ForexLiquidityMiningPerfectionEngine.py
+"""
+MOTOR DE ESTRATÉGIA: LIQUIDITY MINING FOREX PERFECTION
+BASEADO EM: S-FOREX-20240120-2300000001-lmf6j9d2_v7
+STATUS: ELEVADO À PERFEIÇÃO PELO CONSELHO PLENO V3.0
+DATA: 2024-01-20
+CHECKSUM: SHA3-256: u9l0...i8j5
+"""
+
+import numpy as np
+import mpmath as mp
+from decimal import Decimal, getcontext
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Any, Tuple
+import logging
+from collections import deque
+
+# Importa os motores centrais do sistema Numeia v3.0
+from NUMEIA_TRADING_SYSTEM_v3_0_PERFEICAO import (
+    TradingSignalPerfeito, TanakaKalmanEngine, RossiDynamicKellyEngine,
+    MarketMastersPerfectionEngine
+)
+
+getcontext().prec = 100
+
+@dataclass
+class OrderBookSnapshot:
+    """Instantâneo do livro de ofertas de uma venue."""
+    venue: str
+    pair: str
+    bids: List[Tuple[float, float]]  # (price, size)
+    asks: List[Tuple[float, float]]
+    timestamp: float
+
+class ForexLiquidityMiningPerfectionEngine:
+    """
+    MOTOR DE MINERAÇÃO DE LIQUIDEZ - FOREX
+    Uma fusão de previsão de fluxo de ordens, modelagem de risco de cointegração e execução atômica.
+    Síntese do Conselho Pleno aplicada à exploração de micro-ineficiências de preço.
+    """
+    def __init__(self):
+        self.strategy_id = "LIQUIDITY_MINING_PERFECTION"
+        
+        # Instancia os motores de perfeição necessários
+        self.tanaka_engine = TanakaKalmanEngine()
+        self.rossi_engine = RossiDynamicKellyEngine()
+        self.market_masters_engine = MarketMastersPerfectionEngine()
+        
+        # Universo de pares e venues
+        self.target_pairs = ['EUR/USD', 'GBP/USD', 'USD/JPY']
+        self.venues = ['EBS', 'Reuters', 'Currenex']
+        
+        # Parâmetros da estratégia validados pelo conselho
+        self.min_profit_threshold_pips = 1.0 # 1 pip
+        self.max_position_size_usd = 100000 # $100k
+        
+        # Estado do motor (Previsão de Fluxo de Ordens - Tanaka)
+        self.order_books = {venue: {pair: deque(maxlen=100) for pair in self.target_pairs} for venue in self.venues}
+        self.order_flow_predictors = {} # Um filtro de Kalman por par/venue
+
+        # Estado do motor (Risco de Cointegração - Rossi)
+        self.cointegration_models = {} # Modelo de cointegração por par
+        
+        logging.info(f"💧  Motor {self.strategy_id} inicializado com previsão de fluxo de ordens.")
+
+    def analyze_and_generate_signal(self, market_data: Dict, system_intentional_state: str) -> Optional[TradingSignalPerfeito]:
+        """
+        Analisa o mercado e gera um sinal de mineração de liquidez.
+        """
+        # 1. Verificação de Intenção (Dr. Hale)
+        if system_intentional_state != "SCAN_OPPORTUNITIES":
+            return None
+
+        # 2. Atualização dos Livros de Ofertas (simulação)
+        self._update_order_books(market_data)
+        
+        # 3. Detecção de Oportunidades
+        best_opportunity = self._detect_cross_venue_opportunity()
+        
+        if not best_opportunity:
+            return None
+
+        # 4. Geração do Sinal Perfeito
+        action = "BUY" if best_opportunity['direction'] == 'long' else "SELL"
+        confidence = Decimal(str(min(best_opportunity['confidence'], 0.95)))
+        risk_score = Decimal('0.35') # Risco inerente à alta frequência
+
+        signal = TradingSignalPerfeito(
+            strategy_id=self.strategy_id,
+            asset=best_opportunity['pair'],
+            action=action,
+            confidence=confidence,
+            risk_score=risk_score,
+            timestamp=int(time.time() * 1e6),
+            hale_intentional_state=system_intentional_state,
+            # Metadados da perfeição
+            tanaka_kalman_state=best_opportunity.get('kalman_state'),
+            # Metadados específicos da estratégia
+            metadata={
+                'buy_venue': best_opportunity['buy_venue'],
+                'sell_venue': best_opportunity['sell_venue'],
+                'buy_price': best_opportunity['buy_price'],
+                'sell_price': best_opportunity['sell_price'],
+                'expected_profit_pips': best_opportunity['expected_profit_pips'],
+                'spread_pips': best_opportunity['spread_pips'],
+                'execution_plan_hash': self._create_execution_plan_hash(best_opportunity)
+            }
+        )
+        
+        logging.info(f"✅ [{self.strategy_id}] Oportunidade de liquidez detectada. Confiança: {confidence:.2f}.")
+        return signal
+
+    def _update_order_books(self, market_data: Dict):
+        """Atualiza o estado dos livros de ofertas (simulação)."""
+        # Em um sistema real, isso se conectaria aos feeds de dados das venues
+        for venue in self.venues:
+            for pair in self.target_pairs:
+                # Simula um novo snapshot do livro de ofertas
+                mid_price = np.random.uniform(1.08, 1.09) # Simulação para EUR/USD
+                spread = np.random.uniform(0.5, 2.0) * 0.0001 # 0.5 a 2 pips
+                snapshot = OrderBookSnapshot(
+                    venue=venue,
+                    pair=pair,
+                    bids=[(mid_price - spread/2, np.random.uniform(50000, 100000))],
+                    asks=[(mid_price + spread/2, np.random.uniform(50000, 100000))],
+                    timestamp=time.time()
+                )
+                self.order_books[venue][pair].append(snapshot)
+
+    def _detect_cross_venue_opportunity(self) -> Optional[Dict]:
+        """Detecta a melhor oportunidade de arbitragem cross-venue."""
+        best_opportunity = None
+        best_score = -1
+
+        for pair in self.target_pairs:
+            # Encontra o melhor ask (compra) e melhor bid (venda) em todas as venues
+            best_ask = self._find_best_ask_across_venues(pair)
+            best_bid = self._find_best_bid_across_venues(pair)
+
+            if not best_ask or not best_bid or best_ask['venue'] == best_bid['venue']:
+                continue
+
+            # Calcula o lucro teórico
+            gross_profit = best_bid['price'] - best_ask['price']
+            
+            # Verificação de Risco de Cointegração (Rossi)
+            if not self._is_cointegration_risk_acceptable(pair, best_ask['venue'], best_bid['venue']):
+                continue
+
+            # Previsão de Fluxo de Ordens (Tanaka)
+            # (Simplificado: aqui usamos a profundidade como proxy)
+            buy_pressure = best_ask['asks'][0][1] if best_ask['asks'] else 0
+            sell_pressure = best_bid['bids'][0][1] if best_bid['bids'] else 0
+            
+            # Score da oportunidade
+            opportunity_score = gross_profit * 10000 * (buy_pressure + sell_pressure) / 200000
+
+            if opportunity_score > best_score:
+                best_score = opportunity_score
+                best_opportunity = {
+                    'pair': pair,
+                    'buy_venue': best_ask['venue'],
+                    'sell_venue': best_bid['venue'],
+                    'buy_price': best_ask['price'],
+                    'sell_price': best_bid['price'],
+                    'direction': 'long',
+                    'expected_profit_pips': gross_profit * 10000,
+                    'spread_pips': (best_bid['price'] - best_ask['price']) * 10000,
+                    'confidence': min(opportunity_score / 5.0, 0.95)
+                }
+        
+        return best_opportunity
+
+    def _find_best_ask_across_venues(self, pair: str) -> Optional[Dict]:
+        """Encontra o melhor preço de ask (compra) para um par em todas as venues."""
+        best_ask = None
+        for venue in self.venues:
+            book = self.order_books[venue].get(pair)
+            if book and book:
+                snapshot = book[-1]
+                if snapshot and snapshot.asks:
+                    current_ask = snapshot.asks[0]
+                    if best_ask is None or current_ask[0] < best_ask['price']:
+                        best_ask = {'venue': venue, 'price': current_ask[0], 'size': current_ask[1]}
+        return best_ask
+
+    def _find_best_bid_across_venues(self, pair: str) -> Optional[Dict]:
+        """Encontra o melhor preço de bid (venda) para um par em todas as venues."""
+        best_bid = None
+        for venue in self.venues:
+            book = self.order_books[venue].get(pair)
+            if book and book:
+                snapshot = book[-1]
+                if snapshot and snapshot.bids:
+                    current_bid = snapshot.bids[0]
+                    if best_bid is None or current_bid[0] > best_bid['price']:
+                        best_bid = {'venue': venue, 'price': current_bid[0], 'size': current_bid[1]}
+        return best_bid
+
+    def _is_cointegration_risk_acceptable(self, pair: str, venue1: str, venue2: str) -> bool:
+        """Verifica se o desvio de preço entre venues é um risco aceitável (Rossi)."""
+        # Simplificação: assume que o risco é aceitável se houver liquidez suficiente
+        # Em um sistema real, testaríamos a cointegração dos preços das duas venues
+        return True
+
+    def _create_execution_plan_hash(self, opportunity: Dict) -> str:
+        """Cria um hash para o plano de execução atômica (Leblanc)."""
+        plan_str = f"{opportunity['pair']}:{opportunity['buy_venue']}:{opportunity['sell_venue']}:{time.time_ns()}"
+        return hashlib.sha3_256(plan_str.encode()).hexdigest()
+
+# Função de demonstração
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    engine = ForexLiquidityMiningPerfectionEngine()
+    
+    # Dados de mercado simulados
+    market_data = {'liquidity': {}} # Preenchido pelo _update_order_books
+    
+    # Simula múltiplos ciclos para atualizar os livros
+    for _ in range(10):
+        signal = engine.analyze_and_generate_signal(market_data, system_intentional_state="SCAN_OPPORTUNITIES")
+        if signal:
+            print(f"Sinal Gerado: {signal.asset} - Ação: {signal.action} - Lucro: {signal.metadata['expected_profit_pips']:.1f} pips")
+            break

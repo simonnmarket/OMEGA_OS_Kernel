@@ -1,0 +1,171 @@
+//+------------------------------------------------------------------+
+//| Institutional Analysis - Parte 2                                   |
+//|                                                                    |
+//| OBJETIVO: Implementar Smart Money Concepts com:                    |
+//| - Detecção de Zonas Institucionais                               |
+//| - Análise de Acumulação/Distribuição                             |
+//| - Padrões Smart Money                                             |
+//| - Integração com TechnologyAdvances                               |
+//+------------------------------------------------------------------+
+
+private:
+    // Estruturas Smart Money
+    struct SmartMoneyAnalyzer {
+        // Zonas Institucionais
+        struct Zones {
+            double entryLevels[];        // Níveis de entrada
+            double exitLevels[];         // Níveis de saída
+            double stopLevels[];         // Níveis de stop
+            datetime validUntil[];       // Validade das zonas
+            double strength[];           // Força das zonas
+        } zones;
+        
+        // Padrões
+        struct Patterns {
+            bool isAccumulation;         // Padrão de acumulação
+            bool isDistribution;         // Padrão de distribuição
+            bool isManipulation;         // Padrão de manipulação
+            bool isFakeout;             // Falso rompimento
+            double confidence;           // Confiança do padrão
+        } patterns;
+        
+        // Estado
+        struct State {
+            ENUM_MARKET_STATE marketState;  // Estado do mercado
+            double orderFlow;               // Fluxo de ordens
+            double volumeDelta;             // Delta de volume
+            bool isValid;                   // Validação
+        } state;
+    } m_smartMoney;
+    
+    void AnalyzeSmartMoney() {
+        if(!ValidateSmartMoneyData()) return;
+        
+        // Detectar zonas
+        DetectInstitutionalZones();
+        
+        // Analisar padrões
+        AnalyzeSmartMoneyPatterns();
+        
+        // Validar estado
+        ValidateSmartMoneyState();
+        
+        // Processar sinais
+        ProcessSmartMoneySignals();
+    }
+    
+    void DetectInstitutionalZones() {
+        // Limpar zonas antigas
+        ClearExpiredZones();
+        
+        // Detectar novas zonas
+        for(int i = 0; i < 100; i++) {
+            if(IsInstitutionalZone(i)) {
+                AddInstitutionalZone(i);
+            }
+        }
+        
+        // Validar zonas
+        ValidateZones();
+    }
+    
+    bool IsInstitutionalZone(const int shift) {
+        // Verificar volume institucional
+        if(!HasInstitutionalVolume(shift)) return false;
+        
+        // Verificar absorção
+        if(!HasSignificantAbsorption(shift)) return false;
+        
+        // Verificar padrão de preço
+        if(!HasPricePattern(shift)) return false;
+        
+        return true;
+    }
+    
+    void AddInstitutionalZone(const int shift) {
+        // Determinar tipo de zona
+        ENUM_ZONE_TYPE zoneType = DetermineZoneType(shift);
+        
+        // Calcular níveis
+        double zoneHigh = CalculateZoneHigh(shift);
+        double zoneLow = CalculateZoneLow(shift);
+        double zoneStrength = CalculateZoneStrength(shift);
+        
+        // Adicionar zona
+        int index = ArraySize(m_smartMoney.zones.entryLevels);
+        ArrayResize(m_smartMoney.zones.entryLevels, index + 1);
+        ArrayResize(m_smartMoney.zones.exitLevels, index + 1);
+        ArrayResize(m_smartMoney.zones.stopLevels, index + 1);
+        ArrayResize(m_smartMoney.zones.validUntil, index + 1);
+        ArrayResize(m_smartMoney.zones.strength, index + 1);
+        
+        // Configurar zona
+        ConfigureZone(index, zoneType, zoneHigh, zoneLow, zoneStrength);
+    }
+    
+    void AnalyzeSmartMoneyPatterns() {
+        // Reset padrões
+        ResetPatterns();
+        
+        // Detectar acumulação
+        if(IsAccumulationPattern()) {
+            ProcessAccumulation();
+        }
+        
+        // Detectar distribuição
+        if(IsDistributionPattern()) {
+            ProcessDistribution();
+        }
+        
+        // Detectar manipulação
+        if(IsManipulationPattern()) {
+            ProcessManipulation();
+        }
+        
+        // Calcular confiança
+        CalculatePatternConfidence();
+    }
+    
+    void ProcessAccumulation() {
+        m_smartMoney.patterns.isAccumulation = true;
+        
+        // Criar sinal
+        if(ValidateAccumulation()) {
+            CreateAccumulationSignal();
+        }
+        
+        // Atualizar métricas
+        UpdateAccumulationMetrics();
+        
+        // Notificar TechnologyAdvances
+        NotifyAccumulation();
+    }
+    
+    void CreateAccumulationSignal() {
+        InsightSignal signal;
+        signal.type = SIGNAL_ACCUMULATION;
+        signal.price = SymbolInfoDouble(_Symbol, SYMBOL_BID);
+        signal.strength = m_smartMoney.patterns.confidence;
+        signal.timestamp = TimeCurrent();
+        signal.description = "Smart Money Accumulation";
+        
+        // Adicionar sinal
+        AddSignal(signal);
+        
+        // Notificar via TechnologyAdvances
+        m_techManager.ProcessSmartMoneySignal(signal);
+    }
+    
+    void ValidateSmartMoneyState() {
+        // Atualizar estado
+        m_smartMoney.state.marketState = DetermineMarketState();
+        m_smartMoney.state.orderFlow = CalculateOrderFlow();
+        m_smartMoney.state.volumeDelta = CalculateVolumeDelta();
+        
+        // Validar estado
+        m_smartMoney.state.isValid = 
+            ValidateMarketState() && 
+            ValidateOrderFlow() && 
+            ValidateVolumeDelta();
+    }
+};
