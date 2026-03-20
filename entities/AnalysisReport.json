@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AnalysisReport",
+  "description": "Schema unificado V3 — OMEGA/AMI. Ref: OMEGA-AMI-V3-2026-0320",
+  "type": "object",
+  "required": ["asset", "timeframe", "status", "created_at", "checksum"],
+  "properties": {
+    "asset":             { "type": "string", "description": "Símbolo do ativo (ex: XAUUSD)" },
+    "timeframe":         { "type": "string", "description": "Timeframe analisado (ex: H1, D1)" },
+    "status":            { "type": "string", "enum": ["PENDING", "COMPLETED", "FAILED"] },
+    "created_at":        { "type": "string", "format": "date-time" },
+    "updated_at":        { "type": "string", "format": "date-time" },
+    "agent_version":     { "type": "string", "default": "ami_analyzer_v3.0" },
+    "omega_integration": { "type": "boolean", "default": false },
+    "checksum":          { "type": "string", "description": "SHA3-256 do JSON de output completo" },
+    "report_json":       { "type": "string", "description": "JSON serializado do relatório (compatibilidade UI)" },
+    "report_markdown":   { "type": "string", "description": "Markdown do relatório para exibição (compatibilidade UI)" },
+    "checksum_sources": {
+      "type": "object",
+      "properties": {
+        "linha":  { "type": "string", "description": "SHA3-256 do CSV de linha" },
+        "candle": { "type": "string", "description": "SHA3-256 do CSV de candle" }
+      }
+    },
+    "engines": {
+      "type": "object",
+      "description": "Resultados dos motores analíticos OMEGA",
+      "properties": {
+        "harmonic": {
+          "type": "object",
+          "description": "Output do Motor Harmônico V3",
+          "properties": {
+            "metrics": {
+              "type": "object",
+              "properties": {
+                "34_stats": {
+                  "type": "object",
+                  "properties": {
+                    "total_touches": { "type": "integer" },
+                    "hits":          { "type": "integer" },
+                    "breaks":        { "type": "integer" },
+                    "hit_rate":      { "type": "number" },
+                    "break_rate":    { "type": "number" }
+                  }
+                },
+                "134_stats": {
+                  "type": "object",
+                  "properties": {
+                    "total_touches": { "type": "integer" },
+                    "hits":          { "type": "integer" },
+                    "breaks":        { "type": "integer" },
+                    "hit_rate":      { "type": "number" },
+                    "break_rate":    { "type": "number" }
+                  }
+                }
+              }
+            },
+            "events": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp":      { "type": "string" },
+                  "level":          { "type": "string", "enum": ["34", "134"] },
+                  "price_touch":    { "type": "number" },
+                  "harm_value":     { "type": "number" },
+                  "accel_hz":       { "type": "number" },
+                  "wyckoff_ratio":  { "type": "number" },
+                  "outcome":        { "type": "string", "enum": ["HIT/DEFESA", "BREAK/RUPTURA", "NEUTRO"] },
+                  "future_delta":   { "type": "number" },
+                  "lookahead_used": { "type": "integer" }
+                },
+                "required": ["timestamp", "level", "price_touch", "outcome"]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

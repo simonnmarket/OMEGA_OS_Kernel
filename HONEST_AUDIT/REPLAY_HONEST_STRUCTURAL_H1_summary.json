@@ -1,0 +1,31 @@
+[
+  {
+    "file": "REPLAY_HONEST_STRUCTURAL_H1.csv",
+    "sha256": "242bf94477304659486d1205904d4d54652198e86d08a644fa0a56bfc818045a",
+    "symbol": "ALL",
+    "fx_rate": 1.0,
+    "trades": 61,
+    "wins": 42,
+    "winrate_pct": 68.85,
+    "pnl": 2804.1899999999996,
+    "gross_pos": 4238.860000000001,
+    "gross_neg": -1434.67,
+    "pf": 2.954588860155994,
+    "churn_le_3s": 0,
+    "median_duration_s": 266400.0,
+    "mean_duration_s": 509901.6393442623,
+    "max_dd_abs": 295.10000000000036,
+    "max_dd_pct": 2.4874405745304995,
+    "equity_final": 12741.579999999998,
+    "cagr_est_pct": 2.57262398462923,
+    "start_ts": "2016-05-09 01:00:00",
+    "end_ts": "2026-02-17 20:00:00",
+    "reason_counts": {
+      "ALPHA_EJECT": 36,
+      "STOP_LOSS": 15,
+      "TAKE_PROFIT": 10
+    },
+    "fr_total": 0.13101466020490768,
+    "alerts": []
+  }
+]
