@@ -1,11 +1,42 @@
+# === OMEGA OS Kernel — .gitignore ===
+
+# Dados brutos OHLCV (muito grandes para git, manter local)
+OHLCV_DATA/
+grafico_linha/
+grafico_candle/
+
+# Artefatos de output grandes (>5MB) — manter em disco local
+audit/**/harmonic_events_*.json
+audit/**/harmonic_events_*.csv
+
+# Python cache
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+.Python
+
+# Logs de execução pesados
 *.log
-.DS_Store
-.idea/
+
+# Node / Frontend
+node_modules/
+dist/
+build/
+.next/
+
+# Ambientes
+.env
+.env.local
+.venv/
+venv/
+
+# IDE
+.cursor/
 .vscode/
-*.png
-*.csv
-# OHLCV_DATA/ # Keeping this if user wants exact replicability, but usually too big
-# OMEGA_INTELLIGENCE_OS/ # Check if this is part of the core
+*.suo
+*.user
+
+# OS
+Thumbs.db
+.DS_Store

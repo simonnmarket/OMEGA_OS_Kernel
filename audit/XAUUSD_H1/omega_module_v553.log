@@ -1,0 +1,4 @@
+2026-03-20 18:43:02,949 | ERROR | omega_module_v553 | ❌ INTEGRIDADE COMPROMETIDA: Checksum inválido: esperado a3f8c2d1e9b4f7a2, calculado 20c75b792222fe8b
+2026-03-20 18:46:01,562 | INFO | omega_module_v553 | ✅ DCECalibratedPriceEngine inicializado | Checksum válido: 20c75b792222fe8b
+2026-03-20 18:46:01,615 | WARNING | omega_module_v553 | ⚠️ Aumentando n_simulations para 4000 (não convergiu)
+2026-03-20 18:46:01,676 | INFO | omega_module_v553 | ✅ Módulo V5.5.3 validado (teste rápido).

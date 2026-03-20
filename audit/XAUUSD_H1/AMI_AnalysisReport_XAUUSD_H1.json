@@ -1,0 +1,60 @@
+{
+  "mission_id": "AMI-XAUUSD-H1-20260320",
+  "asset": "XAUUSD",
+  "timeframe": "H1",
+  "period_start": "2017-01-01T00:00:00Z",
+  "period_end": "2026-03-20T18:46:00Z",
+  "data_points": 50000,
+  "status": "COMPLETED",
+  "created_at": "2026-03-20T17:46:37.574967+00:00",
+  "updated_at": "2026-03-20T17:46:37.574967+00:00",
+  "agent_version": "ami_analyzer_v3.0",
+  "omega_integration": false,
+  "confidence_score": 87.4,
+  "mach_number": 1.13,
+  "dominant_cycle": "34H",
+  "flutter_risk": "medium",
+  "trajectory_phase": "descending",
+  "checksum_sources": {
+    "linha": "c5e47c15392ebf2238b59798ead88040870588f0f366baa73f4ee32f4d10219a",
+    "candle": "7aef6d5ca7e624686479467561bf1c43c58da74d4bab3f03284fb34f37d9b8b8"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 24262,
+          "hits": 24253,
+          "breaks": 9,
+          "hit_rate": 99.96,
+          "break_rate": 0.04
+        },
+        "134_stats": {
+          "total_touches": 24152,
+          "hits": 24148,
+          "breaks": 4,
+          "hit_rate": 99.98,
+          "break_rate": 0.02
+        }
+      },
+      "events": []
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "components": {
+        "P0_contribution": 42350.42,
+        "lambda_Q": 0.0011799999999999998,
+        "gamma_Q2": 0.00018350000000000002,
+        "delta_PBoc": 0.0
+      },
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "checksum": "4cf6292d1f3c8255bfb8e208b2f2be0c5a1d98c986bc4df6322a877ddc6113a2"
+}
