@@ -1,0 +1,114 @@
+{
+  "generated": "2026-03-20T20:04:20.362766+00:00",
+  "skips": [
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "tier": "T3",
+      "hit_rate_134": 78.69,
+      "mach": 1.0,
+      "margin_used": 1757.2,
+      "skip": true,
+      "skip_reasons": [
+        "hit_rate_134=78.69% < 80.0%"
+      ]
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "tier": "T3",
+      "hit_rate_134": 67.59,
+      "mach": 1.0,
+      "margin_used": 3210.5,
+      "skip": true,
+      "skip_reasons": [
+        "hit_rate_134=67.59% < 80.0%"
+      ]
+    },
+    {
+      "asset": "US100",
+      "timeframe": "H4",
+      "tier": "T3",
+      "hit_rate_134": 68.63,
+      "mach": 1.0,
+      "margin_used": 452.8,
+      "skip": true,
+      "skip_reasons": [
+        "hit_rate_134=68.63% < 80.0%"
+      ]
+    },
+    {
+      "asset": "US30",
+      "timeframe": "H4",
+      "tier": "T3",
+      "hit_rate_134": 67.55,
+      "mach": 1.0,
+      "margin_used": 773.6,
+      "skip": true,
+      "skip_reasons": [
+        "hit_rate_134=67.55% < 80.0%"
+      ]
+    },
+    {
+      "asset": "GER40",
+      "timeframe": "H4",
+      "tier": "T3",
+      "hit_rate_134": 75.6,
+      "mach": 1.0,
+      "margin_used": 548.0,
+      "skip": true,
+      "skip_reasons": [
+        "hit_rate_134=75.60% < 80.0%"
+      ]
+    },
+    {
+      "asset": "HK50",
+      "timeframe": "H1",
+      "tier": "T3",
+      "hit_rate_134": 79.15,
+      "mach": 1.0,
+      "margin_used": 329.8,
+      "skip": true,
+      "skip_reasons": [
+        "hit_rate_134=79.15% < 80.0%"
+      ]
+    },
+    {
+      "asset": "HK50",
+      "timeframe": "H4",
+      "tier": "T3",
+      "hit_rate_134": 65.55,
+      "mach": 1.0,
+      "margin_used": 567.0,
+      "skip": true,
+      "skip_reasons": [
+        "hit_rate_134=65.55% < 80.0%"
+      ]
+    },
+    {
+      "asset": "EURUSD",
+      "timeframe": "H1",
+      "tier": "T2",
+      "hit_rate_134": 100.0,
+      "mach": 1.0,
+      "margin_used": 150.0,
+      "skip": true,
+      "skip_reasons": [
+        "EURUSD: grafico_linha ausente — aguardando dados"
+      ]
+    },
+    {
+      "asset": "EURUSD",
+      "timeframe": "H4",
+      "tier": "T2",
+      "hit_rate_134": 100.0,
+      "mach": 1.0,
+      "margin_used": 150.0,
+      "skip": true,
+      "skip_reasons": [
+        "EURUSD: grafico_linha ausente — aguardando dados"
+      ]
+    }
+  ],
+  "checksum": "6da329fd19893324532bdf903fbcc17d0e0b7576318f008443d7ccfcf0eecb06"
+}

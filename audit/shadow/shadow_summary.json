@@ -1,0 +1,173 @@
+{
+  "mode": "shadow",
+  "generated": "2026-03-20T20:04:20.364486+00:00",
+  "total": 20,
+  "completed": 11,
+  "failed": 0,
+  "skipped": 9,
+  "kill_switch": false,
+  "log_file": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\audit\\shadow\\shadow_loop_20260320_200239.log",
+  "results": [
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H1",
+      "status": "MONITOR",
+      "hit_rate_134": 99.98,
+      "margin_used": 150.0,
+      "checksum": "71a97b23b258656e0d18779b10f123d41305d1309090e8a1234b17558c9a1c3d"
+    },
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H4",
+      "status": "MONITOR",
+      "hit_rate_134": 99.97,
+      "margin_used": 203.9,
+      "checksum": "e1a2385271515bb79bf98f2b083952c44251205435df55b651e125bfc866f55a"
+    },
+    {
+      "asset": "GBPUSD",
+      "timeframe": "H1",
+      "status": "MONITOR",
+      "hit_rate_134": 100.0,
+      "margin_used": 150.0,
+      "checksum": "cd6eae265a4a1b4f26237ab5af8a55f946ec83accd711239647ad2cf84d4fcf9"
+    },
+    {
+      "asset": "GBPUSD",
+      "timeframe": "H4",
+      "status": "MONITOR",
+      "hit_rate_134": 100.0,
+      "margin_used": 150.0,
+      "checksum": "bd2f21b8d08f3fed8afdcce1d12586e694b5832fc9c026a5feac64b86b0b2212"
+    },
+    {
+      "asset": "USDJPY",
+      "timeframe": "H1",
+      "status": "MONITOR",
+      "hit_rate_134": 100.0,
+      "margin_used": 150.0,
+      "checksum": "cbad421e6eef1a936172f21e560e2be5ce4657f855b47a86771f45bc9e12e693"
+    },
+    {
+      "asset": "USDJPY",
+      "timeframe": "H4",
+      "status": "MONITOR",
+      "hit_rate_134": 100.0,
+      "margin_used": 150.0,
+      "checksum": "fa9eae65cd440e095799c5cea0dfeb8ae206418a390eaa151b4207f3dba76a23"
+    },
+    {
+      "asset": "AUDUSD",
+      "timeframe": "H1",
+      "status": "MONITOR",
+      "hit_rate_134": 100.0,
+      "margin_used": 150.0,
+      "checksum": "7c0b4aeec7392b460eb95b094110338d73a96a4a92023f5cf78cc10e19f9b8e0"
+    },
+    {
+      "asset": "AUDUSD",
+      "timeframe": "H4",
+      "status": "MONITOR",
+      "hit_rate_134": 100.0,
+      "margin_used": 150.0,
+      "checksum": "c178ecd7aa911de341f3435f1a92f5c32bf2f6e6f542d58251bcadbc896390ea"
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "SKIP",
+      "reasons": [
+        "hit_rate_134=78.69% < 80.0%"
+      ]
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "status": "SKIP",
+      "reasons": [
+        "hit_rate_134=67.59% < 80.0%"
+      ]
+    },
+    {
+      "asset": "US100",
+      "timeframe": "H1",
+      "status": "MONITOR",
+      "hit_rate_134": 98.15,
+      "margin_used": 304.4,
+      "checksum": "871326ed2ef950a51b4114613057e843169517ab49aeb43311188fea0235a2b9"
+    },
+    {
+      "asset": "US100",
+      "timeframe": "H4",
+      "status": "SKIP",
+      "reasons": [
+        "hit_rate_134=68.63% < 80.0%"
+      ]
+    },
+    {
+      "asset": "US30",
+      "timeframe": "H1",
+      "status": "MONITOR",
+      "hit_rate_134": 98.65,
+      "margin_used": 541.1,
+      "checksum": "e2d3edd40899107558712a9c2cc706a6db2f9caa4a3bebcb094e656b832359c2"
+    },
+    {
+      "asset": "US30",
+      "timeframe": "H4",
+      "status": "SKIP",
+      "reasons": [
+        "hit_rate_134=67.55% < 80.0%"
+      ]
+    },
+    {
+      "asset": "GER40",
+      "timeframe": "H1",
+      "status": "MONITOR",
+      "hit_rate_134": 99.32,
+      "margin_used": 412.3,
+      "checksum": "c37a79172ef29f890bc7786d538f0b6b9612c7fc4456a4557313b6ce680b5c63"
+    },
+    {
+      "asset": "GER40",
+      "timeframe": "H4",
+      "status": "SKIP",
+      "reasons": [
+        "hit_rate_134=75.60% < 80.0%"
+      ]
+    },
+    {
+      "asset": "HK50",
+      "timeframe": "H1",
+      "status": "SKIP",
+      "reasons": [
+        "hit_rate_134=79.15% < 80.0%"
+      ]
+    },
+    {
+      "asset": "HK50",
+      "timeframe": "H4",
+      "status": "SKIP",
+      "reasons": [
+        "hit_rate_134=65.55% < 80.0%"
+      ]
+    },
+    {
+      "asset": "EURUSD",
+      "timeframe": "H1",
+      "status": "SKIP",
+      "reasons": [
+        "EURUSD: grafico_linha ausente — aguardando dados"
+      ]
+    },
+    {
+      "asset": "EURUSD",
+      "timeframe": "H4",
+      "status": "SKIP",
+      "reasons": [
+        "EURUSD: grafico_linha ausente — aguardando dados"
+      ]
+    }
+  ],
+  "checksum": "2f489f7a723649529f0ea8708a3e0f4e3f16b43183b2a036413c9e44497e31ca"
+}

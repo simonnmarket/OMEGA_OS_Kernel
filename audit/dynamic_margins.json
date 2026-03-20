@@ -1,0 +1,115 @@
+{
+  "generated": "2026-03-20T20:57:42+01:00",
+  "atr_ref_XAUUSD_H1": 58.7,
+  "margins": {
+    "XAUUSD": {
+      "D1": {
+        "atr14": 162.2107,
+        "margin_dynamic": 414.5
+      },
+      "H4": {
+        "atr14": 79.785,
+        "margin_dynamic": 203.9
+      },
+      "H1": {
+        "atr14": 58.7,
+        "margin_dynamic": 150.0
+      },
+      "M15": {
+        "atr14": 21.1379,
+        "margin_dynamic": 54.0
+      }
+    },
+    "BTCUSD": {
+      "D1": {
+        "atr14": 2683.5657,
+        "margin_dynamic": 6857.5
+      },
+      "H4": {
+        "atr14": 1256.3907,
+        "margin_dynamic": 3210.5
+      },
+      "H1": {
+        "atr14": 687.6379,
+        "margin_dynamic": 1757.2
+      },
+      "M15": {
+        "atr14": 325.7021,
+        "margin_dynamic": 832.3
+      }
+    },
+    "US100": {
+      "D1": {
+        "atr14": 538.7536,
+        "margin_dynamic": 1376.7
+      },
+      "H4": {
+        "atr14": 177.2036,
+        "margin_dynamic": 452.8
+      },
+      "H1": {
+        "atr14": 119.1143,
+        "margin_dynamic": 304.4
+      },
+      "M15": {
+        "atr14": 78.5821,
+        "margin_dynamic": 200.8
+      }
+    },
+    "US30": {
+      "D1": {
+        "atr14": 935.7714,
+        "margin_dynamic": 2391.2
+      },
+      "H4": {
+        "atr14": 302.7214,
+        "margin_dynamic": 773.6
+      },
+      "H1": {
+        "atr14": 211.7321,
+        "margin_dynamic": 541.1
+      },
+      "M15": {
+        "atr14": 142.2679,
+        "margin_dynamic": 363.5
+      }
+    },
+    "GER40": {
+      "D1": {
+        "atr14": 646.4071,
+        "margin_dynamic": 1651.8
+      },
+      "H4": {
+        "atr14": 214.4464,
+        "margin_dynamic": 548.0
+      },
+      "H1": {
+        "atr14": 161.3429,
+        "margin_dynamic": 412.3
+      },
+      "M15": {
+        "atr14": 88.2857,
+        "margin_dynamic": 225.6
+      }
+    },
+    "HK50": {
+      "D1": {
+        "atr14": 658.25,
+        "margin_dynamic": 1682.1
+      },
+      "H4": {
+        "atr14": 221.9036,
+        "margin_dynamic": 567.0
+      },
+      "H1": {
+        "atr14": 129.0786,
+        "margin_dynamic": 329.8
+      },
+      "M15": {
+        "atr14": 57.4286,
+        "margin_dynamic": 146.8
+      }
+    }
+  },
+  "checksum": "49b15c96bc5831582752f748f4b98762c2e967841923cfa203200cf60e0e2ce8"
+}
