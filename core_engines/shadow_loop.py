@@ -63,14 +63,15 @@ MACH_MAX     = 1.5
 # ─── Retcodes MT5 ────────────────────────────────────────────────────────────
 RETCODE_OK   = {10009, 10010}   # DONE, PLACED
 RETCODE_WARN = {10004}          # REQUOTE — logar mas não falhar
-RETCODE_FAIL = {10006, 10007, 10013, 10016, 10019, 10030}
+RETCODE_FAIL = {10006, 10007, 10013, 10016, 10018, 10019, 10030}
 
 RETCODE_DESC = {
     10004: "REQUOTE",       10006: "REJECT",
     10007: "CANCEL",        10009: "DONE",
     10010: "PLACED",        10013: "INVALID_REQUEST",
-    10016: "INVALID_STOPS", 10019: "NO_MONEY",
-    10030: "LIMIT_ORDERS",  10014: "TOO_MANY_REQ",
+    10016: "INVALID_STOPS", 10018: "NO_MONEY",
+    10019: "NO_CHANGES",    10030: "LIMIT_ORDERS",
+    10014: "TOO_MANY_REQ",
 }
 
 # ─── Logging ─────────────────────────────────────────────────────────────────
@@ -307,14 +308,48 @@ def check_guardrails(asset: str, tf: str, hr: float,
             "skip": len(reasons) > 0, "skip_reasons": reasons}
 
 
-# ─── Position Sizing ─────────────────────────────────────────────────────────
-def calc_lot(equity: float, margin_pts: float, price: float) -> Dict:
-    risk_usd  = equity * RISK_PER_TRADE_PCT
-    stop_pts  = 2.0 * margin_pts
-    pt_val    = price / 10_000.0 if price > 1000 else price / 100.0
-    lot       = max(0.01, round(risk_usd / max(stop_pts * pt_val, 0.001), 2))
-    return {"lot": lot, "risk_usd": round(risk_usd, 2),
-            "stop_pts": stop_pts, "pt_value": round(pt_val, 6)}
+# ─── Position Sizing (MT5 contract-aware) ─────────────────────────────────────
+def calc_lot(equity: float, margin_pts: float, asset: str) -> Dict:
+    """
+    Calcula lote com base no contrato real do MT5.
+    Risco máximo: equity × 0.25%
+    Stop: 2 × margin_pts
+    Lote mínimo: 0.01
+    """
+    import MetaTrader5 as mt5
+    sym  = mt5.symbol_info(asset)
+    tick = mt5.symbol_info_tick(asset)
+
+    if sym is None or tick is None:
+        return {"lot": 0.01, "risk_usd": equity * RISK_PER_TRADE_PCT,
+                "stop_pts": margin_pts * 2, "error": "symbol_info_none"}
+
+    price         = tick.ask
+    point         = sym.point
+    contract_size = sym.trade_contract_size   # ex: 100 (GBPUSD), 100 (XAUUSD)
+    digit         = sym.digits
+
+    # Valor de 1 pip = point × contract_size × price_in_USD_per_unit
+    # Para forex simples: pip_value = point × contract_size
+    # Para XAUUSD: pip_value = point × contract_size (em USD já)
+    pip_value_per_lot = point * contract_size
+
+    risk_usd = equity * RISK_PER_TRADE_PCT
+    stop_pts = 2.0 * margin_pts
+    lot_raw  = risk_usd / max(stop_pts * pip_value_per_lot, 0.0001)
+    lot      = max(0.01, round(lot_raw, 2))
+    # Não exceder 0.5 lot por segurança em paper demo
+    lot      = min(lot, 0.50)
+
+    return {
+        "lot":            lot,
+        "risk_usd":       round(risk_usd, 2),
+        "stop_pts":       stop_pts,
+        "pip_value_lot":  round(pip_value_per_lot, 6),
+        "contract_size":  contract_size,
+        "price_at_calc":  price,
+    }
+
 
 
 # ─── Build AnalysisReport ───────────────────────────────────────────────────
@@ -488,9 +523,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
 
                 if not guard["skip"] and mode == "paper" and mt5_connected:
                     import MetaTrader5 as mt5
-                    tick     = mt5.symbol_info_tick(asset)
-                    price_mt = tick.ask if tick else price_d.get("price", 2000.0)
-                    lot_info = calc_lot(equity, guard["margin_used"], price_mt)
+                    lot_info = calc_lot(equity, guard["margin_used"], asset)
                     exec_result = mt5_send_order(
                         asset, tf, lot_info["lot"],
                         sl_pts=guard["margin_used"] * 2,
