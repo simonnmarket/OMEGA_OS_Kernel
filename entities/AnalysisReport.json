@@ -1,25 +1,48 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "AnalysisReport",
-  "description": "Schema unificado V3 — OMEGA/AMI. Ref: OMEGA-AMI-V3-2026-0320",
+  "description": "Schema unificado V3 — OMEGA/AMI. Ref: OMEGA-AMI-V3-2026-0320. Integra motores harmônico V3 + DCE Price Engine V5.5.3.",
   "type": "object",
   "required": ["asset", "timeframe", "status", "created_at", "checksum"],
   "properties": {
-    "asset":             { "type": "string", "description": "Símbolo do ativo (ex: XAUUSD)" },
-    "timeframe":         { "type": "string", "description": "Timeframe analisado (ex: H1, D1)" },
-    "status":            { "type": "string", "enum": ["PENDING", "COMPLETED", "FAILED"] },
+    "mission_id":        { "type": "string",  "description": "ID único da missão de análise" },
+    "asset":             { "type": "string",  "description": "Ativo analisado (ex: XAUUSD)" },
+    "timeframe":         { "type": "string",  "description": "Timeframe analisado (ex: H1, D1)" },
+    "period_start":      { "type": "string",  "description": "Início do período analisado (ISO8601)" },
+    "period_end":        { "type": "string",  "description": "Fim do período analisado (ISO8601)" },
+    "data_points":       { "type": "number",  "description": "Total de candles/barras processados" },
+    "status": {
+      "type": "string",
+      "enum": ["PENDING", "COMPLETED", "FAILED"],
+      "description": "Estado da análise — alinhado com CIO/CKO/CQO V3"
+    },
     "created_at":        { "type": "string", "format": "date-time" },
     "updated_at":        { "type": "string", "format": "date-time" },
     "agent_version":     { "type": "string", "default": "ami_analyzer_v3.0" },
     "omega_integration": { "type": "boolean", "default": false },
     "checksum":          { "type": "string", "description": "SHA3-256 do JSON de output completo" },
-    "report_json":       { "type": "string", "description": "JSON serializado do relatório (compatibilidade UI)" },
-    "report_markdown":   { "type": "string", "description": "Markdown do relatório para exibição (compatibilidade UI)" },
+    "report_json":       { "type": "string", "description": "JSON serializado do relatório (compatibilidade UI legacy)" },
+    "report_markdown":   { "type": "string", "description": "Markdown do relatório para exibição (compatibilidade UI legacy)" },
+    "confidence_score":  { "type": "number", "description": "Score de confiança estatística 0–100" },
+    "mach_number":       { "type": "number", "description": "Número de Mach do preço (Navier-Stokes)" },
+    "dominant_cycle":    { "type": "string", "description": "Ciclo dominante identificado (HHT)" },
+    "flutter_risk": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"],
+      "description": "Risco de flutter aeroelástico"
+    },
+    "trajectory_phase": {
+      "type": "string",
+      "enum": ["ascending", "apex", "descending"],
+      "description": "Fase da trajetória parabólica"
+    },
+    "notes":             { "type": "string", "description": "Observações adicionais do agente" },
     "checksum_sources": {
       "type": "object",
+      "description": "SHA3-256 dos arquivos de entrada usados pelos motores",
       "properties": {
-        "linha":  { "type": "string", "description": "SHA3-256 do CSV de linha" },
-        "candle": { "type": "string", "description": "SHA3-256 do CSV de candle" }
+        "linha":  { "type": "string" },
+        "candle": { "type": "string" }
       }
     },
     "engines": {
@@ -28,12 +51,12 @@
       "properties": {
         "harmonic": {
           "type": "object",
-          "description": "Output do Motor Harmônico V3",
+          "description": "Output do Motor Harmônico V3 (EMA 34/134 sobre linha pura)",
           "properties": {
             "metrics": {
               "type": "object",
               "properties": {
-                "34_stats": {
+                "34_stats":  {
                   "type": "object",
                   "properties": {
                     "total_touches": { "type": "integer" },
@@ -71,6 +94,33 @@
                   "lookahead_used": { "type": "integer" }
                 },
                 "required": ["timestamp", "level", "price_touch", "outcome"]
+              }
+            }
+          }
+        },
+        "price": {
+          "type": "object",
+          "description": "Output do DCE Price Engine V5.5.3 (omega_module_v553)",
+          "properties": {
+            "price":                   { "type": "number" },
+            "base_price":              { "type": "number" },
+            "flash_crash_adjustment":  { "type": "number" },
+            "components": {
+              "type": "object",
+              "properties": {
+                "P0_contribution": { "type": "number" },
+                "lambda_Q":        { "type": "number" },
+                "gamma_Q2":        { "type": "number" },
+                "delta_PBoc":      { "type": "number" }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "timestamp":        { "type": "string" },
+                "params_checksum":  { "type": "string" },
+                "rmse_expected":    { "type": "number" },
+                "r_squared":        { "type": "number" }
               }
             }
           }
