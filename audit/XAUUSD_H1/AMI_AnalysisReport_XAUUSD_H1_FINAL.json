@@ -1,0 +1,61 @@
+{
+  "mission_id": "AMI-XAUUSD-H1-20260320-FINAL",
+  "asset": "XAUUSD",
+  "timeframe": "H1",
+  "period_start": "2017-01-01T00:00:00Z",
+  "period_end": "2026-03-20T19:26:00Z",
+  "data_points": 50000,
+  "status": "COMPLETED",
+  "created_at": "2026-03-20T18:30:49.194613+00:00",
+  "updated_at": "2026-03-20T18:30:49.194613+00:00",
+  "agent_version": "ami_analyzer_v3.0",
+  "omega_integration": false,
+  "confidence_score": 87.4,
+  "mach_number": 1.13,
+  "dominant_cycle": "34H",
+  "flutter_risk": "medium",
+  "trajectory_phase": "descending",
+  "checksum_sources": {
+    "linha": "c5e47c15392ebf2238b59798ead88040870588f0f366baa73f4ee32f4d10219a",
+    "candle": "7aef6d5ca7e624686479467561bf1c43c58da74d4bab3f03284fb34f37d9b8b8"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 24262,
+          "hits": 24253,
+          "breaks": 9,
+          "hit_rate": 99.96,
+          "break_rate": 0.04
+        },
+        "134_stats": {
+          "total_touches": 24152,
+          "hits": 24148,
+          "breaks": 4,
+          "hit_rate": 99.98,
+          "break_rate": 0.02
+        }
+      }
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "components": {
+        "P0_contribution": 42350.42,
+        "lambda_Q": 0.0011799999999999998,
+        "gamma_Q2": 0.00018350000000000002,
+        "delta_PBoc": 0.0
+      },
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "checksum": "e6fb19e34ff653f7a7a86eed449709d24032b2e4a01c53b3f2a25ccd0874974a",
+  "report_json": "{\n  \"mission_id\": \"AMI-XAUUSD-H1-20260320-FINAL\",\n  \"asset\": \"XAUUSD\",\n  \"timeframe\": \"H1\",\n  \"period_start\": \"2017-01-01T00:00:00Z\",\n  \"period_end\": \"2026-03-20T19:26:00Z\",\n  \"data_points\": 50000,\n  \"status\": \"COMPLETED\",\n  \"created_at\": \"2026-03-20T18:30:49.194613+00:00\",\n  \"updated_at\": \"2026-03-20T18:30:49.194613+00:00\",\n  \"agent_version\": \"ami_analyzer_v3.0\",\n  \"omega_integration\": false,\n  \"confidence_score\": 87.4,\n  \"mach_number\": 1.13,\n  \"dominant_cycle\": \"34H\",\n  \"flutter_risk\": \"medium\",\n  \"trajectory_phase\": \"descending\",\n  \"checksum_sources\": {\n    \"linha\": \"c5e47c15392ebf2238b59798ead88040870588f0f366baa73f4ee32f4d10219a\",\n    \"candle\": \"7aef6d5ca7e624686479467561bf1c43c58da74d4bab3f03284fb34f37d9b8b8\"\n  },\n  \"engines\": {\n    \"harmonic\": {\n      \"metrics\": {\n        \"34_stats\": {\n          \"total_touches\": 24262,\n          \"hits\": 24253,\n          \"breaks\": 9,\n          \"hit_rate\": 99.96,\n          \"break_rate\": 0.04\n        },\n        \"134_stats\": {\n          \"total_touches\": 24152,\n          \"hits\": 24148,\n          \"breaks\": 4,\n          \"hit_rate\": 99.98,\n          \"break_rate\": 0.02\n        }\n      }\n    },\n    \"price\": {\n      \"price\": 42350.4333635,\n      \"base_price\": 42350.4213635,\n      \"flash_crash_adjustment\": 0.012,\n      \"components\": {\n        \"P0_contribution\": 42350.42,\n        \"lambda_Q\": 0.0011799999999999998,\n        \"gamma_Q2\": 0.00018350000000000002,\n        \"delta_PBoc\": 0.0\n      },\n      \"metadata\": {\n        \"params_checksum\": \"20c75b792222fe8b\",\n        \"rmse_expected\": 0.0031,\n        \"r_squared\": 0.9876\n      }\n    }\n  },\n  \"checksum\": \"e6fb19e34ff653f7a7a86eed449709d24032b2e4a01c53b3f2a25ccd0874974a\"\n}",
+  "report_markdown": "# AMI Mission Report — AMI-XAUUSD-H1-20260320-FINAL\n**Asset:** XAUUSD | **Timeframe:** H1 | **Status:** COMPLETED\n**Period:** 2017-01-01T00:00:00Z → 2026-03-20T19:26:00Z\n**Data Points:** 50,000 | **Agent:** ami_analyzer_v3.0\n**Generated:** 2026-03-20T18:30:49.194613+00:00\n\n---\n\n## Motor 1 — HHT / Ciclos Harmônicos\n\n| Nível   | Toques  | HIT    | BREAK | Hit Rate   |\n|---------|---------|--------|-------|------------|\n| EMA-34  | 24,262 | 24,253 | 9 | **99.96%** |\n| EMA-134 | 24,152 | 24,148 | 4 | **99.98%** |\n\n**Ciclo dominante:** 34H\n**Frequências:** Fibonacci 34 (nó áureo: 21×φ≈34) e 134 (phase-shift institucional)\n\n---\n\n## Motor 2 — Navier-Stokes / Mach Number\n**Mach Number:** 1.13\n- Mach < 1.0 → regime subsônico (estável)\n- Mach 1.0–1.2 → regime transônico (monitorar)\n- Mach > 1.2 → wave breaking (alerta)\n\n**Diagnóstico:** Mach 1.13 — regime transônico controlado.\n\n---\n\n## Motor 3 — Flutter Aeroelástico\n**Risco:** MEDIUM\n\n| Nível    | Descrição |\n|----------|-----------|\n| low      | Sem ressonância detectada |\n| medium   | Ressonância moderada — monitorar |\n| high     | Ressonância elevada — reduzir exposição |\n| critical | Abort Mission recomendado |\n\n**Diagnóstico:** Flutter medium — monitorar ressonância nas próximas 8 barras.\n\n---\n\n## Motor 4 — Trajetória Parabólica\n**Fase:** DESCENDING\n- ascending → segunda derivada positiva (momentum crescente)\n- apex → curvatura invertendo (ponto crítico)\n- descending → segunda derivada negativa (momentum decrescente)\n\n---\n\n## DCE Price Engine V5.5.3\n\n| Campo               | Valor        |\n|---------------------|--------------|\n| Preço calibrado     | 42350.4334 |\n| Preço base (P0)     | 42350.4214 |\n| Flash crash adj     | 0.012000 |\n| R² (calibração)     | 0.9876 |\n| RMSE out-of-sample  | 0.0031 |\n| Params checksum     | 20c75b792222fe8b |\n\n---\n\n## Veredicto Final\n\n**Status:** `COMPLETED`\n**Confidence Score:** 87.4%\n**Flutter Risk:** MEDIUM\n**Trajectory Phase:** DESCENDING\n\n**SHA3-256 deste relatório:** `e6fb19e34ff653f7a7a86eed449709d24032b2e4a01c53b3f2a25ccd0874974a`\n\n---\n*OMEGA Intelligence OS — ami_analyzer_v3.0 — Sem integração ao loop principal nesta fase.*\n"
+}
