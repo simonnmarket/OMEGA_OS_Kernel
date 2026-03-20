@@ -1,0 +1,59 @@
+{
+  "mode": "paper",
+  "generated": "2026-03-20T20:25:55.791701+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 3,
+  "kill_switch": false,
+  "ks_reason": "",
+  "daily_pnl_usd": 0.26,
+  "online_stats": {
+    "total_signals": 3,
+    "monitor": 3,
+    "skipped": 0,
+    "avg_hit_rate_134": 99.9833,
+    "total_pnl_usd": 0.26,
+    "avg_slippage_pts": 2.233,
+    "avg_latency_ms": 43.8,
+    "max_latency_ms": 63.1
+  },
+  "results": [
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H1",
+      "status": "PAPER_EXECUTE",
+      "hit_rate_134": 99.98,
+      "ic_95": "[99.9574%, 99.9936%]",
+      "margin_used": 150.0,
+      "lot": 0.02,
+      "pnl_usd": 0.27,
+      "slippage_pts": 2.56,
+      "checksum": "86894d5d11054cd064a4aa80"
+    },
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H4",
+      "status": "PAPER_EXECUTE",
+      "hit_rate_134": 99.97,
+      "ic_95": "[99.9006%, 99.9925%]",
+      "margin_used": 203.9,
+      "lot": 0.01,
+      "pnl_usd": 0.46,
+      "slippage_pts": 3.32,
+      "checksum": "72d67ebb29d6ec97a520b451"
+    },
+    {
+      "asset": "GBPUSD",
+      "timeframe": "H1",
+      "status": "PAPER_EXECUTE",
+      "hit_rate_134": 100.0,
+      "ic_95": "[99.9811%, 100.0000%]",
+      "margin_used": 150.0,
+      "lot": 0.02,
+      "pnl_usd": -0.47,
+      "slippage_pts": 0.82,
+      "checksum": "fa45c2c4e809a655ccb39717"
+    }
+  ],
+  "log_file": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\audit\\paper\\paper_loop_20260320_202525.log",
+  "checksum": "90d1a79ee129ce84798fe7c6a8f8120c75aa656f489e29d8aab62c673f57b4fd"
+}

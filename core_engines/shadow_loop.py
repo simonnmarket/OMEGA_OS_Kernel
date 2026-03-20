@@ -1,15 +1,23 @@
 #!/usr/bin/env python3
 """
-OMEGA SHADOW/PAPER LOOP ENGINE
-OMEGA Intelligence OS | nebular-kuiper\core_engines\shadow_loop.py
+OMEGA SHADOW / PAPER LOOP ENGINE v2.0
+nebular-kuiper\core_engines\shadow_loop.py
 
-Modo SHADOW  : gera sinais, loga, NÃO envia ordens.
-Modo PAPER   : envia ordens demo (lote 0.01) com kill switch.
-Kill switch  : DD diário >= 5% OU 3 falhas consecutivas.
+SHADOW : gera sinais, loga, NÃO envia ordens.
+PAPER  : simula execução demo (quanto ficaria a posição, slippage estimado,
+         PnL teórico). Sem MT5 real — integrar broker API na fase live.
+
+Kill switch  : DD diário ≥ 5% OU 3 falhas consecutivas.
+Risco/trade  : ≤ 0,25% da equity (default 10.000 USD demo).
+Max posições : 3 simultâneas.
 
 Uso:
-  python shadow_loop.py --mode shadow --ativos XAUUSD GBPUSD --timeframes H1
-  python shadow_loop.py --mode paper  --ativos XAUUSD --timeframes H1 H4
+  # Shadow (sem ordens):
+  python shadow_loop.py --mode shadow --ativos XAUUSD GBPUSD --timeframes H1 H4
+
+  # Paper (simula execução demo):
+  python shadow_loop.py --mode paper --ativos XAUUSD GBPUSD USDJPY AUDUSD AUDJPY \
+                         ETHUSD US500 SOLUSD DOGUSD --timeframes H1 H4
 """
 
 import argparse
@@ -17,22 +25,50 @@ import hashlib
 import json
 import logging
 import os
+import random
 import subprocess
 import sys
+import time
 import traceback
 from datetime import datetime, timezone
-from pathlib import Path
 from math import sqrt
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 # ─── Caminhos ───────────────────────────────────────────────────────────────
-ROOT = Path(__file__).resolve().parent.parent
-CORE = Path(__file__).resolve().parent
-OHLCV = Path(r"C:\OMEGA_PROJETO\OHLCV_DATA")
-SHADOW_AUDIT = ROOT / "audit" / "shadow"
-SHADOW_AUDIT.mkdir(parents=True, exist_ok=True)
+ROOT        = Path(__file__).resolve().parent.parent
+CORE        = Path(__file__).resolve().parent
+OHLCV       = Path(r"C:\OMEGA_PROJETO\OHLCV_DATA")
+AUDIT_PAPER = ROOT / "audit" / "paper"
+AUDIT_PAPER.mkdir(parents=True, exist_ok=True)
 
-# ─── Logging duplo (stdout + arquivo) ───────────────────────────────────────
-log_file = SHADOW_AUDIT / f"shadow_loop_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.log"
+# ─── Configuração de Risco ───────────────────────────────────────────────────
+DEMO_EQUITY_USD    = 10_000.0   # Conta demo de referência
+RISK_PER_TRADE_PCT = 0.0025     # 0,25% da equity por trade
+MAX_POSITIONS      = 3          # Máximo de posições simultâneas
+DD_DAILY_MAX       = 0.05       # 5% drawdown diário → kill switch
+MAX_CONSEC_FAIL    = 3          # 3 falhas → kill switch
+
+# ─── Guardrails ─────────────────────────────────────────────────────────────
+TIER1_ASSETS = {
+    "XAUUSD", "GBPUSD", "USDJPY", "AUDUSD", "AUDJPY",
+    "ETHUSD", "US500",  "SOLUSD", "DOGUSD",
+}
+HIT_RATE_MIN = 80.0
+MACH_MAX     = 1.5
+
+# ─── Slippage típico por classe de ativo (em pontos) ────────────────────────
+SLIPPAGE_MAP = {
+    "XAUUSD": (1.5, 4.0),   "EURUSD": (0.5, 1.5),   "GBPUSD": (0.5, 2.0),
+    "USDJPY": (0.3, 1.0),   "AUDUSD": (0.5, 2.0),   "AUDJPY": (0.5, 2.0),
+    "ETHUSD": (2.0, 8.0),   "BTCUSD": (5.0, 20.0),  "US500":  (0.3, 1.0),
+    "US100":  (0.5, 2.0),   "SOLUSD": (1.0, 4.0),   "DOGUSD": (0.1, 0.5),
+    "GER40":  (0.5, 2.0),   "HK50":   (1.0, 4.0),   "US30":   (0.5, 2.0),
+}
+
+# ─── Logging ────────────────────────────────────────────────────────────────
+ts_str   = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+log_file = AUDIT_PAPER / f"paper_loop_{ts_str}.log"
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s",
@@ -41,20 +77,26 @@ logging.basicConfig(
         logging.StreamHandler(),
     ],
 )
-log = logging.getLogger("SHADOW")
+log = logging.getLogger("PAPER")
 
-# ─── Guardrails ─────────────────────────────────────────────────────────────
-TIER1_ASSETS = {
-    "XAUUSD", "GBPUSD", "USDJPY", "AUDUSD", "AUDJPY",
-    "ETHUSD", "US500", "SOLUSD", "DOGUSD",
-}
-HIT_RATE_MIN = 80.0      # % — abaixo disso: skip
-MACH_MAX     = 1.5       # Mach > 1.5: skip
-DD_DAILY_MAX = 0.05      # 5% drawdown diário: kill switch
-MAX_CONSEC_FAIL = 3      # 3 falhas consecutivas: kill switch
 
-# ─── Margens dinâmicas (carregadas do JSON gerado pelo ATR) ─────────────────
-def load_dynamic_margins():
+# ─── SHA3-256 ────────────────────────────────────────────────────────────────
+def sha3(data: bytes) -> str:
+    return hashlib.sha3_256(data).hexdigest()
+
+
+# ─── Wilson IC ────────────────────────────────────────────────────────────────
+def wilson_ic(k: int, n: int, z: float = 1.96) -> Tuple[float, float]:
+    if n == 0: return 0.0, 1.0
+    p = k / n
+    d = 1 + z**2 / n
+    c = (p + z**2 / (2 * n)) / d
+    m = z * sqrt(p * (1 - p) / n + z**2 / (4 * n**2)) / d
+    return max(0.0, c - m), min(1.0, c + m)
+
+
+# ─── Carregar margens dinâmicas ───────────────────────────────────────────────
+def load_dynamic_margins() -> dict:
     p = ROOT / "audit" / "dynamic_margins.json"
     if p.exists():
         with open(p, encoding="utf-8") as f:
@@ -62,273 +104,441 @@ def load_dynamic_margins():
         return data.get("margins", {})
     return {}
 
-# ─── Guardrails — verificar se pode operar ─────────────────────────────────
-def check_guardrails(asset: str, timeframe: str,
+
+# ─── Guardrail Check ─────────────────────────────────────────────────────────
+def check_guardrails(asset: str, tf: str,
                      hit_rate_134: float, mach: float,
                      dynamic_margins: dict) -> dict:
     reasons = []
+    tier = "T1" if asset in TIER1_ASSETS else ("T2" if hit_rate_134 >= HIT_RATE_MIN else "T3")
 
-    if asset in TIER1_ASSETS:
-        tier = "T1"
-    elif hit_rate_134 >= HIT_RATE_MIN:
-        tier = "T2"
-    else:
-        tier = "T3"
+    if hit_rate_134 < HIT_RATE_MIN:
         reasons.append(f"hit_rate_134={hit_rate_134:.2f}% < {HIT_RATE_MIN}%")
-
     if mach > MACH_MAX:
         reasons.append(f"Mach={mach:.2f} > {MACH_MAX}")
-
     if asset == "EURUSD":
-        reasons.append("EURUSD: grafico_linha ausente — aguardando dados")
+        reasons.append("EURUSD: grafico_linha ausente")
 
-    margin = 150.0  # default
-    dm = dynamic_margins.get(asset, {}).get(timeframe)
+    margin = 150.0
+    dm = dynamic_margins.get(asset, {}).get(tf)
     if dm and isinstance(dm, dict):
-        margin = dm.get("margin_dynamic", 150.0)
+        margin = float(dm.get("margin_dynamic", 150.0))
 
-    skip = len(reasons) > 0
     return {
-        "asset":        asset,
-        "timeframe":    timeframe,
-        "tier":         tier,
-        "hit_rate_134": hit_rate_134,
-        "mach":         mach,
-        "margin_used":  margin,
-        "skip":         skip,
+        "asset": asset, "timeframe": tf, "tier": tier,
+        "hit_rate_134": hit_rate_134, "mach": mach,
+        "margin_used": margin, "skip": len(reasons) > 0,
         "skip_reasons": reasons,
     }
 
-# ─── Rodar Motor Harmônico V3 ─────────────────────────────────────────────────
-def run_harmonic(asset: str, timeframe: str, margin: float) -> dict | None:
-    out_dir = SHADOW_AUDIT / f"{asset}_{timeframe}"
+
+# ─── Rodar Motor Harmônico ────────────────────────────────────────────────────
+def run_harmonic(asset: str, tf: str, margin: float,
+                 out_dir: Path) -> Optional[dict]:
     out_dir.mkdir(parents=True, exist_ok=True)
     motor = CORE / "omega_harmonic_engine_v3.py"
-
-    cmd = [
-        sys.executable, str(motor),
-        "--symbol", asset,
-        "--timeframe", timeframe,
-        "--base_path", str(OHLCV),
-        "--margin", str(margin),
-        "--lookback", "3",
-        "--lookahead", "5",
-    ]
+    cmd = [sys.executable, str(motor),
+           "--symbol", asset, "--timeframe", tf,
+           "--base_path", str(OHLCV),
+           "--margin", str(margin),
+           "--lookback", "3", "--lookahead", "5"]
     try:
-        r = subprocess.run(cmd, capture_output=True, text=True,
-                           cwd=str(out_dir), timeout=300)
+        t0 = time.perf_counter()
+        r  = subprocess.run(cmd, capture_output=True, text=True,
+                            cwd=str(out_dir), timeout=300)
+        latency = time.perf_counter() - t0
         if r.returncode != 0:
-            log.error("[%s %s] Motor V3 falhou (exit %d): %s",
-                      asset, timeframe, r.returncode, r.stderr[:200])
+            log.error("[%s %s] Motor exit %d: %s",
+                      asset, tf, r.returncode, r.stderr[:200])
             return None
-        jf = out_dir / f"harmonic_events_{asset}_{timeframe}.json"
+        jf = out_dir / f"harmonic_events_{asset}_{tf}.json"
         if not jf.exists():
-            log.error("[%s %s] JSON não encontrado: %s", asset, timeframe, jf)
+            log.error("[%s %s] JSON ausente: %s", asset, tf, jf)
             return None
         with open(jf, encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
+        data["_latency_s"] = round(latency, 3)
+        return data
     except Exception as e:
-        log.error("[%s %s] Exceção motor: %s", asset, timeframe, e)
+        log.error("[%s %s] Exceção motor: %s", asset, tf, e)
         return None
 
-# ─── Integrar Price Engine ────────────────────────────────────────────────────
-def get_price_result():
+
+# ─── Price Engine ────────────────────────────────────────────────────────────
+def get_price_result() -> dict:
     sys.path.insert(0, str(CORE))
     from omega_module_v553 import DCECalibratedPriceEngine, ModuleConfig
     engine = DCECalibratedPriceEngine(ModuleConfig())
     return engine.compute_price(Q=1000, PBoc=0.0, volume_anomaly=0.1)
 
-# ─── Gerar AnalysisReport com ambos engines ────────────────────────────────────
-def build_shadow_report(asset: str, timeframe: str,
-                        harmonic: dict, price: dict,
-                        guardrail: dict) -> dict:
+
+# ─── Position Sizing (0,25% equity) ──────────────────────────────────────────
+def calc_lot(equity: float, margin_pts: float,
+             asset: str, price: float) -> Dict:
+    """
+    Risco máximo por trade: equity × 0.25%
+    Stop loss estimado: 2 × margin (cobertura conservadora)
+    Lote ajustado ao mínimo demo de 0.01
+    """
+    risk_usd    = equity * RISK_PER_TRADE_PCT
+    stop_pts    = 2.0 * margin_pts                    # stop 2× margin
+    pt_value    = price / 10_000.0 if price > 1000 else price / 100.0
+    lot_raw     = risk_usd / (stop_pts * pt_value) if stop_pts * pt_value > 0 else 0.01
+    lot         = max(0.01, round(lot_raw, 2))
+    return {"lot": lot, "risk_usd": round(risk_usd, 2),
+            "stop_pts": stop_pts, "pt_value": round(pt_value, 6)}
+
+
+# ─── Simular Execução Demo ────────────────────────────────────────────────────
+def simulate_paper_execution(asset: str, tf: str,
+                              price: float, lot: float,
+                              margin_pts: float) -> Dict:
+    """
+    Simula execução paper (sem MT5 real).
+    Gera slippage realista, retcode e latência de rede estimada.
+    NOTA: Substituir por chamada real à API MT5 na fase live.
+    """
+    slip_range   = SLIPPAGE_MAP.get(asset, (1.0, 5.0))
+    slippage_pts = round(random.uniform(*slip_range), 2)
+    latency_ms   = round(random.uniform(12, 80), 1)    # latência demo típica
+    fill_price   = round(price + slippage_pts * 0.01, 5)
+    retcode      = 10009                               # TRADE_RETCODE_DONE
+
+    pnl_pts = round(random.uniform(-margin_pts * 0.5, margin_pts * 0.8), 2)
+    pnl_usd = round(pnl_pts * lot * 0.01 * price / 1000, 2)
+
+    return {
+        "retcode":     retcode,
+        "retcode_str": "TRADE_RETCODE_DONE",
+        "fill_price":  fill_price,
+        "slippage_pts": slippage_pts,
+        "lot":         lot,
+        "pnl_pts":     pnl_pts,
+        "pnl_usd":     pnl_usd,
+        "latency_ms":  latency_ms,
+        "mode":        "PAPER_SIMULATION",
+        "note":        "Substituir por API MT5 real na fase live",
+    }
+
+
+# ─── Construir AnalysisReport ─────────────────────────────────────────────────
+def build_paper_report(asset: str, tf: str, mode: str,
+                       harmonic: dict, price_data: dict,
+                       guardrail: dict, execution: Optional[dict],
+                       lot_info: Optional[dict]) -> dict:
     now = datetime.now(timezone.utc).isoformat()
-    m = harmonic.get("engines", {}).get("harmonic", {}).get("metrics", {})
+    m    = harmonic.get("engines", {}).get("harmonic", {}).get("metrics", {})
     s134 = m.get("134_stats", {})
     s34  = m.get("34_stats",  {})
+    k134 = s134.get("hits", 0)
+    n134 = s134.get("total_touches", 1)
+    lb, ub = wilson_ic(k134, n134)
 
     report = {
-        "mission_id":       f"SHADOW-{asset}-{timeframe}-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S')}",
-        "asset":            asset,
-        "timeframe":        timeframe,
-        "status":           "COMPLETED" if harmonic.get("status") == "COMPLETED" else "FAILED",
-        "created_at":       now,
-        "agent_version":    "shadow_loop_v1.0",
+        "mission_id":        f"PAPER-{asset}-{tf}-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S')}",
+        "asset":             asset,
+        "timeframe":         tf,
+        "status":            "COMPLETED",
+        "mode":              mode,
+        "created_at":        now,
+        "agent_version":     "shadow_loop_v2.0",
         "omega_integration": True,
-        "mode":             "shadow",
-        "guardrail":        guardrail,
+        "guardrail":         guardrail,
+        "binomial_ic_95": {
+            "hits": k134, "total": n134,
+            "p_hat": round(k134 / max(n134, 1), 6),
+            "lower_bound": round(lb, 6), "upper_bound": round(ub, 6),
+            "interval": f"[{lb*100:.4f}%, {ub*100:.4f}%]",
+        },
         "engines": {
-            "harmonic": {
-                "metrics": {"34_stats": s34, "134_stats": s134}
-            },
+            "harmonic": {"metrics": {"34_stats": s34, "134_stats": s134}},
             "price": {
-                "price":                  price.get("price"),
-                "base_price":             price.get("base_price"),
-                "flash_crash_adjustment": price.get("flash_crash_adjustment"),
-                "components":             price.get("components"),
-                "metadata": {k: v for k, v in price.get("metadata", {}).items()
+                "price":                  price_data.get("price"),
+                "base_price":             price_data.get("base_price"),
+                "flash_crash_adjustment": price_data.get("flash_crash_adjustment"),
+                "components":             price_data.get("components"),
+                "metadata": {k: v for k, v in price_data.get("metadata", {}).items()
                              if k in ["params_checksum", "rmse_expected", "r_squared"]},
-            }
+            },
         },
         "signal": {
-            "action":       "SKIP" if guardrail["skip"] else "MONITOR",
+            "action":       "SKIP" if guardrail["skip"] else ("PAPER_EXECUTE" if mode == "paper" else "MONITOR"),
             "skip_reasons": guardrail["skip_reasons"],
             "margin_used":  guardrail["margin_used"],
             "tier":         guardrail["tier"],
         },
+        "execution": execution,
+        "lot_info":  lot_info,
+        "latency_motor_s": harmonic.get("_latency_s"),
     }
+
     jb = json.dumps(report, indent=2).encode("utf-8")
-    report["checksum"] = hashlib.sha3_256(jb).hexdigest()
+    report["checksum"] = sha3(jb)
     return report
+
 
 # ─── Kill Switch ─────────────────────────────────────────────────────────────
 class KillSwitch:
-    def __init__(self):
-        self.consec_fail = 0
-        self.daily_loss  = 0.0
-        self.triggered   = False
+    def __init__(self, equity: float):
+        self.equity       = equity
+        self.daily_pnl    = 0.0
+        self.consec_fail  = 0
+        self.triggered    = False
+        self.reason       = ""
 
-    def check(self, success: bool, pnl_pct: float = 0.0) -> bool:
+    def update(self, success: bool, pnl_usd: float = 0.0) -> bool:
         if self.triggered:
             return True
+        self.daily_pnl += pnl_usd
         if not success:
             self.consec_fail += 1
         else:
             self.consec_fail = 0
-        self.daily_loss += pnl_pct
+        dd_pct = abs(self.daily_pnl) / self.equity
+        if dd_pct >= DD_DAILY_MAX:
+            self.reason    = f"DD diário {dd_pct*100:.2f}% ≥ {DD_DAILY_MAX*100:.0f}%"
+            self.triggered = True
+            log.critical("💀 KILL SWITCH: %s — loop encerrado!", self.reason)
         if self.consec_fail >= MAX_CONSEC_FAIL:
-            log.critical("KILL SWITCH: %d falhas consecutivas — loop encerrado", self.consec_fail)
+            self.reason    = f"{self.consec_fail} falhas consecutivas"
             self.triggered = True
-        if abs(self.daily_loss) >= DD_DAILY_MAX:
-            log.critical("KILL SWITCH: DD diário %.2f%% >= %.0f%% — loop encerrado",
-                         self.daily_loss*100, DD_DAILY_MAX*100)
-            self.triggered = True
+            log.critical("💀 KILL SWITCH: %s — loop encerrado!", self.reason)
         return self.triggered
 
+
+# ─── Online Statistics ────────────────────────────────────────────────────────
+class OnlineStats:
+    def __init__(self):
+        self.signals       = 0
+        self.monitor_count = 0
+        self.skip_count    = 0
+        self.total_pnl     = 0.0
+        self.total_slippage= 0.0
+        self.latencies_ms  = []
+        self.hr_observations = []
+
+    def record(self, report: dict):
+        action = report["signal"]["action"]
+        self.signals += 1
+        if "SKIP" in action:
+            self.skip_count += 1
+            return
+        self.monitor_count += 1
+        hr = report["engines"]["harmonic"]["metrics"]["134_stats"].get("hit_rate", 0)
+        self.hr_observations.append(hr)
+        ex = report.get("execution")
+        if ex:
+            self.total_pnl     += ex.get("pnl_usd", 0)
+            self.total_slippage += ex.get("slippage_pts", 0)
+            self.latencies_ms.append(ex.get("latency_ms", 0))
+
+    def summary(self) -> dict:
+        n  = max(len(self.hr_observations), 1)
+        lm = self.latencies_ms or [0]
+        return {
+            "total_signals":    self.signals,
+            "monitor":          self.monitor_count,
+            "skipped":          self.skip_count,
+            "avg_hit_rate_134": round(sum(self.hr_observations) / n, 4),
+            "total_pnl_usd":    round(self.total_pnl, 2),
+            "avg_slippage_pts": round(self.total_slippage / n, 3),
+            "avg_latency_ms":   round(sum(lm) / len(lm), 1),
+            "max_latency_ms":   round(max(lm), 1),
+        }
+
+
 # ─── Loop Principal ───────────────────────────────────────────────────────────
-def run_shadow_loop(ativos, timeframes, mode="shadow"):
-    log.info("=" * 70)
-    log.info("OMEGA SHADOW LOOP | mode=%s | %d ativos × %d TFs", mode, len(ativos), len(timeframes))
-    log.info("Guardrail: hit_rate_134 >= %.0f%% | Mach <= %.1f | DD <= %.0f%% | MaxConsecFail=%d",
-             HIT_RATE_MIN, MACH_MAX, DD_DAILY_MAX*100, MAX_CONSEC_FAIL)
-    log.info("=" * 70)
+def run_loop(ativos: List[str], timeframes: List[str],
+             mode: str, equity: float):
+
+    log.info("=" * 72)
+    log.info("OMEGA %s LOOP v2.0 | %d ativos × %d TFs | equity=USD %.2f",
+             mode.upper(), len(ativos), len(timeframes), equity)
+    log.info("Risk/trade=%.2f%% | MaxPos=%d | DD_max=%.0f%% | MaxFail=%d",
+             RISK_PER_TRADE_PCT * 100, MAX_POSITIONS, DD_DAILY_MAX * 100, MAX_CONSEC_FAIL)
+    log.info("Guardrails: HR134≥%.0f%% | Mach≤%.1f", HIT_RATE_MIN, MACH_MAX)
+    log.info("=" * 72)
 
     dynamic_margins = load_dynamic_margins()
-    price_result    = get_price_result()
-    kill            = KillSwitch()
+    price_data      = get_price_result()
+    ks              = KillSwitch(equity)
+    stats           = OnlineStats()
+    open_positions  = 0
     skip_table      = []
-    reports         = []
-    success_count   = fail_count = skip_count = 0
+    all_reports     = []
 
     for asset in ativos:
         for tf in timeframes:
-            if kill.triggered:
-                log.critical("[%s %s] KILL SWITCH ativo — abortando.", asset, tf)
+            if ks.triggered:
+                log.critical("[%s %s] KS ativo — abortando.", asset, tf)
                 break
 
-            log.info("[%s %s] Iniciando ciclo...", asset, tf)
+            log.info("[%s %s] ── Iniciando ciclo ──", asset, tf)
+            t_cycle = time.perf_counter()
 
-            # Guardrail preliminar — sem rodar motor
-            prelim = check_guardrails(asset, tf, 100.0, 1.0, dynamic_margins)
-            if asset not in TIER1_ASSETS and asset != "EURUSD":
-                # Carrega hit_rate real do gamaray se disponível
-                rep_f = ROOT / "audit" / f"{asset}_{tf}" / f"AnalysisReport_{asset}_{tf}.json"
-                if rep_f.exists():
+            # ── Guardrail preliminar (dados do Gama-Ray anteriores) ──
+            prev_hr = 100.0
+            rep_f = ROOT / "audit" / f"{asset}_{tf}" / f"AnalysisReport_{asset}_{tf}.json"
+            if rep_f.exists():
+                try:
                     with open(rep_f, encoding="utf-8") as f2:
                         prev = json.load(f2)
-                    hr = prev.get("engines", {}).get("harmonic", {}).get("metrics", {}).get("134_stats", {}).get("hit_rate", 100.0)
-                    prelim = check_guardrails(asset, tf, hr, 1.0, dynamic_margins)
+                    prev_hr = (prev.get("engines", {})
+                               .get("harmonic", {})
+                               .get("metrics", {})
+                               .get("134_stats", {})
+                               .get("hit_rate", 100.0))
+                except Exception:
+                    pass
 
+            prelim = check_guardrails(asset, tf, prev_hr, 1.0, dynamic_margins)
             if prelim["skip"]:
-                log.warning("[%s %s] SKIP — %s", asset, tf, prelim["skip_reasons"])
-                skip_count += 1
+                log.warning("[%s %s] SKIP (prelim) — %s", asset, tf, prelim["skip_reasons"])
                 skip_table.append(prelim)
-                reports.append({"asset": asset, "timeframe": tf, "status": "SKIP",
-                                 "reasons": prelim["skip_reasons"]})
-                kill.check(success=True)
+                dummy_report = {"asset": asset, "timeframe": tf, "status": "SKIP",
+                                "signal": {"action": "SKIP",
+                                           "skip_reasons": prelim["skip_reasons"],
+                                           "tier": prelim["tier"],
+                                           "margin_used": prelim["margin_used"]},
+                                "engines": {"harmonic": {}, "price": {}},
+                                "execution": None, "lot_info": None,
+                                "binomial_ic_95": {}}
+                stats.record(dummy_report)
+                all_reports.append({"asset": asset, "timeframe": tf,
+                                    "status": "SKIP", "reason": prelim["skip_reasons"]})
                 continue
 
-            # Rodar motor harmônico
-            harmonic = run_harmonic(asset, tf, prelim["margin_used"])
+            # ── Verificar limite de posições ──
+            if mode == "paper" and open_positions >= MAX_POSITIONS:
+                log.warning("[%s %s] MAX_POSITIONS (%d) atingido — aguardando.",
+                            asset, tf, MAX_POSITIONS)
+                continue
+
+            # ── Rodar Motor Harmônico V3 ──
+            out_dir  = AUDIT_PAPER / f"{asset}_{tf}"
+            harmonic = run_harmonic(asset, tf, prelim["margin_used"], out_dir)
             if harmonic is None:
-                fail_count += 1
-                if kill.check(success=False):
-                    break
+                ks.update(success=False)
+                all_reports.append({"asset": asset, "timeframe": tf, "status": "FAIL"})
                 continue
 
-            # Guardrail final com dados reais
-            s134 = harmonic.get("engines", {}).get("harmonic", {}).get("metrics", {}).get("134_stats", {})
+            # ── Guardrail final com dados reais ──
+            s134    = (harmonic.get("engines", {})
+                       .get("harmonic", {})
+                       .get("metrics", {})
+                       .get("134_stats", {}))
             hr_real = s134.get("hit_rate", 0.0)
-            guardrail = check_guardrails(asset, tf, hr_real, 1.0, dynamic_margins)
+            guard   = check_guardrails(asset, tf, hr_real, 1.0, dynamic_margins)
 
-            report = build_shadow_report(asset, tf, harmonic, price_result, guardrail)
+            # ── Position sizing ──
+            lot_info  = None
+            execution = None
 
-            # Salvar relatório
-            out_dir = SHADOW_AUDIT / f"{asset}_{tf}"
-            out_dir.mkdir(parents=True, exist_ok=True)
-            out_f = out_dir / f"ShadowReport_{asset}_{tf}.json"
+            if not guard["skip"] and mode == "paper":
+                price_val = price_data.get("price", 2000.0)
+                lot_info  = calc_lot(equity, guard["margin_used"], asset, price_val)
+                execution = simulate_paper_execution(
+                    asset, tf, price_val, lot_info["lot"], guard["margin_used"])
+                open_positions = min(open_positions + 1, MAX_POSITIONS)
+                ks.update(
+                    success=(execution["retcode"] == 10009),
+                    pnl_usd=execution.get("pnl_usd", 0),
+                )
+
+            # ── Construir e salvar AnalysisReport ──
+            report = build_paper_report(
+                asset, tf, mode, harmonic, price_data, guard, execution, lot_info)
+
+            out_f = out_dir / f"PaperReport_{asset}_{tf}.json"
             with open(out_f, "w", encoding="utf-8") as f:
                 json.dump(report, f, indent=2, ensure_ascii=False)
 
+            stats.record(report)
             action = report["signal"]["action"]
-            log.info("[%s %s] %s | hr134=%.2f%% | margin=%.1f | SHA3=%s...",
-                     asset, tf, action, hr_real, guardrail["margin_used"], report["checksum"][:16])
+            cycle_ms = round((time.perf_counter() - t_cycle) * 1000, 1)
 
-            success_count += 1
-            reports.append({"asset": asset, "timeframe": tf, "status": action,
-                             "hit_rate_134": hr_real, "margin_used": guardrail["margin_used"],
-                             "checksum": report["checksum"]})
-            kill.check(success=True)
+            if execution:
+                log.info("[%s %s] %s | hr134=%.2f%% IC=[%s] lot=%.2f "
+                         "slip=%.2f pts PnL=%.2f USD lat_net=%.0fms | SHA3=%s...",
+                         asset, tf, action, hr_real,
+                         report["binomial_ic_95"]["interval"],
+                         lot_info["lot"], execution["slippage_pts"],
+                         execution["pnl_usd"], execution["latency_ms"],
+                         report["checksum"][:16])
+            else:
+                log.info("[%s %s] %s | hr134=%.2f%% IC=[%s] margin=%.1fpts SHA3=%s...",
+                         asset, tf, action, hr_real,
+                         report["binomial_ic_95"]["interval"],
+                         guard["margin_used"], report["checksum"][:16])
 
-    # ─── Tabela de Skips ────────────────────────────────────────────────────
-    skip_out = SHADOW_AUDIT / "skip_table.json"
+            log.info("[%s %s] Ciclo total: %.0f ms", asset, tf, cycle_ms)
+
+            all_reports.append({
+                "asset": asset, "timeframe": tf, "status": action,
+                "hit_rate_134": hr_real,
+                "ic_95": report["binomial_ic_95"]["interval"],
+                "margin_used": guard["margin_used"],
+                "lot": lot_info["lot"] if lot_info else None,
+                "pnl_usd": execution.get("pnl_usd") if execution else None,
+                "slippage_pts": execution.get("slippage_pts") if execution else None,
+                "checksum": report["checksum"][:24],
+            })
+
+    # ─── Skip Table ──────────────────────────────────────────────────────────
+    skip_out = AUDIT_PAPER / "skip_table.json"
     skip_data = {"generated": datetime.now(timezone.utc).isoformat(), "skips": skip_table}
     sjb = json.dumps(skip_data, indent=2).encode("utf-8")
-    skip_data["checksum"] = hashlib.sha3_256(sjb).hexdigest()
+    skip_data["checksum"] = sha3(sjb)
     with open(skip_out, "w", encoding="utf-8") as f:
         json.dump(skip_data, f, indent=2, ensure_ascii=False)
 
-    # ─── Summary ────────────────────────────────────────────────────────────
+    # ─── Online Statistics Summary ────────────────────────────────────────────
+    stat_sum = stats.summary()
+    log.info("── ESTATÍSTICAS ONLINE ──────────────────────────────────────────")
+    for k, v in stat_sum.items():
+        log.info("  %-25s : %s", k, v)
+
+    # ─── Summary Final ───────────────────────────────────────────────────────
     now = datetime.now(timezone.utc).isoformat()
     summary = {
-        "mode":         mode,
-        "generated":    now,
-        "total":        success_count + fail_count + skip_count,
-        "completed":    success_count,
-        "failed":       fail_count,
-        "skipped":      skip_count,
-        "kill_switch":  kill.triggered,
-        "log_file":     str(log_file),
-        "results":      reports,
+        "mode":          mode,
+        "generated":     now,
+        "equity_demo":   equity,
+        "total_cycles":  len(all_reports),
+        "kill_switch":   ks.triggered,
+        "ks_reason":     ks.reason,
+        "daily_pnl_usd": round(ks.daily_pnl, 2),
+        "online_stats":  stat_sum,
+        "results":       all_reports,
+        "log_file":      str(log_file),
     }
     sb = json.dumps(summary, indent=2).encode("utf-8")
-    summary["checksum"] = hashlib.sha3_256(sb).hexdigest()
-    sum_out = SHADOW_AUDIT / "shadow_summary.json"
+    summary["checksum"] = sha3(sb)
+    sum_out = AUDIT_PAPER / "paper_summary.json"
     with open(sum_out, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)
 
-    log.info("=" * 70)
-    log.info("SHADOW LOOP CONCLUÍDO | OK=%d SKIP=%d FAIL=%d | KS=%s",
-             success_count, skip_count, fail_count, kill.triggered)
+    log.info("=" * 72)
+    log.info("%s LOOP CONCLUÍDO | cycles=%d | KS=%s | PnL=%.2f USD",
+             mode.upper(), len(all_reports), ks.triggered, ks.daily_pnl)
     log.info("SHA3 summary: %s", summary["checksum"])
-    log.info("Artifacts: %s", SHADOW_AUDIT)
-    log.info("=" * 70)
+    log.info("Artifacts: %s", AUDIT_PAPER)
+    log.info("=" * 72)
     return summary
 
 
 # ─── Entry Point ─────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    DEFAULT_ATIVOS = list(TIER1_ASSETS) + ["BTCUSD", "US100", "US30", "GER40", "HK50", "EURUSD"]
-    DEFAULT_TFS    = ["H1", "H4"]
-
-    parser = argparse.ArgumentParser(description="OMEGA Shadow/Paper Loop Engine")
+    TIER1 = sorted(TIER1_ASSETS)
+    parser = argparse.ArgumentParser(description="OMEGA Shadow/Paper Loop v2.0")
     parser.add_argument("--mode",       choices=["shadow", "paper"], default="shadow")
-    parser.add_argument("--ativos",     nargs="+", default=DEFAULT_ATIVOS)
-    parser.add_argument("--timeframes", nargs="+", default=DEFAULT_TFS)
+    parser.add_argument("--ativos",     nargs="+", default=TIER1)
+    parser.add_argument("--timeframes", nargs="+", default=["H1", "H4"])
+    parser.add_argument("--equity",     type=float, default=DEMO_EQUITY_USD)
     args = parser.parse_args()
 
     try:
-        result = run_shadow_loop(args.ativos, args.timeframes, args.mode)
+        result = run_loop(args.ativos, args.timeframes, args.mode, args.equity)
         sys.exit(0 if not result["kill_switch"] else 1)
     except Exception:
         log.critical("ERRO CRÍTICO:\n%s", traceback.format_exc())
