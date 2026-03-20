@@ -1,0 +1,91 @@
+{
+  "mission_id": "PAPER-XAUUSD-H1-20260320T211256",
+  "asset": "XAUUSD",
+  "timeframe": "H1",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-03-20T21:12:56.783154+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "XAUUSD",
+    "timeframe": "H1",
+    "tier": "T1",
+    "hit_rate_134": 99.98,
+    "mach": 1.0,
+    "margin_used": 150.0,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 24148,
+    "total": 24152,
+    "p_hat": 0.999834,
+    "lower_bound": 0.999574,
+    "upper_bound": 0.999936,
+    "interval": "[99.9574%, 99.9936%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 24262,
+          "hits": 24253,
+          "breaks": 9,
+          "hit_rate": 99.96,
+          "break_rate": 0.04
+        },
+        "134_stats": {
+          "total_touches": 24152,
+          "hits": 24148,
+          "breaks": 4,
+          "hit_rate": 99.98,
+          "break_rate": 0.02
+        }
+      }
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 150.0,
+    "tier": "T1"
+  },
+  "execution": {
+    "retcode": 10018,
+    "retcode_str": "NO_MONEY",
+    "success": false,
+    "deal": 0,
+    "order": 0,
+    "fill_price": 0.0,
+    "ask_at_send": 4492.09,
+    "sl_price": 4489.09,
+    "tp_price": 4495.09,
+    "volume_confirmed": 0.0,
+    "slippage_pts": 449209.0,
+    "comment": "Market closed",
+    "request_id": 2264848756,
+    "latency_ms": 33.5,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.08,
+    "risk_usd": 25.0,
+    "stop_pts": 300.0,
+    "pip_value_lot": 1.0,
+    "contract_size": 100.0,
+    "price_at_calc": 4492.09
+  },
+  "latency_motor_s": 9.396,
+  "checksum": "f004268096bd20720bb5dd9da6d3f5e9a77872aae536cd004ebccb700fdefa88"
+}

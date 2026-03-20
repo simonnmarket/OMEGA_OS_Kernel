@@ -1,0 +1,68 @@
+2026-03-20 21:52:20,330 | INFO     | ======================================================================
+2026-03-20 21:52:20,330 | INFO     | OMEGA Harmonic Engine V3 | USDJPY H1
+2026-03-20 21:52:20,330 | INFO     | harm_fast=34 | harm_slow=134 | margin=150.0
+2026-03-20 21:52:20,330 | INFO     | ======================================================================
+2026-03-20 21:52:20,359 | INFO     | SHA3-256 linha:  cbc15e772aa0f80eea6a0a80622b5286af14f80a1feb0c10010843e0fd04701e
+2026-03-20 21:52:20,360 | INFO     | SHA3-256 candle: 17990c7f68f1cf10936b47545c17f5e1be545724cba73075462b917baa6ea573
+2026-03-20 21:52:20,411 | INFO     | [LINHA] Carregado e validado: 50000 linhas.
+2026-03-20 21:52:20,488 | INFO     | [CANDLE] Carregado e validado: 50000 linhas.
+2026-03-20 21:52:20,494 | INFO     | Merge concluído: 50000 linhas úteis.
+2026-03-20 21:52:27,276 | INFO     | Eventos detectados: 48922
+2026-03-20 21:52:29,553 | INFO     | CSV salvo: harmonic_events_USDJPY_H1.csv
+2026-03-20 21:52:29,554 | INFO     | ----------------------------------------------------------------------
+2026-03-20 21:52:29,554 | INFO     | EMA-34  | Toques:  24461 | HIT:  24461 | BREAK:      0 | Hit Rate: 100.00%
+2026-03-20 21:52:29,554 | INFO     | EMA-134 | Toques:  24461 | HIT:  24461 | BREAK:      0 | Hit Rate: 100.00%
+2026-03-20 21:52:29,554 | INFO     | Output JSON checksum (SHA3-256): c0652f4abc9460fa95ea295d7db02ba24abd19f7234804337997c51d2e695df9
+2026-03-20 21:52:29,554 | INFO     | STATUS: COMPLETED
+2026-03-20 21:52:29,554 | INFO     | ======================================================================
+2026-03-20 21:53:00,449 | INFO     | ======================================================================
+2026-03-20 21:53:00,451 | INFO     | OMEGA Harmonic Engine V3 | USDJPY H1
+2026-03-20 21:53:00,451 | INFO     | harm_fast=34 | harm_slow=134 | margin=150.0
+2026-03-20 21:53:00,451 | INFO     | ======================================================================
+2026-03-20 21:53:00,465 | INFO     | SHA3-256 linha:  cbc15e772aa0f80eea6a0a80622b5286af14f80a1feb0c10010843e0fd04701e
+2026-03-20 21:53:00,465 | INFO     | SHA3-256 candle: 17990c7f68f1cf10936b47545c17f5e1be545724cba73075462b917baa6ea573
+2026-03-20 21:53:00,514 | INFO     | [LINHA] Carregado e validado: 50000 linhas.
+2026-03-20 21:53:00,585 | INFO     | [CANDLE] Carregado e validado: 50000 linhas.
+2026-03-20 21:53:00,591 | INFO     | Merge concluído: 50000 linhas úteis.
+2026-03-20 21:53:06,780 | INFO     | Eventos detectados: 48922
+2026-03-20 21:53:08,823 | INFO     | CSV salvo: harmonic_events_USDJPY_H1.csv
+2026-03-20 21:53:08,825 | INFO     | ----------------------------------------------------------------------
+2026-03-20 21:53:08,825 | INFO     | EMA-34  | Toques:  24461 | HIT:  24461 | BREAK:      0 | Hit Rate: 100.00%
+2026-03-20 21:53:08,825 | INFO     | EMA-134 | Toques:  24461 | HIT:  24461 | BREAK:      0 | Hit Rate: 100.00%
+2026-03-20 21:53:08,825 | INFO     | Output JSON checksum (SHA3-256): 8f7f0b7976b8184b365ba87b3203e57c98687e7ec6c85f435a9a53b9d4e7cd45
+2026-03-20 21:53:08,825 | INFO     | STATUS: COMPLETED
+2026-03-20 21:53:08,825 | INFO     | ======================================================================
+2026-03-20 21:54:09,388 | INFO     | ======================================================================
+2026-03-20 21:54:09,388 | INFO     | OMEGA Harmonic Engine V3 | USDJPY H1
+2026-03-20 21:54:09,390 | INFO     | harm_fast=34 | harm_slow=134 | margin=150.0
+2026-03-20 21:54:09,390 | INFO     | ======================================================================
+2026-03-20 21:54:09,404 | INFO     | SHA3-256 linha:  cbc15e772aa0f80eea6a0a80622b5286af14f80a1feb0c10010843e0fd04701e
+2026-03-20 21:54:09,404 | INFO     | SHA3-256 candle: 17990c7f68f1cf10936b47545c17f5e1be545724cba73075462b917baa6ea573
+2026-03-20 21:54:09,458 | INFO     | [LINHA] Carregado e validado: 50000 linhas.
+2026-03-20 21:54:09,533 | INFO     | [CANDLE] Carregado e validado: 50000 linhas.
+2026-03-20 21:54:09,539 | INFO     | Merge concluído: 50000 linhas úteis.
+2026-03-20 21:54:16,672 | INFO     | Eventos detectados: 48922
+2026-03-20 21:54:18,787 | INFO     | CSV salvo: harmonic_events_USDJPY_H1.csv
+2026-03-20 21:54:18,788 | INFO     | ----------------------------------------------------------------------
+2026-03-20 21:54:18,788 | INFO     | EMA-34  | Toques:  24461 | HIT:  24461 | BREAK:      0 | Hit Rate: 100.00%
+2026-03-20 21:54:18,788 | INFO     | EMA-134 | Toques:  24461 | HIT:  24461 | BREAK:      0 | Hit Rate: 100.00%
+2026-03-20 21:54:18,789 | INFO     | Output JSON checksum (SHA3-256): fd5a21889a64e178cca66ac8333f3d3b19414c933d03c06c76613ac4a34bfaa6
+2026-03-20 21:54:18,789 | INFO     | STATUS: COMPLETED
+2026-03-20 21:54:18,789 | INFO     | ======================================================================
+2026-03-20 22:13:06,726 | INFO     | ======================================================================
+2026-03-20 22:13:06,730 | INFO     | OMEGA Harmonic Engine V3 | USDJPY H1
+2026-03-20 22:13:06,731 | INFO     | harm_fast=34 | harm_slow=134 | margin=150.0
+2026-03-20 22:13:06,731 | INFO     | ======================================================================
+2026-03-20 22:13:06,767 | INFO     | SHA3-256 linha:  cbc15e772aa0f80eea6a0a80622b5286af14f80a1feb0c10010843e0fd04701e
+2026-03-20 22:13:06,767 | INFO     | SHA3-256 candle: 17990c7f68f1cf10936b47545c17f5e1be545724cba73075462b917baa6ea573
+2026-03-20 22:13:06,867 | INFO     | [LINHA] Carregado e validado: 50000 linhas.
+2026-03-20 22:13:06,943 | INFO     | [CANDLE] Carregado e validado: 50000 linhas.
+2026-03-20 22:13:06,949 | INFO     | Merge concluído: 50000 linhas úteis.
+2026-03-20 22:13:14,446 | INFO     | Eventos detectados: 48922
+2026-03-20 22:13:17,153 | INFO     | CSV salvo: harmonic_events_USDJPY_H1.csv
+2026-03-20 22:13:17,156 | INFO     | ----------------------------------------------------------------------
+2026-03-20 22:13:17,156 | INFO     | EMA-34  | Toques:  24461 | HIT:  24461 | BREAK:      0 | Hit Rate: 100.00%
+2026-03-20 22:13:17,156 | INFO     | EMA-134 | Toques:  24461 | HIT:  24461 | BREAK:      0 | Hit Rate: 100.00%
+2026-03-20 22:13:17,156 | INFO     | Output JSON checksum (SHA3-256): a787f436231d32c1ffb05afc1b28d433ef40b58369d81b88712283e67a314cac
+2026-03-20 22:13:17,156 | INFO     | STATUS: COMPLETED
+2026-03-20 22:13:17,156 | INFO     | ======================================================================

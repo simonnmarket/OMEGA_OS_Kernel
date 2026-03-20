@@ -1,0 +1,41 @@
+2026-03-21T00:39:14.996 | INFO | ========================================================================
+2026-03-21T00:39:14.997 | INFO | OMEGA PSA STRESS MULTI-TF v1.0 | mode=SHADOW | equity=100000
+2026-03-21T00:39:14.997 | INFO | 15 símbolos × 9 TFs = 135 combinações
+2026-03-21T00:39:14.997 | INFO | Sessões=3 | MaxPos=50 | Risk=0.25% | KS_demo=20%
+2026-03-21T00:39:14.997 | INFO | HR targets: {'H1': 95.0, 'H4': 95.0, 'M15': 90.0, 'M30': 90, 'M5': 90.0, 'M1': 85.0, 'M3': 85.0, 'D1': 95, 'W1': 95}
+2026-03-21T00:39:14.998 | INFO | Output: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\results\daily_paper_20260321
+2026-03-21T00:39:14.998 | INFO | ========================================================================
+2026-03-21T00:39:14.999 | INFO | ── Sessão 1/3 ──────────────────────────
+2026-03-21T00:39:15.001 | INFO | [AUDJPY M1] ✅ EXECUTE | HR=86.50%/85% IC=[81.1160%, 90.5282%] Mach=0.90 slip=1.99x n=203 VALIDATED
+2026-03-21T00:39:15.002 | INFO | [AUDJPY M3] ✅ EXECUTE | HR=90.40%/85% IC=[85.4510%, 93.7879%] Mach=0.87 slip=1.30x n=195 VALIDATED
+2026-03-21T00:39:15.002 | INFO | [AUDJPY M5] ✅ EXECUTE | HR=93.80%/90% IC=[90.0429%, 96.1993%] Mach=0.83 slip=2.39x n=244 VALIDATED
+2026-03-21T00:39:15.003 | INFO | [AUDJPY M15] ✅ EXECUTE | HR=97.90%/90% IC=[87.9267%, 99.6660%] Mach=0.78 slip=1.80x n=41 VALIDATED
+2026-03-21T00:39:15.003 | INFO | [AUDJPY M30] ✅ EXECUTE | HR=98.90%/90% IC=[95.8746%, 99.7133%] Mach=0.73 slip=2.22x n=166 VALIDATED
+2026-03-21T00:39:15.003 | INFO | [AUDJPY H1] ✅ EXECUTE | HR=100.00%/95% IC=[98.3286%, 100.0000%] Mach=0.65 slip=0.91x n=226 VALIDATED
+2026-03-21T00:39:15.003 | INFO | [AUDJPY H4] ✅ EXECUTE | HR=100.00%/95% IC=[96.5026%, 100.0000%] Mach=0.58 slip=1.48x n=106 VALIDATED
+2026-03-21T00:39:15.004 | INFO | [AUDJPY D1] ✅ EXECUTE | HR=100.00%/95% IC=[97.6263%, 100.0000%] Mach=0.51 slip=1.92x n=158 VALIDATED
+2026-03-21T00:39:15.004 | INFO | [AUDJPY W1] ✅ EXECUTE | HR=100.00%/95% IC=[98.2526%, 100.0000%] Mach=0.45 slip=2.28x n=216 VALIDATED
+2026-03-21T00:39:15.004 | INFO | Sessão 1 SHA3: eba05a800a5f252ef5ac574561cba271 | results=9
+2026-03-21T00:39:15.506 | INFO | ── Sessão 2/3 ──────────────────────────
+2026-03-21T00:39:15.507 | INFO | Sessão 2 SHA3: ca4510738395af1429224dd785675309 | results=0
+2026-03-21T00:39:16.008 | INFO | ── Sessão 3/3 ──────────────────────────
+2026-03-21T00:39:16.008 | INFO | Sessão 3 SHA3: ca4510738395af1429224dd785675309 | results=0
+2026-03-21T00:39:16.509 | INFO | Exportando telemetria (CSV,JSON)...
+2026-03-21T00:39:16.644 | INFO | SHA3 hash: 18048b585d5b252bc3e3ebe91a3d1fa1672eeac1af2ba462b62f2b7b62a36b91 → consolidated_report_20260320.sha3
+2026-03-21T00:39:16.644 | INFO | ========================================================================
+2026-03-21T00:39:16.645 | INFO | PSA STRESS CONCLUÍDO | 9 resultados | KS=True (ativ=1)
+2026-03-21T00:39:16.645 | INFO | SUCCESS_OVERALL: False
+2026-03-21T00:39:16.645 | INFO | SHA3 consolidado: 18048b585d5b252bc3e3ebe91a3d1fa1672eeac1af2ba462b62f2b7b62a36b91
+2026-03-21T00:39:16.645 | INFO | Output dir: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\results\daily_paper_20260321
+2026-03-21T00:39:16.645 | INFO | Arquivos CSV: 9 | JSON: 9
+2026-03-21T00:39:16.646 | INFO | ========================================================================
+2026-03-21T00:39:16.646 | INFO | ── SUMÁRIO POR TIMEFRAME ──────────────────────────────────────
+2026-03-21T00:39:16.646 | INFO |   M1   | EX= 1 SKIP= 0 | avgHR=86.50%/85% | slip=0.99pts | lat=47ms | ✅
+2026-03-21T00:39:16.646 | INFO |   M3   | EX= 1 SKIP= 0 | avgHR=90.40%/85% | slip=0.65pts | lat=97ms | ✅
+2026-03-21T00:39:16.646 | INFO |   M5   | EX= 1 SKIP= 0 | avgHR=93.80%/90% | slip=1.20pts | lat=86ms | ✅
+2026-03-21T00:39:16.646 | INFO |   M15  | EX= 1 SKIP= 0 | avgHR=97.90%/90% | slip=0.90pts | lat=82ms | ✅
+2026-03-21T00:39:16.647 | INFO |   M30  | EX= 1 SKIP= 0 | avgHR=98.90%/90% | slip=1.11pts | lat=103ms | ✅
+2026-03-21T00:39:16.647 | INFO |   H1   | EX= 1 SKIP= 0 | avgHR=100.00%/95% | slip=0.45pts | lat=174ms | ✅
+2026-03-21T00:39:16.647 | INFO |   H4   | EX= 1 SKIP= 0 | avgHR=100.00%/95% | slip=0.74pts | lat=138ms | ✅
+2026-03-21T00:39:16.647 | INFO |   D1   | EX= 1 SKIP= 0 | avgHR=100.00%/95% | slip=0.96pts | lat=57ms | ✅
+2026-03-21T00:39:16.647 | INFO |   W1   | EX= 1 SKIP= 0 | avgHR=100.00%/95% | slip=1.14pts | lat=68ms | ✅

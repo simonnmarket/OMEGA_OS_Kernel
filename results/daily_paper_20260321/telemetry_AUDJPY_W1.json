@@ -1,0 +1,37 @@
+[
+  {
+    "symbol": "AUDJPY",
+    "tf": "W1",
+    "status": "EXECUTE",
+    "validation": "VALIDATED",
+    "n_trades": 216,
+    "hr_134": 100.0,
+    "hr_target": 95,
+    "hr_ic_95": [
+      98.2526,
+      100.0
+    ],
+    "hr_ic_str": "[98.2526%, 100.0000%]",
+    "mach_backtest": 0.45,
+    "mach_limit": 1.35,
+    "skip": false,
+    "skip_reasons": [],
+    "slip_backtest_pts": 0.5,
+    "slip_executed_pts": 1.14,
+    "slip_ratio_vs_bt": 2.28,
+    "slip_alert_5x": false,
+    "fill_total": 9,
+    "fill_partial": 0,
+    "fill_rate_pct": 100.0,
+    "retcode_done": 9,
+    "retcode_requote": 2,
+    "retcode_reject": 0,
+    "retcode_error_rate_pct": 18.18,
+    "latency_ms_avg": 67.93,
+    "latency_ms_p95": 167.33,
+    "cycle_wall_ms": 0.0,
+    "ts": "2026-03-20T23:39:15.004637+00:00",
+    "checksum": "65caa574856d577b00c713ab56b19fd5df52b612483addeeb0a5873178e61cb8",
+    "session": 1
+  }
+]

@@ -1,0 +1,91 @@
+{
+  "mission_id": "PAPER-USDJPY-H1-20260320T211317",
+  "asset": "USDJPY",
+  "timeframe": "H1",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-03-20T21:13:17.591584+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "USDJPY",
+    "timeframe": "H1",
+    "tier": "T1",
+    "hit_rate_134": 100.0,
+    "mach": 1.0,
+    "margin_used": 150.0,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 24461,
+    "total": 24461,
+    "p_hat": 1.0,
+    "lower_bound": 0.999843,
+    "upper_bound": 1.0,
+    "interval": "[99.9843%, 100.0000%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 24461,
+          "hits": 24461,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        },
+        "134_stats": {
+          "total_touches": 24461,
+          "hits": 24461,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        }
+      }
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 150.0,
+    "tier": "T1"
+  },
+  "execution": {
+    "retcode": 10018,
+    "retcode_str": "NO_MONEY",
+    "success": false,
+    "deal": 0,
+    "order": 0,
+    "fill_price": 0.0,
+    "ask_at_send": 159.242,
+    "sl_price": 158.942,
+    "tp_price": 159.542,
+    "volume_confirmed": 0.0,
+    "slippage_pts": 159242.0,
+    "comment": "Market closed",
+    "request_id": 2264848758,
+    "latency_ms": 138.3,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.01,
+    "risk_usd": 25.0,
+    "stop_pts": 300.0,
+    "pip_value_lot": 100.0,
+    "contract_size": 100000.0,
+    "price_at_calc": 159.242
+  },
+  "latency_motor_s": 11.28,
+  "checksum": "762c5d88f9cc6e5f6fd5b47f74567326378e4cc5ab3ff4c44089fc9ff2975b57"
+}

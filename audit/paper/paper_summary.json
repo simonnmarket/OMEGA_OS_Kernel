@@ -1,18 +1,18 @@
 {
   "mode": "paper",
-  "generated": "2026-03-20T20:54:19.123320+00:00",
+  "generated": "2026-03-20T21:13:17.597627+00:00",
   "equity_demo": 10000.0,
   "total_cycles": 3,
-  "kill_switch": false,
-  "ks_reason": "",
+  "kill_switch": true,
+  "ks_reason": "3 falhas consecutivas",
   "online_stats": {
     "total_signals": 3,
     "executed": 3,
     "skipped": 0,
     "avg_hit_rate_134": 99.9933,
-    "avg_slippage_pts": 0.0,
-    "avg_latency_ms": 87.3,
-    "max_latency_ms": 160.2
+    "avg_slippage_pts": 247286.333,
+    "avg_latency_ms": 67.8,
+    "max_latency_ms": 138.3
   },
   "results": [
     {
@@ -22,10 +22,10 @@
       "hit_rate_134": 99.98,
       "ic_95": "[99.9574%, 99.9936%]",
       "margin_used": 150.0,
-      "lot": 0.19,
-      "retcode": 10009,
-      "slippage_pts": 0.0,
-      "checksum": "463c66285ebfebf7906bb420"
+      "lot": 0.08,
+      "retcode": 10018,
+      "slippage_pts": 449209.0,
+      "checksum": "f004268096bd20720bb5dd9d"
     },
     {
       "asset": "GBPUSD",
@@ -34,10 +34,10 @@
       "hit_rate_134": 100.0,
       "ic_95": "[99.9811%, 100.0000%]",
       "margin_used": 150.0,
-      "lot": 6.25,
-      "retcode": 10009,
-      "slippage_pts": 0.0,
-      "checksum": "bc6c2ac6e5731fe95b63474d"
+      "lot": 0.08,
+      "retcode": 10018,
+      "slippage_pts": 133408.0,
+      "checksum": "349000eab55fb73efbc9602b"
     },
     {
       "asset": "USDJPY",
@@ -46,12 +46,12 @@
       "hit_rate_134": 100.0,
       "ic_95": "[99.9843%, 100.0000%]",
       "margin_used": 150.0,
-      "lot": 0.05,
-      "retcode": 10009,
-      "slippage_pts": 0.0,
-      "checksum": "562ffe58a4863eab874c78fd"
+      "lot": 0.01,
+      "retcode": 10018,
+      "slippage_pts": 159242.0,
+      "checksum": "762c5d88f9cc6e5f6fd5b47f"
     }
   ],
-  "log_file": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\audit\\paper\\paper_loop_20260320_205347.log",
-  "checksum": "fd66bdf8c494ec3cfe0c774fc59fafc53810f5e39f6198d4af87280b7ca63d70"
+  "log_file": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\audit\\paper\\paper_loop_20260320_211247.log",
+  "checksum": "6611320f509237320eee57f72fd50619b84fe848ab37b6bfefb7850b40542acd"
 }
