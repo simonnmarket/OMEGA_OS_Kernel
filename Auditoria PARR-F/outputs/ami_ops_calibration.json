@@ -5,108 +5,108 @@
       "timeframe": "H1",
       "mode": "daytrade",
       "status": "",
-      "mach_number": 0.0,
-      "confidence_score": 0.0,
+      "mach_number": 0.5618,
+      "confidence_score": 0.8,
       "risk_per_trade_pct": 0.25,
       "max_positions": 10,
       "sl_tp": {
-        "entry_zone": null,
-        "stop_loss": null,
-        "target_1": null,
-        "target_2": null,
-        "max_exposure_pct": null,
-        "timing_candles": null,
+        "entry_zone": 4651.72,
+        "stop_loss": 4628.46,
+        "target_1": 4698.24,
+        "target_2": 4744.75,
+        "max_exposure_pct": 2.5,
+        "timing_candles": 8,
         "rr_suggested": {
           "tp1_rr": 1.5,
           "tp2_rr": 3.0
         }
       },
-      "opportunities": 0
+      "opportunities": 1
     },
     {
       "symbol": "XAUUSD",
       "timeframe": "M1",
       "mode": "scalp",
       "status": "",
-      "mach_number": 0.0,
-      "confidence_score": 0.0,
+      "mach_number": 0.5078,
+      "confidence_score": 0.6,
       "risk_per_trade_pct": 0.25,
       "max_positions": 15,
       "sl_tp": {
-        "entry_zone": null,
-        "stop_loss": null,
-        "target_1": null,
-        "target_2": null,
-        "max_exposure_pct": null,
-        "timing_candles": null,
+        "entry_zone": 4651.82,
+        "stop_loss": 4628.56,
+        "target_1": 4698.34,
+        "target_2": 4744.86,
+        "max_exposure_pct": 2.5,
+        "timing_candles": 8,
         "rr_suggested": {
           "tp1_rr": 1.5,
           "tp2_rr": 3.0
         }
       },
-      "opportunities": 0
+      "opportunities": 1
     },
     {
       "symbol": "XAUUSD",
       "timeframe": "M15",
       "mode": "daytrade",
       "status": "",
-      "mach_number": 0.0,
-      "confidence_score": 0.0,
+      "mach_number": 0.4399,
+      "confidence_score": 0.6,
       "risk_per_trade_pct": 0.25,
       "max_positions": 10,
       "sl_tp": {
-        "entry_zone": null,
-        "stop_loss": null,
-        "target_1": null,
-        "target_2": null,
-        "max_exposure_pct": null,
-        "timing_candles": null,
+        "entry_zone": 4651.82,
+        "stop_loss": 4628.56,
+        "target_1": 4698.34,
+        "target_2": 4744.86,
+        "max_exposure_pct": 2.5,
+        "timing_candles": 8,
         "rr_suggested": {
           "tp1_rr": 1.5,
           "tp2_rr": 3.0
         }
       },
-      "opportunities": 0
+      "opportunities": 1
     },
     {
       "symbol": "XAUUSD",
       "timeframe": "M5",
       "mode": "scalp",
       "status": "",
-      "mach_number": 0.0,
-      "confidence_score": 0.0,
+      "mach_number": 0.5591,
+      "confidence_score": 0.6,
       "risk_per_trade_pct": 0.25,
       "max_positions": 15,
       "sl_tp": {
-        "entry_zone": null,
-        "stop_loss": null,
-        "target_1": null,
-        "target_2": null,
-        "max_exposure_pct": null,
-        "timing_candles": null,
+        "entry_zone": 4651.82,
+        "stop_loss": 4628.56,
+        "target_1": 4698.34,
+        "target_2": 4744.86,
+        "max_exposure_pct": 2.5,
+        "timing_candles": 8,
         "rr_suggested": {
           "tp1_rr": 1.5,
           "tp2_rr": 3.0
         }
       },
-      "opportunities": 0
+      "opportunities": 1
     }
   ],
   "summary": {
     "XAUUSD": {
       "count": 4,
-      "mach_mean": 0.0,
-      "confidence_mean": 0.0,
+      "mach_mean": 0.51715,
+      "confidence_mean": 0.65,
       "status_counts": {
         "": 4
       }
     }
   },
   "metadata": {
-    "generated_at": "2026-03-21T20:42:03.773384+00:00",
+    "generated_at": "2026-03-21T21:01:30.366152+00:00",
     "version": "psa_run_ami_calibration_v1.0",
-    "reports_dir": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\outputs\\AMI_reports",
+    "reports_dir": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\outputs\\causal_reports",
     "n_reports_processed": 4,
     "output_path": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\outputs\\ami_ops_calibration.json"
   }
