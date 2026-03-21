@@ -1,0 +1,182 @@
+{
+  "recommendations": [
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "D1",
+      "mode": "swing",
+      "status": "",
+      "mach_number": 0.0,
+      "confidence_score": 0.0,
+      "risk_per_trade_pct": 0.25,
+      "max_positions": 5,
+      "sl_tp": {
+        "entry_zone": null,
+        "stop_loss": null,
+        "target_1": null,
+        "target_2": null,
+        "max_exposure_pct": null,
+        "timing_candles": null,
+        "rr_suggested": {
+          "tp1_rr": 1.5,
+          "tp2_rr": 3.0
+        }
+      },
+      "opportunities": 0
+    },
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "H1",
+      "mode": "daytrade",
+      "status": "",
+      "mach_number": 0.0,
+      "confidence_score": 0.0,
+      "risk_per_trade_pct": 0.25,
+      "max_positions": 10,
+      "sl_tp": {
+        "entry_zone": null,
+        "stop_loss": null,
+        "target_1": null,
+        "target_2": null,
+        "max_exposure_pct": null,
+        "timing_candles": null,
+        "rr_suggested": {
+          "tp1_rr": 1.5,
+          "tp2_rr": 3.0
+        }
+      },
+      "opportunities": 0
+    },
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "H4",
+      "mode": "swing",
+      "status": "",
+      "mach_number": 0.0,
+      "confidence_score": 0.0,
+      "risk_per_trade_pct": 0.25,
+      "max_positions": 5,
+      "sl_tp": {
+        "entry_zone": null,
+        "stop_loss": null,
+        "target_1": null,
+        "target_2": null,
+        "max_exposure_pct": null,
+        "timing_candles": null,
+        "rr_suggested": {
+          "tp1_rr": 1.5,
+          "tp2_rr": 3.0
+        }
+      },
+      "opportunities": 0
+    },
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "M1",
+      "mode": "scalp",
+      "status": "",
+      "mach_number": 0.0,
+      "confidence_score": 0.0,
+      "risk_per_trade_pct": 0.25,
+      "max_positions": 15,
+      "sl_tp": {
+        "entry_zone": null,
+        "stop_loss": null,
+        "target_1": null,
+        "target_2": null,
+        "max_exposure_pct": null,
+        "timing_candles": null,
+        "rr_suggested": {
+          "tp1_rr": 1.5,
+          "tp2_rr": 3.0
+        }
+      },
+      "opportunities": 0
+    },
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "M15",
+      "mode": "daytrade",
+      "status": "",
+      "mach_number": 0.0,
+      "confidence_score": 0.0,
+      "risk_per_trade_pct": 0.25,
+      "max_positions": 10,
+      "sl_tp": {
+        "entry_zone": null,
+        "stop_loss": null,
+        "target_1": null,
+        "target_2": null,
+        "max_exposure_pct": null,
+        "timing_candles": null,
+        "rr_suggested": {
+          "tp1_rr": 1.5,
+          "tp2_rr": 3.0
+        }
+      },
+      "opportunities": 0
+    },
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "M5",
+      "mode": "scalp",
+      "status": "",
+      "mach_number": 0.0,
+      "confidence_score": 0.0,
+      "risk_per_trade_pct": 0.25,
+      "max_positions": 15,
+      "sl_tp": {
+        "entry_zone": null,
+        "stop_loss": null,
+        "target_1": null,
+        "target_2": null,
+        "max_exposure_pct": null,
+        "timing_candles": null,
+        "rr_suggested": {
+          "tp1_rr": 1.5,
+          "tp2_rr": 3.0
+        }
+      },
+      "opportunities": 0
+    },
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "W1",
+      "mode": "swing",
+      "status": "",
+      "mach_number": 0.0,
+      "confidence_score": 0.0,
+      "risk_per_trade_pct": 0.25,
+      "max_positions": 5,
+      "sl_tp": {
+        "entry_zone": null,
+        "stop_loss": null,
+        "target_1": null,
+        "target_2": null,
+        "max_exposure_pct": null,
+        "timing_candles": null,
+        "rr_suggested": {
+          "tp1_rr": 1.5,
+          "tp2_rr": 3.0
+        }
+      },
+      "opportunities": 0
+    }
+  ],
+  "summary": {
+    "XAUUSD": {
+      "count": 7,
+      "mach_mean": 0.0,
+      "confidence_mean": 0.0,
+      "status_counts": {
+        "": 7
+      }
+    }
+  },
+  "metadata": {
+    "generated_at": "2026-03-21T20:38:45.311439+00:00",
+    "version": "psa_run_ami_calibration_v1.0",
+    "reports_dir": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\outputs\\causal_reports",
+    "n_reports_processed": 7,
+    "output_path": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\outputs\\ami_ops_calibration.json"
+  }
+}
