@@ -5,7 +5,7 @@
       "timeframe": "H1",
       "mode": "daytrade",
       "status": "",
-      "mach_number": 0.5618,
+      "mach_number": 0.4803,
       "confidence_score": 0.8,
       "risk_per_trade_pct": 0.25,
       "max_positions": 10,
@@ -28,7 +28,7 @@
       "timeframe": "M1",
       "mode": "scalp",
       "status": "",
-      "mach_number": 0.5078,
+      "mach_number": 0.5333,
       "confidence_score": 0.6,
       "risk_per_trade_pct": 0.25,
       "max_positions": 15,
@@ -51,7 +51,7 @@
       "timeframe": "M15",
       "mode": "daytrade",
       "status": "",
-      "mach_number": 0.4399,
+      "mach_number": 0.4638,
       "confidence_score": 0.6,
       "risk_per_trade_pct": 0.25,
       "max_positions": 10,
@@ -74,7 +74,7 @@
       "timeframe": "M5",
       "mode": "scalp",
       "status": "",
-      "mach_number": 0.5591,
+      "mach_number": 0.5844,
       "confidence_score": 0.6,
       "risk_per_trade_pct": 0.25,
       "max_positions": 15,
@@ -96,7 +96,7 @@
   "summary": {
     "XAUUSD": {
       "count": 4,
-      "mach_mean": 0.51715,
+      "mach_mean": 0.51545,
       "confidence_mean": 0.65,
       "status_counts": {
         "": 4
@@ -104,9 +104,9 @@
     }
   },
   "metadata": {
-    "generated_at": "2026-03-21T21:01:30.366152+00:00",
+    "generated_at": "2026-03-21T21:31:31.790638+00:00",
     "version": "psa_run_ami_calibration_v1.0",
-    "reports_dir": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\outputs\\causal_reports",
+    "reports_dir": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\outputs\\AMI_reports",
     "n_reports_processed": 4,
     "output_path": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\outputs\\ami_ops_calibration.json"
   }

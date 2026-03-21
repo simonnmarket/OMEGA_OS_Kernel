@@ -1,0 +1,44 @@
+{
+  "symbol": "XAUUSD",
+  "timeframe": "M1",
+  "period_start": "2026-01-28T15:23:00",
+  "period_end": "2026-03-19T23:17:00",
+  "data_points": 50000,
+  "forces": {
+    "order_flow": {
+      "magnitude": 160.0,
+      "direction": "bearish"
+    },
+    "volume_force": {
+      "volume_ratio": 0.46535154274152757,
+      "wyckoff": "neutral"
+    },
+    "momentum_force": {
+      "acceleration": 4.710000000000036,
+      "direction": "bullish"
+    },
+    "energy": {
+      "kinetic": 0.0004922010024695833,
+      "potential": 7.869999999999891
+    }
+  },
+  "mach_number": 0.5078,
+  "confidence_score": 0.6,
+  "opportunities": [
+    {
+      "id": "OPP_a44b5225",
+      "type": "causal_setup",
+      "calibration": {
+        "entry_zone": 4651.82,
+        "stop_loss": 4628.56,
+        "target_1": 4698.34,
+        "target_2": 4744.86,
+        "max_exposure_pct": 2.5,
+        "timing_candles": 8
+      }
+    }
+  ],
+  "patterns": [],
+  "timestamp": "2026-03-21T21:01:28.844798",
+  "checksum": "a44b5225b9ebe3cfac2580c57350601b9d7e10660f09a354e3b80772b9f5df5d"
+}

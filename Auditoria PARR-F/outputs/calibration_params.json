@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "generated_at": "2026-03-21T21:01:29.727985+00:00",
+    "version": "omega_turing_calibrate_v1.1",
+    "n_reports_processed": 4,
+    "reports_dir": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\outputs\\causal_reports",
+    "output_path": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\outputs\\calibration_params.json"
+  },
+  "calibration": {
+    "XAUUSD": {
+      "H1": {
+        "count": 1,
+        "order_flow_mag_mean": 247490.0400000139,
+        "order_flow_mag_ic95": null,
+        "order_flow_mag_n": 1,
+        "order_flow_bias": "bearish",
+        "volume_ratio_mean": 0.17799562895870516,
+        "volume_ratio_n": 1,
+        "wyckoff_mode": "neutral",
+        "wyckoff_counts": {
+          "neutral": 1
+        },
+        "momentum_accel_mean": -13.1299999999992,
+        "momentum_bias": "bearish",
+        "energy_kin_mean": 0.004812798384054245,
+        "energy_pot_mean": 77.38000000000011
+      },
+      "M1": {
+        "count": 1,
+        "order_flow_mag_mean": 160.0,
+        "order_flow_mag_ic95": null,
+        "order_flow_mag_n": 1,
+        "order_flow_bias": "bearish",
+        "volume_ratio_mean": 0.46535154274152757,
+        "volume_ratio_n": 1,
+        "wyckoff_mode": "neutral",
+        "wyckoff_counts": {
+          "neutral": 1
+        },
+        "momentum_accel_mean": 4.710000000000036,
+        "momentum_bias": "bullish",
+        "energy_kin_mean": 0.0004922010024695833,
+        "energy_pot_mean": 7.869999999999891
+      },
+      "M15": {
+        "count": 1,
+        "order_flow_mag_mean": 8596.30000000133,
+        "order_flow_mag_ic95": null,
+        "order_flow_mag_n": 1,
+        "order_flow_bias": "bullish",
+        "volume_ratio_mean": 0.07290680719347165,
+        "volume_ratio_n": 1,
+        "wyckoff_mode": "neutral",
+        "wyckoff_counts": {
+          "neutral": 1
+        },
+        "momentum_accel_mean": -12.570000000000618,
+        "momentum_bias": "bearish",
+        "energy_kin_mean": 0.0023680962319723607,
+        "energy_pot_mean": 80.07999999999993
+      },
+      "M5": {
+        "count": 1,
+        "order_flow_mag_mean": 1287.8000000001994,
+        "order_flow_mag_ic95": null,
+        "order_flow_mag_n": 1,
+        "order_flow_bias": "bullish",
+        "volume_ratio_mean": 0.23291925465838512,
+        "volume_ratio_n": 1,
+        "wyckoff_mode": "neutral",
+        "wyckoff_counts": {
+          "neutral": 1
+        },
+        "momentum_accel_mean": -0.6300000000001091,
+        "momentum_bias": "bearish",
+        "energy_kin_mean": 0.0011618587072152408,
+        "energy_pot_mean": 44.72999999999956
+      }
+    }
+  }
+}
