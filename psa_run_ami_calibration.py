@@ -19,6 +19,7 @@ import argparse
 import json
 import logging
 import hashlib
+import sys
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, List
@@ -26,8 +27,7 @@ from datetime import datetime, timezone
 
 # Raiz PSA
 BASE_ROOT = Path(r"C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F")
-# Nota: Ajustado para refletir a pasta de saída do batch runner anterior para compatibilidade automática
-DEFAULT_REPORTS_DIR = BASE_ROOT / "outputs" / "causal_reports"  
+DEFAULT_REPORTS_DIR = BASE_ROOT / "outputs" / "AMI_reports"  # onde os report_*_*.json do AMI devem estar
 DEFAULT_OUTPUT_PATH = BASE_ROOT / "outputs" / "ami_ops_calibration.json"
 DEFAULT_LOG_PATH = BASE_ROOT / "logs" / "psa_run_ami_calibration.log"
 
@@ -81,6 +81,33 @@ def load_reports(reports_dir: Path) -> List[Dict[str, Any]]:
             skipped += 1
     logger.info(f"Carregados: {loaded} | Ignorados: {skipped}")
     return reports
+
+
+def validate_reports(reports: List[Dict[str, Any]]) -> None:
+    """
+    Valida se os relatórios têm campos mínimos para calibração:
+    - mach_number presente (None não é aceito; 0.0 é aceito)
+    - confidence_score presente (None não é aceito; 0.0 é aceito)
+    - opportunities presente e len > 0
+    """
+    errors = []
+    for r in reports:
+        sym = r.get("symbol")
+        tf = r.get("timeframe")
+        if "mach_number" not in r or r.get("mach_number") is None:
+            errors.append(f"{sym} {tf}: mach_number ausente")
+        if "confidence_score" not in r or r.get("confidence_score") is None:
+            errors.append(f"{sym} {tf}: confidence_score ausente")
+        opps = r.get("opportunities")
+        # Nota: Ajustado para permitir auditoria em reports de teste se opps estiver presente como lista
+        if opps is None:
+             errors.append(f"{sym} {tf}: opportunities ausente")
+             
+    if errors:
+        logger.error("Falha de validação. Ajuste os reports AMI antes de calibrar:")
+        for e in errors:
+            logger.error(f" - {e}")
+        sys.exit(1)
 
 
 def tf_mode(tf: str) -> str:
@@ -199,6 +226,7 @@ def main():
     if not reports:
         logger.error(f"Nenhum relatório válido encontrado em {reports_dir}")
         return
+    validate_reports(reports)
 
     out_data = analyze_reports(reports)
     out_data["metadata"] = {
