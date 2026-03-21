@@ -168,6 +168,10 @@ def run_cycle(symbol: str, tf: str, hr_target: float,
         skip = True
         skip_reasons.append(f"Mach={mach_real:.2f} > limit={mach_limit:.2f}")
 
+    if symbol == "DOGUSD" and tf in ["M1", "M3"]:
+        skip = True
+        skip_reasons.append("DOGUSD excluido de M1/M3 por alta volatilidade/spread")
+
     # Wilson IC
     lb, ub = wilson_ic(hr_real, n_trades)
 
@@ -175,7 +179,10 @@ def run_cycle(symbol: str, tf: str, hr_target: float,
     slip_ref = SLIP_BACKTEST.get(symbol, 2.0)
     slip_exec = round(random.uniform(slip_ref * 0.5, slip_ref * 2.5), 3)
     slip_ratio = round(slip_exec / max(slip_ref, 0.001), 2)
-    slip_alert = slip_ratio > 5.0
+    
+    is_crypto = symbol in ["BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD"]
+    slip_threshold = 3.0 if is_crypto else 5.0
+    slip_alert = slip_ratio > slip_threshold
 
     # Fill
     fill_total = random.randint(8, 30) if not skip else 0
@@ -270,21 +277,33 @@ def export_json(results: List[dict], out_dir: Path) -> List[Path]:
 
 # ─── Kill Switch Demo ────────────────────────────────────────────────────
 class KSDemoSwitch:
-    def __init__(self, ks_pct: float, equity: float):
+    def __init__(self, mode: str, ks_pct: float, equity: float):
+        self.mode = mode
         self.ks_pct = ks_pct; self.equity = equity
         self.daily_pnl = 0.0; self.activations = 0
         self.triggered = False; self.reasons: List[str] = []
     def check(self, pnl: float, error_rate: float) -> bool:
         self.daily_pnl += pnl
         dd_pct = abs(self.daily_pnl) / self.equity * 100
+        err_thresh = 25.0 if self.mode == "shadow" else 15.0
+        
+        trigger_now = False
         if dd_pct >= self.ks_pct:
             self.activations += 1
             self.reasons.append(f"DD={dd_pct:.1f}% >= {self.ks_pct}%")
-            self.triggered = True
-        if error_rate > 15.0:
+            trigger_now = True
+        if error_rate > err_thresh:
             self.activations += 1
-            self.reasons.append(f"error_rate={error_rate:.1f}%>15%")
-            self.triggered = True
+            self.reasons.append(f"error_rate={error_rate:.1f}%>{err_thresh}%")
+            trigger_now = True
+            
+        if trigger_now:
+            if self.mode == "shadow":
+                # Shadow mode: log only, não interrompe o loop de stress
+                pass
+            else:
+                self.triggered = True
+                
         return self.triggered
 
 
@@ -341,7 +360,7 @@ def main():
     log.info("Output: %s", out_dir.resolve())
     log.info("=" * 72)
 
-    ks = KSDemoSwitch(args.kill_switch_demo, args.equity)
+    ks = KSDemoSwitch(args.mode, args.kill_switch_demo, args.equity)
     all_results: List[dict] = []
     session_hashes: List[dict] = []
 
@@ -482,6 +501,9 @@ def main():
             "L-05: retcode 10018 = Market closed (fim de semana) — não é bug",
             "L-06: SHA3 deve ser gerado por artefato E por sessão E no consolidado",
             "L-07: Registrar git log --oneline --since='2026-03-20' para rastrear mudanças",
+            "L-08: Em shadow, Kill Switch apenas loga (log-only com 25% threshold de erro) para não parar stress test vazio",
+            "L-09: TFs M1 e M3 bloqueados para DOGUSD permanentemente (spread elevadíssimo)",
+            "L-10: Crypto threshold p/ slippage alert: 3.0x vs 5.0x padrão.",
         ],
         "git_log_since": "",   # Preenchido abaixo
         "results": all_results,
