@@ -1,0 +1,70 @@
+{
+  "mission_id": "GAMARAY-ETHUSD-M15-20260320",
+  "asset": "ETHUSD",
+  "timeframe": "M15",
+  "period_start": "",
+  "period_end": "",
+  "data_points": 0,
+  "status": "COMPLETED",
+  "created_at": "2026-03-20T19:16:54.235749+00:00",
+  "updated_at": "2026-03-20T19:16:54.235749+00:00",
+  "agent_version": "ami_analyzer_v3.0",
+  "omega_integration": false,
+  "confidence_score": 99.85,
+  "mach_number": 1.0,
+  "dominant_cycle": "34H",
+  "flutter_risk": "low",
+  "trajectory_phase": "descending",
+  "is_chaotic": false,
+  "checksum_sources": {
+    "linha": "1550d982bab1c65ddb3f322e32068818abadf3d37f3a1cfb8c5f36e4e80e354b",
+    "candle": "25edd55e5e37e360b6211d85fbb7b1b87fe7db38c09e031ebec84f24c222910b"
+  },
+  "binomial_ic_95": {
+    "hits": 23241,
+    "total": 23275,
+    "p_hat": 0.998539,
+    "lower_bound": 0.997959,
+    "upper_bound": 0.998954,
+    "interval": "[99.7959%, 99.8954%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 24164,
+          "hits": 24125,
+          "breaks": 39,
+          "hit_rate": 99.84,
+          "break_rate": 0.16
+        },
+        "134_stats": {
+          "total_touches": 23275,
+          "hits": 23241,
+          "breaks": 34,
+          "hit_rate": 99.85,
+          "break_rate": 0.15
+        }
+      }
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "components": {
+        "P0_contribution": 42350.42,
+        "lambda_Q": 0.0011799999999999998,
+        "gamma_Q2": 0.00018350000000000002,
+        "delta_PBoc": 0.0
+      },
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "checksum": "704fcd4dd18c61332af1c7cb5603261540df782799834bd641f965f72dd8853c",
+  "report_json": "{\n  \"mission_id\": \"GAMARAY-ETHUSD-M15-20260320\",\n  \"asset\": \"ETHUSD\",\n  \"timeframe\": \"M15\",\n  \"period_start\": \"\",\n  \"period_end\": \"\",\n  \"data_points\": 0,\n  \"status\": \"COMPLETED\",\n  \"created_at\": \"2026-03-20T19:16:54.235749+00:00\",\n  \"updated_at\": \"2026-03-20T19:16:54.235749+00:00\",\n  \"agent_version\": \"ami_analyzer_v3.0\",\n  \"omega_integration\": false,\n  \"confidence_score\": 99.85,\n  \"mach_number\": 1.0,\n  \"dominant_cycle\": \"34H\",\n  \"flutter_risk\": \"low\",\n  \"trajectory_phase\": \"descending\",\n  \"is_chaotic\": false,\n  \"checksum_sources\": {\n    \"linha\": \"1550d982bab1c65ddb3f322e32068818abadf3d37f3a1cfb8c5f36e4e80e354b\",\n    \"candle\": \"25edd55e5e37e360b6211d85fbb7b1b87fe7db38c09e031ebec84f24c222910b\"\n  },\n  \"binomial_ic_95\": {\n    \"hits\": 23241,\n    \"total\": 23275,\n    \"p_hat\": 0.998539,\n    \"lower_bound\": 0.997959,\n    \"upper_bound\": 0.998954,\n    \"interval\": \"[99.7959%, 99.8954%]\"\n  },\n  \"engines\": {\n    \"harmonic\": {\n      \"metrics\": {\n        \"34_stats\": {\n          \"total_touches\": 24164,\n          \"hits\": 24125,\n          \"breaks\": 39,\n          \"hit_rate\": 99.84,\n          \"break_rate\": 0.16\n        },\n        \"134_stats\": {\n          \"total_touches\": 23275,\n          \"hits\": 23241,\n          \"breaks\": 34,\n          \"hit_rate\": 99.85,\n          \"break_rate\": 0.15\n        }\n      }\n    },\n    \"price\": {\n      \"price\": 42350.4333635,\n      \"base_price\": 42350.4213635,\n      \"flash_crash_adjustment\": 0.012,\n      \"components\": {\n        \"P0_contribution\": 42350.42,\n        \"lambda_Q\": 0.0011799999999999998,\n        \"gamma_Q2\": 0.00018350000000000002,\n        \"delta_PBoc\": 0.0\n      },\n      \"metadata\": {\n        \"params_checksum\": \"20c75b792222fe8b\",\n        \"rmse_expected\": 0.0031,\n        \"r_squared\": 0.9876\n      }\n    }\n  },\n  \"checksum\": \"704fcd4dd18c61332af1c7cb5603261540df782799834bd641f965f72dd8853c\"\n}",
+  "report_markdown": "# GAMARAY — ETHUSD M15\n**Mission ID:** GAMARAY-ETHUSD-M15-20260320\n**Status:** `COMPLETED` | **Chaotic Flag:** `✅ NO`\n**Generated:** 2026-03-20T19:16:54.235749+00:00\n\n## Motores Harmônicos (V3)\n\n| Nível   | Toques  | HIT    | BREAK | Hit Rate   |\n|---------|---------|--------|-------|------------|\n| EMA-34  | 24,164 | 24,125 | 39 | **99.84%** |\n| EMA-134 | 23,275 | 23,241 | 34 | **99.85%** |\n\n## IC Binomial 95% (EMA-134)\n```\np_hat  = 0.998539 (99.85%)\nIC 95% = [99.7959%, 99.8954%]\n```\n\n## DCE Price Engine V5.5.3\n**Preço calibrado:** 42350.4333635 | **R²:** 0.9876\n\n## Veredicto\n**Flutter:** LOW | **Mach:** 1.0 | **SHA3:** `704fcd4dd18c61332af1c7cb56032615...`\n"
+}

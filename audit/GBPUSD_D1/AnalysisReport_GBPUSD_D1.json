@@ -1,0 +1,70 @@
+{
+  "mission_id": "GAMARAY-GBPUSD-D1-20260320",
+  "asset": "GBPUSD",
+  "timeframe": "D1",
+  "period_start": "",
+  "period_end": "",
+  "data_points": 0,
+  "status": "COMPLETED",
+  "created_at": "2026-03-20T19:17:01.794852+00:00",
+  "updated_at": "2026-03-20T19:17:01.794852+00:00",
+  "agent_version": "ami_analyzer_v3.0",
+  "omega_integration": false,
+  "confidence_score": 100.0,
+  "mach_number": 1.0,
+  "dominant_cycle": "34H",
+  "flutter_risk": "low",
+  "trajectory_phase": "descending",
+  "is_chaotic": false,
+  "checksum_sources": {
+    "linha": "776cf12e7a5da1486d0109a1a13d099387d08c2314bf55e1b215110ef23d4307",
+    "candle": "ff9a3864879a3e31de8f2afa37a156e324f89fdc7bc0d2683d072af51e416a9c"
+  },
+  "binomial_ic_95": {
+    "hits": 2459,
+    "total": 2459,
+    "p_hat": 1.0,
+    "lower_bound": 0.99844,
+    "upper_bound": 1.0,
+    "interval": "[99.8440%, 100.0000%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 2459,
+          "hits": 2459,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        },
+        "134_stats": {
+          "total_touches": 2459,
+          "hits": 2459,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        }
+      }
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "components": {
+        "P0_contribution": 42350.42,
+        "lambda_Q": 0.0011799999999999998,
+        "gamma_Q2": 0.00018350000000000002,
+        "delta_PBoc": 0.0
+      },
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "checksum": "cc2a896ed57239fd992d5a32c816b0ff69c133a9e4b635170b054bc46c96dad7",
+  "report_json": "{\n  \"mission_id\": \"GAMARAY-GBPUSD-D1-20260320\",\n  \"asset\": \"GBPUSD\",\n  \"timeframe\": \"D1\",\n  \"period_start\": \"\",\n  \"period_end\": \"\",\n  \"data_points\": 0,\n  \"status\": \"COMPLETED\",\n  \"created_at\": \"2026-03-20T19:17:01.794852+00:00\",\n  \"updated_at\": \"2026-03-20T19:17:01.794852+00:00\",\n  \"agent_version\": \"ami_analyzer_v3.0\",\n  \"omega_integration\": false,\n  \"confidence_score\": 100.0,\n  \"mach_number\": 1.0,\n  \"dominant_cycle\": \"34H\",\n  \"flutter_risk\": \"low\",\n  \"trajectory_phase\": \"descending\",\n  \"is_chaotic\": false,\n  \"checksum_sources\": {\n    \"linha\": \"776cf12e7a5da1486d0109a1a13d099387d08c2314bf55e1b215110ef23d4307\",\n    \"candle\": \"ff9a3864879a3e31de8f2afa37a156e324f89fdc7bc0d2683d072af51e416a9c\"\n  },\n  \"binomial_ic_95\": {\n    \"hits\": 2459,\n    \"total\": 2459,\n    \"p_hat\": 1.0,\n    \"lower_bound\": 0.99844,\n    \"upper_bound\": 1.0,\n    \"interval\": \"[99.8440%, 100.0000%]\"\n  },\n  \"engines\": {\n    \"harmonic\": {\n      \"metrics\": {\n        \"34_stats\": {\n          \"total_touches\": 2459,\n          \"hits\": 2459,\n          \"breaks\": 0,\n          \"hit_rate\": 100.0,\n          \"break_rate\": 0.0\n        },\n        \"134_stats\": {\n          \"total_touches\": 2459,\n          \"hits\": 2459,\n          \"breaks\": 0,\n          \"hit_rate\": 100.0,\n          \"break_rate\": 0.0\n        }\n      }\n    },\n    \"price\": {\n      \"price\": 42350.4333635,\n      \"base_price\": 42350.4213635,\n      \"flash_crash_adjustment\": 0.012,\n      \"components\": {\n        \"P0_contribution\": 42350.42,\n        \"lambda_Q\": 0.0011799999999999998,\n        \"gamma_Q2\": 0.00018350000000000002,\n        \"delta_PBoc\": 0.0\n      },\n      \"metadata\": {\n        \"params_checksum\": \"20c75b792222fe8b\",\n        \"rmse_expected\": 0.0031,\n        \"r_squared\": 0.9876\n      }\n    }\n  },\n  \"checksum\": \"cc2a896ed57239fd992d5a32c816b0ff69c133a9e4b635170b054bc46c96dad7\"\n}",
+  "report_markdown": "# GAMARAY — GBPUSD D1\n**Mission ID:** GAMARAY-GBPUSD-D1-20260320\n**Status:** `COMPLETED` | **Chaotic Flag:** `✅ NO`\n**Generated:** 2026-03-20T19:17:01.794852+00:00\n\n## Motores Harmônicos (V3)\n\n| Nível   | Toques  | HIT    | BREAK | Hit Rate   |\n|---------|---------|--------|-------|------------|\n| EMA-34  | 2,459 | 2,459 | 0 | **100.0%** |\n| EMA-134 | 2,459 | 2,459 | 0 | **100.0%** |\n\n## IC Binomial 95% (EMA-134)\n```\np_hat  = 1.000000 (100.0%)\nIC 95% = [99.8440%, 100.0000%]\n```\n\n## DCE Price Engine V5.5.3\n**Preço calibrado:** 42350.4333635 | **R²:** 0.9876\n\n## Veredicto\n**Flutter:** LOW | **Mach:** 1.0 | **SHA3:** `cc2a896ed57239fd992d5a32c816b0ff...`\n"
+}

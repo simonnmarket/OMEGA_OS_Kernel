@@ -1,0 +1,70 @@
+{
+  "mission_id": "GAMARAY-USDJPY-H1-20260320",
+  "asset": "USDJPY",
+  "timeframe": "H1",
+  "period_start": "",
+  "period_end": "",
+  "data_points": 0,
+  "status": "COMPLETED",
+  "created_at": "2026-03-20T19:17:54.319129+00:00",
+  "updated_at": "2026-03-20T19:17:54.319129+00:00",
+  "agent_version": "ami_analyzer_v3.0",
+  "omega_integration": false,
+  "confidence_score": 100.0,
+  "mach_number": 1.0,
+  "dominant_cycle": "34H",
+  "flutter_risk": "low",
+  "trajectory_phase": "descending",
+  "is_chaotic": false,
+  "checksum_sources": {
+    "linha": "cbc15e772aa0f80eea6a0a80622b5286af14f80a1feb0c10010843e0fd04701e",
+    "candle": "17990c7f68f1cf10936b47545c17f5e1be545724cba73075462b917baa6ea573"
+  },
+  "binomial_ic_95": {
+    "hits": 24461,
+    "total": 24461,
+    "p_hat": 1.0,
+    "lower_bound": 0.999843,
+    "upper_bound": 1.0,
+    "interval": "[99.9843%, 100.0000%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 24461,
+          "hits": 24461,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        },
+        "134_stats": {
+          "total_touches": 24461,
+          "hits": 24461,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        }
+      }
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "components": {
+        "P0_contribution": 42350.42,
+        "lambda_Q": 0.0011799999999999998,
+        "gamma_Q2": 0.00018350000000000002,
+        "delta_PBoc": 0.0
+      },
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "checksum": "510baa678fa9b40c1c18da08790e076240856acc608b3f88e159fe1a0e2f7d54",
+  "report_json": "{\n  \"mission_id\": \"GAMARAY-USDJPY-H1-20260320\",\n  \"asset\": \"USDJPY\",\n  \"timeframe\": \"H1\",\n  \"period_start\": \"\",\n  \"period_end\": \"\",\n  \"data_points\": 0,\n  \"status\": \"COMPLETED\",\n  \"created_at\": \"2026-03-20T19:17:54.319129+00:00\",\n  \"updated_at\": \"2026-03-20T19:17:54.319129+00:00\",\n  \"agent_version\": \"ami_analyzer_v3.0\",\n  \"omega_integration\": false,\n  \"confidence_score\": 100.0,\n  \"mach_number\": 1.0,\n  \"dominant_cycle\": \"34H\",\n  \"flutter_risk\": \"low\",\n  \"trajectory_phase\": \"descending\",\n  \"is_chaotic\": false,\n  \"checksum_sources\": {\n    \"linha\": \"cbc15e772aa0f80eea6a0a80622b5286af14f80a1feb0c10010843e0fd04701e\",\n    \"candle\": \"17990c7f68f1cf10936b47545c17f5e1be545724cba73075462b917baa6ea573\"\n  },\n  \"binomial_ic_95\": {\n    \"hits\": 24461,\n    \"total\": 24461,\n    \"p_hat\": 1.0,\n    \"lower_bound\": 0.999843,\n    \"upper_bound\": 1.0,\n    \"interval\": \"[99.9843%, 100.0000%]\"\n  },\n  \"engines\": {\n    \"harmonic\": {\n      \"metrics\": {\n        \"34_stats\": {\n          \"total_touches\": 24461,\n          \"hits\": 24461,\n          \"breaks\": 0,\n          \"hit_rate\": 100.0,\n          \"break_rate\": 0.0\n        },\n        \"134_stats\": {\n          \"total_touches\": 24461,\n          \"hits\": 24461,\n          \"breaks\": 0,\n          \"hit_rate\": 100.0,\n          \"break_rate\": 0.0\n        }\n      }\n    },\n    \"price\": {\n      \"price\": 42350.4333635,\n      \"base_price\": 42350.4213635,\n      \"flash_crash_adjustment\": 0.012,\n      \"components\": {\n        \"P0_contribution\": 42350.42,\n        \"lambda_Q\": 0.0011799999999999998,\n        \"gamma_Q2\": 0.00018350000000000002,\n        \"delta_PBoc\": 0.0\n      },\n      \"metadata\": {\n        \"params_checksum\": \"20c75b792222fe8b\",\n        \"rmse_expected\": 0.0031,\n        \"r_squared\": 0.9876\n      }\n    }\n  },\n  \"checksum\": \"510baa678fa9b40c1c18da08790e076240856acc608b3f88e159fe1a0e2f7d54\"\n}",
+  "report_markdown": "# GAMARAY — USDJPY H1\n**Mission ID:** GAMARAY-USDJPY-H1-20260320\n**Status:** `COMPLETED` | **Chaotic Flag:** `✅ NO`\n**Generated:** 2026-03-20T19:17:54.319129+00:00\n\n## Motores Harmônicos (V3)\n\n| Nível   | Toques  | HIT    | BREAK | Hit Rate   |\n|---------|---------|--------|-------|------------|\n| EMA-34  | 24,461 | 24,461 | 0 | **100.0%** |\n| EMA-134 | 24,461 | 24,461 | 0 | **100.0%** |\n\n## IC Binomial 95% (EMA-134)\n```\np_hat  = 1.000000 (100.0%)\nIC 95% = [99.9843%, 100.0000%]\n```\n\n## DCE Price Engine V5.5.3\n**Preço calibrado:** 42350.4333635 | **R²:** 0.9876\n\n## Veredicto\n**Flutter:** LOW | **Mach:** 1.0 | **SHA3:** `510baa678fa9b40c1c18da08790e0762...`\n"
+}

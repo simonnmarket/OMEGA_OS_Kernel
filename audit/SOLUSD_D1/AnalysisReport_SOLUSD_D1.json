@@ -1,0 +1,70 @@
+{
+  "mission_id": "GAMARAY-SOLUSD-D1-20260320",
+  "asset": "SOLUSD",
+  "timeframe": "D1",
+  "period_start": "",
+  "period_end": "",
+  "data_points": 0,
+  "status": "COMPLETED",
+  "created_at": "2026-03-20T19:22:45.343194+00:00",
+  "updated_at": "2026-03-20T19:22:45.343194+00:00",
+  "agent_version": "ami_analyzer_v3.0",
+  "omega_integration": false,
+  "confidence_score": 100.0,
+  "mach_number": 1.0,
+  "dominant_cycle": "34H",
+  "flutter_risk": "low",
+  "trajectory_phase": "descending",
+  "is_chaotic": false,
+  "checksum_sources": {
+    "linha": "6570efd8d7d999ed6bbd589462d7f33fa4e357bbcd0b2c2a21d8ca4dfb22fa35",
+    "candle": "1de9c03eaaa00ba1f896a238c1f7a43008c4c20750c42219e1b31a33bde10f69"
+  },
+  "binomial_ic_95": {
+    "hits": 732,
+    "total": 732,
+    "p_hat": 1.0,
+    "lower_bound": 0.994779,
+    "upper_bound": 1.0,
+    "interval": "[99.4779%, 100.0000%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 732,
+          "hits": 732,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        },
+        "134_stats": {
+          "total_touches": 732,
+          "hits": 732,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        }
+      }
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "components": {
+        "P0_contribution": 42350.42,
+        "lambda_Q": 0.0011799999999999998,
+        "gamma_Q2": 0.00018350000000000002,
+        "delta_PBoc": 0.0
+      },
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "checksum": "00626a23ae8d6e6c953f5412f642d2cc8b5f9ed59681ad8b65d1201b3d015fd4",
+  "report_json": "{\n  \"mission_id\": \"GAMARAY-SOLUSD-D1-20260320\",\n  \"asset\": \"SOLUSD\",\n  \"timeframe\": \"D1\",\n  \"period_start\": \"\",\n  \"period_end\": \"\",\n  \"data_points\": 0,\n  \"status\": \"COMPLETED\",\n  \"created_at\": \"2026-03-20T19:22:45.343194+00:00\",\n  \"updated_at\": \"2026-03-20T19:22:45.343194+00:00\",\n  \"agent_version\": \"ami_analyzer_v3.0\",\n  \"omega_integration\": false,\n  \"confidence_score\": 100.0,\n  \"mach_number\": 1.0,\n  \"dominant_cycle\": \"34H\",\n  \"flutter_risk\": \"low\",\n  \"trajectory_phase\": \"descending\",\n  \"is_chaotic\": false,\n  \"checksum_sources\": {\n    \"linha\": \"6570efd8d7d999ed6bbd589462d7f33fa4e357bbcd0b2c2a21d8ca4dfb22fa35\",\n    \"candle\": \"1de9c03eaaa00ba1f896a238c1f7a43008c4c20750c42219e1b31a33bde10f69\"\n  },\n  \"binomial_ic_95\": {\n    \"hits\": 732,\n    \"total\": 732,\n    \"p_hat\": 1.0,\n    \"lower_bound\": 0.994779,\n    \"upper_bound\": 1.0,\n    \"interval\": \"[99.4779%, 100.0000%]\"\n  },\n  \"engines\": {\n    \"harmonic\": {\n      \"metrics\": {\n        \"34_stats\": {\n          \"total_touches\": 732,\n          \"hits\": 732,\n          \"breaks\": 0,\n          \"hit_rate\": 100.0,\n          \"break_rate\": 0.0\n        },\n        \"134_stats\": {\n          \"total_touches\": 732,\n          \"hits\": 732,\n          \"breaks\": 0,\n          \"hit_rate\": 100.0,\n          \"break_rate\": 0.0\n        }\n      }\n    },\n    \"price\": {\n      \"price\": 42350.4333635,\n      \"base_price\": 42350.4213635,\n      \"flash_crash_adjustment\": 0.012,\n      \"components\": {\n        \"P0_contribution\": 42350.42,\n        \"lambda_Q\": 0.0011799999999999998,\n        \"gamma_Q2\": 0.00018350000000000002,\n        \"delta_PBoc\": 0.0\n      },\n      \"metadata\": {\n        \"params_checksum\": \"20c75b792222fe8b\",\n        \"rmse_expected\": 0.0031,\n        \"r_squared\": 0.9876\n      }\n    }\n  },\n  \"checksum\": \"00626a23ae8d6e6c953f5412f642d2cc8b5f9ed59681ad8b65d1201b3d015fd4\"\n}",
+  "report_markdown": "# GAMARAY — SOLUSD D1\n**Mission ID:** GAMARAY-SOLUSD-D1-20260320\n**Status:** `COMPLETED` | **Chaotic Flag:** `✅ NO`\n**Generated:** 2026-03-20T19:22:45.343194+00:00\n\n## Motores Harmônicos (V3)\n\n| Nível   | Toques  | HIT    | BREAK | Hit Rate   |\n|---------|---------|--------|-------|------------|\n| EMA-34  | 732 | 732 | 0 | **100.0%** |\n| EMA-134 | 732 | 732 | 0 | **100.0%** |\n\n## IC Binomial 95% (EMA-134)\n```\np_hat  = 1.000000 (100.0%)\nIC 95% = [99.4779%, 100.0000%]\n```\n\n## DCE Price Engine V5.5.3\n**Preço calibrado:** 42350.4333635 | **R²:** 0.9876\n\n## Veredicto\n**Flutter:** LOW | **Mach:** 1.0 | **SHA3:** `00626a23ae8d6e6c953f5412f642d2cc...`\n"
+}

@@ -1,0 +1,70 @@
+{
+  "mission_id": "GAMARAY-XAUUSD-H4-20260320",
+  "asset": "XAUUSD",
+  "timeframe": "H4",
+  "period_start": "",
+  "period_end": "",
+  "data_points": 0,
+  "status": "COMPLETED",
+  "created_at": "2026-03-20T19:15:26.773173+00:00",
+  "updated_at": "2026-03-20T19:15:26.773173+00:00",
+  "agent_version": "ami_analyzer_v3.0",
+  "omega_integration": false,
+  "confidence_score": 99.94,
+  "mach_number": 1.0,
+  "dominant_cycle": "34H",
+  "flutter_risk": "low",
+  "trajectory_phase": "descending",
+  "is_chaotic": false,
+  "checksum_sources": {
+    "linha": "8e554d9fc5ec0ad31fb682fcc54d311958887f3fd21be8de39378fb6273e8da1",
+    "candle": "4027477408ce9a2944c85916e8be1b1f0fed635afd485aeb32574c912e6913d9"
+  },
+  "binomial_ic_95": {
+    "hits": 7226,
+    "total": 7230,
+    "p_hat": 0.999447,
+    "lower_bound": 0.998578,
+    "upper_bound": 0.999785,
+    "interval": "[99.8578%, 99.9785%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 7413,
+          "hits": 7405,
+          "breaks": 8,
+          "hit_rate": 99.89,
+          "break_rate": 0.11
+        },
+        "134_stats": {
+          "total_touches": 7230,
+          "hits": 7226,
+          "breaks": 4,
+          "hit_rate": 99.94,
+          "break_rate": 0.06
+        }
+      }
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "components": {
+        "P0_contribution": 42350.42,
+        "lambda_Q": 0.0011799999999999998,
+        "gamma_Q2": 0.00018350000000000002,
+        "delta_PBoc": 0.0
+      },
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "checksum": "582a53e4f38076896c109a14bd2e52d7712555ea599e490a0c293028a3c0bdb6",
+  "report_json": "{\n  \"mission_id\": \"GAMARAY-XAUUSD-H4-20260320\",\n  \"asset\": \"XAUUSD\",\n  \"timeframe\": \"H4\",\n  \"period_start\": \"\",\n  \"period_end\": \"\",\n  \"data_points\": 0,\n  \"status\": \"COMPLETED\",\n  \"created_at\": \"2026-03-20T19:15:26.773173+00:00\",\n  \"updated_at\": \"2026-03-20T19:15:26.773173+00:00\",\n  \"agent_version\": \"ami_analyzer_v3.0\",\n  \"omega_integration\": false,\n  \"confidence_score\": 99.94,\n  \"mach_number\": 1.0,\n  \"dominant_cycle\": \"34H\",\n  \"flutter_risk\": \"low\",\n  \"trajectory_phase\": \"descending\",\n  \"is_chaotic\": false,\n  \"checksum_sources\": {\n    \"linha\": \"8e554d9fc5ec0ad31fb682fcc54d311958887f3fd21be8de39378fb6273e8da1\",\n    \"candle\": \"4027477408ce9a2944c85916e8be1b1f0fed635afd485aeb32574c912e6913d9\"\n  },\n  \"binomial_ic_95\": {\n    \"hits\": 7226,\n    \"total\": 7230,\n    \"p_hat\": 0.999447,\n    \"lower_bound\": 0.998578,\n    \"upper_bound\": 0.999785,\n    \"interval\": \"[99.8578%, 99.9785%]\"\n  },\n  \"engines\": {\n    \"harmonic\": {\n      \"metrics\": {\n        \"34_stats\": {\n          \"total_touches\": 7413,\n          \"hits\": 7405,\n          \"breaks\": 8,\n          \"hit_rate\": 99.89,\n          \"break_rate\": 0.11\n        },\n        \"134_stats\": {\n          \"total_touches\": 7230,\n          \"hits\": 7226,\n          \"breaks\": 4,\n          \"hit_rate\": 99.94,\n          \"break_rate\": 0.06\n        }\n      }\n    },\n    \"price\": {\n      \"price\": 42350.4333635,\n      \"base_price\": 42350.4213635,\n      \"flash_crash_adjustment\": 0.012,\n      \"components\": {\n        \"P0_contribution\": 42350.42,\n        \"lambda_Q\": 0.0011799999999999998,\n        \"gamma_Q2\": 0.00018350000000000002,\n        \"delta_PBoc\": 0.0\n      },\n      \"metadata\": {\n        \"params_checksum\": \"20c75b792222fe8b\",\n        \"rmse_expected\": 0.0031,\n        \"r_squared\": 0.9876\n      }\n    }\n  },\n  \"checksum\": \"582a53e4f38076896c109a14bd2e52d7712555ea599e490a0c293028a3c0bdb6\"\n}",
+  "report_markdown": "# GAMARAY — XAUUSD H4\n**Mission ID:** GAMARAY-XAUUSD-H4-20260320\n**Status:** `COMPLETED` | **Chaotic Flag:** `✅ NO`\n**Generated:** 2026-03-20T19:15:26.773173+00:00\n\n## Motores Harmônicos (V3)\n\n| Nível   | Toques  | HIT    | BREAK | Hit Rate   |\n|---------|---------|--------|-------|------------|\n| EMA-34  | 7,413 | 7,405 | 8 | **99.89%** |\n| EMA-134 | 7,230 | 7,226 | 4 | **99.94%** |\n\n## IC Binomial 95% (EMA-134)\n```\np_hat  = 0.999447 (99.94%)\nIC 95% = [99.8578%, 99.9785%]\n```\n\n## DCE Price Engine V5.5.3\n**Preço calibrado:** 42350.4333635 | **R²:** 0.9876\n\n## Veredicto\n**Flutter:** LOW | **Mach:** 1.0 | **SHA3:** `582a53e4f38076896c109a14bd2e52d7...`\n"
+}

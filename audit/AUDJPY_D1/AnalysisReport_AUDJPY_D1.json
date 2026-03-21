@@ -1,0 +1,70 @@
+{
+  "mission_id": "GAMARAY-AUDJPY-D1-20260320",
+  "asset": "AUDJPY",
+  "timeframe": "D1",
+  "period_start": "",
+  "period_end": "",
+  "data_points": 0,
+  "status": "COMPLETED",
+  "created_at": "2026-03-20T19:18:43.659448+00:00",
+  "updated_at": "2026-03-20T19:18:43.659448+00:00",
+  "agent_version": "ami_analyzer_v3.0",
+  "omega_integration": false,
+  "confidence_score": 100.0,
+  "mach_number": 1.0,
+  "dominant_cycle": "34H",
+  "flutter_risk": "low",
+  "trajectory_phase": "descending",
+  "is_chaotic": false,
+  "checksum_sources": {
+    "linha": "6d03412cf97bf5990c0f81b204105918379df143f5f048cc96f4e93f1b9bcd21",
+    "candle": "210faed5f8393dd5ae67d24e1f9744f2a2b966b08d8892b9585fb8b9442da53c"
+  },
+  "binomial_ic_95": {
+    "hits": 2447,
+    "total": 2447,
+    "p_hat": 1.0,
+    "lower_bound": 0.998433,
+    "upper_bound": 1.0,
+    "interval": "[99.8433%, 100.0000%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 2447,
+          "hits": 2447,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        },
+        "134_stats": {
+          "total_touches": 2447,
+          "hits": 2447,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        }
+      }
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "components": {
+        "P0_contribution": 42350.42,
+        "lambda_Q": 0.0011799999999999998,
+        "gamma_Q2": 0.00018350000000000002,
+        "delta_PBoc": 0.0
+      },
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "checksum": "8073d250638ac807ff579b89c6faf036eb479b2bd0293d0bb05a562825db80cf",
+  "report_json": "{\n  \"mission_id\": \"GAMARAY-AUDJPY-D1-20260320\",\n  \"asset\": \"AUDJPY\",\n  \"timeframe\": \"D1\",\n  \"period_start\": \"\",\n  \"period_end\": \"\",\n  \"data_points\": 0,\n  \"status\": \"COMPLETED\",\n  \"created_at\": \"2026-03-20T19:18:43.659448+00:00\",\n  \"updated_at\": \"2026-03-20T19:18:43.659448+00:00\",\n  \"agent_version\": \"ami_analyzer_v3.0\",\n  \"omega_integration\": false,\n  \"confidence_score\": 100.0,\n  \"mach_number\": 1.0,\n  \"dominant_cycle\": \"34H\",\n  \"flutter_risk\": \"low\",\n  \"trajectory_phase\": \"descending\",\n  \"is_chaotic\": false,\n  \"checksum_sources\": {\n    \"linha\": \"6d03412cf97bf5990c0f81b204105918379df143f5f048cc96f4e93f1b9bcd21\",\n    \"candle\": \"210faed5f8393dd5ae67d24e1f9744f2a2b966b08d8892b9585fb8b9442da53c\"\n  },\n  \"binomial_ic_95\": {\n    \"hits\": 2447,\n    \"total\": 2447,\n    \"p_hat\": 1.0,\n    \"lower_bound\": 0.998433,\n    \"upper_bound\": 1.0,\n    \"interval\": \"[99.8433%, 100.0000%]\"\n  },\n  \"engines\": {\n    \"harmonic\": {\n      \"metrics\": {\n        \"34_stats\": {\n          \"total_touches\": 2447,\n          \"hits\": 2447,\n          \"breaks\": 0,\n          \"hit_rate\": 100.0,\n          \"break_rate\": 0.0\n        },\n        \"134_stats\": {\n          \"total_touches\": 2447,\n          \"hits\": 2447,\n          \"breaks\": 0,\n          \"hit_rate\": 100.0,\n          \"break_rate\": 0.0\n        }\n      }\n    },\n    \"price\": {\n      \"price\": 42350.4333635,\n      \"base_price\": 42350.4213635,\n      \"flash_crash_adjustment\": 0.012,\n      \"components\": {\n        \"P0_contribution\": 42350.42,\n        \"lambda_Q\": 0.0011799999999999998,\n        \"gamma_Q2\": 0.00018350000000000002,\n        \"delta_PBoc\": 0.0\n      },\n      \"metadata\": {\n        \"params_checksum\": \"20c75b792222fe8b\",\n        \"rmse_expected\": 0.0031,\n        \"r_squared\": 0.9876\n      }\n    }\n  },\n  \"checksum\": \"8073d250638ac807ff579b89c6faf036eb479b2bd0293d0bb05a562825db80cf\"\n}",
+  "report_markdown": "# GAMARAY — AUDJPY D1\n**Mission ID:** GAMARAY-AUDJPY-D1-20260320\n**Status:** `COMPLETED` | **Chaotic Flag:** `✅ NO`\n**Generated:** 2026-03-20T19:18:43.659448+00:00\n\n## Motores Harmônicos (V3)\n\n| Nível   | Toques  | HIT    | BREAK | Hit Rate   |\n|---------|---------|--------|-------|------------|\n| EMA-34  | 2,447 | 2,447 | 0 | **100.0%** |\n| EMA-134 | 2,447 | 2,447 | 0 | **100.0%** |\n\n## IC Binomial 95% (EMA-134)\n```\np_hat  = 1.000000 (100.0%)\nIC 95% = [99.8433%, 100.0000%]\n```\n\n## DCE Price Engine V5.5.3\n**Preço calibrado:** 42350.4333635 | **R²:** 0.9876\n\n## Veredicto\n**Flutter:** LOW | **Mach:** 1.0 | **SHA3:** `8073d250638ac807ff579b89c6faf036...`\n"
+}

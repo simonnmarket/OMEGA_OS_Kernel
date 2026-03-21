@@ -1,0 +1,70 @@
+{
+  "mission_id": "GAMARAY-BTCUSD-H1-20260320",
+  "asset": "BTCUSD",
+  "timeframe": "H1",
+  "period_start": "",
+  "period_end": "",
+  "data_points": 0,
+  "status": "COMPLETED",
+  "created_at": "2026-03-20T19:16:10.050975+00:00",
+  "updated_at": "2026-03-20T19:16:10.050975+00:00",
+  "agent_version": "ami_analyzer_v3.0",
+  "omega_integration": false,
+  "confidence_score": 78.69,
+  "mach_number": 1.0,
+  "dominant_cycle": "UNDEFINED",
+  "flutter_risk": "critical",
+  "trajectory_phase": "descending",
+  "is_chaotic": false,
+  "checksum_sources": {
+    "linha": "1e6c67fd547477dff9f83c6ae510399f1a11c67479816668ba5bf8ece406d5be",
+    "candle": "d440b3c46e8a18215dcc170e7638ccc735afa5b13a0b9cb8c4849bdd546dbe9c"
+  },
+  "binomial_ic_95": {
+    "hits": 4077,
+    "total": 5181,
+    "p_hat": 0.786914,
+    "lower_bound": 0.775553,
+    "upper_bound": 0.797849,
+    "interval": "[77.5553%, 79.7849%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 10648,
+          "hits": 8015,
+          "breaks": 2633,
+          "hit_rate": 75.27,
+          "break_rate": 24.73
+        },
+        "134_stats": {
+          "total_touches": 5181,
+          "hits": 4077,
+          "breaks": 1104,
+          "hit_rate": 78.69,
+          "break_rate": 21.31
+        }
+      }
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "components": {
+        "P0_contribution": 42350.42,
+        "lambda_Q": 0.0011799999999999998,
+        "gamma_Q2": 0.00018350000000000002,
+        "delta_PBoc": 0.0
+      },
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "checksum": "482c83eec418d1b433c480169534386b7b721e53dea57167d57a659c2e72ccc2",
+  "report_json": "{\n  \"mission_id\": \"GAMARAY-BTCUSD-H1-20260320\",\n  \"asset\": \"BTCUSD\",\n  \"timeframe\": \"H1\",\n  \"period_start\": \"\",\n  \"period_end\": \"\",\n  \"data_points\": 0,\n  \"status\": \"COMPLETED\",\n  \"created_at\": \"2026-03-20T19:16:10.050975+00:00\",\n  \"updated_at\": \"2026-03-20T19:16:10.050975+00:00\",\n  \"agent_version\": \"ami_analyzer_v3.0\",\n  \"omega_integration\": false,\n  \"confidence_score\": 78.69,\n  \"mach_number\": 1.0,\n  \"dominant_cycle\": \"UNDEFINED\",\n  \"flutter_risk\": \"critical\",\n  \"trajectory_phase\": \"descending\",\n  \"is_chaotic\": false,\n  \"checksum_sources\": {\n    \"linha\": \"1e6c67fd547477dff9f83c6ae510399f1a11c67479816668ba5bf8ece406d5be\",\n    \"candle\": \"d440b3c46e8a18215dcc170e7638ccc735afa5b13a0b9cb8c4849bdd546dbe9c\"\n  },\n  \"binomial_ic_95\": {\n    \"hits\": 4077,\n    \"total\": 5181,\n    \"p_hat\": 0.786914,\n    \"lower_bound\": 0.775553,\n    \"upper_bound\": 0.797849,\n    \"interval\": \"[77.5553%, 79.7849%]\"\n  },\n  \"engines\": {\n    \"harmonic\": {\n      \"metrics\": {\n        \"34_stats\": {\n          \"total_touches\": 10648,\n          \"hits\": 8015,\n          \"breaks\": 2633,\n          \"hit_rate\": 75.27,\n          \"break_rate\": 24.73\n        },\n        \"134_stats\": {\n          \"total_touches\": 5181,\n          \"hits\": 4077,\n          \"breaks\": 1104,\n          \"hit_rate\": 78.69,\n          \"break_rate\": 21.31\n        }\n      }\n    },\n    \"price\": {\n      \"price\": 42350.4333635,\n      \"base_price\": 42350.4213635,\n      \"flash_crash_adjustment\": 0.012,\n      \"components\": {\n        \"P0_contribution\": 42350.42,\n        \"lambda_Q\": 0.0011799999999999998,\n        \"gamma_Q2\": 0.00018350000000000002,\n        \"delta_PBoc\": 0.0\n      },\n      \"metadata\": {\n        \"params_checksum\": \"20c75b792222fe8b\",\n        \"rmse_expected\": 0.0031,\n        \"r_squared\": 0.9876\n      }\n    }\n  },\n  \"checksum\": \"482c83eec418d1b433c480169534386b7b721e53dea57167d57a659c2e72ccc2\"\n}",
+  "report_markdown": "# GAMARAY — BTCUSD H1\n**Mission ID:** GAMARAY-BTCUSD-H1-20260320\n**Status:** `COMPLETED` | **Chaotic Flag:** `✅ NO`\n**Generated:** 2026-03-20T19:16:10.050975+00:00\n\n## Motores Harmônicos (V3)\n\n| Nível   | Toques  | HIT    | BREAK | Hit Rate   |\n|---------|---------|--------|-------|------------|\n| EMA-34  | 10,648 | 8,015 | 2633 | **75.27%** |\n| EMA-134 | 5,181 | 4,077 | 1104 | **78.69%** |\n\n## IC Binomial 95% (EMA-134)\n```\np_hat  = 0.786914 (78.69%)\nIC 95% = [77.5553%, 79.7849%]\n```\n\n## DCE Price Engine V5.5.3\n**Preço calibrado:** 42350.4333635 | **R²:** 0.9876\n\n## Veredicto\n**Flutter:** CRITICAL | **Mach:** 1.0 | **SHA3:** `482c83eec418d1b433c480169534386b...`\n"
+}

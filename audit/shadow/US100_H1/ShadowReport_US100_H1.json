@@ -1,0 +1,63 @@
+{
+  "mission_id": "SHADOW-US100-H1-20260320T200403",
+  "asset": "US100",
+  "timeframe": "H1",
+  "status": "COMPLETED",
+  "created_at": "2026-03-20T20:04:03.018412+00:00",
+  "agent_version": "shadow_loop_v1.0",
+  "omega_integration": true,
+  "mode": "shadow",
+  "guardrail": {
+    "asset": "US100",
+    "timeframe": "H1",
+    "tier": "T2",
+    "hit_rate_134": 98.15,
+    "mach": 1.0,
+    "margin_used": 304.4,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 15080,
+          "hits": 14760,
+          "breaks": 320,
+          "hit_rate": 97.88,
+          "break_rate": 2.12
+        },
+        "134_stats": {
+          "total_touches": 12029,
+          "hits": 11806,
+          "breaks": 223,
+          "hit_rate": 98.15,
+          "break_rate": 1.85
+        }
+      }
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "components": {
+        "P0_contribution": 42350.42,
+        "lambda_Q": 0.0011799999999999998,
+        "gamma_Q2": 0.00018350000000000002,
+        "delta_PBoc": 0.0
+      },
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "signal": {
+    "action": "MONITOR",
+    "skip_reasons": [],
+    "margin_used": 304.4,
+    "tier": "T2"
+  },
+  "checksum": "871326ed2ef950a51b4114613057e843169517ab49aeb43311188fea0235a2b9"
+}

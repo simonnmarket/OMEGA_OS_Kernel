@@ -1,0 +1,70 @@
+{
+  "mission_id": "GAMARAY-HK50-H1-20260320",
+  "asset": "HK50",
+  "timeframe": "H1",
+  "period_start": "",
+  "period_end": "",
+  "data_points": 0,
+  "status": "COMPLETED",
+  "created_at": "2026-03-20T19:22:24.124676+00:00",
+  "updated_at": "2026-03-20T19:22:24.124676+00:00",
+  "agent_version": "ami_analyzer_v3.0",
+  "omega_integration": false,
+  "confidence_score": 79.15,
+  "mach_number": 1.0,
+  "dominant_cycle": "UNDEFINED",
+  "flutter_risk": "critical",
+  "trajectory_phase": "descending",
+  "is_chaotic": false,
+  "checksum_sources": {
+    "linha": "1c4b9b00adb8a2bebbc050f4fc9bbbf9d310441d2af3d58de7ee8b0f870a9b46",
+    "candle": "6a80a2a20747348feb69826bcf9957e58f35f77ea7a0b12f664fb6e9ed235414"
+  },
+  "binomial_ic_95": {
+    "hits": 3280,
+    "total": 4144,
+    "p_hat": 0.791506,
+    "lower_bound": 0.77887,
+    "upper_bound": 0.803602,
+    "interval": "[77.8870%, 80.3602%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 7945,
+          "hits": 6214,
+          "breaks": 1731,
+          "hit_rate": 78.21,
+          "break_rate": 21.79
+        },
+        "134_stats": {
+          "total_touches": 4144,
+          "hits": 3280,
+          "breaks": 864,
+          "hit_rate": 79.15,
+          "break_rate": 20.85
+        }
+      }
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "components": {
+        "P0_contribution": 42350.42,
+        "lambda_Q": 0.0011799999999999998,
+        "gamma_Q2": 0.00018350000000000002,
+        "delta_PBoc": 0.0
+      },
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "checksum": "1305a43ae4b76434a2db14e2f5185b40247ec8a51af95a687f60bfcfbbfd0936",
+  "report_json": "{\n  \"mission_id\": \"GAMARAY-HK50-H1-20260320\",\n  \"asset\": \"HK50\",\n  \"timeframe\": \"H1\",\n  \"period_start\": \"\",\n  \"period_end\": \"\",\n  \"data_points\": 0,\n  \"status\": \"COMPLETED\",\n  \"created_at\": \"2026-03-20T19:22:24.124676+00:00\",\n  \"updated_at\": \"2026-03-20T19:22:24.124676+00:00\",\n  \"agent_version\": \"ami_analyzer_v3.0\",\n  \"omega_integration\": false,\n  \"confidence_score\": 79.15,\n  \"mach_number\": 1.0,\n  \"dominant_cycle\": \"UNDEFINED\",\n  \"flutter_risk\": \"critical\",\n  \"trajectory_phase\": \"descending\",\n  \"is_chaotic\": false,\n  \"checksum_sources\": {\n    \"linha\": \"1c4b9b00adb8a2bebbc050f4fc9bbbf9d310441d2af3d58de7ee8b0f870a9b46\",\n    \"candle\": \"6a80a2a20747348feb69826bcf9957e58f35f77ea7a0b12f664fb6e9ed235414\"\n  },\n  \"binomial_ic_95\": {\n    \"hits\": 3280,\n    \"total\": 4144,\n    \"p_hat\": 0.791506,\n    \"lower_bound\": 0.77887,\n    \"upper_bound\": 0.803602,\n    \"interval\": \"[77.8870%, 80.3602%]\"\n  },\n  \"engines\": {\n    \"harmonic\": {\n      \"metrics\": {\n        \"34_stats\": {\n          \"total_touches\": 7945,\n          \"hits\": 6214,\n          \"breaks\": 1731,\n          \"hit_rate\": 78.21,\n          \"break_rate\": 21.79\n        },\n        \"134_stats\": {\n          \"total_touches\": 4144,\n          \"hits\": 3280,\n          \"breaks\": 864,\n          \"hit_rate\": 79.15,\n          \"break_rate\": 20.85\n        }\n      }\n    },\n    \"price\": {\n      \"price\": 42350.4333635,\n      \"base_price\": 42350.4213635,\n      \"flash_crash_adjustment\": 0.012,\n      \"components\": {\n        \"P0_contribution\": 42350.42,\n        \"lambda_Q\": 0.0011799999999999998,\n        \"gamma_Q2\": 0.00018350000000000002,\n        \"delta_PBoc\": 0.0\n      },\n      \"metadata\": {\n        \"params_checksum\": \"20c75b792222fe8b\",\n        \"rmse_expected\": 0.0031,\n        \"r_squared\": 0.9876\n      }\n    }\n  },\n  \"checksum\": \"1305a43ae4b76434a2db14e2f5185b40247ec8a51af95a687f60bfcfbbfd0936\"\n}",
+  "report_markdown": "# GAMARAY — HK50 H1\n**Mission ID:** GAMARAY-HK50-H1-20260320\n**Status:** `COMPLETED` | **Chaotic Flag:** `✅ NO`\n**Generated:** 2026-03-20T19:22:24.124676+00:00\n\n## Motores Harmônicos (V3)\n\n| Nível   | Toques  | HIT    | BREAK | Hit Rate   |\n|---------|---------|--------|-------|------------|\n| EMA-34  | 7,945 | 6,214 | 1731 | **78.21%** |\n| EMA-134 | 4,144 | 3,280 | 864 | **79.15%** |\n\n## IC Binomial 95% (EMA-134)\n```\np_hat  = 0.791506 (79.15%)\nIC 95% = [77.8870%, 80.3602%]\n```\n\n## DCE Price Engine V5.5.3\n**Preço calibrado:** 42350.4333635 | **R²:** 0.9876\n\n## Veredicto\n**Flutter:** CRITICAL | **Mach:** 1.0 | **SHA3:** `1305a43ae4b76434a2db14e2f5185b40...`\n"
+}

@@ -1,0 +1,63 @@
+{
+  "mission_id": "SHADOW-USDJPY-H4-20260320T200336",
+  "asset": "USDJPY",
+  "timeframe": "H4",
+  "status": "COMPLETED",
+  "created_at": "2026-03-20T20:03:36.435213+00:00",
+  "agent_version": "shadow_loop_v1.0",
+  "omega_integration": true,
+  "mode": "shadow",
+  "guardrail": {
+    "asset": "USDJPY",
+    "timeframe": "H4",
+    "tier": "T1",
+    "hit_rate_134": 100.0,
+    "mach": 1.0,
+    "margin_used": 150.0,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 7535,
+          "hits": 7535,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        },
+        "134_stats": {
+          "total_touches": 7535,
+          "hits": 7535,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        }
+      }
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "components": {
+        "P0_contribution": 42350.42,
+        "lambda_Q": 0.0011799999999999998,
+        "gamma_Q2": 0.00018350000000000002,
+        "delta_PBoc": 0.0
+      },
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "signal": {
+    "action": "MONITOR",
+    "skip_reasons": [],
+    "margin_used": 150.0,
+    "tier": "T1"
+  },
+  "checksum": "fa9eae65cd440e095799c5cea0dfeb8ae206418a390eaa151b4207f3dba76a23"
+}
