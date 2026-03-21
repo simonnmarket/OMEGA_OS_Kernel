@@ -22,11 +22,11 @@
       "potential": 80.07999999999993
     }
   },
-  "mach_number": 0.4638,
+  "mach_number": 0.5358,
   "confidence_score": 0.6,
   "opportunities": [
     {
-      "id": "OPP_681251c0",
+      "id": "OPP_ad56be93",
       "type": "causal_setup",
       "calibration": {
         "entry_zone": 4651.82,
@@ -39,6 +39,6 @@
     }
   ],
   "patterns": [],
-  "timestamp": "2026-03-21T21:31:30.200709",
-  "checksum": "681251c0d349f2506d056ae64778b27978cb6e51da0d72ac76ccf4a13a585d6e"
+  "timestamp": "2026-03-21T21:48:58.028183",
+  "checksum": "ad56be932ad86e4f9f6f580a2265d8472880ae04806976ccbc22d53c963a6aa7"
 }

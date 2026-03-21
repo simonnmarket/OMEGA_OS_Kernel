@@ -288,6 +288,314 @@
       "patterns": [],
       "timestamp": "2026-03-21T21:31:30.473799",
       "checksum": "c538f409fbd58452d85f64d1156725b81a8419de112456978053b110bf766a11"
+    },
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "M1",
+      "period_start": "2026-01-28T15:23:00",
+      "period_end": "2026-03-19T23:17:00",
+      "data_points": 50000,
+      "forces": {
+        "order_flow": {
+          "magnitude": 160.0,
+          "direction": "bearish"
+        },
+        "volume_force": {
+          "volume_ratio": 0.46535154274152757,
+          "wyckoff": "neutral"
+        },
+        "momentum_force": {
+          "acceleration": 4.710000000000036,
+          "direction": "bullish"
+        },
+        "energy": {
+          "kinetic": 0.0004922010024695833,
+          "potential": 7.869999999999891
+        }
+      },
+      "mach_number": 0.6224,
+      "confidence_score": 0.6,
+      "opportunities": [
+        {
+          "id": "OPP_a65d5206",
+          "type": "causal_setup",
+          "calibration": {
+            "entry_zone": 4651.82,
+            "stop_loss": 4628.56,
+            "target_1": 4698.34,
+            "target_2": 4744.86,
+            "max_exposure_pct": 2.5,
+            "timing_candles": 8
+          }
+        }
+      ],
+      "patterns": [],
+      "timestamp": "2026-03-21T21:48:57.728631",
+      "checksum": "a65d520663b4bafe5b048ce6d5481e5116f64a1d6fa9d939b28050c6ab12603d"
+    },
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "M5",
+      "period_start": "2025-07-07T03:00:00",
+      "period_end": "2026-03-19T23:15:00",
+      "data_points": 50000,
+      "forces": {
+        "order_flow": {
+          "magnitude": 1287.8000000001994,
+          "direction": "bullish"
+        },
+        "volume_force": {
+          "volume_ratio": 0.23291925465838512,
+          "wyckoff": "neutral"
+        },
+        "momentum_force": {
+          "acceleration": -0.6300000000001091,
+          "direction": "bearish"
+        },
+        "energy": {
+          "kinetic": 0.0011618587072152408,
+          "potential": 44.72999999999956
+        }
+      },
+      "mach_number": 0.5386,
+      "confidence_score": 0.6,
+      "opportunities": [
+        {
+          "id": "OPP_cc6d8d14",
+          "type": "causal_setup",
+          "calibration": {
+            "entry_zone": 4651.82,
+            "stop_loss": 4628.56,
+            "target_1": 4698.34,
+            "target_2": 4744.86,
+            "max_exposure_pct": 2.5,
+            "timing_candles": 8
+          }
+        }
+      ],
+      "patterns": [],
+      "timestamp": "2026-03-21T21:48:57.884368",
+      "checksum": "cc6d8d14325648bd4d2a0fa451368072d65a24ecd78faa4c476e7bd74b23cda6"
+    },
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "M15",
+      "period_start": "2024-02-06T20:45:00",
+      "period_end": "2026-03-19T23:15:00",
+      "data_points": 50000,
+      "forces": {
+        "order_flow": {
+          "magnitude": 8596.30000000133,
+          "direction": "bullish"
+        },
+        "volume_force": {
+          "volume_ratio": 0.07290680719347165,
+          "wyckoff": "neutral"
+        },
+        "momentum_force": {
+          "acceleration": -12.570000000000618,
+          "direction": "bearish"
+        },
+        "energy": {
+          "kinetic": 0.0023680962319723607,
+          "potential": 80.07999999999993
+        }
+      },
+      "mach_number": 0.5358,
+      "confidence_score": 0.6,
+      "opportunities": [
+        {
+          "id": "OPP_ad56be93",
+          "type": "causal_setup",
+          "calibration": {
+            "entry_zone": 4651.82,
+            "stop_loss": 4628.56,
+            "target_1": 4698.34,
+            "target_2": 4744.86,
+            "max_exposure_pct": 2.5,
+            "timing_candles": 8
+          }
+        }
+      ],
+      "patterns": [],
+      "timestamp": "2026-03-21T21:48:58.028183",
+      "checksum": "ad56be932ad86e4f9f6f580a2265d8472880ae04806976ccbc22d53c963a6aa7"
+    },
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "H1",
+      "period_start": "2017-12-01T06:00:00",
+      "period_end": "2026-03-19T23:00:00",
+      "data_points": 50000,
+      "forces": {
+        "order_flow": {
+          "magnitude": 247490.0400000139,
+          "direction": "bearish"
+        },
+        "volume_force": {
+          "volume_ratio": 0.17799562895870516,
+          "wyckoff": "neutral"
+        },
+        "momentum_force": {
+          "acceleration": -13.1299999999992,
+          "direction": "bearish"
+        },
+        "energy": {
+          "kinetic": 0.004812798384054245,
+          "potential": 77.38000000000011
+        }
+      },
+      "mach_number": 0.4571,
+      "confidence_score": 0.8,
+      "opportunities": [
+        {
+          "id": "OPP_d228b2f7",
+          "type": "causal_setup",
+          "calibration": {
+            "entry_zone": 4651.72,
+            "stop_loss": 4628.46,
+            "target_1": 4698.24,
+            "target_2": 4744.75,
+            "max_exposure_pct": 2.5,
+            "timing_candles": 8
+          }
+        }
+      ],
+      "patterns": [],
+      "timestamp": "2026-03-21T21:48:58.164110",
+      "checksum": "d228b2f75117eeb08a0363e351e4616600d3a39d8c9ddf2bb2474ffd33bab1d8"
+    },
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "H4",
+      "period_start": "2016-08-09T20:00:00",
+      "period_end": "2026-03-19T20:00:00",
+      "data_points": 15000,
+      "forces": {
+        "order_flow": {
+          "magnitude": 4231348.440000027,
+          "direction": "bearish"
+        },
+        "volume_force": {
+          "volume_ratio": 1.374865706442132,
+          "wyckoff": "neutral"
+        },
+        "momentum_force": {
+          "acceleration": 56.160000000000764,
+          "direction": "bullish"
+        },
+        "energy": {
+          "kinetic": 0.007272834080885737,
+          "potential": 77.38000000000011
+        }
+      },
+      "mach_number": 0.7297,
+      "confidence_score": 0.6,
+      "opportunities": [
+        {
+          "id": "OPP_9cef3907",
+          "type": "causal_setup",
+          "calibration": {
+            "entry_zone": 4651.72,
+            "stop_loss": 4628.46,
+            "target_1": 4698.24,
+            "target_2": 4744.75,
+            "max_exposure_pct": 2.5,
+            "timing_candles": 8
+          }
+        }
+      ],
+      "patterns": [],
+      "timestamp": "2026-03-21T21:48:58.223964",
+      "checksum": "9cef3907a617a9d130dbbefc0e6a2a2c18e881f9c149f8b47784d4cbcf6235bc"
+    },
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "D1",
+      "period_start": "2008-01-07T00:00:00",
+      "period_end": "2026-03-19T00:00:00",
+      "data_points": 5000,
+      "forces": {
+        "order_flow": {
+          "magnitude": 31220784.379999958,
+          "direction": "bearish"
+        },
+        "volume_force": {
+          "volume_ratio": 1.6963620011556602,
+          "wyckoff": "distribution"
+        },
+        "momentum_force": {
+          "acceleration": 20.409999999999854,
+          "direction": "bullish"
+        },
+        "energy": {
+          "kinetic": 0.015201077656287731,
+          "potential": 0.0
+        }
+      },
+      "mach_number": 0.6224,
+      "confidence_score": 0.6,
+      "opportunities": [
+        {
+          "id": "OPP_9977cccb",
+          "type": "causal_setup",
+          "calibration": {
+            "entry_zone": 4651.72,
+            "stop_loss": 4628.46,
+            "target_1": 4698.24,
+            "target_2": 4744.75,
+            "max_exposure_pct": 2.5,
+            "timing_candles": 8
+          }
+        }
+      ],
+      "patterns": [],
+      "timestamp": "2026-03-21T21:48:58.247117",
+      "checksum": "9977cccbbcd5caa7fae5db838b9aa87c9f59c97891dc8237d8d1e7387aa7e58c"
+    },
+    {
+      "symbol": "XAUUSD",
+      "timeframe": "W1",
+      "period_start": "1998-04-19T00:00:00",
+      "period_end": "2026-03-15T00:00:00",
+      "data_points": 1443,
+      "forces": {
+        "order_flow": {
+          "magnitude": 64087600.92000001,
+          "direction": "bullish"
+        },
+        "volume_force": {
+          "volume_ratio": 1.2762949827136867,
+          "wyckoff": "neutral"
+        },
+        "momentum_force": {
+          "acceleration": -214.32000000000062,
+          "direction": "bearish"
+        },
+        "energy": {
+          "kinetic": 0.02769635372464279,
+          "potential": 651.2300000000005
+        }
+      },
+      "mach_number": 0.5668,
+      "confidence_score": 0.6,
+      "opportunities": [
+        {
+          "id": "OPP_b9d5afd8",
+          "type": "causal_setup",
+          "calibration": {
+            "entry_zone": 4651.72,
+            "stop_loss": 4628.46,
+            "target_1": 4698.24,
+            "target_2": 4744.75,
+            "max_exposure_pct": 2.5,
+            "timing_candles": 8
+          }
+        }
+      ],
+      "patterns": [],
+      "timestamp": "2026-03-21T21:48:58.261569",
+      "checksum": "b9d5afd8296e66d8b85f038a99e859faaaeb391e8b0670b44efbc19ad80279ed"
     }
   ]
 }

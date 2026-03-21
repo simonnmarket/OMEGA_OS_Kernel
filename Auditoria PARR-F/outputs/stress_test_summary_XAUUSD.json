@@ -1,0 +1,95 @@
+{
+  "symbol": "XAUUSD",
+  "period": {
+    "start": "2026-01-28T15:23:00+00:00",
+    "end": "2026-03-15T00:00:00+00:00",
+    "days": 45
+  },
+  "total_trades": 119029,
+  "avg_orders_per_day": 2645.09,
+  "by_timeframe": {
+    "M1": {
+      "trades": 24500,
+      "winrate": 60.01,
+      "pnl": 1.0464241765380935e+23
+    },
+    "M5": {
+      "trades": 24526,
+      "winrate": 59.57,
+      "pnl": 5.317035882091599e+40
+    },
+    "M15": {
+      "trades": 24512,
+      "winrate": 59.93,
+      "pnl": 4.895687568310222e+58
+    },
+    "H1": {
+      "trades": 24497,
+      "winrate": 80.16,
+      "pnl": 4.948629196146324e+91
+    },
+    "H4": {
+      "trades": 14692,
+      "winrate": 59.76,
+      "pnl": 2.443758031580627e+102
+    },
+    "D1": {
+      "trades": 4893,
+      "winrate": 59.17,
+      "pnl": 7.260631594868654e+105
+    },
+    "W1": {
+      "trades": 1409,
+      "winrate": 59.76,
+      "pnl": 6.9754122645148266e+106
+    }
+  },
+  "by_mode": {
+    "scalp": {
+      "trades": 49026,
+      "winrate": 59.79,
+      "pnl": 5.317035882091599e+40
+    },
+    "daytrade": {
+      "trades": 49009,
+      "winrate": 70.04,
+      "pnl": 4.948629196146324e+91
+    },
+    "swing": {
+      "trades": 20994,
+      "winrate": 59.62,
+      "pnl": 7.701719799804852e+106
+    }
+  },
+  "performance": {
+    "total_pnl": 7.701719799804857e+106,
+    "avg_pnl_per_trade": 6.470456611250079e+101,
+    "winrate": 63.98,
+    "payoff": 1.8,
+    "max_drawdown_pct": 4.07,
+    "avg_slippage_pts": 0.4501
+  },
+  "retcodes": {
+    "10004_REQUOTE": 3768,
+    "10009_DONE": 109362,
+    "10010_PLACED": 5899,
+    "10006_REJECT": 2414
+  },
+  "opportunities_matched": {
+    "total_opportunities": 7,
+    "executed": 7,
+    "match_rate_pct": 100.0
+  },
+  "validations": {
+    "future_timestamps_filtered": 0,
+    "min_trades_met": true,
+    "min_orders_per_day_met": true
+  },
+  "generated_at": "2026-03-21T21:49:32.354026+00:00",
+  "agent_version": "psa_audit_engine_v2.0",
+  "hashes": {
+    "trades_csv": "2d966db9a7c2683da0091258be3be7ed94014059949d30b1ef8a239cec054974",
+    "equity_csv": "4d02a7161aa6ca2655cd828d475392236c1830995030a4d5bec143f34fda7f22",
+    "summary_json": "cca4d4bae6d1344171cbbb7dfa36826dc4b2aab7af957f041f2b68d1fc43e8f2"
+  }
+}
