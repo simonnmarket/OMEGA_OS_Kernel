@@ -1,0 +1,14 @@
+{
+    "timestamp_utc": "2026-03-22T23:45:00Z",
+    "account_number": "8011410475",
+    "currency": "USD",
+    "balance": 8065.68,
+    "equity_anchor": 8065.68,
+    "circuit_breaker": {
+        "status": "ARMED",
+        "threshold_pct": 3.5,
+        "max_loss_allowed": 282.29,
+        "kill_switch_equity_level": 7783.39
+    },
+    "note": "Recalibrated from standard $100k demo backtest assumptions to physical MT5 connection."
+}

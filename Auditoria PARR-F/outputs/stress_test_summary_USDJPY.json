@@ -1,0 +1,20 @@
+{
+  "symbol": "USDJPY",
+  "total_trades": 88606,
+  "performance": {
+    "winrate": 63.96,
+    "max_drawdown_pct": 1.1208,
+    "total_pnl": 13271000.0,
+    "sharpe_ratio": -1.3502,
+    "sortino_ratio": -1.9671,
+    "calmar_ratio": 1.25,
+    "total_return_pct": 13221.05,
+    "risk_methodology": "log_returns_equity_g01_v1"
+  },
+  "hashes": {
+    "trades_csv": "f2ef2fc2a3c5bc58b0e268b22f0a72b8ea839789dde2f07665832c8964affa42",
+    "equity_csv": "af51955aad1158217230fe724bd4177db65db0e1f72d9008e681dacea8e0c338"
+  },
+  "generated_at": "2026-03-22T21:21:18.763087+00:00",
+  "version": "psa_audit_engine_v3.1_OHLCV_G01"
+}

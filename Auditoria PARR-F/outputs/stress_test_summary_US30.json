@@ -1,0 +1,20 @@
+{
+  "symbol": "US30",
+  "total_trades": 80256,
+  "performance": {
+    "winrate": 64.04,
+    "max_drawdown_pct": 0.8307,
+    "total_pnl": 12060375.0,
+    "sharpe_ratio": -1.0605,
+    "sortino_ratio": -1.5912,
+    "calmar_ratio": 1.8269,
+    "total_return_pct": 12014.94,
+    "risk_methodology": "log_returns_equity_g01_v1"
+  },
+  "hashes": {
+    "trades_csv": "0471fb904a26b9d0b6a333b44f722463e506e0153374e561b3984405d034c2a3",
+    "equity_csv": "95ccb6e781bcde89a3926902f4f97bcf9e3ea4b31353e2eebf24fab09cb15923"
+  },
+  "generated_at": "2026-03-22T20:30:03.155504+00:00",
+  "version": "psa_audit_engine_v3.1_OHLCV_G01"
+}

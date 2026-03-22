@@ -1,0 +1,1 @@
+{"symbol": "US500", "timeframe": "M1", "status": "NORMAL", "mach_number": 0.85, "confidence_score": 0.64, "forces": {"order_flow": {"direction": "BULLISH"}}, "opportunities": [{"calibration": {"entry_zone": 1.0, "stop_loss": 0.98, "target_1": 1.03, "target_2": 1.06, "max_exposure_pct": 0.25, "timing_candles": 5}}]}

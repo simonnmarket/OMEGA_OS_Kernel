@@ -1,0 +1,20 @@
+{
+  "symbol": "EURUSD",
+  "total_trades": 602,
+  "performance": {
+    "winrate": 65.78,
+    "max_drawdown_pct": 1.2797,
+    "total_pnl": 97000.0,
+    "sharpe_ratio": 7.884,
+    "sortino_ratio": 48.0989,
+    "calmar_ratio": 25.4843,
+    "total_return_pct": 96.26,
+    "risk_methodology": "log_returns_equity_g01_v1"
+  },
+  "hashes": {
+    "trades_csv": "48d2a029d10506c394f264f86458dcb300cb04da7bb24aed9b3dd4d848a45af0",
+    "equity_csv": "c4d27e60e9158f7d438d4035fa2807e9dbaac7d5eae3cec025394777e99e5937"
+  },
+  "generated_at": "2026-03-22T21:21:19.941239+00:00",
+  "version": "psa_audit_engine_v3.1_OHLCV_G01"
+}

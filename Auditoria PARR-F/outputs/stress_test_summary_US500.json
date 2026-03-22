@@ -1,0 +1,20 @@
+{
+  "symbol": "US500",
+  "total_trades": 76995,
+  "performance": {
+    "winrate": 64.32,
+    "max_drawdown_pct": 1.3412,
+    "total_pnl": 11701875.0,
+    "sharpe_ratio": -0.911,
+    "sortino_ratio": -1.3233,
+    "calmar_ratio": 1.1725,
+    "total_return_pct": 11657.78,
+    "risk_methodology": "log_returns_equity_g01_v1"
+  },
+  "hashes": {
+    "trades_csv": "c8bb0c99e5dc336b8061c0ede49ae0386768f2042fd1b3e3d818704fa9e624d1",
+    "equity_csv": "226bde2c0c95293b86f6172c41467d9bd924880fb54e12aa448a5644108c2653"
+  },
+  "generated_at": "2026-03-22T20:30:18.680454+00:00",
+  "version": "psa_audit_engine_v3.1_OHLCV_G01"
+}

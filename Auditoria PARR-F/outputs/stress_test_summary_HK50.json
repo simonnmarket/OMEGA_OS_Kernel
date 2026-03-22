@@ -1,0 +1,20 @@
+{
+  "symbol": "HK50",
+  "total_trades": 83940,
+  "performance": {
+    "winrate": 64.16,
+    "max_drawdown_pct": 1.1038,
+    "total_pnl": 12674375.0,
+    "sharpe_ratio": -1.1641,
+    "sortino_ratio": -1.6774,
+    "calmar_ratio": 1.3278,
+    "total_return_pct": 12626.65,
+    "risk_methodology": "log_returns_equity_g01_v1"
+  },
+  "hashes": {
+    "trades_csv": "41b2201537dbdfd2a0a626d83355edce5364e57476cca4a467ac54a631203765",
+    "equity_csv": "1c4b67d3b3cd51f3824b706cb4061027815f8d26c9b0937a0e8f360882e04d0c"
+  },
+  "generated_at": "2026-03-22T20:29:32.687579+00:00",
+  "version": "psa_audit_engine_v3.1_OHLCV_G01"
+}

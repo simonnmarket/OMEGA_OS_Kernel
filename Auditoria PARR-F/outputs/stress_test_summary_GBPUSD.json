@@ -1,0 +1,20 @@
+{
+  "symbol": "GBPUSD",
+  "total_trades": 88321,
+  "performance": {
+    "winrate": 63.94,
+    "max_drawdown_pct": 1.1321,
+    "total_pnl": 13216000.0,
+    "sharpe_ratio": -1.3502,
+    "sortino_ratio": -2.0032,
+    "calmar_ratio": 1.2421,
+    "total_return_pct": 13249.37,
+    "risk_methodology": "log_returns_equity_g01_v1"
+  },
+  "hashes": {
+    "trades_csv": "5b4c051fc1536fdec71b7f7f9f62c38cab07b83c7af43c9f19fb4ae66f126142",
+    "equity_csv": "5e3bb8982bceca50faa810c9224e3d0c3d4dc30b71af120f44ecc85d6843c404"
+  },
+  "generated_at": "2026-03-22T20:28:54.128866+00:00",
+  "version": "psa_audit_engine_v3.1_OHLCV_G01"
+}

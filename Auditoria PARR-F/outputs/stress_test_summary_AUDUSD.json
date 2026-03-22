@@ -1,0 +1,20 @@
+{
+  "symbol": "AUDUSD",
+  "total_trades": 88323,
+  "performance": {
+    "winrate": 64.05,
+    "max_drawdown_pct": 1.0067,
+    "total_pnl": 13273625.0,
+    "sharpe_ratio": -1.3198,
+    "sortino_ratio": -1.8922,
+    "calmar_ratio": 1.3962,
+    "total_return_pct": 13223.66,
+    "risk_methodology": "log_returns_equity_g01_v1"
+  },
+  "hashes": {
+    "trades_csv": "6db6e3fe433561f5452efab117261eadb7789da37dfc0d2aa041cfc627c5f809",
+    "equity_csv": "7a417d18f5200075f405f3c4e862ae5c34118258980c82e593f1f87349b51b62"
+  },
+  "generated_at": "2026-03-22T20:27:53.792110+00:00",
+  "version": "psa_audit_engine_v3.1_OHLCV_G01"
+}

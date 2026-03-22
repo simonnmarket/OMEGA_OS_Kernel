@@ -1,0 +1,10 @@
+{
+  "anchor_equity": 100000.0,
+  "current_equity": 96400.0,
+  "daily_return_pct": -3.6,
+  "gross_loss_intraday_pct": 3.6,
+  "state": "OPEN",
+  "date": "2026-03-22",
+  "trigger_time": "2026-03-22T19:53:15.079050+00:00",
+  "alerts_sent": []
+}

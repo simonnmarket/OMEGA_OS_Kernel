@@ -1,0 +1,20 @@
+{
+  "symbol": "ETHUSD",
+  "total_trades": 80928,
+  "performance": {
+    "winrate": 63.78,
+    "max_drawdown_pct": 1.1696,
+    "total_pnl": 12027375.0,
+    "sharpe_ratio": -1.0837,
+    "sortino_ratio": -1.6051,
+    "calmar_ratio": 1.286,
+    "total_return_pct": 11982.07,
+    "risk_methodology": "log_returns_equity_g01_v1"
+  },
+  "hashes": {
+    "trades_csv": "d4ce32f66bae1b50a264b81ed974b852fd3e1dec17b673d9d6baca8ed3459dd1",
+    "equity_csv": "fb35681fccf85b85df6bed0cb5cc9681346bb381bd2f21b880d65245dd05a2d2"
+  },
+  "generated_at": "2026-03-22T20:28:32.355154+00:00",
+  "version": "psa_audit_engine_v3.1_OHLCV_G01"
+}

@@ -1,0 +1,20 @@
+{
+  "symbol": "BTCUSD",
+  "total_trades": 80926,
+  "performance": {
+    "winrate": 63.77,
+    "max_drawdown_pct": 1.0277,
+    "total_pnl": 12021625.0,
+    "sharpe_ratio": -1.0666,
+    "sortino_ratio": -1.5522,
+    "calmar_ratio": 1.4634,
+    "total_return_pct": 11976.34,
+    "risk_methodology": "log_returns_equity_g01_v1"
+  },
+  "hashes": {
+    "trades_csv": "9f3f19e768cfc8ea049daa47f78ad3c9dda10c0b4cdb9504b437811a4ddd50b4",
+    "equity_csv": "3865503655f8f8c78f65d91e886e007b4e49acb93126911f88f748c0f595832b"
+  },
+  "generated_at": "2026-03-22T20:28:12.399369+00:00",
+  "version": "psa_audit_engine_v3.1_OHLCV_G01"
+}

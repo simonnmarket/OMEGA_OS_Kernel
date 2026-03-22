@@ -1,0 +1,1 @@
+{"symbol": "EURUSD", "timeframe": "W1", "status": "NORMAL", "mach_number": 0.85, "confidence_score": 0.64, "forces": {"order_flow": {"direction": "BULLISH"}}, "opportunities": [{"calibration": {"entry_zone": 1.0805, "stop_loss": 1.078, "target_1": 1.085, "target_2": 1.09, "max_exposure_pct": 0.25, "timing_candles": 5}}]}

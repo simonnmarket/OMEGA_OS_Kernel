@@ -1,0 +1,20 @@
+{
+  "symbol": "AUDJPY",
+  "total_trades": 88313,
+  "performance": {
+    "winrate": 63.99,
+    "max_drawdown_pct": 1.3279,
+    "total_pnl": 13242375.0,
+    "sharpe_ratio": -1.3496,
+    "sortino_ratio": -1.9818,
+    "calmar_ratio": 1.0581,
+    "total_return_pct": 13192.53,
+    "risk_methodology": "log_returns_equity_g01_v1"
+  },
+  "hashes": {
+    "trades_csv": "6382597e898b488df99c3667eba526bb00062502457a22dd072b2995a2d3309e",
+    "equity_csv": "c5eb2a7da52b1d900aea4e890253a40ec2512615fb072357974a359330c1fc98"
+  },
+  "generated_at": "2026-03-22T21:21:03.308964+00:00",
+  "version": "psa_audit_engine_v3.1_OHLCV_G01"
+}

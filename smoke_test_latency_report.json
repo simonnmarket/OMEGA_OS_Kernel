@@ -1,0 +1,11 @@
+{
+  "test_id": "LAT_1774209195",
+  "timestamp": "2026-03-22T19:53:15.818044+00:00",
+  "config_hash": "6e9d54d7",
+  "total_iterations": 1000,
+  "successful_iterations": 1000,
+  "failed_iterations": 0,
+  "redis_p95_ms": 37.2865,
+  "mt5_p95_ms": 102.081,
+  "overall_passed": false
+}

@@ -3,11 +3,13 @@
 **Domínio**: SIMONNMARKET GROUP | **Projeto**: AURORA v8.0 | **Sistema**: OMEGA  
 **Público-alvo**: PSA (Principal Solution Architect) — **uso obrigatório**  
 **Tipo de documento**: **Living document** (deve ser atualizado a cada marco relevante)  
-**Versão**: 1.1  
+**Versão**: 1.2  
 **Última atualização**: 2026-03-22 (UTC)  
 **Responsável pela manutenção**: PSA + Tech Lead (CQO/CKO) — **PSA é dono do conteúdo técnico de execução**
 
-> **Este é o ficheiro CANÓNICO** (fonte da verdade). Path: workspace `.gemini` — Secção 0.
+> **Nota (cópia Cursor)**: O ficheiro **canónico** deve ser mantido em  
+> `C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Documentacao_Processo\PSA_BRIEFING_ESTADO_ATUAL.md`.  
+> Após editar aqui, **copiar/commit** para o workspace `.gemini` para evitar divergência.
 
 ---
 
@@ -73,21 +75,21 @@ Este arquivo existe **à parte** dos procedimentos (SOP, Checklist, Definições
 | **Demo Fase 0** | Pausada por decisão de governança (padronização antes de escalar). |
 | **Documentação Tier-0 (5 docs)** | Criada e submetida à homologação; CFO recomendou homologação após Fase 2. |
 | **Fase 2 (validação retrospectiva XAUUSD)** | **Concluída** com Camadas 1, 2 e **3** (Camada 3 validada pelo PSA no MT5/OHLCV). |
-| **Motor de auditoria** | `psa_audit_engine.py` **v3.0** — OHLCV-driven, bugs v2.0 corrigidos (entrada dinâmica, BEARISH, IDs, SL/TP ATR). |
+| **Motor de auditoria** | `psa_audit_engine.py` **v3.1_OHLCV_G01** — OHLCV-driven, bugs v2.0 corrigidos; **G-01** (Sharpe/Sortino/Calmar na equity no `summary.json`) homologado no marco 2026-03-22. |
 | **Diretório único** | **`.gemini\...\nebular-kuiper`** — ver Secção 0. |
 
 ---
 
-## 4. Resultados consolidados — XAUUSD (Stress Test v3.0)
+## 4. Resultados consolidados — XAUUSD (Stress Test v3.1_OHLCV_G01)
 
 **Localização dos artefactos**: `Auditoria PARR-F\outputs\` **no workspace canónico** (Secção 0).
 
-| Métrica | Valor referência | Observação |
-|---------|------------------|------------|
-| Total de trades | **88.049** | Amostra auditável; critério ≥100k foi substituído por robustez + integridade (decisão Tier-0 documentada). |
-| Winrate | **63,55%** | |
-| IC95% (Wilson) | **[63,28%, 64,12%]** | |
-| Max drawdown | **1,67%** | Sobre curva de equity conforme definições. |
+| Métrica | Valor referência (Dossiê Final 2026-03-22) | Observação |
+|---------|------------------------------------------|------------|
+| Total de trades | **88.049** | Base factual para transição Demo; critério ≥100k foi substituído por robustez + integridade (decisão Tier-0 documentada). |
+| Winrate | **63,76%** | Conforme `stress_test_summary_XAUUSD.json` v3.1. |
+| Sharpe (equity) | **-1,2172** | Ratios negativos documentados no Dossiê — ver interpretação trade-level vs benchmark anual (`DOSSIE_FINAL_HOMOLOGACAO_XAUUSD_20260322.md`). |
+| Max drawdown | **1,4668%** | Sobre curva de equity conforme definições. |
 | Total PnL (summary) | Conforme `stress_test_summary_XAUUSD.json` | **Verificar sempre o ficheiro** no path canónico. |
 | Hashes SHA3-256 (summary) | `trades_csv`, `equity_csv` no JSON | Recalcular localmente após qualquer re-run **no workspace oficial**. |
 
@@ -115,7 +117,7 @@ Este arquivo existe **à parte** dos procedimentos (SOP, Checklist, Definições
 | Camada | Conteúdo | Status (2026-03-22) | Responsável |
 |--------|----------|---------------------|-------------|
 | **1 — Técnica** | Hashes, colunas, JSON, IDs únicos, timestamps | Aprovada com ressalvas (ex.: Git no workspace certo) | Tech Lead / scripts |
-| **2 — Estatística** | Winrate, IC, DD, consistência trades vs summary | Aprovada com **GAP G-01**: Sharpe/Sortino/Calmar ausentes no `summary.json` | Tech Lead + CFO |
+| **2 — Estatística** | Winrate, DD, Sharpe/Sortino/Calmar (equity), consistência trades vs summary | **Aprovada** — métricas G-01 presentes no `summary.json` v3.1 | Tech Lead + CFO |
 | **3 — Física** | 10 trades vs candles MT5/OHLCV | **Aprovada (10/10)** — PSA | **PSA** |
 
 **Artefatos Camada 3 (referência)**:
@@ -130,17 +132,17 @@ Este arquivo existe **à parte** dos procedimentos (SOP, Checklist, Definições
 
 | ID | Gap | Severidade | Ação PSA / dono | Estado |
 |----|-----|------------|-----------------|--------|
-| **G-01** | Sharpe / Sortino / Calmar não exportados no `stress_test_summary_*.json` | Média | Implementar cálculo sobre **equity_curve** (Documento 3); versionar motor (ex. **v3.1**). | **Aberto** |
-| **G-02** | Rastreio Git / commit vs workspace | Baixa | Confirmar commit e branch no **repositório canónico**; anotar SHA na Secção 9 deste briefing. | **Aberto** |
+| **G-01** | Sharpe / Sortino / Calmar no `stress_test_summary_*.json` (equity) | Média | Motor **v3.1_OHLCV_G01**; blindagem `np.errstate` no cálculo. | **Fechado (2026-03-22)** |
+| **G-02** | Rastreio Git / commit vs workspace | Baixa | SHA registado na Secção 9 (commit **939ffc1** — verificar no clone oficial). | **Fechado (2026-03-22)** |
 | **G-03** | Duplicação .cursor vs .gemini | — | **FECHADO**: uma única fonte — Secção 0. | **Fechado (2026-03-22)** |
 
-**Critério de encerramento G-01**: Camada 2 validar automaticamente itens 2.5–2.7 sem “PENDING”.
+**Critério de encerramento G-01**: cumprido com `summary.json` v3.1 e Dossiê Final.
 
 **Próximos passos PSA (prioridade)**:
 
-1. **G-01**: Atualizar `psa_audit_engine.py` para calcular Sharpe/Sortino/Calmar sobre a curva de equity e escrever no `summary.json`.
+1. **Demo / AMI**: Calibragem e validação operacional conforme roadmap (fora do âmbito deste briefing).
 2. **Manutenção**: Após cada stress test ou novo ativo, atualizar **Secções 4–6 e 9** **somente** no ficheiro canónico (Secção 0).
-3. **G-02**: Registar commit Git verificado na tabela abaixo.
+3. Novos ativos: replicar processo Tier-0 (SOP + 3 camadas).
 
 ---
 
@@ -162,6 +164,7 @@ Este arquivo existe **à parte** dos procedimentos (SOP, Checklist, Definições
 - `RELATORIO_FASE2_VALIDACAO_RETROSPECTIVA.md`
 - `HOMOLOGACAO_DOCUMENTOS_TIER0.md`
 - `DOCUMENTO_FINAL_CONSELHO_V3_APROVACAO.md`
+- **`DOSSIE_FINAL_HOMOLOGACAO_XAUUSD_20260322.md`** — Dossiê Final de Homologação (XAUUSD, v3.1, Anexo A reconciliação)
 
 ---
 
@@ -183,15 +186,16 @@ Este arquivo existe **à parte** dos procedimentos (SOP, Checklist, Definições
 |--------|------|-------|--------------------|
 | 1.0 | 2026-03-22 | Tech Lead + alinhamento PSA | Criação: estado pós-Fase 2, Camada 3 PSA, gaps G-01–G-03, workspaces. |
 | 1.1 | 2026-03-22 | Tech Lead + decisão projeto | **Diretório único**: `.gemini` = fonte da verdade; G-03 fechado; regras anti-conflito; hashes em Secção 4. |
+| 1.2 | 2026-03-22 | PSA + CRO/CTO (marco homologação) | Motor **v3.1_OHLCV_G01**; G-01/G-02 **fechados**; métricas v3.1 no resumo; commit **939ffc1**; referência `DOSSIE_FINAL_HOMOLOGACAO_XAUUSD_20260322.md`. |
 
-**Git / commit canónico (G-02)** — preencher pelo PSA após verificação:
+**Git / commit canónico (G-02)** — confirmar no clone oficial:
 
 | Campo | Valor |
 |-------|--------|
-| Repositório | _(ex.: OMEGA_OS_Kernel)_ |
+| Repositório | _(nome do repo interno)_ |
 | Branch | _(ex.: main)_ |
-| Commit SHA | _(ex.: 02e50fa ou SHA completo)_ |
-| Data verificação | ____/____/______ |
+| Commit SHA | **939ffc1** (prefixo; SHA completo no `git log`) |
+| Data verificação | 2026-03-22 |
 
 ---
 

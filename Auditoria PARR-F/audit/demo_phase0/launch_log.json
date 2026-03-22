@@ -1,0 +1,54 @@
+{
+  "launch_id": "DEMO001",
+  "timestamp": "2026-03-22T22:14:02.816845+00:00",
+  "phase": "DEMO_FASE_0",
+  "status": "DISPATCHED",
+  "signal": {
+    "meta": {
+      "version": "3.1",
+      "wave_id": "FIRST_WAVE_20260322",
+      "agent_id": "ORACLE_ALPHA_01",
+      "timestamp_utc": "2026-03-22T23:00:00.000Z"
+    },
+    "signal_id": "DEMO001_20260322_2300",
+    "phase": "DEMO_FASE_0",
+    "protocol": "OMEGA-FIRST-WAVE-20260322",
+    "symbol": "XAUUSD",
+    "timeframe": "M1",
+    "direction": "BUY",
+    "side": "BUY",
+    "entry_price": 1980.5,
+    "sl": 1975.5,
+    "tp": 1995.0,
+    "lot": 0.1,
+    "risk_pct": 1.0,
+    "context": {
+      "adx_trend": "STRONG_BULL",
+      "volatility_regime": "EXPANSION"
+    },
+    "confidence_score": 0.85,
+    "reasoning": "Tier0_Launch_Confirmation",
+    "timestamp": "2026-03-22T23:00:00Z",
+    "git_commit": "4a8ea36",
+    "git_tag": "v3.1_latency_fixed",
+    "circuit_breaker_hash": "2f4005b63ab4",
+    "latency_p95_ms": 79.28,
+    "council_approval": "OMEGA-CONSELHO-DEMO-20260322",
+    "first_wave_assets": [
+      "XAUUSD",
+      "EURUSD",
+      "GBPUSD",
+      "AUDJPY",
+      "USDJPY"
+    ],
+    "signal_hash": "03f21de7bd6d14d2"
+  },
+  "first_wave_assets": [
+    "XAUUSD",
+    "EURUSD",
+    "GBPUSD",
+    "AUDJPY",
+    "USDJPY"
+  ],
+  "council_approval": "OMEGA-CONSELHO-DEMO-20260322"
+}

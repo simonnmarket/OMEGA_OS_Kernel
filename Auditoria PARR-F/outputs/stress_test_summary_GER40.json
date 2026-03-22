@@ -1,0 +1,20 @@
+{
+  "symbol": "GER40",
+  "total_trades": 92403,
+  "performance": {
+    "winrate": 63.99,
+    "max_drawdown_pct": 1.3072,
+    "total_pnl": 13854250.0,
+    "sharpe_ratio": -1.4797,
+    "sortino_ratio": -2.1477,
+    "calmar_ratio": 1.0365,
+    "total_return_pct": 13802.12,
+    "risk_methodology": "log_returns_equity_g01_v1"
+  },
+  "hashes": {
+    "trades_csv": "ce832334beca6c0d5ae44bc491d6decba448d252b5faabb41ab7c5b45f2c025b",
+    "equity_csv": "7d3ad62f21f1b78d3829d2406bf186ce701669be01b6bac4056c37e7659694ee"
+  },
+  "generated_at": "2026-03-22T20:29:16.659284+00:00",
+  "version": "psa_audit_engine_v3.1_OHLCV_G01"
+}
