@@ -2,14 +2,19 @@
   "symbol": "XAUUSD",
   "total_trades": 88049,
   "performance": {
-    "winrate": 63.55,
-    "max_drawdown_pct": 1.67,
-    "total_pnl": 12959000.0
+    "winrate": 63.76,
+    "max_drawdown_pct": 1.4668,
+    "total_pnl": 13072750.0,
+    "sharpe_ratio": -1.2172,
+    "sortino_ratio": -1.6807,
+    "calmar_ratio": 0.9595,
+    "total_return_pct": 13105.76,
+    "risk_methodology": "log_returns_equity_g01_v1"
   },
   "hashes": {
-    "trades_csv": "7c4cd6ca7fbeaebe07d5e51509f13f98fd194369750f8775802350c26383d40d",
-    "equity_csv": "32e7701a08fe8cea1ab793977ca47ff445b500d1df8e2bda84e7a1c783e13877"
+    "trades_csv": "ef1d6b8901f15270417b5fb2e42bbf25cbd669ab4954401075c30a8f736a9641",
+    "equity_csv": "76139cc3528c5cc03261d56a860edfd4d8ff31198b2c06d4f213cb2e48ee97d5"
   },
-  "generated_at": "2026-03-22T13:37:37.745077+00:00",
-  "version": "psa_audit_engine_v3.0_OHLCV"
+  "generated_at": "2026-03-22T18:51:13.913892+00:00",
+  "version": "psa_audit_engine_v3.1_OHLCV_G01"
 }

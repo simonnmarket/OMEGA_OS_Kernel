@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 r"""
-psa_audit_engine.py v3.0
-REFACTOR FINAL — AUDITORIA REALÍSTICA (OHLCV-DRIVEN)
+psa_audit_engine.py v3.1_OHLCV_G01
+REFACTOR FINAL — AUDITORIA REALÍSTICA (OHLCV-DRIVEN) + RISK METRICS (G-01)
 
 Objetivo:
 - Sincronizar logs de trades com o histórico real (OHLCV).
 - Corrigir física de PnL (BUY vs SELL).
 - Implementar SL/TP adaptativo via ATR.
 - Garantir Opportunity IDs únicos.
+- G-01: Cálculo de Sharpe, Sortino e Calmar via Curve Analysis.
 
-Protocolo: OMEGA-REFACTOR-V3-2026-0322
+Protocolo: OMEGA-REFACTOR-V3.1-G01-2026-0322
 """
 
 import argparse
@@ -70,6 +71,80 @@ def calculate_atr_pandas(df, period=14):
     true_range = np.max(ranges, axis=1)
     return true_range.rolling(period).mean()
 
+def calculate_risk_metrics_g01(
+    equity_series: np.ndarray,
+    periods_per_year: float = 252.0,
+    risk_free_rate_annual: float = 0.02,
+) -> Dict[str, Any]:
+    """
+    G-01: Cálculo de Sharpe / Sortino / Calmar a partir da curva de equity.
+    Otimizado para segurança (Lei OMEGA) com trapping de erros NumPy.
+    """
+    out = {
+        "sharpe_ratio": 0.0,
+        "sortino_ratio": 0.0,
+        "calmar_ratio": 0.0,
+        "max_drawdown_pct": 0.0,
+        "total_return_pct": 0.0,
+        "methodology": "log_returns_equity_g01_v1",
+        "periods_per_year": periods_per_year,
+        "status": "calculated"
+    }
+
+    eq = np.asarray(equity_series, dtype=np.float64)
+    if eq.size < 2:
+        out["status"] = "insufficient_data"
+        return out
+    
+    if np.any(eq <= 0):
+        out["status"] = "invalid_equity_values"
+        return out
+
+    try:
+        with np.errstate(invalid='raise', divide='raise'):
+            returns = np.diff(np.log(eq))
+            returns = returns[np.isfinite(returns)]
+
+            if returns.size == 0:
+                raise ValueError("Série de retornos vazia após limpeza.")
+
+            rf_per_period = risk_free_rate_annual / periods_per_year
+            mean_r = float(np.mean(returns))
+            std_r = float(np.std(returns, ddof=1))
+            
+            if std_r > 1e-9:
+                out["sharpe_ratio"] = round((mean_r - rf_per_period) / std_r * np.sqrt(periods_per_year), 4)
+
+            neg = returns[returns < 0]
+            if neg.size > 1:
+                downside_std = float(np.std(neg, ddof=1))
+                if downside_std > 1e-9:
+                    out["sortino_ratio"] = round((mean_r - rf_per_period) / downside_std * np.sqrt(periods_per_year), 4)
+
+            peak = np.maximum.accumulate(eq)
+            dd = (peak - eq) / peak
+            max_dd = float(np.max(dd))
+            out["max_drawdown_pct"] = round(max_dd * 100.0, 4)
+
+            if max_dd > 1e-9:
+                n = eq.size
+                years = n / periods_per_year
+                if years > 0:
+                    cagr = (float(eq[-1] / eq[0]) ** (1.0 / years)) - 1.0
+                    out["calmar_ratio"] = round(cagr / max_dd, 4)
+
+            total_ret = (eq[-1] - eq[0]) / eq[0]
+            out["total_return_pct"] = round(total_ret * 100.0, 2)
+
+    except FloatingPointError as fpe:
+        logger.error(f"G-01 Math Error: {fpe}")
+        out["status"] = f"math_error: {str(fpe)}"
+    except Exception as e:
+        logger.error(f"G-01 Unexpected Error: {e}")
+        out["status"] = f"crash: {str(e)}"
+
+    return out
+
 class PSAAuditEngineV3:
     def __init__(self, args):
         self.args = args
@@ -100,9 +175,7 @@ class PSAAuditEngineV3:
         df = pd.read_csv(p)
         df['time'] = pd.to_datetime(df['time']).dt.tz_localize('UTC')
         
-        # Garantir colunas OHLC para ATR
         if 'close' not in df.columns:
-            # Caso seja arquivo de linha, emular OHLC
             df['high'] = df['linha'] * 1.0001
             df['low'] = df['linha'] * 0.9999
             df['close'] = df['linha']
@@ -116,7 +189,6 @@ class PSAAuditEngineV3:
         tf = report["timeframe"]
         mode = tf_mode(tf)
         
-        # Filtro de data (se solicitado)
         if self.args.date_filter:
             target_date = pd.to_datetime(self.args.date_filter).tz_localize('UTC')
             df = ohlcv[ohlcv['time'].dt.date == target_date.date()].copy()
@@ -127,8 +199,6 @@ class PSAAuditEngineV3:
             logger.warning(f"Sem dados para {sym} {tf} no período solicitado.")
             return
 
-        # Densidade de trades aumentada para Stress Test (Requisito Tier-0)
-        # Para 100k trades em 7 TFs, precisamos de ~15k por TF.
         target_trades_per_tf = 15000 
         step = max(1, len(df) // target_trades_per_tf)
         
@@ -142,17 +212,12 @@ class PSAAuditEngineV3:
                 self.stats["future_filtered"] += 1
                 continue
 
-            # Signal & Meta-Analysis
-            # Usamos a direção do report original como viés, mas o PnL é físico
             bias = report["forces"]["order_flow"]["direction"].upper()
-            side = bias # "BULLISH" ou "BEARISH"
+            side = bias
             
-            # Entry Price REAL (Close do candle)
             entry_p = row['close']
             atr = row['atr'] if not np.isnan(row['atr']) else (entry_p * 0.001)
             
-            # SL/TP Adaptativo (Baseado em ATR)
-            # Requisito 4: SL=2.0*ATR, TP=3.0*ATR
             sl_dist = 2.0 * atr
             tp_dist = 3.0 * atr
             
@@ -163,31 +228,22 @@ class PSAAuditEngineV3:
                 sl = entry_p + sl_dist
                 tp = entry_p - tp_dist
 
-            # Execução Física (Simulação de Win baseada na confiança do AMI)
-            # Em um backtest real, buscaríamos no futuro do dataframe. 
-            # Aqui, mantemos o motor probabilístico validado pelo IC95, mas com física de preço.
             conf = report["confidence_score"]
             is_win = random.random() < conf
             
-            # Slippage Realista
             slip = round(random.uniform(0.1, 0.8), 2)
             self.stats["slippage_sum"] += slip
             
-            # PnL Físico (Requisito 2)
             risk_amt = self.initial_equity * self.args.risk_per_trade
-            pnl = risk_amt * (1.5 if is_win else -1.0) # Ratio 1:1.5 físico
+            pnl = risk_amt * (1.5 if is_win else -1.0)
             
-            # Exit Price Físico
             exit_p = tp if is_win else sl
             
-            # Opportunity ID Único (Requisito 3)
             opp_id = f"OPP_{sym}_{tf}_{t_entry.strftime('%Y%m%d%H%M')}"
             
-            # Retcode simulado
             rc = random.choices(["10009_DONE", "10010_PLACED"], weights=[95, 5])[0]
             self.stats["retcodes"][rc] += 1
 
-            # Registro
             trade = {
                 "timestamp_entry": t_entry.isoformat(),
                 "timestamp_exit": (t_entry + timedelta(minutes=random.randint(5, 60))).isoformat(),
@@ -209,12 +265,9 @@ class PSAAuditEngineV3:
                 "pyramid_seq": ""
             }
             
-            # VALIDAÇÃO DE SANIDADE (Self-Check)
             if side == "BULLISH":
-                # BUY: Lucra se Exit > Entry
                 correct_pnl = (exit_p > entry_p) if is_win else (exit_p < entry_p)
             else:
-                # SELL: Lucra se Exit < Entry
                 correct_pnl = (exit_p < entry_p) if is_win else (exit_p > entry_p)
                 
             if not correct_pnl:
@@ -223,7 +276,6 @@ class PSAAuditEngineV3:
             self.trades.append(trade)
             self.equity += pnl
             
-            # Equity Curve
             if self.equity > self.peak_equity: self.peak_equity = self.equity
             dd = ((self.peak_equity - self.equity) / self.peak_equity) * 100
             if dd > self.stats["max_dd"]: self.stats["max_dd"] = dd
@@ -240,15 +292,12 @@ class PSAAuditEngineV3:
             self.stats["by_tf"][tf]["trades"] += 1
 
     def run(self):
-        logger.info(f"INICIANDO REFACTOR V3.0 — STRESS TEST REALÍSTICO")
+        logger.info(f"INICIANDO STRESS TEST V3.1 — RISK METRICS INTEGRATED")
         
-        # Tentar carregar reports do AMI_reports ou AMI_reports/XAUUSD
         reports = []
         for tf in self.args.timeframes:
-            # Caminho 1
             p = REPORTS_DIR / self.args.symbol / f"report_{self.args.symbol}_{tf}.json"
             if not p.exists():
-                # Caminho 2
                 p = REPORTS_DIR / f"report_{self.args.symbol}_{tf}.json"
             
             if p.exists():
@@ -283,7 +332,6 @@ class PSAAuditEngineV3:
             w.writeheader()
             w.writerows(self.equity_curve)
 
-        # Summary
         summary = {
             "symbol": self.args.symbol,
             "total_trades": len(self.trades),
@@ -299,12 +347,36 @@ class PSAAuditEngineV3:
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "version": "psa_audit_engine_v3.0_OHLCV"
         }
+
+        # --- INÍCIO BLOCO G-01 (RISK METRICS) ---
+        try:
+            if hasattr(self, 'equity_curve') and self.equity_curve:
+                equity_vals = np.array([row.get("equity", 0) for row in self.equity_curve], dtype=np.float64)
+                
+                risk_metrics = calculate_risk_metrics_g01(equity_vals)
+                
+                summary["performance"].update({
+                    "sharpe_ratio": risk_metrics["sharpe_ratio"],
+                    "sortino_ratio": risk_metrics["sortino_ratio"],
+                    "calmar_ratio": risk_metrics["calmar_ratio"],
+                    "max_drawdown_pct": risk_metrics["max_drawdown_pct"],
+                    "total_return_pct": risk_metrics["total_return_pct"],
+                    "risk_methodology": risk_metrics["methodology"]
+                })
+                
+                summary["version"] = "psa_audit_engine_v3.1_OHLCV_G01"
+                
+        except Exception as e:
+            logger.error(f"Falha crítica na integração G-01: {e}")
+            if "performance" in summary:
+                summary["performance"]["g01_error"] = str(e)
+        # --- FIM BLOCO G-01 ---
         
         summary_path = OUTPUT_DIR / f"stress_test_summary_{self.args.symbol}.json"
         with open(summary_path, "w", encoding="utf-8") as f:
             json.dump(summary, f, indent=2)
             
-        logger.info(f"Refactor V3.0 Completo. {len(self.trades)} trades gerados com integridade física.")
+        logger.info(f"Refactor V3.1 (G-01) Completo. {len(self.trades)} trades gerados.")
 
 def main():
     p = argparse.ArgumentParser()
