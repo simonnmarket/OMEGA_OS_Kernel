@@ -1,95 +1,15 @@
 {
   "symbol": "XAUUSD",
-  "period": {
-    "start": "2026-01-28T15:23:00+00:00",
-    "end": "2026-03-15T00:00:00+00:00",
-    "days": 45
-  },
-  "total_trades": 119048,
-  "avg_orders_per_day": 2645.51,
-  "by_timeframe": {
-    "M1": {
-      "trades": 24534,
-      "winrate": 59.83,
-      "pnl": 4141100.0
-    },
-    "M5": {
-      "trades": 24492,
-      "winrate": 59.84,
-      "pnl": 4135500.0
-    },
-    "M15": {
-      "trades": 24509,
-      "winrate": 60.56,
-      "pnl": 4262150.0
-    },
-    "H1": {
-      "trades": 24493,
-      "winrate": 79.71,
-      "pnl": 7543550.0
-    },
-    "H4": {
-      "trades": 14700,
-      "winrate": 59.65,
-      "pnl": 2463300.0
-    },
-    "D1": {
-      "trades": 4906,
-      "winrate": 60.13,
-      "pnl": 838500.0
-    },
-    "W1": {
-      "trades": 1414,
-      "winrate": 59.48,
-      "pnl": 235200.0
-    }
-  },
-  "by_mode": {
-    "scalp": {
-      "trades": 49026,
-      "winrate": 59.83,
-      "pnl": 8276600.0
-    },
-    "daytrade": {
-      "trades": 49002,
-      "winrate": 70.13,
-      "pnl": 11805700.0
-    },
-    "swing": {
-      "trades": 21020,
-      "winrate": 59.75,
-      "pnl": 3537000.0
-    }
-  },
+  "total_trades": 560,
   "performance": {
-    "total_pnl": 23619300.0,
-    "avg_pnl_per_trade": 198.4,
-    "winrate": 64.06,
-    "payoff": 1.8,
-    "max_drawdown_pct": 1.82,
-    "avg_slippage_pts": 0.4499
+    "winrate": 59.64,
+    "max_drawdown_pct": 1.31,
+    "total_pnl": 68750.0
   },
-  "retcodes": {
-    "10009_DONE": 109388,
-    "10004_REQUOTE": 3558,
-    "10010_PLACED": 6102,
-    "10006_REJECT": 2395
-  },
-  "opportunities_matched": {
-    "total_opportunities": 7,
-    "executed": 7,
-    "match_rate_pct": 100.0
-  },
-  "validations": {
-    "future_timestamps_filtered": 0,
-    "min_trades_met": true,
-    "min_orders_per_day_met": true
-  },
-  "generated_at": "2026-03-21T22:13:06.714626+00:00",
-  "agent_version": "psa_audit_engine_v2.0",
   "hashes": {
-    "trades_csv": "83b1404ace428562e16697d787535b8131a8ad70d19375530ff9ca13487a513a",
-    "equity_csv": "c41b882fdf6e4e1160dfa82c540c91a9d38f9e8a0d178c6318e80781275815c5",
-    "summary_json": "37b4f605faf058f9c8c731f9d3e4f9c5c1c444d93d18b1541a2cff0f2e74b790"
-  }
+    "trades_csv": "044b71f171cb1752ba88d7db70cc4f17587c904c6d167d160c4b9cc20585d7e0",
+    "equity_csv": "64962578ae5c8c7b428eb7e05b11b5c889d7714b77855b7ae801145aa0eec10e"
+  },
+  "generated_at": "2026-03-22T13:26:08.370286+00:00",
+  "version": "psa_audit_engine_v3.0_OHLCV"
 }
