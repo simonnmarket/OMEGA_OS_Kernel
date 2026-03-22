@@ -1,0 +1,8 @@
+{
+  "test_id": "LAT_OPT_20260322",
+  "timestamp": "2026-03-22T20:06:52.300577+00:00",
+  "total_iterations": 1000,
+  "mt5_p95_ms": 79.2788,
+  "redis_p95_ms": 31.4,
+  "overall_passed": true
+}
