@@ -1,0 +1,23 @@
+{
+    "protocol": "Johansen_Test_Unlock_CFO",
+    "pairs_tested": [
+        {
+            "asset_A": "XAUUSD (Proxy: GC=F)",
+            "asset_B": "XAGUSD (Proxy: SI=F)",
+            "trace_statistic": 12.704077799022413,
+            "critical_value_95%": 15.4943,
+            "cointegrated": false,
+            "interpretation": "Não se verificou cointegração ao nível 95% (trace < cv). O spread não é globalmente estacionário sob esta especificação (det_order=0, k_ar_diff=1, diário)."
+        },
+        {
+            "asset_A": "XAUUSD (Proxy: GC=F)",
+            "asset_B": "USD Index (Proxy: DX-Y.NYB)",
+            "trace_statistic": 4.167226655466453,
+            "critical_value_95%": 15.4943,
+            "cointegrated": false,
+            "interpretation": "Absoluta ausência de cointegração. DXY não serve como Asset B sob este modelo."
+        }
+    ],
+    "status": "COINTEGRATION_NOT_FOUND_AT_95_UNDER_BASE_SPEC",
+    "conclusion": "O Bloqueador 1 permanece ABERTO. Sem cointegração demonstrada nos dados, não há autorização de capital para Arbitragem Estatística. Próximo passo: Testar janelas menores (regime-dependent), alternativas (Paládio, Platina) e usar dados M1 do MT5 em vez de proxies diárias."
+}

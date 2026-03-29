@@ -55,12 +55,11 @@ class ExecutionManagerV104:
             'opportunity_cost': 0.0
         }
 
-        # 1. Lógica de Opportunity Cost (Q3 - Alinhamento com MD)
+        # 1. Lógica de Opportunity Cost (Q3 - Alinhamento literal com MD)
         if engagement['signal_fired'] and self.active_side is None:
-            # Simulamos que o sinal ocorreu em 'z_val'. Se não entramos por slippage ou delay:
-            # Aqui calculamos quanto o spread se moveu contra nós desde o threshold.
-            spread_now = y_price - (0.5 * x_price) # Simplificação de pontos
-            engagement['opportunity_cost'] = abs(z_val * 0.1) # Proxy de pontos
+            # Spread no momento do sinal: y_price no momento do signal_side
+            # Simplificamos para o preço atual da barra onde o sinal disparou pela primeira vez.
+            engagement['opportunity_cost'] = abs(y_price - (0.5 * x_price)) # Fórmula literal do MD §1.3
 
         # 2. Lógica de Entrada com Cool Down
         if signal_side != "FLAT" and self.active_side is None:

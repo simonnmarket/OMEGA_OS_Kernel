@@ -1,0 +1,79 @@
+{
+  "generated_at_utc": "2026-03-24T20:53:31.589249+00:00",
+  "source_files": {
+    "XAUUSD": {
+      "path": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\data_lake\\live_feed\\XAUUSD_MADRUGADA_M1.csv",
+      "sha256": "3904b90e6de9b65e04b78a48688a298f34ef6a2d46b2db984257f9d3c97c807d",
+      "rows_parsed": 478
+    },
+    "XAGUSD": {
+      "path": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\data_lake\\live_feed\\XAGUSD_MADRUGADA_M1.csv",
+      "sha256": "35d3700dd69bee9f5c1805f4eb93e84f33756f4fd52fa6d8e63f1927c3280488",
+      "rows_parsed": 478
+    }
+  },
+  "merge_inner_on_time": {
+    "rows": 478,
+    "time_first": 1774317660,
+    "time_last": 1774346280,
+    "pct_aligned": 1.0
+  },
+  "engle_granger_levels_full_sample": {
+    "alpha": 2243.9490086539417,
+    "beta": 31.320728940638297,
+    "adf_statistic": -2.715769104039617,
+    "pvalue": 0.07134904966492253,
+    "nobs": 477
+  },
+  "rolling_ols_spread_motor_v821": {
+    "window_ols_effective": 159,
+    "ewma_span_effective": 39,
+    "note_if_adaptive": true,
+    "spread_series_len": 319,
+    "adf_on_full_spread_series": {
+      "adf_statistic": -3.2747466144485173,
+      "pvalue": 0.016045736653268493,
+      "nobs": 318
+    },
+    "last_bar_z_causal_style": 1.7606863087001752
+  },
+  "johansen_recomputed_statsmodels": {
+    "trace_statistic_r0": 11.130500029542123,
+    "crit_95_r0": 15.4943,
+    "reject_r0_cointegration_95": false,
+    "error": null
+  },
+  "files_crosscheck": {
+    "data_manifest_v82": {
+      "protocol": "OMEGA-V8.2-FASE1",
+      "timestamp": "2026-03-23T23:54:41.961921",
+      "assets": {
+        "XAUUSD": {
+          "status": "SUCCESS",
+          "bars": 50000,
+          "start": "2026-01-30 17:00:00",
+          "end": "2026-03-24 01:54:00",
+          "sha256": "10f440df95188780106cb7bd624e546438ab76179d6b79d1757ccc0865ab6695"
+        },
+        "XAGUSD": {
+          "status": "SUCCESS",
+          "bars": 50000,
+          "start": "2026-01-30 17:00:00",
+          "end": "2026-03-24 01:54:00",
+          "sha256": "7eae7a5ab4f8273db6078632e50491dbd36d3270294eb97144b971d68f764000"
+        }
+      }
+    },
+    "johansen_m1_results_json": {
+      "protocol": "Johansen_M1_Test",
+      "data_source": "MetaTrader 5 Literal (M1 Raw)",
+      "bars_analyzed": 50000,
+      "start_date": "2026-01-30 17:00:00",
+      "end_date": "2026-03-24 01:54:00",
+      "trace_statistic": 32.955729484095,
+      "critical_value_95%": 15.4943,
+      "cointegrated": true,
+      "conclusion": "Ouro e Prata CO-INTEGRADOS no M1"
+    }
+  }
+}

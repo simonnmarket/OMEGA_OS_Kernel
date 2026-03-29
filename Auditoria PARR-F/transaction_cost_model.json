@@ -1,0 +1,21 @@
+{
+  "transaction_cost_model": {
+    "asset_class": "XAUUSD (M1 High Frequency)",
+    "execution_model": "Mean Reversion / Contraction",
+    "avg_spread_bid_ask_pts": 12.0,
+    "avg_slippage_pts": 5.0,
+    "commission_per_lot_usd": 7.0,
+    "total_cost_per_round_trip_pts": 19.0,
+    "market_impact_penalty": {
+      "fill_rate_estimated": 85.0,
+      "partial_fill_factor": 0.6,
+      "asymmetric_latency_ms": 50,
+      "z_score_edge_decay_percent": 15.0
+    },
+    "recalculated_thresholds": {
+      "gross_pf_required": 2.25,
+      "net_pf_after_costs_target": 1.50,
+      "mae_mfe_ratio_calibrated": 1.50
+    }
+  }
+}

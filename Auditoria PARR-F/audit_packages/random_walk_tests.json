@@ -1,0 +1,18 @@
+{
+    "hurst_exponent": {
+        "value": 0.5517092802290235,
+        "interpretation": "Trending"
+    },
+    "adf_test": {
+        "statistic": -1.602903822582551,
+        "p_value": 0.4821346290981216
+    },
+    "welch_exact": {
+        "t_stat": 0.7812560445161565,
+        "p_value": 0.21752221183062215
+    },
+    "mae_p95": 27.071999999999704,
+    "mfe_p95": 37.83249999999952,
+    "pf_observed": 1.1104250971990839,
+    "synthetic_bars_forward_filled": 0
+}

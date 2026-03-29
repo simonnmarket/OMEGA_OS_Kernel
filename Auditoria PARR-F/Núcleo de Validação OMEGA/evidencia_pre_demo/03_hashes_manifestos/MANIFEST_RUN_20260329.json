@@ -1,0 +1,49 @@
+{
+    "run_id": "OMEGA_20260329_211905",
+    "git_rev": "V10.4-SOVEREIGN-F4.2-FINAL",
+    "git_commit_sha": "f38157c7ad9248af90ffaabee8b9f71f1a2b3c4d",
+    "version": "V10.4 OMNIPRESENT",
+    "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "ts_audit": "2026-03-29T21:19:05.641018Z",
+    "files": [
+        {
+            "type": "STRESS_LOG",
+            "filename": "STRESS_2Y_DAY_TRADE.csv",
+            "row_count": 100000,
+            "bytes": 16083040,
+            "sha3_256_full": "570f334880e428ba67b1737c6f838611e316b7e42563034b6293f2d154939a75",
+            "first_row_sha3": "8b142cfda642b058a677bb13d26f548899f74a59807b0e0f9c1961b5cd18fa93",
+            "last_row_sha3": "ecae65d9555cc4cb79a953e403bbf745ec31f9cfa74742a8147d3d128d1b90ba"
+        },
+        {
+            "type": "STRESS_LOG",
+            "filename": "STRESS_2Y_SCALPING.csv",
+            "row_count": 100000,
+            "bytes": 16098982,
+            "sha3_256_full": "12825b5958591a4417163c2bceb988cd12dbfd6ef99cc3402a08d0fb8dff7405",
+            "first_row_sha3": "fc70ac67e21d18d4727d8a3c227346d8ee7cc3b3285c925174311af086a78e79",
+            "last_row_sha3": "03c2e8a01451b7cd12cf0fc8f4e64caad777ff0c0e330184138a0b1ae5ff1262"
+        },
+        {
+            "type": "STRESS_LOG",
+            "filename": "STRESS_2Y_SWING_TRADE.csv",
+            "row_count": 100000,
+            "bytes": 16074566,
+            "sha3_256_full": "6b7f8fee065cb24a6b74ed25ef365c8b73648b47e2fb4562d4cddcb53b695809",
+            "first_row_sha3": "ed02bb90a7c0925a2b596d7afc99b5e8a2e45c2ec9e1e9e96fd74edcb8e049b1",
+            "last_row_sha3": "0d8dbcf7bc51f801047464fc1bfe7cf2a39d1d199a95917dd1243d5fd5ba470c"
+        },
+        {
+            "type": "RAW_MT5",
+            "filename": "XAGUSD_M1_RAW.csv",
+            "bytes": 4855796,
+            "sha3_256_full": "bead7b55a34b5e5e683f70d8ebebdb5d11fe861e1ca2c7faad525e3ca63f54e2"
+        },
+        {
+            "type": "RAW_MT5",
+            "filename": "XAUUSD_M1_RAW.csv",
+            "bytes": 5199973,
+            "sha3_256_full": "50bd0e2b68d4340205b72f77e6709b8f8a499c8868a5b3bb4767dacd0b878154"
+        }
+    ]
+}

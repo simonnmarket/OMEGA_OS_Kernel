@@ -1,0 +1,11 @@
+{
+    "protocol": "Johansen_M1_Test",
+    "data_source": "MetaTrader 5 Literal (M1 Raw)",
+    "bars_analyzed": 50000,
+    "start_date": "2026-01-30 17:00:00",
+    "end_date": "2026-03-24 01:54:00",
+    "trace_statistic": 32.955729484095,
+    "critical_value_95%": 15.4943,
+    "cointegrated": true,
+    "conclusion": "Ouro e Prata CO-INTEGRADOS no M1"
+}

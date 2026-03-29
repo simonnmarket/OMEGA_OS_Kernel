@@ -1,0 +1,42 @@
+RELATÓRIO EMPÍRICO — PARIDADE (OMEGA núcleo)
+============================================================
+UTC: 2026-03-29T16:46:44.970487+00:00
+Linhas após inner join: 4140
+Primeiro tempo: 2026-02-27 23:28:00
+Último tempo: 2026-03-04 23:27:00
+
+Ficheiros e SHA256:
+  Y: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Núcleo de Validação OMEGA\dados_ohlcv_referencia\XAUUSD_M1.csv
+       004dd5529e010b92585a7f40c54b95a1c63fd06cf90704dcd254f7f8dedfd738
+  X: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Núcleo de Validação OMEGA\dados_ohlcv_referencia\XAGUSD_M1.csv
+       8d609f75e1924b524998d149f3f683049497cbbcefff461c046a4a48a9c6420a
+
+Parâmetros:
+{
+  "window_ols": 500,
+  "ewma_span": 100,
+  "forgetting_rls": 0.995,
+  "p0_scale": 10000.0,
+  "eps": 1e-10
+}
+
+10.A Paridade EWMA (mesmo spread batch):
+{
+  "n_points": 3638,
+  "mse": 0.32539729169787623,
+  "mean_abs_diff": 0.03227064369334644,
+  "max_abs_diff": 33.01255415442064,
+  "note": "Mesma série de spreads; divergência restante = diferença pandas ewm.std vs recorrência v_t."
+}
+
+10.B Paridade completa batch vs online:
+{
+  "n_points": 3638,
+  "mse": 0.1526083948522071,
+  "mean_abs_diff": 0.23134427170349628,
+  "max_abs_diff": 7.946539608923458,
+  "note": "Spread batch (OLS w) != spread online (RLS); interpretar como Z_DRIFT estrutural."
+}
+
+Série alinhada gravada em: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Núcleo de Validação OMEGA\PSA_EMPIRICA_OUT_MANUAL\serie_alinhada_merge.csv
+JSON completo: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Núcleo de Validação OMEGA\PSA_EMPIRICA_OUT_MANUAL\RELATORIO_EMPIRICO_PARIDADE.json

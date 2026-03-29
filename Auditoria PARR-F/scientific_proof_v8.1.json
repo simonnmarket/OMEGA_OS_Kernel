@@ -1,0 +1,32 @@
+{
+    "version": "V8.1_POPULATION_EDGE",
+    "timestamp": "2026-03-24T00:00:00Z",
+    "status": "REJECTED",
+    "mandate": {
+        "data_length_bars": 90000,
+        "target_p_value": 0.01,
+        "monte_carlo_iterations": 10000,
+        "grid_search": "5x5x5"
+    },
+    "grid_search_results": {
+        "best_theta_m": 0.5,
+        "best_delta": 0.1,
+        "best_lambda": 10.0
+    },
+    "statistical_tests": {
+        "welch_ttest_p_value": 0.13624539662024956,
+        "significant_at_001": false,
+        "total_trades_analyzed": 237
+    },
+    "monte_carlo": {
+        "iterations": 10000,
+        "observed_pf": 1.2310404692841144,
+        "percentile_rank": 50.760000000000005,
+        "threshold_99": 1.8103793772963166,
+        "passes_threshold": false
+    },
+    "final_verdict": {
+        "approved": false,
+        "reason": "Falha Estat\u00edstica frente \u00e0 Aleatoriedade."
+    }
+}

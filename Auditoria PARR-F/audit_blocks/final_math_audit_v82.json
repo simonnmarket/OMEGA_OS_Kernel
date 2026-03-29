@@ -1,0 +1,9 @@
+{
+    "ADF_Statistic": -14.376239246374611,
+    "ADF_p_value": 9.314262849544727e-27,
+    "Critical_Value_5%": -2.8615984885202495,
+    "Stationarity_Approved": true,
+    "Net_Profit_Factor_Target_1.5": 0.017704553959104412,
+    "Transaction_Cost_Applied": "19pts",
+    "Status": "REJECTED_BY_GATES"
+}

@@ -1,0 +1,23 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Núcleo de Validação OMEGA\venv_psa\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Núcleo de Validação OMEGA
+collecting ... collected 15 items
+
+tests/test_engagement_metrics.py::test_engagement_rate_none_when_zero_signals PASSED [  6%]
+tests/test_engagement_metrics.py::test_engagement_rate_value PASSED      [ 13%]
+tests/test_engagement_metrics.py::test_engagement_rate_invalid PASSED    [ 20%]
+tests/test_engagement_metrics.py::test_n_zero_placeholders PASSED        [ 26%]
+tests/test_engagement_metrics.py::test_opportunity_cost_only_when_signal_not_filled PASSED [ 33%]
+tests/test_online_engine.py::test_online_runs_without_nan_inf PASSED     [ 40%]
+tests/test_parity_report.py::test_recursive_z_first_is_zero PASSED       [ 46%]
+tests/test_parity_report.py::test_parity_ewma_report_finite PASSED       [ 53%]
+tests/test_parity_report.py::test_full_pipeline_report_runs PASSED       [ 60%]
+tests/test_rls.py::test_rls_lambda1_matches_batch_ols PASSED             [ 66%]
+tests/test_rls.py::test_innovation_matches_y_minus_phi_theta PASSED      [ 73%]
+tests/test_v821_batch.py::test_rolling_spread_uses_only_past_window PASSED [ 80%]
+tests/test_v821_batch.py::test_causal_z_matches_explicit_shift1_formula PASSED [ 86%]
+tests/test_v821_batch.py::test_z_differs_from_contemporaneous_ewma_when_series_moves PASSED [ 93%]
+tests/test_v821_batch.py::test_v821_pipeline_matches_components PASSED   [100%]
+
+============================= 15 passed in 0.60s ==============================

@@ -1,0 +1,6 @@
+Data/hora UTC aproximada da recolha: 2026-03-27 10:49:21'Z'
+SO: Windows (PowerShell)
+Caminho absoluto pasta núcleo: C:\Users\Lenovo\.cursor\nebular-kuiper\Auditoria PARR-F\Núcleo de Validação OMEGA
+Python: Python 3.11.9
+
+venv: não indicado nesta geração automática (completar se aplicável)
