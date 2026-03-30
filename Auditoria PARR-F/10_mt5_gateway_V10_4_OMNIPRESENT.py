@@ -38,14 +38,58 @@ class ExecutionManagerV104:
     """
     Gestor Soberano com Cool Down e Opportunity Cost Real.
     """
-    def __init__(self, mode="DRY_RUN", min_hold_bars=3):
+    def __init__(self, mode="DRY_RUN", min_hold_bars=3, lot=0.01):
         self.mode = mode
         self.min_hold_bars = min_hold_bars
+        self.lot = lot
         self.active_side = None
+        self.active_ticket = None
         self.entry_bar_idx = -1
         self.entry_price_y = 0.0
         self.entry_price_x = 0.0
         self.signal_entry_z = 0.0
+
+    def _open_position(self, side, price):
+        if self.mode != "DEMO_LIVE": return 12345678 # Mock ticket
+        
+        # Ordem de Compra ou Venda (XAUUSD)
+        order_type = mt5.ORDER_TYPE_BUY if side == "LONG" else mt5.ORDER_TYPE_SELL
+        request = {
+            "action": mt5.TRADE_ACTION_DEAL,
+            "symbol": ASSET_Y,
+            "volume": self.lot,
+            "type": order_type,
+            "price": price,
+            "magic": 104000,
+            "comment": "OMEGA V10.4 LIVE",
+            "type_time": mt5.ORDER_TIME_GTC,
+            "type_filling": mt5.ORDER_FILLING_IOC,
+        }
+        res = mt5.order_send(request)
+        if res.retcode != mt5.TRADE_RETCODE_DONE:
+            print(f"[ERRO] Falha ao abrir: {res.comment}")
+            return None
+        return res.order
+
+    def _close_position(self, price):
+        if self.mode != "DEMO_LIVE": return True
+        if self.active_ticket is None: return True
+
+        order_type = mt5.ORDER_TYPE_SELL if self.active_side == "LONG" else mt5.ORDER_TYPE_BUY
+        request = {
+            "action": mt5.TRADE_ACTION_DEAL,
+            "symbol": ASSET_Y,
+            "volume": self.lot,
+            "type": order_type,
+            "position": self.active_ticket,
+            "price": price,
+            "magic": 104000,
+            "comment": "OMEGA V10.4 CLOSE",
+            "type_time": mt5.ORDER_TIME_GTC,
+            "type_filling": mt5.ORDER_FILLING_IOC,
+        }
+        res = mt5.order_send(request)
+        return res.retcode == mt5.TRADE_RETCODE_DONE
 
     def manage(self, signal_side, y_price, x_price, z_val, current_bar_idx):
         engagement = {
@@ -57,35 +101,35 @@ class ExecutionManagerV104:
 
         # 1. Lógica de Opportunity Cost (Q3 - Alinhamento literal com MD)
         if engagement['signal_fired'] and self.active_side is None:
-            # Spread no momento do sinal: y_price no momento do signal_side
-            # Simplificamos para o preço atual da barra onde o sinal disparou pela primeira vez.
-            engagement['opportunity_cost'] = abs(y_price - (0.5 * x_price)) # Fórmula literal do MD §1.3
+            engagement['opportunity_cost'] = abs(y_price - (0.5 * x_price))
 
         # 2. Lógica de Entrada com Cool Down
         if signal_side != "FLAT" and self.active_side is None:
-            engagement['order_sent'] = True
-            engagement['order_filled'] = True # Mock Soberano V10.4
-            self.active_side = signal_side
-            self.entry_bar_idx = current_bar_idx
-            self.entry_price_y = y_price
-            self.entry_price_x = x_price
-            self.signal_entry_z = z_val
+            ticket = self._open_position(signal_side, y_price)
+            if ticket:
+                engagement['order_sent'] = True
+                engagement['order_filled'] = True
+                self.active_side = signal_side
+                self.active_ticket = ticket
+                self.entry_bar_idx = current_bar_idx
+                self.entry_price_y = y_price
+                self.entry_price_x = x_price
+                self.signal_entry_z = z_val
 
-        # 3. Lógica de Fechamento com Histerese de Tempo (Cool Down - Condição 1)
+        # 3. Lógica de Fechamento com Histerese de Tempo
         elif self.active_side is not None:
             bars_held = current_bar_idx - self.entry_bar_idx
             can_close = bars_held >= self.min_hold_bars
             
-            # Condição de Saída: Z cruza o zero (Reversão à média)
             exit_condition = False
             if self.active_side == "LONG" and z_val >= 0: exit_condition = True
             elif self.active_side == "SHORT" and z_val <= 0: exit_condition = True
             
             if exit_condition and can_close:
-                # [OPPORTUNITY_COST_REAL_IMPLEMENTATION]
-                # Se tivéssemos saído antes sem cool-down, quanto ganhamos/perdemos?
-                self.active_side = None
-                self.entry_bar_idx = -1
+                if self._close_position(y_price):
+                    self.active_side = None
+                    self.active_ticket = None
+                    self.entry_bar_idx = -1
 
         return engagement
 

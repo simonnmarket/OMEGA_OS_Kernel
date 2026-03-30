@@ -1,0 +1,44 @@
+{
+  "generated_utc": "2026-03-27T17:06:13.733237+00:00",
+  "script": "run_empirical_parity_real_data.py",
+  "python": "3.11.9",
+  "inputs": {
+    "y_csv": "C:\\Users\\Lenovo\\.cursor\\OMEGA_OS_Kernel\\OHLCV_DATA\\grafico_linha\\XAUUSD_M1.csv",
+    "x_csv": "C:\\Users\\Lenovo\\.cursor\\OMEGA_OS_Kernel\\OHLCV_DATA\\grafico_linha\\AUDJPY_M1.csv",
+    "sha256_y": "13bcdb84274355d850f4b359142579760e9f361b587eca4f4900408e1a215d96",
+    "sha256_x": "587e443bb85c891ea09911b336eac5774e1d2e7a2485fe77fea014bea014cf7f",
+    "time_col": "time",
+    "value_col": "linha"
+  },
+  "parameters": {
+    "window_ols": 500,
+    "ewma_span": 100,
+    "forgetting_rls": 0.995,
+    "p0_scale": 10000.0,
+    "eps": 1e-10
+  },
+  "merge_stats": {
+    "n_rows_after_inner_join": 47830,
+    "t_first": "2026-01-30 05:33:00",
+    "t_last": "2026-03-19 23:17:00"
+  },
+  "parity_ewma_same_spread_batch": {
+    "n_points": 47328,
+    "mse": 0.007473269577975625,
+    "mean_abs_diff": 0.0134294320707724,
+    "max_abs_diff": 14.495393011330599,
+    "note": "Mesma série de spreads; divergência restante = diferença pandas ewm.std vs recorrência v_t."
+  },
+  "parity_full_batch_vs_online": {
+    "n_points": 47328,
+    "mse": 0.13228905014344927,
+    "mean_abs_diff": 0.24431935792642373,
+    "max_abs_diff": 5.250552733833771,
+    "note": "Spread batch (OLS w) != spread online (RLS); interpretar como Z_DRIFT estrutural."
+  },
+  "notes": [
+    "spread_batch usa OLS em janela; spread online usa inovação RLS — MSE elevado em rep_full pode ser estrutural.",
+    "rep_ewma compara apenas a camada EWMA sobre o mesmo spread_batch (pandas vs recursivo).",
+    "Nenhuma linha foi sintetizada: apenas inner join temporal sobre CSV existentes."
+  ]
+}

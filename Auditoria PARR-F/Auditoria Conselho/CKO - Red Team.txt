@@ -1,0 +1,50 @@
+MEMORANDO DE APROVAÇÃO: FECHAMENTO DO GATE A (CUSTÓDIA)
+
+PARA: PSA (Project System Architect)
+DE: CEO / Comitê Executivo
+DATA: 30 de Março de 2026
+ASSUNTO: APROVAÇÃO FASE A E AUTORIZAÇÃO INÍCIO FASE B (CORREÇÃO HISTÓRICA)
+
+1. VERIFICAÇÃO DE CONFORMIDADE (CHECKLIST PAF-PSA)
+Recebi o manifesto atualizado (git_commit_sha: 2497789d...) e a confirmação de execução do validador.
+
+Status da Auditoria:
+
+Integridade de Código (Git): ✅ O SHA no manifesto agora corresponde ao commit HEAD. A cadeia de custódia do código-fonte está restaurada.
+Integridade de Dados (Hashes): ✅ Os hashes SHA3-256 dos logs de Stress (V10.4) e Raw (MT5) permanecem inalterados desde a última verificação. A base de evidência do fracasso da V10.4 está preservada e imutável.
+Nova Evidência (Demo): ✅ A entrada do log DEMO_LOG_SWING_TRADE_20260330_SMOKE10.csv (10 linhas) é crucial. Ela documenta empiricamente o "Cego Matemático" (Z oscilando próximo a 0) que diagnosticamos. Não estamos apagando o erro; estamos catalogando-o.
+Automação (RT-A): ✅ A geração do relatório RT_A_EVIDENCIAS_AUTO_20260331.md via script remove o risco de erro humano na transcrição de hashes.
+Conclusão do Gate A: APROVADO.
+A fase de custódia e saneamento dos artefatos falhos (V10.4) está concluída com excelência. O repositório está limpo e rastreável.
+
+2. AUTORIZAÇÃO: INÍCIO DA FASE B (HISTÓRICO 2Y+)
+Com a verdade da V10.4 selada no manifesto, você está autorizado a iniciar a Fase B: Histórico Longo (Correção).
+
+Atenção: A Fase B não é apenas "verificar" os dados antigos. É a Reexecução da História com a nova matemática da V10.5 "DEAD-EYE".
+
+Objetivos da Fase B:
+
+Implementação da Correção: Garantir que o código V10.5 (com 
+λ=0.9998
+) está no repositório (mas ainda não é o padrão).
+Replay Histórico: Rodar o motor V10.5 sobre os arquivos XAUUSD_M1_RAW.csv e XAGUSD_M1_RAW.csv.
+Quebra da "Maldição do Silêncio": O resultado deste backtest DEVE mostrar signal_fired = True.
+Meta: Identificar operações que a V10.4 ignorou mas que a V10.5 teria capturado.
+Registro do Novo Manifesto: Um novo manifesto (ou branch do manifesto) deve ser gerado contendo os logs da V10.5.
+3. DIRETRIZ TÉCNICA PARA A FASE B
+Para provar que a correção funcionou antes de irmos para o Demo novamente, você deve apresentar no próximo relatório:
+
+Comparação Lado a Lado:
+Coluna 1: Z-Score Médio da V10.4 (Deve ser ~0.0).
+Coluna 2: Z-Score Médio da V10.5 (Deve oscilar com amplitude maior, ex: -2.0 a +2.0).
+Contagem de Trades:
+V10.4: ~0 trades (confirmado).
+V10.5: Esperamos dezenas ou centenas de trades no período de 3 meses.
+4. ORDEM DE MISSÃO
+O depósito de evidências da falha está seguro. O "Corpo" da V10.4 foi autopsiado e arquivado.
+
+Agora, traga a V10.5 para a vida. Prove que, com a memória estendida (
+λ=0.9998
+), o sistema enxerga os 16.000 pontos que a versão anterior ignorou.
+
+Pode iniciar a Fase B.

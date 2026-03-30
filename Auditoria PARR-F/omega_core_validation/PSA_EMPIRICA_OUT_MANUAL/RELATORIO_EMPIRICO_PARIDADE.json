@@ -1,0 +1,44 @@
+{
+  "generated_utc": "2026-03-29T16:46:44.970487+00:00",
+  "script": "run_empirical_parity_real_data.py",
+  "python": "3.11.9",
+  "inputs": {
+    "y_csv": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\dados_ohlcv_referencia\\XAUUSD_M1.csv",
+    "x_csv": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\dados_ohlcv_referencia\\XAGUSD_M1.csv",
+    "sha256_y": "004dd5529e010b92585a7f40c54b95a1c63fd06cf90704dcd254f7f8dedfd738",
+    "sha256_x": "8d609f75e1924b524998d149f3f683049497cbbcefff461c046a4a48a9c6420a",
+    "time_col": "time",
+    "value_col": "close"
+  },
+  "parameters": {
+    "window_ols": 500,
+    "ewma_span": 100,
+    "forgetting_rls": 0.995,
+    "p0_scale": 10000.0,
+    "eps": 1e-10
+  },
+  "merge_stats": {
+    "n_rows_after_inner_join": 4140,
+    "t_first": "2026-02-27 23:28:00",
+    "t_last": "2026-03-04 23:27:00"
+  },
+  "parity_ewma_same_spread_batch": {
+    "n_points": 3638,
+    "mse": 0.32539729169787623,
+    "mean_abs_diff": 0.03227064369334644,
+    "max_abs_diff": 33.01255415442064,
+    "note": "Mesma série de spreads; divergência restante = diferença pandas ewm.std vs recorrência v_t."
+  },
+  "parity_full_batch_vs_online": {
+    "n_points": 3638,
+    "mse": 0.1526083948522071,
+    "mean_abs_diff": 0.23134427170349628,
+    "max_abs_diff": 7.946539608923458,
+    "note": "Spread batch (OLS w) != spread online (RLS); interpretar como Z_DRIFT estrutural."
+  },
+  "notes": [
+    "spread_batch usa OLS em janela; spread online usa inovação RLS — MSE elevado em rep_full pode ser estrutural.",
+    "rep_ewma compara apenas a camada EWMA sobre o mesmo spread_batch (pandas vs recursivo).",
+    "Nenhuma linha foi sintetizada: apenas inner join temporal sobre CSV existentes."
+  ]
+}

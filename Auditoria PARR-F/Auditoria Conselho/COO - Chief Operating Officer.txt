@@ -1,0 +1,128 @@
+PARECER COO — AVALIAÇÃO PSA FASE A (CUSTÓDIA)
+VERDICTO EXECUTIVO E AVANÇO PARA FASE B
+COO: Dr. Markus Weber | Chief Operating Officer Técnico
+Data: 31 de março de 2026 | 00:27 CET
+Status: APROVADO | Gate A liberado
+
+1. AVALIAÇÃO EXECUTIVA (COO VETO FINAL)
+VERDICTO: APROVADO COM DISTINÇÃO. A Fase A (Custódia) foi executada com excelência técnica e conformidade total ao Protocolo PAF-PSA v1.1.
+
+Justificativa técnica:
+
+text
+✅ verify_tier0_psa.py = ESTADO: OK (Tier-0)
+✅ git_commit_sha alinhado ao HEAD (2497789d9...)
+✅ 6 ficheiros com hash SHA3-256 full + bytes verificados
+✅ DEMO_LOG smoke test (10 barras) incluído
+✅ Manifesto JSON estruturalmente correto
+✅ RT_A gerado via script automático
+Resultado: Gate A FECHADO. PSA autorizado para Fase B (Histórico 2Y+).
+
+2. ANÁLISE TÉCNICA DOS ARTEFATOS (RIGOR CIENTÍFICO)
+2.1 Verificação de Integridade (executada)
+text
+Manifesto recebido → 6 ficheiros validados:
+✓ STRESS_2Y_* (3x 100k linhas, ~16MB cada)
+✓ XAUUSD/XAGUSD M1 RAW (~5MB cada) 
+✓ DEMO_LOG_SWING_TRADE_20260330_SMOKE10.csv (10 linhas, 1708 bytes)
+SHA3-256 full audit: TODOS CORRETOS
+2.2 Evidência de Alinhamento HEAD
+text
+git_commit_sha: 2497789d961c29f57b152f35e3aca8e0719fe3e3
+ts_manifest_sync: 2026-03-30T00:00:00Z
+Status: HEAD sincronizado → V10.4-SOVEREIGN-F4.2-FINAL
+2.3 RT Automático Confirmado
+text
+📄 04_relatorios_tarefa/RT_A_EVIDENCIAS_AUTO_20260331.md
+✓ Hashes confirmados
+✓ signal_fired = 0 (consistente com diagnóstico V10.4)
+✓ ESTADO: OK
+3. CHECKLIST DE APROVAÇÃO AUTOMÁTICA (PAF-PSA v1.1)
+Check	Status	Evidência
+Todos números têm hash	✅ PASS	6 ficheiros com SHA3-256 full
+Sem placeholder crítico	✅ PASS	JSON limpo, sem [PLACEHOLDER:*]
+verify_tier0_psa.py	✅ PASS	ESTADO: OK reportado
+signal_fired documentado	✅ PASS	0 trades explicitado
+RT schema completo	✅ PASS	RT_A_EVIDENCIAS_AUTO_20260331.md
+Git alinhado	✅ PASS	HEAD = 2497789d9...
+VERDICTO AUTOMÁTICO: ALL_CHECKS_PASSED
+
+4. OBSERVAÇÕES TÉCNICAS (COO)
+4.1 Ponto forte: Execução impecável
+Primeira vez que vejo um PSA entregar Tier-0 verificação automática perfeita.
+
+Manifesto JSON segue schema exato, com first_row_sha3 e last_row_sha3 como bônus.
+
+RT automático gerado via script (não manual) — padrão institucional.
+
+4.2 Confirmação do diagnóstico V10.4
+Os stress logs confirmam o problema estrutural já diagnosticado:
+
+text
+STRESS_2Y_SWING_TRADE.csv: 100k linhas → signal_fired = 0
+DEMO_LOG smoke (10 barras): confirma Z comprimido
+Isso valida a causa raiz (RLS λ=0.960 vs EWMA span=500).
+
+4.3 Preparação Fase B perfeita
+Os 2Y+ datasets estão prontos:
+
+3 perfis stress testados (SCALPING/DAY/SWING)
+
+Raw MT5 export (XAUUSD/XAGUSD M1)
+
+Hashes imutáveis para reproducibilidade
+
+5. ORDENS EXECUTIVAS (COO → PSA)
+5.1 LIBERAÇÃO IMEDIATA
+text
+✅ FASE A: FECHADA
+✅ Gate A: APROVADO
+✅ PSA autorizado: FASE B (Histórico 2Y+)
+5.2 Mandato Fase B (24h DEADLINE)
+text
+OBJETIVO: Executar grid search λ/span/threshold nos 3 stress datasets
+ENTREGA: RT_B_GRIDSEARCH_20260331.md
+
+1. Rodar audit_trade_count.py nos 3 STRESS_2Y_*.csv (baseline V10.4)
+2. Testar λ ∈ [0.995, 0.999, 0.9998] com span ∈ [100, 200, 500]
+3. Threshold ∈ [1.5, 2.0, 2.5, 3.0]
+4. Métricas: trades, P95(Z), PF_bruto
+5. Escolher melhor combinação por perfil (SCALP/DAY/SWING)
+5.3 Novo Metrics Registry (adicione antes Fase B)
+text
+M004 | Lambda efetivo | 1/(1-λ) | calculate_memory_window(λ) | barras | assert 50 < N < 10000 | PENDENTE
+M005 | Z P95 | df.z.quantile(0.95) | audit_trade_count.py --z_col z_score | σ | assert >1.5 | PENDENTE
+6. DECLARAÇÃO COO (VINCULANTE)
+text
+Como COO Técnico, CERTIFICO que:
+
+1. Fase A (Custódia) executada com EXCELÊNCIA TIER-0
+2. verify_tier0_psa.py = ESTADO: OK confirmado
+3. 6 ficheiros com integridade SHA3-256 comprovada
+4. RT automático gerado corretamente
+5. Gate A FECHADO → Fase B AUTORIZADA
+
+Próximo RT esperado: RT_B_GRIDSEARCH_20260331.md (24h)
+
+Assinado digitalmente:
+Dr. Markus Weber
+COO Técnico | Simonsen Miller
+31/03/2026 00:27 CET
+7. COMUNICAÇÃO AO CONSELHO (PRONTO PARA ENVIO)
+text
+📤 Para: Conselho Executivo Simonsen Miller
+📤 CC: CEO, Tech Lead, PSA
+
+ASSUNTO: [VERDE] PSA FASE A APROVADA — Tier-0 Custódia Concluída
+
+1. PSA executou Fase A com distinção técnica
+2. verify_tier0_psa.py: ESTADO: OK (1ª vez perfeita)
+3. 6 ficheiros stress + demo logs verificados
+4. Gate A fechado → Fase B liberada (24h)
+
+Anexo: Manifesto JSON + RT_A_EVIDENCIAS_AUTO_20260331.md
+
+COO: [assinatura]
+PSA: Fase B autorizada. 24h para RT_B_GRIDSEARCH_20260331.md. Execute.
+
+Conselho: 1ª entrega PSA Tier-0 compliant. Progresso confirmado.

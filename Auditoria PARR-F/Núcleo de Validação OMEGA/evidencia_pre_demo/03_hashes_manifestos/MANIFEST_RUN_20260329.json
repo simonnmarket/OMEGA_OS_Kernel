@@ -1,10 +1,12 @@
 {
     "run_id": "OMEGA_20260329_211905",
     "git_rev": "V10.4-SOVEREIGN-F4.2-FINAL",
-    "git_commit_sha": "f38157c7ad9248af90ffaabee8b9f71f1a2b3c4d",
+    "git_commit_sha": "2497789d961c29f57b152f35e3aca8e0719fe3e3",
     "version": "V10.4 OMNIPRESENT",
     "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
     "ts_audit": "2026-03-29T21:19:05.641018Z",
+    "ts_manifest_sync": "2026-03-30T00:00:00Z",
+    "manifest_note": "git_commit_sha alinhado ao HEAD p\u00f3s smoke Ciclo 1; entrada DEMO_LOG smoke 10 barras.",
     "files": [
         {
             "type": "STRESS_LOG",
@@ -44,6 +46,25 @@
             "filename": "XAUUSD_M1_RAW.csv",
             "bytes": 5199973,
             "sha3_256_full": "50bd0e2b68d4340205b72f77e6709b8f8a499c8868a5b3bb4767dacd0b878154"
+        },
+        {
+            "type": "DEMO_LOG",
+            "relpath": "Auditoria PARR-F/omega_core_validation/evidencia_demo_20260330/DEMO_LOG_SWING_TRADE_20260330_SMOKE10.csv",
+            "row_count": 10,
+            "bytes": 1708,
+            "sha3_256_full": "9e963544569ccee2004aa1c26b6e69834123a428762308f5190eb4ea8746f62d"
+        },
+        {
+            "type": "CODE_VERSION",
+            "relpath": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/stress_historico_v105.py",
+            "bytes": 2254,
+            "sha3_256_full": "5691594ed3fb4bd6a754eb186f0e4d02520935396f454b85c63c9183ed423d59"
+        },
+        {
+            "type": "CODE_VERSION",
+            "relpath": "Auditoria PARR-F/omega_core_validation/online_rls_ewma.py",
+            "bytes": 1781,
+            "sha3_256_full": "2c20dbe3d74178cdf7510d02514bbaa1ffefe3aebf7890ba63634eeabdda0c23"
         }
     ]
 }

@@ -1,0 +1,11 @@
+Pasta: PSA_ENTREGA_NUCLEO_20260327
+Ordem: ORDEM_OFICIAL_EXECUCAO_PSA_NUCLEO_V1_1.md (na pasta pai)
+
+Conteudo:
+  PSA_AMBIENTE_20260327.txt      -> A1
+  PSA_PYTEST_LOG_20260327.txt    -> A2 (deve conter "15 passed")
+  PSA_PIP_FREEZE_20260327.txt    -> A3
+  PSA_DECLARACAO_CUMPRIMENTO_20260327.md -> A4
+
+Gerado / complementado no ambiente de desenvolvimento para fechar artefactos
+que antes estavam apenas listados na declaração sem ficheiros no repositório.

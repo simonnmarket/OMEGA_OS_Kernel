@@ -1,0 +1,6 @@
+ID,Nome,Formula,Script,Unidade,Teste,Status
+M001,Trades Totais (signal_fired),df['signal_fired'].sum(),audit_trade_count.py --signal_col signal_fired,inteiro,assert trades >= 1 onde aplicável,PENDENTE
+M002,Profit Factor,gross_profit / abs(gross_loss) se gross_loss != 0,pnl_analysis.py,float,assert 0 < pf < 10 se PnL disponível,PENDENTE
+M003,Max Drawdown,max(peak - trough) sobre curva acumulada,pnl_analysis.py,%,assert dd < limite se definido,PENDENTE
+M004,Memória Efectiva (N),1 / (1 - lambda),gridsearch_v105.py,barras,assert N >= span,PENDENTE
+M005,Percentil 95 (P95) de Z,np.percentile(abs(Z_series), 95),gridsearch_v105.py,sigma,assert P95 > 1.0,PENDENTE

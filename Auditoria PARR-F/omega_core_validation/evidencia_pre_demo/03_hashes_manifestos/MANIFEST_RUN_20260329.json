@@ -47,10 +47,10 @@
         },
         {
             "type": "DEMO_LOG",
-            "filename": "DEMO_LOG_SWING_TRADE_20260330.csv",
+            "filename": "DEMO_LOG_SWING_TRADE_20260330_SMOKE10.csv",
             "bytes": 1708,
             "sha3_256_full": "9e963544569ccee2004aa1c26b6e69834123a428762308f5190eb4ea8746f62d",
-            "relpath": "Auditoria PARR-F/omega_core_validation/evidencia_demo_20260330/DEMO_LOG_SWING_TRADE_20260330.csv"
+            "relpath": "Auditoria PARR-F/omega_core_validation/evidencia_demo_20260330/DEMO_LOG_SWING_TRADE_20260330_SMOKE10.csv"
         }
     ]
 }
