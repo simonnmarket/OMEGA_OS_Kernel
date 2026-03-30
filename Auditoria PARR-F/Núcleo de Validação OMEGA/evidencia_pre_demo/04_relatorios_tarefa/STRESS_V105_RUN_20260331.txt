@@ -1,0 +1,4 @@
+Iniciando Pipeline de Stress Hist¾rico Completo v10.5
+Total de Sinais Disparados (|Z| > 2.0): 222
+ExecuþÒo terminada. Salvo em C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\N·cleo de ValidaþÒo OMEGA\evidencia_pre_demo\02_logs_execucao\STRESS_V10_5_SWING_TRADE.csv.
+Tempo total: 2.93s

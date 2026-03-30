@@ -1,7 +1,7 @@
 {
     "run_id": "OMEGA_20260329_211905",
     "git_rev": "V10.4-SOVEREIGN-F4.2-FINAL",
-    "git_commit_sha": "2497789d961c29f57b152f35e3aca8e0719fe3e3",
+    "git_commit_sha": "3390911b0eba8960fdcfec5c8b2fdd79595f9a3c",
     "version": "V10.4 OMNIPRESENT",
     "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
     "ts_audit": "2026-03-29T21:19:05.641018Z",
@@ -56,15 +56,24 @@
         },
         {
             "type": "CODE_VERSION",
+            "filename": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/stress_historico_v105.py",
             "relpath": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/stress_historico_v105.py",
             "bytes": 2254,
             "sha3_256_full": "5691594ed3fb4bd6a754eb186f0e4d02520935396f454b85c63c9183ed423d59"
         },
         {
             "type": "CODE_VERSION",
+            "filename": "Auditoria PARR-F/omega_core_validation/online_rls_ewma.py",
             "relpath": "Auditoria PARR-F/omega_core_validation/online_rls_ewma.py",
             "bytes": 1781,
             "sha3_256_full": "2c20dbe3d74178cdf7510d02514bbaa1ffefe3aebf7890ba63634eeabdda0c23"
+        },
+        {
+            "type": "STRESS_LOG",
+            "filename": "STRESS_V10_5_SWING_TRADE.csv",
+            "relpath": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/02_logs_execucao/STRESS_V10_5_SWING_TRADE.csv",
+            "bytes": 15102292,
+            "sha3_256_full": "112b5958dfc3e9c4e157d63304f500d5cb02e07a8fe1a47f723d08027d0d36df"
         }
     ]
 }
