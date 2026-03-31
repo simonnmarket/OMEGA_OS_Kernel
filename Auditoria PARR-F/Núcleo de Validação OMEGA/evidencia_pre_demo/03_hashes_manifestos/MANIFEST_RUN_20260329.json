@@ -1,12 +1,12 @@
 {
     "run_id": "OMEGA_20260329_211905",
     "git_rev": "V10.4-SOVEREIGN-F4.2-FINAL",
-    "git_commit_sha": "ea738bac563fdc4fe000383f451a2d36a6b0e45b",
+    "git_commit_sha": "a9fdb7a63232045f3662017bcd3bed8334205b81",
     "version": "V10.4 OMNIPRESENT",
     "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
     "ts_audit": "2026-03-29T21:19:05.641018Z",
     "ts_manifest_sync": "2026-03-30T00:00:00Z",
-    "manifest_note": "git_commit_sha alinhado ao HEAD p\u00f3s smoke Ciclo 1; entrada DEMO_LOG smoke 10 barras.",
+    "manifest_note": "git_commit_sha alinhado ao HEAD pós smoke Ciclo 1; entrada DEMO_LOG smoke 10 barras.",
     "files": [
         {
             "type": "STRESS_LOG",
@@ -56,8 +56,8 @@
         },
         {
             "type": "CODE_VERSION",
-            "filename": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/stress_historico_v105.py",
-            "relpath": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/stress_historico_v105.py",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/stress_historico_v105.py",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/stress_historico_v105.py",
             "bytes": 2254,
             "sha3_256_full": "5691594ed3fb4bd6a754eb186f0e4d02520935396f454b85c63c9183ed423d59"
         },
@@ -71,14 +71,14 @@
         {
             "type": "STRESS_LOG",
             "filename": "STRESS_V10_5_SWING_TRADE.csv",
-            "relpath": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/02_logs_execucao/STRESS_V10_5_SWING_TRADE.csv",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/02_logs_execucao/STRESS_V10_5_SWING_TRADE.csv",
             "bytes": 15102292,
             "sha3_256_full": "112b5958dfc3e9c4e157d63304f500d5cb02e07a8fe1a47f723d08027d0d36df"
         },
         {
             "type": "CODE_VERSION",
-            "filename": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/qa_independente_v105.py",
-            "relpath": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/qa_independente_v105.py",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/qa_independente_v105.py",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/qa_independente_v105.py",
             "bytes": 1118,
             "sha3_256_full": "c00ee3da4e8aa280a4fde8d7d34c9d0a1c2420045260cd87923f4521faf3e67c"
         },
@@ -86,22 +86,57 @@
             "type": "CODE_VERSION",
             "filename": "Auditoria PARR-F/11_live_demo_cycle_1.py",
             "relpath": "Auditoria PARR-F/11_live_demo_cycle_1.py",
-            "bytes": 6432,
-            "sha3_256_full": "1ae2d0e27dec41e93875ca46e3a4f9b393eb8140ec79bfbd32b43e92a8707d26"
+            "bytes": 7837,
+            "sha3_256_full": "ae2c748f204deb857e6da9d5bdd19bc2f921cfd1b1f0418136e8602c72462a3a"
         },
         {
             "type": "DOCUMENT",
-            "filename": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/04_relatorios_tarefa/RT_E_FALHA_DEMO_NOTURNO_20260331.md",
-            "relpath": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/04_relatorios_tarefa/RT_E_FALHA_DEMO_NOTURNO_20260331.md",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/RT_E_FALHA_DEMO_NOTURNO_20260331.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/RT_E_FALHA_DEMO_NOTURNO_20260331.md",
             "bytes": 3310,
             "sha3_256_full": "1b697ad17977c4a6a3f2ed5a476a0d49c7f974387b1243304a1e9ff343621f08"
         },
         {
             "type": "DOCUMENT",
-            "filename": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/04_relatorios_tarefa/AUDITORIA_CRITICA_FALHA_LIVE_DEMO_20260331.md",
-            "relpath": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/04_relatorios_tarefa/AUDITORIA_CRITICA_FALHA_LIVE_DEMO_20260331.md",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/AUDITORIA_CRITICA_FALHA_LIVE_DEMO_20260331.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/AUDITORIA_CRITICA_FALHA_LIVE_DEMO_20260331.md",
             "bytes": 6445,
             "sha3_256_full": "e295c8dd440eff2276f50b3906922ae0fc4ea2b8b7ed25ab24e18f0e60fc207b"
+        },
+        {
+            "type": "CODE_VERSION",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/audit_trade_count.py",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/audit_trade_count.py",
+            "bytes": 4257,
+            "sha3_256_full": "a71e9ae7e6b54acc25abcc8260a34a06595cbdbc112541f2ad5121c6077a77e0"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/PACOTE_PSA_OMEGA_VERDADE_UNIFICADA_20260331.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/PACOTE_PSA_OMEGA_VERDADE_UNIFICADA_20260331.md",
+            "bytes": 9928,
+            "sha3_256_full": "d22990db2fa6b47dce3a3d5c74000127915e7e71a3f2d9fef0ed9619bf90001a"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/RT_E_VITALSIGNS_MANDATO_20260331.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/RT_E_VITALSIGNS_MANDATO_20260331.md",
+            "bytes": 2130,
+            "sha3_256_full": "ebd3136f6166a28bf4ca28748400be4f57985b48b738ec4282fc2d6609c71728"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/DOC_PSA_FINAL_EXECUCAO_CORRECOES_20260331.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/DOC_PSA_FINAL_EXECUCAO_CORRECOES_20260331.md",
+            "bytes": 7093,
+            "sha3_256_full": "0e9327fa0869598f34cbf738e9e4d77362814ef02abecad87a706418581daaa3"
+        },
+        {
+            "type": "CODE_VERSION",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/psa_sync_manifest_from_disk.py",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/psa_sync_manifest_from_disk.py",
+            "bytes": 4981,
+            "sha3_256_full": "467b5b9ed123490639f71943cf7c5c11f156b44c51ac655dd5b19faa8edd637f"
         }
     ]
 }

@@ -47,6 +47,8 @@ Set-Location -LiteralPath $env:NEBULAR_KUIPER_ROOT
 | Demo pós-corida | `...\evidencia_pre_demo\verificar_demo_apos_noturno.py` |
 | Evidências RT-A automáticas | `...\evidencia_pre_demo\gerar_evidencias_rt_a.py` |
 | Registo de métricas (definições) | `...\evidencia_pre_demo\05_metrics_registry.csv` |
+| **Execução PSA — correcções + manifesto** | `...\evidencia_pre_demo\DOC_PSA_FINAL_EXECUCAO_CORRECOES_20260331.md` |
+| **Sincronizar manifesto com disco** | `...\evidencia_pre_demo\psa_sync_manifest_from_disk.py` |
 
 ---
 
