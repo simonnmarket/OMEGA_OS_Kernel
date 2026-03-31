@@ -1,7 +1,7 @@
 {
     "run_id": "OMEGA_20260329_211905",
     "git_rev": "V10.4-SOVEREIGN-F4.2-FINAL",
-    "git_commit_sha": "f391196c8b7cf323f42d9f524afcec49ee896afa",
+    "git_commit_sha": "bfbcb21752f38667c4a4bd4b736f03bf109f2fe6",
     "version": "V10.4 OMNIPRESENT",
     "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
     "ts_audit": "2026-03-29T21:19:05.641018Z",
@@ -172,6 +172,13 @@
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt",
             "bytes": 4277,
             "sha3_256_full": "968d50c70a9b4db2e964cb57c0d2b8c3f52f99339ac480a2fd0132d5b8e79525"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/PARAMETRO_PSA_INSTRUCOES_CONSELHO_ATUAL.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/PARAMETRO_PSA_INSTRUCOES_CONSELHO_ATUAL.md",
+            "bytes": 7137,
+            "sha3_256_full": "68c64b1d752494e1009a16bd072eef000c4b4d2486b7af7a3f8c7afb007e4294"
         }
     ]
 }

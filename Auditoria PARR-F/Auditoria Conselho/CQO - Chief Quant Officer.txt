@@ -1,87 +1,96 @@
-RESPOSTA EXECUTIVA — GATE TIER-0 VALIDADO | FASE E AUTORIZADA
-DATA: 31 de Março de 2026 | HORÁRIO: 20:00 UTC | STATUS: ✅ GATE_GLOBAL PASS CONFIRMADO
+RESPOSTA EXECUTIVA — CERTIFICADO V10.5 VALIDADO | FASE E AUTORIZADA
+DATA: 31 de Março de 2026 | HORÁRIO: 21:00 UTC | STATUS: ✅ GATE_GLOBAL PASS CONFIRMADO
 DESTINATÁRIO: PSA Antigravity MACE-MAX | COPIA: Conselho Executivo Simonsen Miller
-CLASSIFICAÇÃO: TIER-0 — AUTORIZAÇÃO OFICIAL FASE E
+CLASSIFICAÇÃO: TIER-0 — AUTORIZAÇÃO OFICIAL FASE E (DEMO LIVE)
 =============================================================================
-🎯 VEREDITO EXECUTIVO — GATE TIER-0 VALIDADO
+🎯 VEREDITO EXECUTIVO — CERTIFICADO FINAL VALIDADO
 Prezado PSA Antigravity MACE-MAX,
-Este documento confirma que o GATE_GLOBAL PASS foi VERIFICADO INDEPENDENTEMENTE e a FASE E (OMEGA Live Demo) está AUTORIZADA PARA INÍCIO IMEDIATO.
+Este documento confirma que o CERTIFICADO_FINAL_SDR_V105.md foi VERIFICADO INDEPENDENTEMENTE e a FASE E (OMEGA Demo Live MT5) está AUTORIZADA PARA INÍCIO IMEDIATO.
 [✅] INTEGRIDADE CRIPTOGRÁFICA — VALIDADA:
-• Git HEAD: 1632010c59aec1724ed25031d5637db83a546641 ✅
-• MANIFEST_RUN_20260329.json sincronizado ✅
-• 3 ficheiros canônicos embutidos com SHA3-256 ✅
-• psa_sync_manifest_from_disk.py executado com sucesso ✅
-• Commit Git: f391196c8... registrado ✅
-[✅] GATES AUTOMÁTICOS — VALIDADOS:
+• Git HEAD: bfbcb21752f38667c4a4bd4b736f03bf109f2fe6 ✅
+• SHA3-256 STRESS_V10_5_SWING_TRADE.csv: 112b5958dfc3e9c4e157d63304f500d5cb02e07a8fe1a47f723d08027d0d36df ✅
+• psa_gate_conselho_tier0.py: GATE_GLOBAL PASS ✅
 • audit_trade_count exit: 0 ✅
 • verify_tier0_psa exit: 0 ✅
-• GATE_GLOBAL: PASS ✅
 • ESTADO: OK (Tier-0 verificação automática) ✅
 [✅] MÉTRICAS DE STRESS TEST — VALIDADAS:
 • 100.000 barras processadas ✅
 • 222 trades com signal_fired=True ✅
-• Z-Score P50: 0.695 ✅
-• Z-Score P95: 1.8858 ✅
-• Redução de 402 → 222 trades (ruído eliminado) ✅
-[✅] PROTEÇÕES ESTRUTURAIS — VALIDADAS:
-• Warm-up 20.000 barras ✅
-• Sincronia XAUUSD/XAGUSD (Anti-Drift) ✅
-• Z-Threshold 2.0 ✅
-• VitalSigns Monitor ✅
-• PnL definitions (spread, slippage, lotes) ✅
+• Z-Score P50: 0.695670 ✅
+• Z-Score P95: 1.885867 ✅
+• Z-Score P99: 2.579635 ✅
+• Densidade: 0.22% (sniper, não ruído) ✅
+[✅] PROTEÇÕES ESTRUTURAIS FASE E — VALIDADAS:
+• Warm-up 20.000 barras (RLS memory protection) ✅
+• Sincronia temporal r1x[0][0] == current_t (anti-drift) ✅
+• VitalSignsMonitor (flatline detection <0.05 em 30 barras) ✅
+• Z-Threshold |Z| >= 2.0 ✅
+[✅] CORREÇÕES DE TESE MATEMÁTICA — VALIDADAS:
+• P95 >= 2.0 refutado como exigência irreal ✅
+• P95 real ≈ 1.886 documentado e aceito ✅
+• 222 sinais snipers em 2 anos de stress ✅
+• Threshold 2.0 atua por barra, não por distribuição ✅
 =============================================================================
 📊 VALIDAÇÃO TÉCNICA — PONTOS CRÍTICOS VERIFICADOS
 =============================================================================
 [1] GIT HEAD E RASTREABILIDADE:
-• Commit: 1632010c59aec1724ed25031d5637db83a546641
+• Commit: bfbcb21752f38667c4a4bd4b736f03bf109f2fe6
 • Branch: main (V10.5-SWING-FINAL)
-• Timestamp: 2026-03-31T19:45:00Z
-• Verificação: git rev-parse HEAD == 1632010c... ✅
+• Timestamp: 2026-03-31T20:28:26Z
+• Verificação: git rev-parse HEAD == bfbcb217... ✅
 [2] HASHES DE INTEGRIDADE:
 • STRESS_V10_5_SWING_TRADE.csv: 112b5958dfc3e9c4e157d63304f500d5cb02e07a8fe1a47f723d08027d0d36df ✅
-• ENTREGA_PSA_DEFINITIVA_SYNCONSELHO_V105.md: Embutido no manifest ✅
+• CERTIFICADO_FINAL_SDR_V105.md: Embutido no manifest ✅
 • psa_gate_conselho_tier0.py: Embutido no manifest ✅
-• run_psa_gate_conselho_tier0.ps1: Embutido no manifest ✅
+• 11_live_demo_cycle_1.py (v1.3.0): Embutido no manifest ✅
 [3] MÉTRICAS DE TRADES:
 • Trade count: 222 (mínimo requerido: 20 para Swing) ✅
 • Z-Score P95: 1.8858 < 2.0 threshold (margem de segurança) ✅
-• Densidade: 0.22% (sniper, não ruído) ✅
+• Z-Score P99: 2.579 > 2.0 (confirma que threshold é atingível) ✅
+• Densidade: 0.22% (estratégia sniper, não ruído) ✅
 [4] GATES AUTOMÁTICOS:
 • audit_trade_count.py: exit: 0 (PASS) ✅
 • verify_tier0_psa.py: exit: 0 (PASS) ✅
 • GATE_GLOBAL: PASS ✅
+• ESTADO: OK ✅
 [5] PROTEÇÕES DE WARM-UP:
 • Warm-up: 20.000 barras ✅
 • Memória RLS (λ=0.9998): 5.000 barras ✅
 • Margem de segurança: 4x ✅
 =============================================================================
-🗝️ AUTORIZAÇÃO OFICIAL — FASE E (OMEGA LIVE DEMO)
+🗝️ AUTORIZAÇÃO OFICIAL — FASE E (OMEGA DEMO LIVE MT5)
 =============================================================================
 [AO PSA — ANTIGRAVITY MACE-MAX]:
 [AUTORIZAÇÃO OFICIAL:]
-• FASE E (OMEGA Live Demo) AUTORIZADA PARA INÍCIO IMEDIATO ✅
+• FASE E (OMEGA Demo Live MT5) AUTORIZADA PARA INÍCIO IMEDIATO ✅
 • Início: 01 de Abril de 2026, 00:00 UTC ✅
 • Duração mínima: 30 dias ✅
 • Conta: Demo MT5 (HantecMarketsMU) ✅
 • Capital simulado: $10.000 (não exceder) ✅
+• Script: 11_live_demo_cycle_1.py (v1.3.0) ✅
 [O QUE EXIJO DURANTE FASE E:]
 • Reporte diário até 23:59 UTC ✅
 • Métricas obrigatórias: trade_count, Z_max, Z_min, PnL, DD ✅
 • Alerta imediato se: DD > 3.5% OU signal_fired = 0 por > 24h ✅
 • Manter hashes SHA3-256 em todos logs ✅
 • Executar psa_gate_conselho_tier0.py semanalmente ✅
+• Manter 11_live_demo_cycle_1.py inalterado (hash monitorado) ✅
 [CRITÉRIOS DE SUCESSO FASE E:]
 • PF_Net ≥ 1.50 após 30 dias ✅
 • Max Drawdown ≤ 5% ✅
 • signal_fired.sum() ≥ 50 (30 dias) ✅
 • Zero falhas de sincronia (timestamp drift = 0) ✅
 • 100% logs com hash válido ✅
+• Warm-up 20.000 barras executado em cada inicialização ✅
+• VitalSignsMonitor não acionado (sem flatlines) ✅
 [CRITÉRIOS DE FALHA FASE E:]
 • PF_Net < 1.20 após 30 dias ✅
 • Max Drawdown > 7% ✅
 • signal_fired = 0 por > 48h consecutivas ✅
 • Qualquer falha de integridade de hash ✅
 • Circuit Breaker ativado (> 3.5% DD) ✅
+• Warm-up < 20.000 barras detectado ✅
+• Timestamp drift > 0 detectado ✅
 [PRÓXIMOS PASSOS:]
 • Iniciar Fase E: 01/04/2026 00:00 UTC ✅
 • Reporte semanal: Toda Segunda-feira 09:00 UTC ✅
@@ -91,29 +100,35 @@ Este documento confirma que o GATE_GLOBAL PASS foi VERIFICADO INDEPENDENTEMENTE 
 📋 CHECKLIST DE PRONTIDÃO FASE E
 =============================================================================
 [✅] PRÉ-FASE E:
-• Git HEAD verificado: 1632010c... ✅
+• Git HEAD verificado: bfbcb217... ✅
 • Manifest sincronizado: MANIFEST_RUN_20260329.json ✅
 • Gates automáticos: GATE_GLOBAL PASS ✅
 • 11_live_demo_cycle_1.py (v1.3.0) pronto ✅
 • Conta Demo MT5 configurada ✅
 • XAUUSD/XAGUSD no Market Watch ✅
+• Warm-up 20.000 barras configurado ✅
+• VitalSignsMonitor ativo ✅
+• Anti-drift sync ativo ✅
 [✅] MONITORAMENTO FASE E:
 • Dashboard de telemetria ativo ✅
 • Alertas de Circuit Breaker (-3.5%) configurados ✅
 • Log de engagement em tempo real ✅
 • Verificação de hash automática ✅
 • Reporte diário até 23:59 UTC ✅
+• psa_gate_conselho_tier0.py semanal ✅
 [✅] GOVERNANÇA FASE E:
 • Transição para Live apenas após 30 dias ✅
 • Aprovação Conselho para aumento de posição ✅
 • PF_Net ≥ 1.50 após 30 dias para escalar ✅
 • Drawdown ≤ 5% em todo período ✅
+• Hash de todos logs verificado ✅
 =============================================================================
 🏛️ MENSAGEM FINAL — DO CEO AO PSA E CONSELHO
 =============================================================================
 [AO PSA — ANTIGRAVITY MACE-MAX]:
 [O QUE ACEITO:]
-• Gate Global PASS verificado independentemente ✅
+• Certificado Final verificado independentemente ✅
+• Gate Global PASS confirmado ✅
 • Integridade criptográfica comprovada ✅
 • Métricas atestadas por robôs autônomos ✅
 • Sistema pronto para Fase E ✅
@@ -122,12 +137,14 @@ Este documento confirma que o GATE_GLOBAL PASS foi VERIFICADO INDEPENDENTEMENTE 
 • Reporte diário até 23:59 UTC ✅
 • Zero tolerância para falhas de integridade ✅
 • Manter Tier-0 rigor durante 30 dias ✅
+• Manter 11_live_demo_cycle_1.py inalterado ✅
 [LIÇÕES APRENDIDAS (NÃO REPETIR):]
 • SHA3-256 ≠ funcionalidade (mas agora temos gates que validam ambos) ✅
 • Drawdown 0.00 ≠ sucesso (pode ser ZERO trades) ✅
 • Gates automáticos previnem aprovação sem trades ✅
 • Warm-up deve ser > memória efetiva do RLS ✅
 • Sincronização de timestamps É CRÍTICA em pairs trading ✅
+• P95 < threshold não significa falha (Z-Score atua por barra) ✅
 [AO CONSELHO EXECUTIVO]:
 [DECLARAÇÃO OFICIAL:]
 • Sistema V10.5 passou em todos gates Tier-0 ✅
@@ -161,6 +178,8 @@ Este documento confirma que o GATE_GLOBAL PASS foi VERIFICADO INDEPENDENTEMENTE 
 • Max DD ≤ 5% ✅
 • signal_fired ≥ 50 ✅
 • Zero falhas de hash ✅
+• Zero timestamp drift ✅
+• Warm-up 20.000 barras ✅
 [✅] PRÓXIMOS PASSOS:
 • Iniciar Fase E ✅
 • Reportar diariamente ✅
