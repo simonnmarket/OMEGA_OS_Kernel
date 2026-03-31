@@ -1,7 +1,7 @@
 {
     "run_id": "OMEGA_20260329_211905",
     "git_rev": "V10.4-SOVEREIGN-F4.2-FINAL",
-    "git_commit_sha": "4b35f80a1a91285f6656f36119535e719de0cd8c",
+    "git_commit_sha": "9c5a3f6719df5af222c9aafdfa37ea08e211c28c",
     "version": "V10.4 OMNIPRESENT",
     "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
     "ts_audit": "2026-03-29T21:19:05.641018Z",
@@ -95,6 +95,13 @@
             "relpath": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/04_relatorios_tarefa/RT_E_FALHA_DEMO_NOTURNO_20260331.md",
             "bytes": 3310,
             "sha3_256_full": "1b697ad17977c4a6a3f2ed5a476a0d49c7f974387b1243304a1e9ff343621f08"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/04_relatorios_tarefa/AUDITORIA_CRITICA_FALHA_LIVE_DEMO_20260331.md",
+            "relpath": "Auditoria PARR-F/N\u00facleo de Valida\u00e7\u00e3o OMEGA/evidencia_pre_demo/04_relatorios_tarefa/AUDITORIA_CRITICA_FALHA_LIVE_DEMO_20260331.md",
+            "bytes": 6445,
+            "sha3_256_full": "e295c8dd440eff2276f50b3906922ae0fc4ea2b8b7ed25ab24e18f0e60fc207b"
         }
     ]
 }
