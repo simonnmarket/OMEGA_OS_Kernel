@@ -1,7 +1,7 @@
 {
     "run_id": "OMEGA_20260329_211905",
     "git_rev": "V10.4-SOVEREIGN-F4.2-FINAL",
-    "git_commit_sha": "bd75ea05b6d1ebbfdfeb40508ef17964911b3962",
+    "git_commit_sha": "f925c8d24e4aeab7cb928476edd82eb040aaa088",
     "version": "V10.4 OMNIPRESENT",
     "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
     "ts_audit": "2026-03-29T21:19:05.641018Z",
@@ -121,8 +121,8 @@
             "type": "DOCUMENT",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/RT_E_VITALSIGNS_MANDATO_20260331.md",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/RT_E_VITALSIGNS_MANDATO_20260331.md",
-            "bytes": 2130,
-            "sha3_256_full": "ebd3136f6166a28bf4ca28748400be4f57985b48b738ec4282fc2d6609c71728"
+            "bytes": 2210,
+            "sha3_256_full": "0282d5b2e085b601dbff084a91a39a7c1e3353706bb1a64e4a8c8967c4f5dca9"
         },
         {
             "type": "DOCUMENT",
@@ -179,6 +179,13 @@
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/PARAMETRO_PSA_INSTRUCOES_CONSELHO_ATUAL.md",
             "bytes": 13836,
             "sha3_256_full": "749cae30a0f00aa99b8c7110b7c34133743ef533eefe61d995aeb87f6ff12bcc"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/HANDOFF_PSA_INSTRUCOES_FINAIS_20260401.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/HANDOFF_PSA_INSTRUCOES_FINAIS_20260401.md",
+            "bytes": 6904,
+            "sha3_256_full": "1eb4b827a04eddea2c68a2313db1cb56916d34aa424c76479dcfbf1d14a44a21"
         }
     ]
 }

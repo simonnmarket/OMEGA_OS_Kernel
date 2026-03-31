@@ -44,3 +44,6 @@
 **Recuperação controlada:** monitoramento cardíaco mínimo (flatline) **ativo** no demo live; Cycle 2 depende ainda de checklist COO (heartbeat, coerência documental, paridade threshold) conforme parecer unificado.
 
 **Assinatura técnica:** PSA — implementação conforme mandato; **SHA Git:** a9fdb7a63232045f3662017bcd3bed8334205b81
+
+
+**Handoff 20260401 — próximo passo: demo MT5 sec. 5.2 após gate PASS**
