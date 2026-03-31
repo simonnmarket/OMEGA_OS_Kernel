@@ -1,179 +1,136 @@
-AUDITORIA CRÍTICA TÉCNICA — OMEGA V10.5 LIVE DEMO FALHA
-RELATÓRIO FORENSE IEEE 1012-2016 | VERIFICAÇÃO LEVEL: CRITICAL
-Auditor: Dr. Markus Weber | COO Técnico
-Data: 31 de março de 2026 | 19:22 CET
-Classificação: CRÍTICA (4 falhas estruturais identificadas)
-Standard: IEEE 1012-2016 | ISO/IEC 12207:2017 | CMMI-DEV v2.0
+AUDITORIA EXECUTIVA — DOSSIE COMPLIANCE OMEGA V10.5
+COERÊNCIA, PROVA E GAPS REMANESCENTES
+ID: AUDIT-COMPLIANCE-BOARD-V10.5-FINAL
+Data: 31 de março de 2026 | 21:38 CEST
+Classificação: Conselho Executivo | CRÍTICO
+Escopo: AUDITORIA_COMPLIANCE_CONSELHO_V105_FINAL.md vs evidência do repositório e 11_live_demo_cycle_1.py
 
-EXECUTIVE SUMMARY (ZERO TOLERÂNCIA)
-Falha confirmada: OMEGA V10.5 gerou 0 sinais em demo live apesar de movimento de 16k pontos.
-Causa raiz comprovada: Warm-up insuficiente + assincronia MT5.
-Hotfix PSA: Correto mas INSUFICIENTE.
-Falhas identificadas: 4 CRÍTICAS com algoritmos reprodutíveis.
+Veredito executivo
+O dossiê está forte em governança e cadeia de custódia, mas ainda mistura três camadas que precisam ser separadas com mais rigor: fato comprovado, inferência técnica e declaração de política. Isso é exatamente o tipo de problema que um conselho sério precisa eliminar antes de aceitar o documento como “final”.
 
-VERDICTO: SISTEMA NÃO PRONTO. Run noturno CANCELADO até QA gates passarem.
+Meu veredito como COO técnico é: aprovar o dossiê como artefato de compliance, mas não aprovar como prova completa de performance até corrigir os pontos de coerência numérica, escopo e monitoramento.
 
-FALHA CRÍTICA 1: CALCULAÇÃO — WARM-UP INSUFICIENTE (MATEMÁTICA)
-Algoritmo reprodutível da falha
-python
-# REPRODUÇÃO: Erro inicialização RLS
-def simulate_warmup_failure(lambda_rls=0.9998, warmup_bars=1000, initial_error=4500):
-    """IEEE 1012 Test Case: RLS variance explosion."""
-    N_effective = 1 / (1 - lambda_rls)  # 5000 barras
-    S = 0.0  # Variância inicial
-    
-    # Primeira barra: erro catastrófico
-    error_t0 = initial_error
-    S = (1 - lambda_rls) * error_t0**2 + lambda_rls * S  # ~20M
-    
-    # Warm-up insuficiente
-    for t in range(1, warmup_bars + 1):
-        error_t = 5.0  # Erro normal
-        S = (1 - lambda_rls) * error_t**2 + lambda_rls * S
-    
-    z_trapped = error_t / np.sqrt(S)  # ~5 / 4472 = 0.0011
-    return {
-        'N_effective': N_effective,
-        'warmup_ratio': warmup_bars / N_effective,
-        'S_final': S,
-        'z_trapped': z_trapped,
-        'threshold_needed': 2.0
-    }
+Pontos de convergência
+Há quatro blocos em que o dossiê está bem alinhado com a evidência e com o raciocínio técnico já validado:
 
-# EXECUÇÃO
-result = simulate_warmup_failure()
-print(f"Falha reprodutível: Z preso em {result['z_trapped']:.4f} vs threshold {result['threshold_needed']}")
-Output esperado:
+Warm-up de 20.000 barras: a mudança faz sentido para um motor com memória longa, porque reduz o choque inicial do RLS e diminui a chance de Z-score “travado” por variância inflada.
 
-text
-Falha reprodutível: Z preso em 0.0011 vs threshold 2.0
-Crítica: Warm-up 1000 barras = 20% da memória necessária. PSA corrigiu para 20k (correto), mas sem teste de latência MT5.
+Sincronia rígida XAU/XAG: a trava temporal é coerente com a necessidade de evitar spread entre barras desalinhadas, o que preserva a cointegração operacional.
 
-Sugestão: Warm-up adaptativo:
+VitalSignsMonitor: a observabilidade contínua é necessária; sistemas regulados e auditáveis exigem detecção de silêncio, drift e mudança de regime em tempo real.
 
-python
-warmup_bars = int(5 * N_effective)  # 25k barras
-if mt5.copy_rates_from_pos(..., warmup_bars).size < warmup_bars * 0.9:
-    logger.error("INSUFICIENT_HISTORY")
-    sys.exit(1)
-FALHA CRÍTICA 2: ARQUITETURA INEFICIENTE — ASSINCRONIA MT5 (ALGORITMO)
-Algoritmo reprodutível da falha
-python
-def mt5_drift_test(r1y_timestamp, r1x_timestamp, tolerance_ms=1000):
-    """IEEE 1012 Test Case: Timestamp sync failure."""
-    drift_ms = abs(r1y_timestamp - r1x_timestamp) / 1e6  # μs → ms
-    
-    if drift_ms > tolerance_ms:
-        return {
-            'status': 'DRIFT_DETECTED',
-            'drift_ms': drift_ms,
-            'cointegração_quebrada': True,
-            'recommended_action': 'SKIP_BAR'
-        }
-    return {'status': 'SYNC_OK', 'cointegração_quebrada': False}
+Separação entre laboratório e live: é correto distinguir o motor matemático do problema de integração/ponte de execução.
 
-# REPRODUÇÃO: Prata estagnada 02:58 vs Ouro 02:59
-test_case = mt5_drift_test(1711912680000000, 1711912620000000)  # 60s drift
-print(f"Assincronia detectada: {test_case}")
-Output esperado:
+Esses quatro pontos são defensáveis e devem permanecer no dossiê.
 
-text
-Assincronia detectada: {'status': 'DRIFT_DETECTED', 'drift_ms': 60000.0, 'cointegração_quebrada': True}
-Crítica: PSA corrigiu com r1x[0][0] == current_t, mas sem tolerância (milissegundos MT5 jitter). Pode gerar falsos skips.
+Gaps numéricos
+O principal problema do dossiê é que ele afirma números corretos em intenção, mas nem todos estão amarrados ao mesmo tipo de evidência. O caso mais sensível é o uso de 222 trades e P95 = 1.8858, que podem ser válidos, mas precisam vir explicitamente do mesmo CSV, do mesmo script e da mesma versão do código.
 
-Sugestão: Tolerância dinâmica:
+Também há um risco de mistura de séries: o texto precisa deixar claro se esses números vêm de STRESS_V10_5_SWING_TRADE.csv, de um run live, ou de um resumo consolidado. Em auditoria, o mesmo número sem o mesmo contexto vira fragilidade, mesmo quando está certo.
 
-python
-TOLERANCE_MS = 5000  # 5s max drift
-if abs(r1x[0][0] - r1y[0][0]) > TOLERANCE_MS * 1e6:
-    continue
-FALHA CRÍTICA 3: AUSÊNCIA DE MONITORAMENTO — ZERO QA REAL-TIME (ALGORITMO)
-Algoritmo reprodutível da falha
-python
-def monitoring_gap_detector(signal_count_1h, z_p95_1h, min_signals=1, min_z_p95=1.5):
-    """IEEE 1012 Test Case: Silence detection."""
-    anomalies = []
-    
-    if signal_count_1h == 0:
-        anomalies.append("SILENCE_DETECTED")
-    
-    if z_p95_1h < min_z_p95:
-        anomalies.append("Z_COMPRESSED")
-    
-    return {
-        'status': 'ALERT' if anomalies else 'NORMAL',
-        'anomalies': anomalies,
-        'emergency_action': 'PAUSE_AND_AUDIT' if len(anomalies) > 0 else 'CONTINUE'
-    }
+O que precisa ser corrigido
+Declarar o arquivo exato de origem para cada número.
 
-# REPRODUÇÃO demo 14h
-hourly_stats = {'signal_count_1h': 0, 'z_p95_1h': 0.134}
-alert = monitoring_gap_detector(**hourly_stats)
-print(f"Monitor falhou: {alert}")
-Output esperado:
+Declarar o comando exato que gerou a métrica.
 
-text
-Monitor falhou: {'status': 'ALERT', 'anomalies': ['SILENCE_DETECTED', 'Z_COMPRESSED'], 'emergency_action': 'PAUSE_AND_AUDIT'}
-Crítica: Sem monitoramento real-time. Sistema mudo por 14h sem alarme.
+Declarar a versão do script e o commit.
 
-Sugestão: Heartbeat obrigatório:
+Declarar se o número é stress, demo ou produção.
 
-python
-if time.time() - last_signal > 3600 * 4:  # 4h sem sinal
-    logger.critical("EMERGENCY_PAUSE: NO_SIGNALS_4H")
-    sys.exit(1)
-FALHA CRÍTICA 4: CÁLCULO — THRESHOLD INCOMPATÍVEL (ALGORITMO)
-Algoritmo reprodutível da falha
-python
-def threshold_mismatch(z_distribution, threshold=2.0):
-    """IEEE 1012 Test Case: Unrealistic threshold."""
-    p_above_threshold = (np.abs(z_distribution) >= threshold).mean()
-    theoretical_hits = len(z_distribution) * p_above_threshold
-    
-    return {
-        'threshold': threshold,
-        'p_above': p_above_threshold,
-        'expected_signals': theoretical_hits,
-        'status': 'UNREALISTIC' if theoretical_hits < 1 else 'OK'
-    }
+Gaps estruturais
+O dossiê também precisa de uma limpeza formal em três áreas.
 
-# REPRODUÇÃO: Z demo [0.0158, 0.134]
-z_demo = np.random.uniform(-0.15, 0.15, 10000)
-test = threshold_mismatch(z_demo)
-print(f"Threshold falhou: {test}")
-Output esperado:
+1. Métrica sem contexto operacional
+P95 = 1.8858 pode ser bom, mas não prova que o sistema opera bem em live; prova apenas que o Z-score teve aquela distribuição naquela amostra. Em compliance quantitativo, distribuição não é sinônimo de edge.
 
-text
-Threshold falhou: {'threshold': 2.0, 'p_above': 0.0, 'expected_signals': 0.0, 'status': 'UNREALISTIC'}
-Crítica: Z P95=0.134 vs threshold=2.0 = 0% taxa de disparo esperada.
+2. “222 trades” sem freio de regime
+O número de trades só é útil se vier acompanhado de:
 
-Sugestão: Threshold adaptativo:
+horizonte temporal,
 
-python
-threshold = max(2.0, z_history.quantile(0.95) * 1.5)
-QUALITY GATES IEEE 1012-2016 (VERIFICAÇÃO CRÍTICA)
-Gate	Status	Algoritmo	Ação
-G1 Data Integrity	❌ FAIL	verify_tier0_psa.py OK mas sem warm-up test	Reparar
-G2 Deterministic	❌ FAIL	Assincronia MT5	Corrigir tolerância
-G3 Latency	⚠️ WARN	20k barras = ~3s MT5	Monitorar
-G4 Zero Slippage	✅ PASS	Demo não executou	N/A
-VERDICTO COO (CRÍTICO)
-text
-🚨 FALHA CRÍTICA 1: CÁLCULO (Warm-up)
-🚨 FALHA CRÍTICA 2: ARQUITETURA (MT5 drift)
-🚨 FALHA CRÍTICA 3: MONITORAMENTO (Zero alert)
-🚨 FALHA CRÍTICA 4: THRESHOLD (Incompatível)
+custo de transação,
 
-HOTFIX PSA: CORRETO mas INSUFICIENTE
+regime de volatilidade,
 
-RUN NOTURNO: CANCELADO até:
-1. Teste warm-up 20k barras (<3s)
-2. Tolerância drift 5s max
-3. Heartbeat monitoramento
-4. Threshold adaptativo
-Próximo passo: PSA implementar 4 correções + novo RT_E_v2 em 4h.
+taxa de reversão,
 
-Conselho: Sistema não pronto. PSA identificou problemas corretos, mas solução parcial.
+PnL líquido.
 
-COO: Dr. Markus Weber
-31/03/2026 19:22 CET
+Sem isso, a contagem vira só volumetria, não qualidade.
+
+3. Monitoramento ainda insuficiente como prova
+O VitalSignsMonitor deve ser descrito como gate técnico, não como “blindagem legal” do sistema. Ele resolve silêncio e flatline, mas não substitui validação de performance.
+
+Classificação das falhas
+Falha Crítica 1 — Dados
+O dossiê ainda precisa provar que todo número tem trilha fechada entre:
+arquivo → script → output → RT.
+Sem isso, há risco de “métrica ornamental”.
+
+Falha Crítica 2 — Arquitetura
+A separação entre engine, ponte MT5 e monitoramento está correta em conceito, mas o documento precisa dizer claramente o que é motor causal, o que é layer de execução, e o que é layer de supervisão.
+
+Falha Crítica 3 — Cálculo
+O texto está aceitando thresholds e percentis como se fossem verdades universais. Eles não são. Precisam ser vinculados ao dataset e à finalidade do perfil swing.
+
+Falha Crítica 4 — Monitoramento
+O sistema de silêncio/flatline é necessário, mas ainda falta especificar:
+
+condição de disparo,
+
+ação automática,
+
+regra de pausa,
+
+revalidação para retomar.
+
+Recomendações para versão final
+Eu exigiria quatro ajustes antes de usar isso como documento de Conselho definitivo:
+
+Tabela de rastreabilidade por métrica
+Cada número deve conter: ID, fórmula, arquivo, script, commit e output.
+
+Separação formal dos domínios
+
+Compliance de dados
+
+Validação matemática
+
+Monitoramento live
+
+Governança de execução
+
+Seção explícita de limitações
+Dizer, sem ambiguidade, o que o dossiê prova e o que ele não prova.
+
+Bloco de decisão do Conselho
+Incluir um veredito do tipo:
+
+aprovado para custódia,
+
+aprovado para Fase E condicionada,
+
+bloqueado para produção final.
+
+Veredito final
+O dossiê está bem acima da média e é útil para o Conselho, mas ainda não está 100% blindado contra contestação técnica. Ele é forte como artefato de compliance, porém ainda precisa de uma versão com rastreabilidade mais rígida para virar prova final incontestável.
+
+Minha decisão como COO técnico:
+
+Aprovar o documento como base oficial.
+
+Exigir revisão de rastreabilidade numérica.
+
+Exigir tabela de métricas com fonte única.
+
+Exigir separação entre prova de integridade e prova de edge.
+
+Se você quiser, eu posso transformar esse dossiê agora em uma versão v10.5.1 revisada para Conselho, já com:
+
+tabela de métricas auditável,
+
+seção de limitações,
+
+matriz de decisão,
+
+e texto pronto para assinatura executiva.
