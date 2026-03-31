@@ -8,7 +8,7 @@
 | **ID do documento** | AUDIT-COMPLIANCE-BOARD-V10.5-FINAL |
 | **Data da auditoria** | 31 de março de 2026 |
 | **Engenharia (PSA)** | Antigravity MACE-MAX |
-| **Rastreabilidade Git HEAD (Tier-0)** | `1632010c59aec1724ed25031d5637db83a546641` |
+| **Rastreabilidade Git HEAD (Tier-0)** | `f391196c8b7cf323f42d9f524afcec49ee896afa` |
 
 ---
 

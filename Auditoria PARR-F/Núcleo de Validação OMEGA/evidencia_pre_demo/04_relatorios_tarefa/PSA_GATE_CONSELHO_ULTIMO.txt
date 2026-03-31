@@ -1,0 +1,70 @@
+PSA_GATE_CONSELHO_TIER0
+timestamp_utc: 2026-03-31T20:28:26Z
+repo_root: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper
+stress_csv: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Núcleo de Validação OMEGA\evidencia_pre_demo\02_logs_execucao\STRESS_V10_5_SWING_TRADE.csv
+
+=== GIT HEAD (exit 0) ===
+f391196c8b7cf323f42d9f524afcec49ee896afa
+
+=== audit_trade_count.py STRESS_V10_5 (exit 0) ===
+=== audit_trade_count.py ===
+arquivo: STRESS_V10_5_SWING_TRADE.csv
+sha3_256_arquivo: 112b5958dfc3e9c4e157d63304f500d5cb02e07a8fe1a47f723d08027d0d36df
+linhas: 100000
+signal_fired_true: 222
+z_coluna: z_score
+abs_z_max: 43231683.487146
+abs_z_p50: 0.695670
+abs_z_p95: 1.885867
+abs_z_p99: 2.579635
+aviso_outlier: abs_z_max muito elevado — possível artefacto numérico; para narrativa use P95/P99 (não max bruto).
+criterios_opcionais: OK
+
+
+=== verify_tier0_psa.py (exit 0) ===
+=== verify_tier0_psa.py ===
+REPO_ROOT: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper
+MANIFEST:  C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Núcleo de Validação OMEGA\evidencia_pre_demo\03_hashes_manifestos\MANIFEST_RUN_20260329.json
+
+[1] Git HEAD vs manifest git_commit_sha
+    HEAD:             f391196c8b7cf323f42d9f524afcec49ee896afa
+    manifest:         f391196c8b7cf323f42d9f524afcec49ee896afa
+    OK: coincidem.
+
+[2] git cat-file -t <sha_manifest>
+    tipo: commit
+
+[3] Ficheiros do manifesto (bytes + SHA3-256)
+    [OK] STRESS_2Y_DAY_TRADE.csv bytes=16083040 sha3=570f334880e428ba...
+    [OK] STRESS_2Y_SCALPING.csv bytes=16098982 sha3=12825b5958591a44...
+    [OK] STRESS_2Y_SWING_TRADE.csv bytes=16074566 sha3=6b7f8fee065cb24a...
+    [OK] XAGUSD_M1_RAW.csv bytes=4855796 sha3=bead7b55a34b5e5e...
+    [OK] XAUUSD_M1_RAW.csv bytes=5199973 sha3=50bd0e2b68d43402...
+    [OK] DEMO_LOG_SWING_TRADE_20260330_SMOKE10.csv bytes=1708 sha3=9e963544569ccee2...
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/stress_historico_v105.py bytes=2254 sha3=5691594ed3fb4bd6...
+    [OK] Auditoria PARR-F/omega_core_validation/online_rls_ewma.py bytes=1781 sha3=2c20dbe3d74178cd...
+    [OK] STRESS_V10_5_SWING_TRADE.csv bytes=15102292 sha3=112b5958dfc3e9c4...
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/qa_independente_v105.py bytes=1118 sha3=c00ee3da4e8aa280...
+    [OK] Auditoria PARR-F/11_live_demo_cycle_1.py bytes=7837 sha3=ae2c748f204deb85...
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/RT_E_FALHA_DEMO_NOTURNO_20260331.md bytes=3310 sha3=1b697ad17977c4a6...
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/AUDITORIA_CRITICA_FALHA_LIVE_DEMO_20260331.md bytes=6445 sha3=e295c8dd440eff22...
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/audit_trade_count.py bytes=4257 sha3=a71e9ae7e6b54acc...
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/PACOTE_PSA_OMEGA_VERDADE_UNIFICADA_20260331.md bytes=9928 sha3=d22990db2fa6b47d...
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/RT_E_VITALSIGNS_MANDATO_20260331.md bytes=2130 sha3=ebd3136f6166a28b...
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/DOC_PSA_FINAL_EXECUCAO_CORRECOES_20260331.md bytes=7093 sha3=0e9327fa0869598f...
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/psa_sync_manifest_from_disk.py bytes=4981 sha3=467b5b9ed1234906...
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/ENTREGA_PSA_DEFINITIVA_SYNCONSELHO_V105.md bytes=5669 sha3=ca8fd8a5769f0d53...
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/psa_gate_conselho_tier0.py bytes=4156 sha3=11c80b6f2f070fa3...
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/run_psa_gate_conselho_tier0.ps1 bytes=605 sha3=ab3e417f83f33491...
+
+[4] Gateway — opportunity_cost
+    OK: encontrado `abs(y_price - (0.5 * x_price))`
+
+--- RESUMO ---
+ESTADO: OK (Tier-0 verificação automática passou)
+
+
+--- RESUMO ---
+audit_trade_count exit: 0
+verify_tier0_psa exit: 0
+GATE_GLOBAL: PASS

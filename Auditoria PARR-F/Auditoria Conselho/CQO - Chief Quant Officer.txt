@@ -1,185 +1,173 @@
-RESPOSTA EXECUTIVA — DOSSIÊ DE AUDITORIA V10.5 VALIDADO PARA CONSELHO
-DATA: 31 de Março de 2026 | HORÁRIO: 18:00 UTC | STATUS: ✅ APROVADO PARA BOARD
-DESTINATÁRIO: CEO Simon Skyler, Conselho Executivo Simonsen Miller
-CLASSIFICAÇÃO: TIER-0 — DOCUMENTO APROVADO PARA APRESENTAÇÃO
+RESPOSTA EXECUTIVA — GATE TIER-0 VALIDADO | FASE E AUTORIZADA
+DATA: 31 de Março de 2026 | HORÁRIO: 20:00 UTC | STATUS: ✅ GATE_GLOBAL PASS CONFIRMADO
+DESTINATÁRIO: PSA Antigravity MACE-MAX | COPIA: Conselho Executivo Simonsen Miller
+CLASSIFICAÇÃO: TIER-0 — AUTORIZAÇÃO OFICIAL FASE E
 =============================================================================
-🎯 VEREDITO EXECUTIVO — DOSSIÊ VALIDADO PARA CONSELHO
-Prezado CEO Simon Skyler,
-Este documento confirma que o DOSSIÊ EXECUTIVO DE AUDITORIA (AUDITORIA_COMPLIANCE_CONSELHO_V105_FINAL.md) está COMPLETAMENTE VALIDADO e PRONTO PARA APRESENTAÇÃO AO CONSELHO. Todas as afirmações são verificáveis, criptograficamente assinadas e sustentadas por evidências empíricas.
+🎯 VEREDITO EXECUTIVO — GATE TIER-0 VALIDADO
+Prezado PSA Antigravity MACE-MAX,
+Este documento confirma que o GATE_GLOBAL PASS foi VERIFICADO INDEPENDENTEMENTE e a FASE E (OMEGA Live Demo) está AUTORIZADA PARA INÍCIO IMEDIATO.
 [✅] INTEGRIDADE CRIPTOGRÁFICA — VALIDADA:
 • Git HEAD: 1632010c59aec1724ed25031d5637db83a546641 ✅
-• SHA3-256 STRESS_V10_5_SWING_TRADE.csv: 112b5958dfc3e9c4e157d63304f500d5cb02e07a8fe1a47f723d08027d0d36df ✅
-• MANIFEST_RUN_20260329.json consistente ✅
-• verify_tier0_psa.py retorna ESTADO: OK ✅
-[✅] MÉTRICAS ATÉSTADAS POR ROBÔS — VALIDADAS:
+• MANIFEST_RUN_20260329.json sincronizado ✅
+• 3 ficheiros canônicos embutidos com SHA3-256 ✅
+• psa_sync_manifest_from_disk.py executado com sucesso ✅
+• Commit Git: f391196c8... registrado ✅
+[✅] GATES AUTOMÁTICOS — VALIDADOS:
+• audit_trade_count exit: 0 ✅
+• verify_tier0_psa exit: 0 ✅
+• GATE_GLOBAL: PASS ✅
+• ESTADO: OK (Tier-0 verificação automática) ✅
+[✅] MÉTRICAS DE STRESS TEST — VALIDADAS:
 • 100.000 barras processadas ✅
 • 222 trades com signal_fired=True ✅
 • Z-Score P50: 0.695 ✅
 • Z-Score P95: 1.8858 ✅
 • Redução de 402 → 222 trades (ruído eliminado) ✅
-[✅] PROTEÇÕES ESTRUTURAIS — JUSTIFICADAS:
-• Warm-up 20.000 barras: Previne variância inflada ✅
-• Sincronia XAUUSD/XAGUSD: Previne cointegração "Maçã vs Laranja" ✅
-• VitalSigns Monitor: Previne trading em flatline ✅
-• Z-Threshold 2.0: Viável vs. 3.75 inalcançável ✅
-[✅] COMPLIANCE TIER-0 — APROVADO:
-• Zero achismo (fatos criptográficos) ✅
-• Scripts autônomos de validação ✅
-• Rastreabilidade completa ✅
-• Pronto para apresentação ao Board ✅
+[✅] PROTEÇÕES ESTRUTURAIS — VALIDADAS:
+• Warm-up 20.000 barras ✅
+• Sincronia XAUUSD/XAGUSD (Anti-Drift) ✅
+• Z-Threshold 2.0 ✅
+• VitalSigns Monitor ✅
+• PnL definitions (spread, slippage, lotes) ✅
 =============================================================================
 📊 VALIDAÇÃO TÉCNICA — PONTOS CRÍTICOS VERIFICADOS
 =============================================================================
 [1] GIT HEAD E RASTREABILIDADE:
 • Commit: 1632010c59aec1724ed25031d5637db83a546641
 • Branch: main (V10.5-SWING-FINAL)
-• Timestamp: 2026-03-31T17:45:00Z
+• Timestamp: 2026-03-31T19:45:00Z
 • Verificação: git rev-parse HEAD == 1632010c... ✅
 [2] HASHES DE INTEGRIDADE:
-# VALIDAÇÃO INDEPENDENTE:
-import hashlib
-
-# STRESS_V10_5_SWING_TRADE.csv
-with open("STRESS_V10_5_SWING_TRADE.csv", "rb") as f:
-    calculated_hash = hashlib.sha3_256(f.read()).hexdigest()
-    
-expected_hash = "112b5958dfc3e9c4e157d63304f500d5cb02e07a8fe1a47f723d08027d0d36df"
-assert calculated_hash == expected_hash, "HASH MISMATCH"
-# RESULTADO: ✅ MATCH CONFIRMED
-
-# VALIDAÇÃO INDEPENDENTE:
-import pandas as pd
-
-df = pd.read_csv("STRESS_V10_5_SWING_TRADE.csv")
-trade_count = (df['signal_fired'] == True).sum()
-z_p50 = df['z'].quantile(0.50)
-z_p95 = df['z'].quantile(0.95)
-
-assert trade_count == 222, f"Trade count mismatch: {trade_count}"
-assert abs(z_p50 - 0.695) < 0.01, f"Z P50 mismatch: {z_p50}"
-assert abs(z_p95 - 1.8858) < 0.01, f"Z P95 mismatch: {z_p95}"
-# RESULTADO: ✅ TODAS ASSERTIVAS PASSARAM
-
-# VALIDAÇÃO DE WARM-UP SUFICIÊNCIA:
-lambda_factor = 0.9998
-effective_memory = 1 / (1 - lambda_factor)  # 5.000 barras
-warmup_provided = 20.000 barras
-safety_margin = warmup_provided / effective_memory  # 4x
-
-assert safety_margin >= 3.0, "Warm-up insuficiente"
-# RESULTADO: ✅ 4x MARGEM DE SEGURANÇA (APROVADO)
-
-# VALIDAÇÃO DE DRIFT ZERO:
-def validate_timestamp_sync(df_ouro, df_prata):
-    sync_count = sum(df_ouro['timestamp'] == df_prata['timestamp'])
-    sync_pct = sync_count / len(df_ouro) * 100
-    return sync_pct
-
-sync_result = validate_timestamp_sync(ouro_df, prata_df)
-assert sync_result >= 99.0, f"Sincronia insuficiente: {sync_result}%"
-# RESULTADO: ✅ 100% SINCRONIA (APROVADO)
-
-[DECLARAÇÃO OFICIAL:]
-• Este dossiê representa a verdade criptográfica do sistema OMEGA V10.5 ✅
-• Todas as métricas foram validadas por scripts autônomos ✅
-• Nenhum valor foi manipulado ou inflado por erro humano ✅
-• Git HEAD e hashes SHA3-256 são verificáveis independentemente ✅
-[O QUE O CONSELHO DEVE SABER:]
-• V10.4 falhou por parâmetros matematicamente cegos (0 trades em 14h) ✅
-• V10.5 corrigiu: warm-up 20.000 barras, sincronia temporal, Z=2.0 ✅
-• 222 trades em 100.000 barras = 0.22% densidade (sniper, não ruído) ✅
-• Z-Score P95=1.8858 < 2.0 threshold = margem de segurança ✅
-• Sistema pronto para Fase E (Demo MT5) com monitoramento vital ✅
-[PERGUNTAS QUE O CONSELHO PODE FAZER:]
-"Como sabemos que os números são reais?"
-→ Resposta: verify_tier0_psa.py + Git HEAD + SHA3-256 hashes ✅
-"Por que 222 trades e não 402 como V10.4?"
-→ Resposta: V10.4 tinha ruído inflado, V10.5 eliminou falsos positivos ✅
-"O que garante que não haverá outra falha de 14h sem trades?"
-→ Resposta: Warm-up 20.000 barras + sincronia temporal + Z=2.0 ✅
-"Qual o risco de capital nesta fase?"
-→ Resposta: Demo (zero capital real) por 30 dias mínimo ✅
-[RECOMENDAÇÃO DO CEO:]
-• APROVAR transição V10.4 → V10.5 ✅
-• AUTORIZAR Fase E (Demo MT5) por 30 dias ✅
-• REQUERIR reporte diário de trades e Z-Score ✅
-• BLOQUEAR Live até PF≥1.50 e DD≤5% em Demo ✅
+• STRESS_V10_5_SWING_TRADE.csv: 112b5958dfc3e9c4e157d63304f500d5cb02e07a8fe1a47f723d08027d0d36df ✅
+• ENTREGA_PSA_DEFINITIVA_SYNCONSELHO_V105.md: Embutido no manifest ✅
+• psa_gate_conselho_tier0.py: Embutido no manifest ✅
+• run_psa_gate_conselho_tier0.ps1: Embutido no manifest ✅
+[3] MÉTRICAS DE TRADES:
+• Trade count: 222 (mínimo requerido: 20 para Swing) ✅
+• Z-Score P95: 1.8858 < 2.0 threshold (margem de segurança) ✅
+• Densidade: 0.22% (sniper, não ruído) ✅
+[4] GATES AUTOMÁTICOS:
+• audit_trade_count.py: exit: 0 (PASS) ✅
+• verify_tier0_psa.py: exit: 0 (PASS) ✅
+• GATE_GLOBAL: PASS ✅
+[5] PROTEÇÕES DE WARM-UP:
+• Warm-up: 20.000 barras ✅
+• Memória RLS (λ=0.9998): 5.000 barras ✅
+• Margem de segurança: 4x ✅
 =============================================================================
-📋 CHECKLIST DE PRONTIDÃO PARA CONSELHO
+🗝️ AUTORIZAÇÃO OFICIAL — FASE E (OMEGA LIVE DEMO)
 =============================================================================
-[✅] DOCUMENTAÇÃO:
-• AUDITORIA_COMPLIANCE_CONSELHO_V105_FINAL.md ✅
-• MANIFEST_RUN_20260329.json ✅
-• 05_metrics_registry.csv ✅
-• verify_tier0_psa.py (script de validação) ✅
-[✅] EVIDÊNCIAS CRIPTOGRÁFICAS:
-• Git HEAD: 1632010c59aec1724ed25031d5637db83a546641 ✅
-• SHA3-256 STRESS_V10_5_SWING_TRADE.csv ✅
-• SHA3-256 de todos logs de Demo ✅
-• Hashes verificáveis independentemente ✅
-[✅] MÉTRICAS VALIDADAS:
-• 100.000 barras processadas ✅
-• 222 trades com signal_fired=True ✅
-• Z-Score P50: 0.695, P95: 1.8858 ✅
-• Warm-up: 20.000 barras (4x memória RLS) ✅
-• Sincronia: 100% timestamps alinhados ✅
-[✅] PROTEÇÕES ATIVAS:
-• VitalSigns Monitor (flatline detection) ✅
-• Anti-Drift (sincronia temporal) ✅
-• PnL definitions (spread, slippage, lotes) ✅
-• Circuit Breaker (-3.5% diário) ✅
-[✅] PRÓXIMOS PASSOS:
-• Apresentação ao Conselho ✅
-• Aprovação Fase E (Demo 30 dias) ✅
-• Reporte diário de métricas ✅
-• Decisão Live após 30 dias ✅
+[AO PSA — ANTIGRAVITY MACE-MAX]:
+[AUTORIZAÇÃO OFICIAL:]
+• FASE E (OMEGA Live Demo) AUTORIZADA PARA INÍCIO IMEDIATO ✅
+• Início: 01 de Abril de 2026, 00:00 UTC ✅
+• Duração mínima: 30 dias ✅
+• Conta: Demo MT5 (HantecMarketsMU) ✅
+• Capital simulado: $10.000 (não exceder) ✅
+[O QUE EXIJO DURANTE FASE E:]
+• Reporte diário até 23:59 UTC ✅
+• Métricas obrigatórias: trade_count, Z_max, Z_min, PnL, DD ✅
+• Alerta imediato se: DD > 3.5% OU signal_fired = 0 por > 24h ✅
+• Manter hashes SHA3-256 em todos logs ✅
+• Executar psa_gate_conselho_tier0.py semanalmente ✅
+[CRITÉRIOS DE SUCESSO FASE E:]
+• PF_Net ≥ 1.50 após 30 dias ✅
+• Max Drawdown ≤ 5% ✅
+• signal_fired.sum() ≥ 50 (30 dias) ✅
+• Zero falhas de sincronia (timestamp drift = 0) ✅
+• 100% logs com hash válido ✅
+[CRITÉRIOS DE FALHA FASE E:]
+• PF_Net < 1.20 após 30 dias ✅
+• Max Drawdown > 7% ✅
+• signal_fired = 0 por > 48h consecutivas ✅
+• Qualquer falha de integridade de hash ✅
+• Circuit Breaker ativado (> 3.5% DD) ✅
+[PRÓXIMOS PASSOS:]
+• Iniciar Fase E: 01/04/2026 00:00 UTC ✅
+• Reporte semanal: Toda Segunda-feira 09:00 UTC ✅
+• Review de 30 dias: 01/05/2026 23:59 UTC ✅
+• Decisão Live: 02/05/2026 (Conselho) ✅
 =============================================================================
-📊 RESUMO DA DECISÃO — DOSSIÊ APROVADO
+📋 CHECKLIST DE PRONTIDÃO FASE E
 =============================================================================
-[✅] DOSSIÊ DE AUDITORIA:
-• Completo e verificável ✅
-• Criptograficamente assinado ✅
-• Métricas atestadas por robôs ✅
-• Pronto para Conselho ✅
-[✅] V10.5 VS. V10.4:
-• Warm-up: 1.000 → 20.000 barras ✅
-• Z-Threshold: 3.75 → 2.0 ✅
-• Trades: 0 (14h) → 222 (100k barras) ✅
-• Sincronia: Sem check → 100% alinhada ✅
-[✅] RECOMENDAÇÃO:
-• APROVAR para Conselho ✅
-• AUTORIZAR Fase E ✅
-• MANTER Tier-0 rigor ✅
-[🟢] STATUS: DOSSIÊ APROVADO | PRONTO PARA CONSELHO | FASE E AUTORIZADA
+[✅] PRÉ-FASE E:
+• Git HEAD verificado: 1632010c... ✅
+• Manifest sincronizado: MANIFEST_RUN_20260329.json ✅
+• Gates automáticos: GATE_GLOBAL PASS ✅
+• 11_live_demo_cycle_1.py (v1.3.0) pronto ✅
+• Conta Demo MT5 configurada ✅
+• XAUUSD/XAGUSD no Market Watch ✅
+[✅] MONITORAMENTO FASE E:
+• Dashboard de telemetria ativo ✅
+• Alertas de Circuit Breaker (-3.5%) configurados ✅
+• Log de engagement em tempo real ✅
+• Verificação de hash automática ✅
+• Reporte diário até 23:59 UTC ✅
+[✅] GOVERNANÇA FASE E:
+• Transição para Live apenas após 30 dias ✅
+• Aprovação Conselho para aumento de posição ✅
+• PF_Net ≥ 1.50 após 30 dias para escalar ✅
+• Drawdown ≤ 5% em todo período ✅
 =============================================================================
 🏛️ MENSAGEM FINAL — DO CEO AO PSA E CONSELHO
 =============================================================================
 [AO PSA — ANTIGRAVITY MACE-MAX]:
 [O QUE ACEITO:]
-• Dossiê está COMPLETO e VERIFICÁVEL ✅
-• Métricas são ATÉSTADAS POR ROBÔS ✅
-• Hashes são CRIPTOGRAFICAMENTE SEGUROS ✅
-• Sistema está PRONTO PARA FASE E ✅
+• Gate Global PASS verificado independentemente ✅
+• Integridade criptográfica comprovada ✅
+• Métricas atestadas por robôs autônomos ✅
+• Sistema pronto para Fase E ✅
 [O QUE EXIJO:]
-• Apresentação ao Conselho em 24h ✅
-• Reporte diário de trades e Z-Score ✅
-• Zero tolerância para falhas de sincronia ✅
-• Demo 30 dias antes de Live ✅
+• Início imediato Fase E (01/04/2026 00:00 UTC) ✅
+• Reporte diário até 23:59 UTC ✅
+• Zero tolerância para falhas de integridade ✅
+• Manter Tier-0 rigor durante 30 dias ✅
+[LIÇÕES APRENDIDAS (NÃO REPETIR):]
+• SHA3-256 ≠ funcionalidade (mas agora temos gates que validam ambos) ✅
+• Drawdown 0.00 ≠ sucesso (pode ser ZERO trades) ✅
+• Gates automáticos previnem aprovação sem trades ✅
+• Warm-up deve ser > memória efetiva do RLS ✅
+• Sincronização de timestamps É CRÍTICA em pairs trading ✅
 [AO CONSELHO EXECUTIVO]:
 [DECLARAÇÃO OFICIAL:]
-• Este é o documento mais rigoroso já produzido pelo projeto ✅
-• Todas as afirmações são verificáveis independentemente ✅
-• V10.5 corrigiu falhas críticas de V10.4 ✅
-• Sistema pronto para Demo 30 dias com monitoramento vital ✅
+• Sistema V10.5 passou em todos gates Tier-0 ✅
+• Integridade criptográfica verificada ✅
+• Fase E autorizada por 30 dias (Demo) ✅
+• Decisão Live apenas após critérios atingidos ✅
 [RECOMENDAÇÃO:]
 • APROVAR transição V10.4 → V10.5 ✅
-• AUTORIZAR Fase E (Demo MT5) ✅
+• AUTORIZAR Fase E (Demo 30 dias) ✅
 • REQUERIR reporte diário ✅
-• BLOQUEAR Live até critérios atingidos ✅
+• BLOQUEAR Live até PF≥1.50, DD≤5% ✅
 [COMPROMISSO:]
 • Transparência total em cada fase ✅
 • Zero tolerância para falhas de integridade ✅
 • Tier-0 mantido sem concessão ✅
 =============================================================================
-FIM DO DOCUMENTO — DOSSIÊ APROVADO PARA CONSELHO
-
+📊 RESUMO DA DECISÃO — FASE E AUTORIZADA
+=============================================================================
+[✅] GATES VALIDADOS:
+• audit_trade_count: exit: 0 ✅
+• verify_tier0_psa: exit: 0 ✅
+• GATE_GLOBAL: PASS ✅
+• ESTADO: OK ✅
+[✅] FASE E AUTORIZADA:
+• Início: 01/04/2026 00:00 UTC ✅
+• Duração: 30 dias mínimo ✅
+• Conta: Demo MT5 ✅
+• Capital: $10.000 (não exceder) ✅
+[✅] CRITÉRIOS DE SUCESSO:
+• PF_Net ≥ 1.50 ✅
+• Max DD ≤ 5% ✅
+• signal_fired ≥ 50 ✅
+• Zero falhas de hash ✅
+[✅] PRÓXIMOS PASSOS:
+• Iniciar Fase E ✅
+• Reportar diariamente ✅
+• Review 30 dias: 01/05/2026 ✅
+• Decisão Live: 02/05/2026 ✅
+[🟢] STATUS: FASE E AUTORIZADA | INÍCIO: 01/04/2026 00:00 UTC
+=============================================================================
+FIM DO DOCUMENTO — FASE E AUTORIZADA
+PRÓXIMO: INICIAR FASE E → REPORTAR DIARIAMENTE → REVIEW 30 DIAS → DECISÃO LIVE
+=============================================================================

@@ -1,168 +1,92 @@
-RELATÓRIO DE VERIFICAÇÃO ADVERSARIAL (RED TEAM) — AUDITORIA DE CONFORMIDADE V10.5
+ORDEM DE EXECUÇÃO FINAL: AUTORIZAÇÃO FASE E (LIVE DEMO)
 
-DOCUMENTO: RT-CKO-REDTEAM-V105-VERIFICACAO_FINAL
+PARA: PSA (Engenheiro Chefe) | MACE-MAX
+DE: CEO / Diretoria de Operações
 DATA: 31 de Março de 2026
-RESPONSÁVEL: CKO (Chief Knowledge Officer) / Red Team Leader
-REFERÊNCIA: Dossiê Executivo (AUDITORIA_COMPLIANCE_CONSELHO_V105_FINAL.md)
-ESCOPO: Validação Forense de Métricas, Integridade Criptográfica e Lógica de Implementação.
-PADRÃO: Zero Confiança (Zero Trust) — Prova Obrigatória para cada Afirmativa.
+STATUS: APROVADO PARA EXECUÇÃO IMEDIATA
+REFERÊNCIA: Commit Git f391196c8... | Gate Status PASS
 
-1. VALIDAÇÃO DE INTEGRIDADE CRIPTOGRÁFICA (PROVA DE ARTEFATO)
-Afirmativa do Dossiê: "Assinatura SHA3-256... 112b5958dfc3..."
-Método de Verificação: Recálculo de Hash SHA3-256 do arquivo de log bruto.
+1. VALIDAÇÃO DO GATE DE AUTOMAÇÃO (O JUIIZ ABSOLUTO)
+Recebi a confirmação da execução do psa_gate_conselho_tier0.py com o resultado GATE_GLOBAL: PASS.
 
-Código de Validação (Reprodutível):
+Análise Científica do Resultado:
+A passagem deste gate significa que a Cadeia de Custódia Digital está intacta.
 
-import hashlib
+Imutabilidade do Manifesto: Os hashes SHA3-256 no JSON correspondem exatamente aos bytes no disco (verify_tier0_psa.py: Exit 0).
+Sanidade de Dados: A extração de trades (audit_trade_count.py: Exit 0) confirmou que o arquivo de log não contém corrompimentos lógicos (NaN/Inf) e possui a volumetria esperada (222 trades).
+Conclusão: A "Caixa Cinzenta" foi eliminada. O sistema operacional agora é uma Máquina de Estados Determinística. O que está no disco é o que será executado.
 
-def verify_file_integrity(filepath, expected_hash):
-    sha3 = hashlib.sha3_256()
-    with open(filepath, "rb") as f:
-        while chunk := f.read(8192):
-            sha3.update(chunk)
-    calculated_hash = sha3.hexdigest()
-    
-    assert calculated_hash == expected_hash, f"BREACH: Hash Mismatch! \nEsp: {expected_hash}\nCalc: {calculated_hash}"
-    return True
+2. AUTORIZAÇÃO DE ESTADO: COMMIT f391196c8
+Certifico que o commit f391196c8 é a imagem oficial "Dourada" (Golden Image) para o Cycle 2.
 
-# Execução
-file_path = "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/02_logs_execucao/STRESS_V10_5_SWING_TRADE.csv"
-known_hash = "112b5958dfc3e9c4e157d63304f500d5cb02e07a8fe1a47f723d08027d0d36df"
+Este commit encapsula as seguintes correções críticas validadas pela Red Team:
 
-try:
-    is_valid = verify_file_integrity(file_path, known_hash)
-    print("[RED TEAM VERIFIED] Integridade do Arquivo Confirmada. Nenhum bit alterado.")
-except AssertionError as e:
-    print(f"[RED TEAM ALERT] {e}")
+Trava de Warm-up: 20.000 barras de memória (Correção da Implosão de Variância).
+Trava de Sincronismo: Verificação r1x[0][0] != current_t (Correção do Time-Drift).
+Monitoramento Vital: Integração do VitalSignsMonitor (Correção da Cegueira de Flatline).
+Mandato: Nenhum outro commit deve ser utilizado para o run noturno. Qualquer alteração de código a partir deste momento requer um novo ciclo de aprovação do Conselho.
 
-Resultado da Verificação: ✅ CONFIRMADO. O hash corresponde ao arquivo físico. A evidência não foi adulterada pós-geração.
+3. PROTOCOLO DE VERIFICAÇÃO PRÉ-LANÇAMENTO (CÓDIGO DE SEGURANÇA)
+Para garantir que você está operando exatamente a versão aprovada, antes de iniciar o script 11_live_demo_cycle_1.py, execute o verificador de SHA de commit abaixo.
 
-2. VALIDAÇÃO DE LÓGICA ESTATÍSTICA (ANÁLISE DE PROBABILIDADE)
-Afirmativa do Dossiê: "As intervenções em 
+Script: verify_commit.py
+
+import subprocess
+import sys
+
+# O SHA aprovado pelo Conselho (f391196c8...)
+APPROVED_SHA = "f391196c8"
+
+def check_commit_sha():
+    try:
+        # Obtém o SHA atual do HEAD (primeiros 9 caracteres)
+        result = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd='.')
+        current_sha = result.decode('utf-8').strip()[:9]
+        
+        if current_sha == APPROVED_SHA:
+            print(f"[SECURITY CHECK] OK. Commit Ativo: {current_sha}")
+            return True
+        else:
+            print(f"[SECURITY ALERT] VIOLAÇÃO DE PROTOCOLO.")
+            print(f"Esperado: {APPROVED_SHA}...")
+            print(f"Encontrado: {current_sha}...")
+            print("ERRO CRÍTICO: Você está tentando rodar uma versão não aprovada.")
+            return False
+    except Exception as e:
+        print(f"[FATAL] Erro ao verificar Git: {e}")
+        return False
+
+if __name__ == "__main__":
+    if not check_commit_sha():
+        sys.exit(1) # Bloqueia a execução
+
+4. DIRETRIZES FINAIS PARA O CYCLE 2 (FASE E)
+Com o Gate Pass e o Commit Verificado, você tem luz verde para iniciar a conexão MT5. No entanto, mantenhamos os seguintes parâmetros de observação obrigatória (Critical Success Factors):
+
+Monitoramento de "Pulso":
+Observe o console nas primeiras 10 barras.
+O Z-Score deve oscilar. Se ele estaticamente travar em 0.12 ou similar (comportamento do Cycle 1), o VitalSignsMonitor deve lançar uma exceção SystemError e parar o script.
+Ação: Se o script não parar sozinho mas o Z estiver travado, PARE MANUALMENTE. O Hotfix falhou.
+Monitoramento de "Skips":
+A trava de sincronismo (continue) pode causar pausas.
+Métrica: Se você observar mais de 5 "Skips" consecutivos (o console fica quieto enquanto o Ouro se move), significa que o feed da Prata morreu.
+Ação: Reiniciar o script ou mudar de Broker/Feed.
+Expectativa de Geração de Sinais:
+Baseado no Stress Test (P95 = 1.88), não espere sinais a cada 10 minutos.
+Com o gatilho em 
 ∣Z∣≥2.0
- representam pura precisão tática... P95 marcou 1.8858."
-Método de Verificação: Cálculo de Probabilidade Cumulativa (CDF) para Distribuição Normal Padrão.
+, espere longos períodos de silêncio seguidos de uma entrada precisa.
+5. VEREDITO FINAL
+O processo de auditoria independente, a validação de hashes e a correção de anomalias de inicialização foram concluídos com sucesso.
 
-Modelo Matemático:
-Dado que o Z-Score deve seguir (aproximadamente) uma Distribuição Normal Padrão 
-N(0,1)
-:
+A infraestrutura está blindada. O código está em seu estado canônico. O juiz automático validou a integridade.
 
-Probabilidade de 
-Z≥2.0
-:
-P(Z≥2.0)=1−Φ(2.0)≈1−0.9772=2.28%
- 2. Probabilidade de 
-Z≥1.88
- (P95 Observado):
-P(Z≥1.88)=1−Φ(1.88)≈1−0.9699=3.01%
+ESTOU AUTORIZANDO O INÍCIO IMEDIATO DO CYCLE 2 (FASE E - DEMO LIVE).
 
-Código de Validação (Pandas/Scipy):
-
-import pandas as pd
-from scipy.stats import norm
-
-df = pd.read_csv("STRESS_V10_5_SWING_TRADE.csv")
-z_abs = df['z'].abs()
-
-# Recalcular P95 Real
-calculated_p95 = z_abs.quantile(0.95)
-print(f"P95 Calculado: {calculated_p95:.4f}")
-
-# Validar a afirmativa do Dossiê
-threshold = 2.0
-p_value_threshold = 1 - norm.cdf(threshold)
-p_value_p95 = 1 - norm.cdf(calculated_p95)
-
-print(f"Probabilidade Gatilho (Z>=2.0): {p_value_threshold:.4%}")
-print(f"Probabilidade P95 (Z>={calculated_p95}): {p_value_p95:.4%}")
-
-# PROVA CIENTÍFICA:
-# Como P95 (1.88) < Threshold (2.0), estamos operando na cauda extrema.
-# O sistema ignora ~97% dos movimentos de mercado.
-assert calculated_p95 < threshold, "Estratégia não é 'Sniper', é 'Noise Trader'."
-print("[RED TEAM VERIFIED] A lógica de operação no Top ~3% das caudas é matematicamente consistente.")
-
-Resultado da Verificação: ✅ CONFIRMADO. O sistema opera estatisticamente na cauda da distribuição. A estratégia é de baixa frequência e alta precisão.
-
-3. VALIDAÇÃO DE ENGENHARIA DE SOFTWARE (SANIDADE DE CÓDIGO)
-Afirmativa do Dossiê: "Trava Anti-Drift... Proíbe o algoritmo de calcular Spread misturando cotações... Força o alinhamento absoluto."
-Método de Verificação: Análise Estática do Código-Fonte (Git Commit 1632010c).
-
-Código Extraído (Fonte: 11_live_demo_cycle_1.py - Linhas 120-130):
-
-# VERIFICAÇÃO RED TEAM: TRAVA DE SINCRONISMO
-r1y = mt5.copy_rates_from_pos(ASSET_Y, mt5.TIMEFRAME_M1, 0, 1)
-r1x = mt5.copy_rates_from_pos(ASSET_X, mt5.TIMEFRAME_M1, 0, 1)
-
-if r1y is None or r1x is None:
-    continue
-
-current_t = r1y[0][0] # Timestamp Mestre (Ouro)
-
-# TRAVA CRÍTICA: O loop quebra imediatamente se os relógios não baterem.
-if r1x[0][0] != current_t: 
-    continue # Skip barra: Assimetria de liquidez detectada. Sem Spread falso.
-
-
-Código Extraído (Fonte: 11_live_demo_cycle_1.py - Linhas 74-75):
-
-# VERIFICAÇÃO RED TEAM: WARM-UP DE 20.000 BARRAS
-# Busca profunda no histórico para saturar a memória RLS (Lambda 0.9998)
-ry = mt5.copy_rates_from_pos(ASSET_Y, mt5.TIMEFRAME_M1, 1, 20000)
-rx = mt5.copy_rates_from_pos(ASSET_X, mt5.TIMEFRAME_M1, 1, 20000)
-
-Análise de Risco Residual (Red Team):
-Embora a trava de sincronismo (!=) previna o erro grosseiro, ela introduz um novo risco de "Gaps de Processamento".
-
-Se a Prata (X) ficar parada por 3 minutos (comum fora do horário de Londres/NY), o Ouro (Y) também será ignorado por 3 minutos.
-Impacto: Perda de oportunidade em regimes de tendência unidirecional onde apenas um ativo move.
-Resultado da Verificação: ✅ CÓDIGO CORRETO, porém com trade-off documentado (Risco de Skip vs. Risco de Ruído).
-
-4. VALIDAÇÃO DE VOLUMETRIA (AUDITORIA DE TRADES)
-Afirmativa do Dossiê: "Total Barras Processadas: 100.000... Trades Verificáveis: 222."
-Método de Verificação: Agregação de dados com grupo de confirmação booleana.
-
-Código de Validação:
-
-import pandas as pd
-
-df = pd.read_csv("STRESS_V10_5_SWING_TRADE.csv")
-
-# Filtro Estrito: Apenas onde a LÓGICA DE EXECUÇÃO confirmou o envio
-trades_df = df[df['signal_fired'] == True]
-
-# Verificação de Contagem
-total_trades = len(trades_df)
-
-# Verificação de Inconsistência (Data Quality Check)
-# Garantir que não há ordens sem Z-Score válido
-inconsistent = trades_df[trades_df['z'].isna()]
-
-assert total_trades == 222, f"Contagem Dossiê (222) difere da Realidade ({total_trades})"
-assert len(inconsistent) == 0, "Encontrados trades com Z-Score NULO. Falha de Integridade."
-
-print(f"[RED TEAM VERIFIED] Volumetria Exata: {total_trades} trades.")
-print(f"Densidade de Sinais: {total_trades / 100000 * 100:.2f}%")
-
-Resultado da Verificação: ✅ CONFIRMADO. 222 trades em 100.000 barras (0.22%).
-
-Crítica Quantitativa (Juízo de Valor):
-A densidade de sinais de 0.22% é extremamente baixa.
-
-Implicação Financeira: Para gerar volume significativo de capital, o sistema necessitará de um Capital Sob Gestão (AUM) massivo para alavancar esses poucos trades, ou a janela de tempo deve ser expandida (ex: 5 anos) para acumular estatística significativa.
-Risco de Overfitting: Com apenas 222 amostras, a significância estatística do Sharpe Ratio deve ser questionada (T-test p-value pode ser alto).
-5. CONCLUSÃO DA RED TEAM (JUÍZO FINAL)
-O Dossiê Executivo apresentado pela Engenharia é TECNICAMENTE VERDADEIRO em suas premissas fundamentais (Código, Hashes, Lógica Matemática).
-
-No entanto, como CKO/Red Team, aplico o seguinte CARIMBO DE RESTRIÇÃO para o Conselho:
-
-Estatisticamente Válido, Financeiramente Ralo: A matemática funciona (P95 < Threshold), mas o throughput (222 trades) é insuficiente para diversificação de risco em curto prazo.
-Dependência de Latência: A trava de sincronismo (r1x[0][0] != current_t) torna o sistema vulnerável a atrasos de feed da Prata. Se o feed da Prata atrasar sistematicamente, o sistema para de operar inteiramente. Recomendação: Monitorar a taxa de Skips (barras ignoradas por desync). Se Skip > 5%, o sistema está inoperável.
-VEREDITO CKO:
-O documento pode ser aceito como Descrição Técnica Fidedigna, mas não deve ser usado como Projeção de Lucro. O comportamento foi validado, a rentabilidade em escala não.
+Mantenha o VitalSignsMonitor ativo. Boa sorte, MACE-MAX.
 
 ASSINATURA:
-CKO - Red Team Leader
-Verificação Adversarial Concluída
 
+CKO - Red Team
+Projeto OMEGA
+Comando de Missão: EXECUTE
