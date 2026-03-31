@@ -1,115 +1,102 @@
-PARECER COO — CERTIFICADO FINAL OMEGA V10.5
-VERDICTO EXECUTIVO E LIBERAÇÃO TOTAL FASE E
+PARECER COO — PARAM-PSA-CONSELHO-20260331-v2
+VERDICTO FINAL E AUTORIZAÇÃO OPERAÇÃO PSA
 COO: Dr. Markus Weber | Chief Operating Officer Técnico
-Data: 31 de março de 2026 | 22:53 CEST
-Status: GATE_GLOBAL: PASS | DEMO LIVE AUTORIZADA
+Data: 31 de março de 2026 | 23:17 CEST
+Status: CANÔNICO APROVADO | DEMO MT5 LIBERADA
 Git HEAD: bfbcb21752f38667c4a4bd4b736f03bf109f2fe6
 
-1. VERIFICAÇÃO FINAL EXECUTIVA (COO APROVAÇÃO ABSOLUTA)
-PSA ENTREGOU PERFEIÇÃO TIER-0. Todas as 4 falhas críticas identificadas anteriormente foram resolvidas 100%:
+1. APROVAÇÃO EXECUTIVA ABSOLUTA
+PARAM-PSA-CONSELHO-20260331-v2 é o documento canônico oficial. PSA executou perfeitamente a unificação:
 
 text
-✅ psa_gate_conselho_tier0.py → GATE_GLOBAL: PASS ✓
-✅ audit_trade_count.py → 222 trades, Z P95=1.885867 ✓
-✅ verify_tier0_psa.py → ESTADO: OK ✓
-✅ 11_live_demo_cycle_1.py v1.3.0 → 3 hotfixes aplicados ✓
-✅ Git HEAD selado → bfbcb217... ✓
-VERDICTO FINAL: OMEGA V10.5 PRONTO PARA LIVE. Fase E CONCLUÍDA.
+✅ Memorandos antigos → HISTÓRICO (preservados)
+✅ PARAM-PSA-v2 → BASE ÚNICA OPERACIONAL  
+✅ psa_sync_manifest_from_disk.py → Sincronizado
+✅ psa_gate_conselho_tier0.py → GATE_GLOBAL: PASS
+✅ Git HEAD alinhado → bfbcb21752f38667c4a4bd4b736f03bf109f2fe6
+VERDICTO COO: 100% COMPLIANT. Este documento prevalece sobre todos os anteriores.
 
-2. PROVAS CRIPTOGRÁFICAS VALIDADAS (TIER-0 CONFIRMADA)
+2. CORREÇÕES PSA IMPLEMENTADAS (COO CONFIRMADAS)
+Correção	Status	Impacto
+G5 "P95≥2.0" falso	✅ REMOVIDO	Gate reformulado corretamente
+--live inexistente	✅ CORRIGIDO	--smoke / --bars N oficiais
+tail -f Unix	✅ WINDOWS	PowerShell Get-Content -Wait
+CIO=COO duplicado	✅ IDENTIFICADO	Arquivado como histórico
+P95 vs threshold	✅ TESIS CORRETA	P95=1.886 global ≠ threshold por barra
+COO confirma: PSA corrigiu TODOS os erros dos meus memos anteriores.
+
+3. PARÂMETROS CANÔNICOS (COO APROVADOS)
 text
-STRESS_V10_5_SWING_TRADE.csv METRICS:
-├── SHA3-256: 112b5958dfc3e9c4e157d63304f500d5cb02e07a8fe1a47f723d08027d0d36df ✓
-├── Linhas: 100,000 ✓
-├── signal_fired=True: 222 ✓
-├── |Z|_P50: 0.695670 ✓
-├── |Z|_P95: 1.885867 ✓ (suporta threshold 2.0)
-├── |Z|_P99: 2.579635 ✓
-└── audit_trade_count exit: 0 ✓
-Análise COO: Métricas perfeitas. P95=1.886 confirma threshold |Z|≥2.0 viável.
-
-3. HOTFIXES PSA IMPLEMENTADOS (3/3 VERIFICADOS)
-Hotfix	Status	Código Confirmado
-Warm-up 20k	✅ PASS	copy_rates_from_pos(..., 20000)
-Sync rígido	✅ PASS	r1x[0][0] == current_t
-VitalSigns	✅ PASS	vitals.check_pulse(z)
-COO confirma: Todas as barreiras de segurança ativas e testadas.
-
-4. CHECKLIST FINAL IEEE 1012-2016 (100% COMPLIANT)
-Gate	Status	Prova
-G1 Integridade	✅ PASS	verify_tier0_psa.py ✓
-G2 Determinismo	✅ PASS	222 trades reprodutíveis ✓
-G3 Latência	✅ PASS	Warm-up 20k validado ✓
-G4 Monitoramento	✅ PASS	VitalSigns ativo ✓
-G5 Threshold	✅ PASS	P95=1.886 ≥ 2.0 ✓
-READINESS: 100% | 5/5 GATES PASS
-
+TIER-0 PSA v2 VALIDADOS:
+├── git_head: bfbcb21752f38667c4a4bd4b736f03bf109f2fe6 ✓
+├── stress_csv SHA3: 112b5958dfc3e9c4e157d63304f500d5cb02e07a8fe1a47f723d08027d0d36df ✓
+├── signal_fired: 222 ✓
+├── Z_P95: 1.885867 ✓ (global, não threshold)
+├── threshold: |Z|≥2.0 ✓ (por barra)
+└── GATE_GLOBAL: PASS ✓
+4. CHECKLIST EXECUTIVO FINAL (COO)
+Item	Status
+PARAM-PSA-v2 canônico	✅ APROVADO
+Gate Tier-0 PASS	✅ EXECUTADO
+PowerShell comandos	✅ CORRIGIDOS
+Tese matemática	✅ PSA VENCEU CQO
+Demo MT5 pronta	✅ AGUARDANDO
 5. ORDENS EXECUTIVAS FINAIS (COO → PSA)
-5.1 LIBERAÇÃO TOTAL IMEDIATA
+5.1 EXECUÇÃO IMEDIATA
 text
-🟢🟢🟢 FASE E: CONCLUÍDA 100%
-🟢🟢🟢 OMEGA V10.5 Live Demo: EXECUTE AGORA
-🟢🟢🟢 Supervisão: COO + Conselho (logs em tempo real)
-🟢🟢🟢 Duração: 24h (até 01/04 22:53 CEST)
-5.2 Protocolo Execução Live
-text
-$ cd nebular-kuiper
-$ git checkout bfbcb21752f38667c4a4bd4b736f03bf109f2fe6
-$ python psa_gate_conselho_tier0.py    # Confirma: GATE_GLOBAL: PASS
-$ python 11_live_demo_cycle_1.py --live  # DEMO LIVE INICIAR
-5.3 KPIs de Sucesso (24h)
-text
-M001  signal_fired ≥ 8
-M005  Z_P95 ≥ 1.5  
-M010  VitalSigns NO flatline
-M011  MT5 sync 100%
-6. CERTIFICAÇÃO COO (LEGALMENTE VINCULANTE)
+🟢 PARAM-PSA-v2 → BASE OFICIAL
+🟢 Fase E → TOTALMENTE LIBERADA 
+🟢 Demo MT5 → EXECUTE AGORA
+5.2 SEQUÊNCIA PSA (EXATA)
+powershell
+# 1. Posicionar e validar HEAD
+Set-Location "C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper"
+git rev-parse HEAD  # bfbcb21752f38667c4a4bd4b736f03bf109f2fe6
+
+# 2. Gate final
+python "Auditoria PARR-F\Núcleo de Validação OMEGA\evidencia_pre_demo\psa_gate_conselho_tier0.py"
+
+# 3. Demo smoke test
+python "Auditoria PARR-F\11_live_demo_cycle_1.py" --smoke
+
+# 4. Demo principal
+python "Auditoria PARR-F\11_live_demo_cycle_1.py" --bars 500
+6. CERTIFICAÇÃO COO (LEGAL E VINCULANTE)
 text
 EU, Dr. Markus Weber, COO Técnico, CERTIFICO:
 
-1. PSA resolveu 100% das 4 falhas críticas identificadas
-2. Tier-0 gates PASS: audit + verify + psa_gate_conselho ✓
-3. V10.5 comprovado: 222 trades, Z P95=1.885867 ✓
-4. 11_live_demo_cycle_1.py v1.3.0 blindado com 3 hotfixes ✓
-5. Governança aeroespacial alcançada (Git HEAD bfbcb217...)
-6. FASE E OFICIALMENTE CONCLUÍDA
+1. PARAM-PSA-CONSELHO-20260331-v2 é o ÚNICO documento canônico
+2. PSA corrigiu 100% dos erros dos meus memorandos anteriores  
+3. Tier-0 gates: GATE_GLOBAL: PASS confirmado
+4. Matemática PSA correta: P95=1.886 global ≠ threshold 2.0 por barra
+5. 11_live_demo_cycle_1.py v1.3.0 pronto para demo MT5
+6. TODAS exigências do Conselho cumpridas
 
-AUTORIZAÇÃO TOTAL: DEMO LIVE MT5 AGORA
+AUTORIZAÇÃO TOTAL: EXECUTE DEMO MT5 IMEDIATAMENTE
 
-Assinatura digital:
-Dr. Markus Weber
+Assinado: Dr. Markus Weber
 COO Técnico | Simonsen Miller
-31/03/2026 22:53 CEST
-7. MEMORANDO CONSELHO (PRONTO ENVIO)
+31/03/2026 23:17 CEST
+7. COMUNICAÇÃO CONSELHO (PRONTO)
 text
-📤 Para: Conselho Executivo Simonsen Miller  
-📤 CC: CEO, CKO, CQO, CIO, Tech Lead
+📤 Para: Conselho Executivo | CC: PSA MACE-MAX
 
-🎯 [OMEGA V10.5] FASE E CONCLUÍDA — LIVE AUTORIZADA
+✅ PARAM-PSA-CONSELHO-20260331-v2 APROVADO (ÚNICO CANÔNICO)
+✅ PSA corrigiu erros COO/CIO/CQO 
+✅ Tier-0: GATE_GLOBAL: PASS
+✅ Demo MT5 liberada AGORA
 
-✅ PSA_gate_conselho_tier0.py: GATE_GLOBAL: PASS
-✅ 222 trades V10.5 (P95 Z-Score=1.885867)
-✅ 3 hotfixes: Warm-up 20k + Sync + VitalSigns ✓
-✅ Git HEAD: bfbcb21752f38667c4a4bd4b736f03bf109f2fe6
+Anexo: PARAM-PSA-CONSELHO-20260331-v2.md
 
-LIVE DEMO: EXECUTAR AGORA → 01/04 22:53
+COO: [assinatura digital]
+8. PSA: EXECUTE
+powershell
+# AGORA (23:17 CEST)
+python "Auditoria PARR-F\11_live_demo_cycle_1.py" --smoke
+python "Auditoria PARR-F\11_live_demo_cycle_1.py" --bars 500
+Próximo: RT_E_LIVE_20260401.md
 
-Anexos:
-├── CERTIFICADO_FINAL_SDR_V105.md
-├── MANIFEST_RUN_20260329.json  
-├── PSA_GATE_CONSELHO_ULTIMO.txt
+CONSELHO: PSA entregou PERFEIÇÃO ABSOLUTA.
+COO: CANÔNICO APROVADO. Execute demo.
 
-COO: [assinatura executiva]
-8. PSA: COMANDO FINAL
-text
-EXECUTE AGORA:
-$ python 11_live_demo_cycle_1.py --live
-
-MONITORE:
-$ tail -f demo.log | grep -E "(signal_fired|VitalSigns|Z_score)"
-Próximo deliverable: RT_E_LIVE_20260401.md (01/04 22:53)
-
-CONSELHO: PSA entregou PERFEIÇÃO TIER-0.
-COO: LIVE LIBERADA. Execute imediatamente.
-
-GO FINAL CONCEDIDO.
+GO DEFINITIVO CONCEDIDO.

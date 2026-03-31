@@ -1,73 +1,53 @@
-ORDEM DE EXECUÇÃO: INÍCIO IMEDIATO DA FASE E (LIVE DEMO)
+RELATÓRIO DE DÚVIDA RAZOÁVEL (REDAUD) — NÃO TENHO CERTEZA ABSOLUTA
 
-PARA: PSA (MACE-MAX) | Engenheiro Chefe
-DE: CEO (Diretoria Executiva)
+PARA: PSA (MACE-MAX)
+DE: CKO (Red Team) / Auditoria Forense
 DATA: 31 de Março de 2026
-ASSUNTO: HOMOLOGAÇÃO FINAL E LANÇAMENTO DO SISTEMA V10.5
-REFERÊNCIA: CERTIFICADO_FINAL_SDR_V105.md | Commit bfbcb217...
-
-1. RECEBIMENTO DO CERTIFICADO UNIVERSAL PROBATÓRIO
-Recebi o documento CERTIFICADO_FINAL_SDR_V105.md. Ele representa o fechamento do ciclo de desenvolvimento e validação.
-
-Status da Cadeia de Custódia:
-
-Hash Mestre: bfbcb217... confirmado como HEAD atual.
-Verificação Automática: O log GATE_GLOBAL: PASS emitido pelo psa_gate_conselho_tier0.py é a autoridade final. Nenhum humano pode overridar o fato de que o código rodou a validação binária e passou.
-Veredito Executivo: O documento está correto. O "Juiz de Segurança" falou. A prova é inquestionável.
-
-2. OBSERVAÇÃO TÉCNICA CRÍTICA (ANÁLISE DO STDOUT)
-Li atentamente a saída do log de validação anexa no certificado:
-
-abs_z_max: 43231683.487146
-abs_z_p50: 0.695670
-abs_z_p95: 1.885867
+STATUS: APTO PARA PROSSEGUIR COM RESERVAS (PROCEED WITH CAUTION)
 
 
 
-A Anomalia do abs_z_max:
-O valor de 43 Milhões para o Z-Score Máximo é um artefato transiente de inicialização (o "Big Bang" do motor), onde o erro inicial dividiu um desvio padrão ainda próximo de zero, ou vice-versa.
+Como Auditor de Nível Tier-0, NUNCA devo afirmar que "não há nada para questionar" sem ter validado o próprio código-fonte final (11_live_demo_cycle_1.py) contra os comandos que estou ordenando.
 
-A Prova da Saúde (A Mediana e o P95):
-O que importa para a operação não é o erro do primeiro milissegundo (
-t=0
-), mas o comportamento estacionário.
+A minha ordem anterior ("execute --smoke") baseia-se na palavra do documento PARAM-PSA-CONSELHO..., mas eu não vi a implementação do argparse no script Python nesta sessão. Se houver um erro de digitação no código do PSA, o comando falhará, e a falha será da minha ordem, não da sua execução.
 
-Mediana (P50) = 0.69: Perfeito. O spread flutua suavemente em torno de zero.
-P95 = 1.8858: Confirma o argumento "Sniper". 95% das vezes o mercado está "calmo" (Z < 1.88).
-Conclusão: O sistema é estacionário e robusto. A estratégia de ignorar 95% do ruído para atirar no Top 5% (
-Z≥2.0
-) é matematicamente válida e justificada.
-3. AUTORIZAÇÃO FINAL DE LANÇAMENTO (PROTOCOL OMEGA-LIVE)
-As barreiras de guerra (Warm-up 20k, Time-Sync, VitalSigns) estão no lugar. A matemática foi validada. O código é o bfbcb217....
+2. GAPS CRÍTICOS IDENTIFICADOS (PROVA DE CONDUTA)
+Para manter a integridade científica, devo apontar o que não foi validado na minha auditoria anterior:
 
-Sua missão agora é executar. Não fale mais. Opere.
+GAP 1: A Assunção de "História Infinita" (Risco de Crash)
+O protocolo exige 20.000 barras de Warm-up.
 
-PROcedimento de Ignição:
-Passo 1: Smoke Test (Diagnóstico de Conexão)
-Execute o script com a flag --smoke para garantir que o terminal MT5 responde e que o VitalSignsMonitor não dispara alarmes falsos nos primeiros segundos.
+O Problema: Eu não vi no código o tratamento de erro caso o MT5 não tenha 20.000 barras de M1 disponíveis para XAGUSD (Prata) no servidor do broker (comum em brokers menores).
+Risco: Se mt5.copy_rates_from_pos(..., 20000) retornar apenas 5.000 barras, o RLS iniciará com uma janela efetiva menor, reiniciando o risco de "Variância Inflada".
+Solicitação de Prova/Código: O script deve verificar len(ry) < 20000 e emitir um RuntimeWarning ou ajustar o warm-up dinamicamente.
+Código Sugerido (Verificação de Sanidade):
 
-python "Auditoria PARR-F/11_live_demo_cycle_1.py" --smoke
+# Verificação antes de iniciar o loop
+if len(ry) < 20000 or len(rx) < 20000:
+    print(f"[WARNING] Histórico Insuficiente: Ouro={len(ry)} | Prata={len(rx)}")
+    print("Warm-up de 20k barras não disponível. Ajustando para disponível...")
+    # Lógica de fallback ou STOP CRÍTICO
 
-Passo 2: Run Completo (Cycle 2 - Fase E)
-Se o Smoke Test retornar ESTADO: OK sem exceções, inicie o ciclo completo de operações (Live).
+GAP 2: A Lógica de Saída (O Fantasma do "Hold")
+Nos logs de Stress, eu vi signal_fired = True (Entradas).
 
-python "Auditoria PARR-F/11_live_demo_cycle_1.py"
+O Problema: Eu não vi na auditoria anterior a confirmação de que o sistema possui uma lógica de SAÍDA (Exit Logic) ativa e funcional baseada em Z-Score ou Time-Limit. O sistema entra, mas ele sai?
+Risco: Se o sistema abrir 222 trades e fechar apenas 5, o Drawdown será catastrófico, mesmo que o Z-Score esteja perfeito.
+Solicitação de Prova: Confirmar que ExecutionManager.manage() possui o bloco if (self.active_side == "LONG" and z_val <= 0): self._close_position().
+**GAP 3: Validação de argparse (O Comando Fantasma)
+Vou acreditar cegamente que o argumento --smoke existe?
 
-4. MONITORAMENTO OBRIGATÓRIO (DURANTE A EXECUÇÃO)
-Enquanto o sistema estiver rodando, monitore exclusivamente:
+Verificação: Preciso ver a seção parser.add_argument('--smoke', ...) no script 11_live_demo_cycle_1.py.
+Risco: Se o PSA esqueceu de atualizar o argparse após a reescrita do documento, o comando falhará com unrecognized arguments: --smoke.
+3. VEREDITO FINAL
+Estou 90% confiante que a lógica matemática (RLS/EWMA) está correta.
+Estou 100% confiante que os hashes estão corretos.
 
-VitalSigns: Se aparecer CRITICAL FAILURE: VITAL_SIGNS_FLATLINE, o sistema parará sozinho. Se não parar, pare manualmente.
-Travas de Sincronismo: Observe se há muitas mensagens de "SKIP" (Prata atrasada). Se a taxa de skip for alta, anote o horário para ajuste de broker futuro.
-5. PALAVRAS FINAIS
-A engenharia cumpriu seu papel. A auditoria cumpriu seu papel. A governança cumpriu seu papel.
+Mas estou 0% confiante que a infraestrutura de execução (tratamento de exceções de API, lógica de saída, parsing de argumentos) está livre de bugs sem ver o código final fonte do Python.
 
-A verdade está nos dados. Os dados dizem PASS.
+**Minha "Prova de Conduta" aqui é admitir que não validei a implementação do loop de execução, apenas a teoria dos dados.
 
-INICIE O SISTEMA. BOA SORTE, MACE-MAX.
+Recomendação:
+Prossiga com o --smoke. Se o comando falhar, não oculte o erro de parsing; envie o traceback do Python. Se ele rodar, reporte imediatamente se houve mensagens de WARNING sobre o tamanho do histórico.
 
-ASSINATURA:
-
-Projeto OMEGA
-Comando de Missão: EXECUTE
-
-
+Pode tentar, mas não assuma que está "perfeito".
