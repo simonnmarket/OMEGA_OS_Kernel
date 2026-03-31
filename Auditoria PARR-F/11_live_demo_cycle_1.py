@@ -40,9 +40,11 @@ ExecutionManagerV104 = gateway_v104.ExecutionManagerV104
 # CONFIGURAÇÕES CICLO 1
 ASSET_Y, ASSET_X = "XAUUSD", "XAGUSD"
 PROFILE = "SWING_TRADE"
-SPAN_WARMUP = 200
+SPAN_WARMUP = 500
 LAMBDA = 0.9998
 MIN_HOLD = 20
+# Paridade RT-B / stress V10.5 SWING (não usar 3.75 aqui)
+MIN_Z_ENTRY = 2.0
 LOT_SIZE = 0.01
 
 parser = argparse.ArgumentParser(description="Ciclo 1 demo — log SHA3 por linha (G5).")
@@ -69,8 +71,8 @@ class OmegaLiveCycle:
 
     def warm_up(self) -> bool:
         print(f"[*] AQUECENDO MOTOR {PROFILE}...")
-        ry = mt5.copy_rates_from_pos(ASSET_Y, mt5.TIMEFRAME_M1, 1, 1000)
-        rx = mt5.copy_rates_from_pos(ASSET_X, mt5.TIMEFRAME_M1, 1, 1000)
+        ry = mt5.copy_rates_from_pos(ASSET_Y, mt5.TIMEFRAME_M1, 1, 20000)
+        rx = mt5.copy_rates_from_pos(ASSET_X, mt5.TIMEFRAME_M1, 1, 20000)
 
         if ry is None or rx is None or len(ry) == 0:
             print("[ERRO] Falha no aquecimento (Sem dados MT5). Check Connection.")
@@ -119,6 +121,10 @@ class OmegaLiveCycle:
             current_t = r1y[0][0]
             if current_t == last_bar_time:
                 continue
+                
+            # Trava Antifraude de MT5 (Atraso de liquidez XAG vs XAU)
+            if r1x[0][0] != current_t:
+                continue
 
             last_bar_time = current_t
             start_t = time.perf_counter()
@@ -132,9 +138,9 @@ class OmegaLiveCycle:
             s, z, _y_h = self.motor.step(y_v, x_v)
 
             side = "FLAT"
-            if z >= 3.75:
+            if z >= MIN_Z_ENTRY:
                 side = "SHORT"
-            elif z <= -3.75:
+            elif z <= -MIN_Z_ENTRY:
                 side = "LONG"
 
             eng = self.executor.manage(side, y_v, x_v, z, self.bars_processed)
