@@ -2,7 +2,7 @@
 OMEGA V10.4 OMNIPRESENT - LIVE DEMO ORCHESTRATOR (PHASE 5 - CICLO 1)
 ====================================================================
 Engenharia: PSA / Antigravity | Auditoria Tier-0
-Versão: 1.2.0 — Barra M1 fechada (copy_rates_from_pos ... 1, 1), --smoke / --bars
+Versão: 1.3.0 — VitalSignsMonitor (flatline), Barra M1 fechada, --smoke / --bars
 
 Uso:
   python 11_live_demo_cycle_1.py --smoke
@@ -17,12 +17,44 @@ import hashlib
 import os
 import sys
 import time
+from collections import deque
 from datetime import datetime
 from importlib import import_module
 
 import MetaTrader5 as mt5
+import numpy as np
 import pandas as pd
 import psutil
+
+
+class VitalSignsMonitor:
+    """
+    Detecção de "Flatline" (Cegueira Estatística).
+    Impede que o sistema rode por horas com Z-Score travado em ~0.13.
+    Mandato COO / AFC — bloqueio ativo até observabilidade mínima.
+    """
+
+    def __init__(self, window_size: int = 20, volatility_floor: float = 0.05) -> None:
+        self.z_history: deque[float] = deque(maxlen=window_size)
+        self.floor = volatility_floor
+        self.alarm_raised = False
+
+    def check_pulse(self, current_z: float) -> None:
+        self.z_history.append(abs(float(current_z)))
+
+        if len(self.z_history) == self.z_history.maxlen:
+            std_dev = float(np.std(self.z_history))
+            if std_dev < self.floor and not self.alarm_raised:
+                self.alarm_raised = True
+                raise SystemError(
+                    "CRITICAL FAILURE: VITAL_SIGNS_FLATLINE.\n"
+                    f"Z-Score stuck at ~{float(np.mean(self.z_history)):.3f} for {self.z_history.maxlen} bars.\n"
+                    "Variance has collapsed. Check Initialization or Feed."
+                )
+
+        if len(self.z_history) >= 2 and float(np.std(self.z_history)) > self.floor:
+            self.alarm_raised = False
+
 
 # PATHS: núcleo + gateway (10_mt5_* em Auditoria PARR-F)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -106,6 +138,7 @@ class OmegaLiveCycle:
         print(f"[*] CONTA: 5100***** | ALVO: {DEMO_LIMIT_BARS} barras")
         print(f"[*] LOG: {DEMO_LOG_PATH}")
 
+        vitals = VitalSignsMonitor(window_size=30, volatility_floor=0.05)
         last_bar_time = 0
 
         while self.bars_processed < DEMO_LIMIT_BARS:
@@ -136,6 +169,7 @@ class OmegaLiveCycle:
             ts_str = server_dt.isoformat()
 
             s, z, _y_h = self.motor.step(y_v, x_v)
+            vitals.check_pulse(z)
 
             side = "FLAT"
             if z >= MIN_Z_ENTRY:
