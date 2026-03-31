@@ -1,5 +1,7 @@
 # Parâmetro PSA — fechamento de fase (Conselho + técnica + instruções)
 
+**Nota:** O texto normativo deste fechamento foi **unificado** em `PARAMETRO_PSA_INSTRUCOES_CONSELHO_ATUAL.md` (Parte A). Mantém-se este ficheiro para arquivo e referência cruzada; em caso de divergência, prevalece o **livrete único**.
+
 **ID:** PARAM-PSA-FECHAMENTO-FASE-FINAL  
 **Versão:** 3.0 (substitui actualizações anteriores do livrete operacional)  
 **Data:** 31 de março de 2026  

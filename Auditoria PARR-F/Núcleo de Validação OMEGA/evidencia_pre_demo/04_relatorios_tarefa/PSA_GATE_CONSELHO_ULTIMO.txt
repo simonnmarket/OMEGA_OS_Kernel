@@ -1,10 +1,10 @@
 PSA_GATE_CONSELHO_TIER0
-timestamp_utc: 2026-03-31T21:15:09Z
+timestamp_utc: 2026-03-31T22:16:05Z
 repo_root: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper
 stress_csv: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Núcleo de Validação OMEGA\evidencia_pre_demo\02_logs_execucao\STRESS_V10_5_SWING_TRADE.csv
 
 === GIT HEAD (exit 0) ===
-3641bdf658ca63e0b15f03a243c6c5c8ce4a409e
+8f19dc99b61da874b7736abab039346e7a50edc0
 
 === audit_trade_count.py STRESS_V10_5 (exit 0) ===
 === audit_trade_count.py ===
@@ -21,14 +21,14 @@ aviso_outlier: abs_z_max muito elevado — possível artefacto numérico; para n
 criterios_opcionais: OK
 
 
-=== verify_tier0_psa.py (exit 0) ===
+=== verify_tier0_psa.py (exit 1) ===
 === verify_tier0_psa.py ===
 REPO_ROOT: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper
 MANIFEST:  C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Núcleo de Validação OMEGA\evidencia_pre_demo\03_hashes_manifestos\MANIFEST_RUN_20260329.json
 
 [1] Git HEAD vs manifest git_commit_sha
-    HEAD:             3641bdf658ca63e0b15f03a243c6c5c8ce4a409e
-    manifest:         3641bdf658ca63e0b15f03a243c6c5c8ce4a409e
+    HEAD:             8f19dc99b61da874b7736abab039346e7a50edc0
+    manifest:         8f19dc99b61da874b7736abab039346e7a50edc0
     OK: coincidem.
 
 [2] git cat-file -t <sha_manifest>
@@ -57,17 +57,21 @@ MANIFEST:  C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditor
     [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/psa_gate_conselho_tier0.py bytes=4156 sha3=11c80b6f2f070fa3...
     [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/run_psa_gate_conselho_tier0.ps1 bytes=605 sha3=ab3e417f83f33491...
     [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/ENTREGA_PSA_CONSELHO_CONSOLIDADO_FINAL.md bytes=7622 sha3=1292e74d87f24b49...
-    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt bytes=4277 sha3=968d50c70a9b4db2...
-    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/PARAMETRO_PSA_INSTRUCOES_CONSELHO_ATUAL.md bytes=7137 sha3=68c64b1d752494e1...
+    [FALHA] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt bytes=4746 sha3=68942e3db8ae3c95...
+    [FALHA] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/PARAMETRO_PSA_INSTRUCOES_CONSELHO_ATUAL.md bytes=13781 sha3=117a73413c0d3b76...
 
 [4] Gateway — opportunity_cost
     OK: encontrado `abs(y_price - (0.5 * x_price))`
 
 --- RESUMO ---
-ESTADO: OK (Tier-0 verificação automática passou)
+ESTADO: FALHA
+  - bytes Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt: esperado 4745, obtido 4746
+  - hash Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt: manifesto != disco
+  - bytes Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/PARAMETRO_PSA_INSTRUCOES_CONSELHO_ATUAL.md: esperado 13863, obtido 13781
+  - hash Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/PARAMETRO_PSA_INSTRUCOES_CONSELHO_ATUAL.md: manifesto != disco
 
 
 --- RESUMO ---
 audit_trade_count exit: 0
-verify_tier0_psa exit: 0
-GATE_GLOBAL: PASS
+verify_tier0_psa exit: 1
+GATE_GLOBAL: FAIL

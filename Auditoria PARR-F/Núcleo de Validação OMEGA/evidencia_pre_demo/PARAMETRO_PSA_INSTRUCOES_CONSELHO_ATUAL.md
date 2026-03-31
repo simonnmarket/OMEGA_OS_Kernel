@@ -1,9 +1,16 @@
-Parâmetro PSA — fechamento de fase (Conselho + técnica + instruções)
+# Livrete operacional único — PSA (OMEGA V10.5)
+
+**Documento canónico (ficheiro no disco):** `PARAMETRO_PSA_INSTRUCOES_CONSELHO_ATUAL.md`  
+**IDs lógicos:** `PARAM-PSA-FECHAMENTO-FASE-FINAL` v3.0 + `PARAM-PSA-CONSELHO-20260331-v2` (conteúdo unificado neste ficheiro).  
+**Data:** 31 de março de 2026  
+**HEAD:** não fixar SHA neste cabeçalho — usar sempre `git rev-parse HEAD` e o campo `git_commit_sha` do `MANIFEST_RUN_20260329.json` após `psa_sync_manifest_from_disk.py`.
+
+---
+
+## Parte A — Fechamento de fase (Conselho + técnica + instruções)
 
 **ID:** PARAM-PSA-FECHAMENTO-FASE-FINAL  
-**Versão:** 3.0 (substitui actualizações anteriores do livrete operacional)  
-**Data:** 31 de março de 2026  
-**Ficheiro canónico único:** `PARAMETRO_PSA_INSTRUCOES_CONSELHO_ATUAL.md` (ID interno PARAM-PSA-CONSELHO-20260331-v2) — **não** alterar o nome do ficheiro no disco; o ID lógico mantém-se.
+**Versão:** 3.0
 
 ---
 
@@ -128,15 +135,11 @@ python "Auditoria PARR-F\Núcleo de Validação OMEGA\evidencia_pre_demo\verific
 
 ---
 
-**Fim do PARAM-PSA-FECHAMENTO-FASE-FINAL**
+**Fim da Parte A (PARAM-PSA-FECHAMENTO-FASE-FINAL).**
 
-*PSA: arquivar juntamente com o último `PSA_GATE_CONSELHO_ULTIMO.txt` e `git rev-parse HEAD` da mesma sessão.*
+---
 
-=======================
-
-Parâmetro PSA — síntese Conselho (actualizado) + instruções operacionais
-
-**Encerramento de fase (análise CKO REDAUD + fechamento):** ver `PARAMETRO_PSA_FECHAMENTO_FASE_FINAL.md` (v3.0).
+## Parte B — Síntese Conselho (actualizado) + instruções operacionais
 
 **ID:** PARAM-PSA-CONSELHO-20260331-v2  
 **Data:** 31 de março de 2026  
@@ -160,7 +163,7 @@ Parâmetro PSA — síntese Conselho (actualizado) + instruções operacionais
 
 | Chave | Valor | Origem |
 |-------|--------|--------|
-| `git_head` | **Sempre** o output actual de `git rev-parse HEAD` (ex.: após unificação: `3641bdf658ca63e0b15f03a243c6c5c8ce4a409e`) | **Não** fixar um SHA no livrete após novos commits; o manifesto `git_commit_sha` deve coincidir com o HEAD do momento. |
+| `git_head` | **Sempre** o output actual de `git rev-parse HEAD` | **Não** fixar um SHA no texto após novos commits; o manifesto `git_commit_sha` deve coincidir com o HEAD do momento (após `psa_sync_manifest_from_disk.py --set-git-commit-sha-from-head`). |
 | `stress_csv` | `evidencia_pre_demo/02_logs_execucao/STRESS_V10_5_SWING_TRADE.csv` | Custódia |
 | `sha3_stress_csv` | `112b5958dfc3e9c4e157d63304f500d5cb02e07a8fe1a47f723d08027d0d36df` | `audit_trade_count.py` |
 | `linhas_stress` | 100000 | idem |
@@ -212,7 +215,7 @@ Parâmetro PSA — síntese Conselho (actualizado) + instruções operacionais
 Set-Location -LiteralPath "C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper"
 $env:NEBULAR_KUIPER_ROOT = (Get-Location).Path
 git rev-parse HEAD
-# Deve coincidir com bfbcb21752f38667c4a4bd4b736f03bf109f2fe6 se estiver no commit acordado
+# Deve coincidir com o campo git_commit_sha em MANIFEST_RUN_20260329.json (não usar SHA de memorandos antigos)
 
 python "Auditoria PARR-F\Núcleo de Validação OMEGA\evidencia_pre_demo\psa_gate_conselho_tier0.py" --out-relatorio "04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt"
 ```
@@ -275,6 +278,6 @@ Os ficheiros **não** coincidem todos nos mesmos números:
 
 ---
 
-**Fim do PARAM-PSA-CONSELHO-20260331-v2**
+**Fim da Parte B (PARAM-PSA-CONSELHO-20260331-v2).**
 
-*PSA: arquivar este ficheiro com o último `PSA_GATE_CONSELHO_ULTIMO.txt` e o output de `git rev-parse HEAD` da mesma sessão.*
+**Fim do livrete unificado.** Arquivar com `PSA_GATE_CONSELHO_ULTIMO.txt` e `git rev-parse HEAD` da mesma sessão.
