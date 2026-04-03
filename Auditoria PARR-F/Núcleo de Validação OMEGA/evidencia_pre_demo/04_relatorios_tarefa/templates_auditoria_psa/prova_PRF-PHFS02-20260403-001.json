@@ -1,0 +1,15 @@
+{
+  "proof_id": "PRF-PHFS02-20260403-001",
+  "req_id": "REQ-PHFS02-001",
+  "doc_ref": "DOC-UNICO-PSA-MESTRE-20260403 \u00a711 e \u00a715",
+  "fase": "PH-FS-02",
+  "titulo_curto": "Plano OHLCV Unificado",
+  "artefacto_obrigatorio": "CATALOGO_OHLCV_PLANO_v1.md",
+  "comando_ou_predicado": "File exists and defines Hive-style tree + ingestion_id/file_hash constraints",
+  "resultado_esperado": "exist\u00eancia do ficheiro com formata\u00e7\u00e3o e deprecia\u00e7\u00e3o explicitada",
+  "resultado_actual": "CATALOGO_OHLCV_PLANO_v1.md gerado definindo a subpasta FIN_SENSE_DATA/bronze/... e a obrigatoriedade de hashes no \u00edndice",
+  "veredito": "PASS",
+  "bloqueador": null,
+  "git_head": "2b906ec774a8fadca7fb3fc257ed3ef28746f1c5",
+  "ts_utc": "2026-04-03T17:28:00Z"
+}

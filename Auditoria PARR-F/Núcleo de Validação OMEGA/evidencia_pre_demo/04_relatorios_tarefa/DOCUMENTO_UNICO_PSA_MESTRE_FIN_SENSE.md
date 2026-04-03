@@ -1,4 +1,4 @@
-Documento único PSA — FIN-SENSE DATA MODULE, Tier-0 e roteiro completo
+# Documento único PSA — FIN-SENSE DATA MODULE, Tier-0 e roteiro completo
 
 | Campo | Valor |
 |-------|--------|
@@ -6,7 +6,7 @@ Documento único PSA — FIN-SENSE DATA MODULE, Tier-0 e roteiro completo
 | **Versão** | 1.0 |
 | **Data** | 3 de abril de 2026 |
 | **Para** | PSA (único executor; custódia de actualizações no repositório) |
-| **Função** | **Um só ficheiro** com normas, script, instruções, métricas, IDs e estado de execution — envio oficial ao PSA |
+| **Função** | **Um só ficheiro** com normas, script, instruções, métricas, IDs e estado de **execução** — envio oficial ao PSA |
 | **Substitui para envio** | Leitura conjunta de `HANDOFF_*`, `SCRIPT_EXECUCAO_*`, `SCRIPT_PSA_FASE_PH-FS-01_*` (o conteúdo essencial está **aqui**; os outros permanecem como cópias de trabalho no disco) |
 
 ---

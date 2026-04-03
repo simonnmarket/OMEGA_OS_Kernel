@@ -1,7 +1,7 @@
 {
     "run_id": "OMEGA_20260329_211905",
     "git_rev": "V10.4-SOVEREIGN-F4.2-FINAL",
-    "git_commit_sha": "5e3396d8a1f9c075ee5d3e28b2c75da034a39bfd",
+    "git_commit_sha": "92765976cf351d7fa3751065712a28c1acedd910",
     "version": "V10.4 OMNIPRESENT",
     "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
     "ts_audit": "2026-03-29T21:19:05.641018Z",
@@ -170,8 +170,8 @@
             "type": "DOCUMENT",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt",
-            "bytes": 7254,
-            "sha3_256_full": "47856df38ac4b157a18dacde69b90708bf9850389167a775e6da8f0c1f138041"
+            "bytes": 7638,
+            "sha3_256_full": "099554286faaf7b3cf06e17d913496255964c17913feaee97747b6793eeea0ab"
         },
         {
             "type": "DOCUMENT",
@@ -233,8 +233,8 @@
             "type": "DOCUMENT",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOCUMENTO_UNICO_PSA_MESTRE_FIN_SENSE.md",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOCUMENTO_UNICO_PSA_MESTRE_FIN_SENSE.md",
-            "bytes": 14922,
-            "sha3_256_full": "9603212b762049387d57605e9c75cf5332e8fb433e2206c73244d49c0ece6771"
+            "bytes": 14929,
+            "sha3_256_full": "f4eef24114979d11db8fcfc551ecbbd03d6e83bc86c97f7242b6dd96332b6952"
         },
         {
             "type": "DOCUMENT",
