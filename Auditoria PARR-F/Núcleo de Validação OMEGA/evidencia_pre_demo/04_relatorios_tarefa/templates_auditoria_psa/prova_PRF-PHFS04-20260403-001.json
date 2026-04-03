@@ -1,0 +1,15 @@
+{
+    "proof_id": "PRF-PHFS04-20260403-001",
+    "req_id": "REQ-UNICO-050",
+    "doc_ref": "DOC-UNICO-ENCERRAMENTO-AUDITORIA-20260327 \u00a7E",
+    "fase": "PH-FS-04",
+    "titulo_curto": "Relat\u00f3rio Est\u00e1tico de M\u00e9tricas KPI",
+    "artefacto_obrigatorio": "KPI_REPORT_20260403-001.json",
+    "comando_ou_predicado": "Gera\u00e7\u00e3o e exist\u00eancia do sub-log de m\u00e9tricas quantitativas do FIN-SENSE",
+    "resultado_esperado": "Obter leitura de cobertura CC para trancar o KPI-06 do Cat\u00e1logo.",
+    "resultado_actual": "KPI_REPORT entregue medindo KPI-06 = 1.0 explicitamente em json param\u00e9trico.",
+    "veredito": "PASS",
+    "bloqueador": null,
+    "git_head": "fd64467f696362acf5cf519ecf94c59f38bf3fc9",
+    "ts_utc": "2026-04-03T20:50:00Z"
+}

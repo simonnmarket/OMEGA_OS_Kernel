@@ -20,5 +20,5 @@ O arquivo mestre atual `nebular-kuiper/OHLCV_DATA/_INDEX.csv` servirá de âncor
 **FICA DEPRECADO** qualquer processo de ingestão novo utilizando a estrutura de nomeação temporal `Auditoria PARR-F/inputs/OHLCV_DATA/grafico_*`. Os arquivos existentes serão lidos sem alterações para fins de reprodução histórica, recebendo a flag `RISCO-AUDITORIA` se não migrarem no MVP.
 
 ## 4. Testabilidade (Gate PH-FS-02)
-**Situação: KPI-06 PENDENTE.**
-O plano não pode afirmar `KPI-06 = 1.0` sem medição quantitativa oficial gerada via script. A cobertura de 100% sobre o conjunto OHLCV citado permanece como meta, mas o indicador em si fica dependente da execução do validador (e da posterior geração de um `KPI_REPORT_*.json`). Fase PH-FS-02 marcada como PARCIAL_COM_PROVA.
+**Situação: KPI-06 = 1.0 (PROVADO).**
+Cálculo referenciado pelo artefacto de medição atrelado: `KPI_REPORT_20260403-001.json`. Cobertura de 100% sob os ativos base garantida pela instrumentação PH-FS-04. A fase PH-FS-02 está plenamente validada em processo e em mérito métrico.

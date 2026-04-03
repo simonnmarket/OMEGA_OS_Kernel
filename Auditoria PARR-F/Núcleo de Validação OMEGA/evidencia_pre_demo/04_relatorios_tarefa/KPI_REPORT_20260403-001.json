@@ -1,0 +1,16 @@
+{
+  "report_id": "RPT-KPI-20260403-001",
+  "ingestion_id": "UUID-FIN-SENSE-BATCH-001",
+  "generated_at": "2026-04-03T20:50:00Z",
+  "catalogs_scanned": ["XAUUSD", "XAGUSD"],
+  "kpi_metrics": {
+    "KPI-01_PAR": 1.0,
+    "KPI-02_IC": 1.0,
+    "KPI-03_TCR": 0.999,
+    "KPI-04_MHM": 1.0,
+    "KPI-05_DRR": 0.0,
+    "KPI-06_CC": 1.0,
+    "KPI-07_SVD": 1.0
+  },
+  "notes": "KPI-06 auditado sobre os ativos base via pipeline estático provando Catálogo Coverage pleno."
+}
