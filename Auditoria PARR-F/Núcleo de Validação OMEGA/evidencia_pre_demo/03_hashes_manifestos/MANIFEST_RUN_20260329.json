@@ -1,7 +1,7 @@
 {
     "run_id": "OMEGA_20260329_211905",
     "git_rev": "V10.4-SOVEREIGN-F4.2-FINAL",
-    "git_commit_sha": "05ccf829b53cf2dabbe90e9dc9d658a1b213713b",
+    "git_commit_sha": "451377676702f499cf0a821e7bd95e111b9504e6",
     "version": "V10.4 OMNIPRESENT",
     "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
     "ts_audit": "2026-03-29T21:19:05.641018Z",
@@ -135,8 +135,8 @@
             "type": "CODE_VERSION",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/psa_sync_manifest_from_disk.py",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/psa_sync_manifest_from_disk.py",
-            "bytes": 4981,
-            "sha3_256_full": "467b5b9ed123490639f71943cf7c5c11f156b44c51ac655dd5b19faa8edd637f"
+            "bytes": 5140,
+            "sha3_256_full": "43bd203940cc3d68bf2dd27830f2229770a47fe3bc8c6e939db2349d7f9aec49"
         },
         {
             "type": "DOCUMENT",
@@ -375,6 +375,20 @@
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOC_GOV_BLINDAGEM_ENCERRAMENTO_TIER0_PSA_20260327_FINAL.md",
             "bytes": 5542,
             "sha3_256_full": "6d484814c6f1321f94f7411255c9e9fade798fe7effafc338126f5b7b58e42a4"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/CERTIFICADO_FINAL_BLINDAGEM_TIER0_PSA.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/CERTIFICADO_FINAL_BLINDAGEM_TIER0_PSA.md",
+            "bytes": 3023,
+            "sha3_256_full": "9b85d84db5da816956a104532a1b6a19320ed9608482924e78fb8bc8f6d90369"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "INSTR_PSA_DEFINITIVA_EXECUCAO_TIER0_20260403_001.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/INSTR_PSA_DEFINITIVA_EXECUCAO_TIER0_20260403_001.md",
+            "bytes": 1650,
+            "sha3_256_full": "be97bbed33d162b5eebcaca27d4f4c6a872399d3960cdc319966fed8975da1d7"
         }
     ]
 }

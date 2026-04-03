@@ -1,3 +1,68 @@
+Isto é o que ficou resolvido no código e o único documento novo com ID que pediu.
+
+1. Correção definitiva (ciclo encerrado)
+Ficheiro: evidencia_pre_demo/verify_tier0_psa.py
+
+Falha (exit 1) continua a ser: ficheiros em falta, bytes/SHA3 diferentes do manifesto, git_commit_sha vazio ou inválido (não é commit Git), gateway sem a fórmula.
+HEAD ≠ git_commit_sha deixou de ser erro: passa a AVISO e mantém exit 0 desde que a secção [3] e o gateway estejam OK.
+Assim, a prova de custódia é o alinhamento byte-a-byte dos ficheiros no manifesto, não o jogo impossível “SHA dentro do ficheiro = SHA do commit que contém o ficheiro”.
+
+2. Documento com ID (instruções PSA — só este)
+Campo	Valor
+ID	INSTR-PSA-DEF-20260403-001
+Ficheiro	04_relatorios_tarefa/INSTR_PSA_DEFINITIVA_EXECUCAO_TIER0_20260403_001.md
+Contém a ordem de execução (sync → verify → gate → PRFs) e a regra de ouro em texto.
+
+3. O que o PSA faz agora (uma vez)
+git add o verify_tier0_psa.py alterado + o INSTR_…001.md (e o que mais tiverem em curso).
+git commit + push se aplicável.
+python psa_sync_manifest_from_disk.py --set-git-commit-sha-from-head (opcional, para alinhar o campo no JSON ao novo HEAD).
+python verify_tier0_psa.py → exit 0 (com ou sem AVISO no SHA, conforme o passo 3).
+Não é obrigatório meter o INSTR_… no MANIFEST para o Tier-0 passar; só precisam disso se quiserem rastreio SHA3 desse ficheiro também — aí: entrada no manifesto + sync.
+
+Com isto, o problema de fundo (ciclo infinito documento/commit/manifesto) está tratado na ferramenta, não com mais papel.
+
+==
+
+# Instruções definitivas PSA — Tier-0 (execução única)
+
+| **ID** | `INSTR-PSA-DEF-20260403-001` |
+|--------|------------------------------|
+| **Versão** | 1.0 |
+| **Efeito** | Encerra o ciclo infinito commit ↔ manifesto: **exit 0** do `verify_tier0_psa.py` baseia-se em **bytes + SHA3-256** dos ficheiros; `HEAD` ≠ `git_commit_sha` é só **AVISO**, não falha. |
+
+---
+
+## PSA — executar nesta ordem (definitivo)
+
+1. **CWD:** `Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo`
+
+2. **Sincronizar hashes e SHA de commit (quando quiserem alinhar o campo ao HEAD):**  
+   `python psa_sync_manifest_from_disk.py --set-git-commit-sha-from-head`
+
+3. **Verificar Tier-0:**  
+   `python verify_tier0_psa.py`  
+   - **Exit 0** = integridade dos ficheiros manifestados + gateway OK.  
+   - Se aparecer **AVISO** sobre `HEAD != git_commit_sha`, **não é falha** — façam commit e, se quiserem o campo alinhado, repitam o passo 2.
+
+4. **Gate:**  
+   `python psa_gate_conselho_tier0.py --out-relatorio 04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt`  
+   Se regravar o gate: passo 2 → 3 outra vez.
+
+5. **PRFs:**  
+   `python psa_refutation_checklist.py --validate <caminho/prova_PRF-….json>` por ficheiro.
+
+6. **Commit / push / tag** conforme política interna. Após cada commit que altere ficheiros no manifesto: **passo 2** (opcional para alinhar texto `git_commit_sha`) + **passo 3** (obrigatório para prova).
+
+---
+
+## Regra de ouro
+
+**Prova de custódia = secção [3] do verify (ficheiros).** O campo `git_commit_sha` no JSON é **metadado**; divergir do `HEAD` após commit **já não bloqueia** o Tier-0.
+
+**Fim.**
+==
+
 #!/usr/bin/env python3
 """
 Verificação Tier-0 — PSA (manifesto Git, ficheiros, gateway opp_cost).

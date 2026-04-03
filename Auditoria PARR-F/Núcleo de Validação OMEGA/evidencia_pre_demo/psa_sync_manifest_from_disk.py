@@ -54,6 +54,10 @@ def _resolve_path(entry: dict) -> tuple[Path, str]:
         rel = entry.get("relpath", "")
         path = (REPO_ROOT / rel.replace("/", os.sep)).resolve() if rel else Path()
         return path, name or Path(rel).name
+    rel = entry.get("relpath", "")
+    if rel:
+        path = (REPO_ROOT / rel.replace("/", os.sep)).resolve()
+        return path, name or Path(rel).name
     path = REPO_ROOT / name
     return path, name
 
