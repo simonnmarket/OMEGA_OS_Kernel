@@ -42,6 +42,7 @@
 | `DOC-SCRIPT-OPS-PH-FS-01-20260403` | PSA único executor, pastas, esquema CSV, passos 6.1–6.9, anti-conflito |
 | `STATUS-ANEXOS-CONSELHO-20260403` | Referência: anexos ausentes declarados |
 | `CERTIFICADO-CONCLUSAO-PH-FS-01` | PH-FS-01 concluída (ver §2) |
+| `DOC-OFC-PSA-PROVAS-AUD-20260403` | **Provas rastreáveis + checklist objectiva** (`DOCUMENTO_OFICIAL_PSA_PROVAS_E_AUDITORIA.md`) |
 
 ---
 
@@ -291,6 +292,7 @@ FIN_SENSE_DATA/bronze/market_data/ohlcv/symbol=<ID>/timeframe=<TF>/year=<YYYY>/m
 | Log runs | `PSA_RUN_LOG.jsonl` |
 | Certificado PH-FS-01 | `DECLARACAO_CONCLUSAO_PH_FS_01.md` |
 | Anexos | `STATUS_ANEXOS_CONSELHO.md` |
+| Provas / auditoria | `DOCUMENTO_OFICIAL_PSA_PROVAS_E_AUDITORIA.md`, `templates_auditoria_psa/`, `psa_refutation_checklist.py` |
 
 ---
 

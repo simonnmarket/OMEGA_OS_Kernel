@@ -1,0 +1,3 @@
+req_id,req_texto_ou_citacao,proof_id,veredito_agregado,ultima_actualizacao_utc,responsavel
+REQ-UNICO-001,"Existência DOCUMENTO_UNICO_PSA_MESTRE_FIN_SENSE.md",,PENDENTE,,
+REQ-UNICO-010,"INVENTARIO_FONTES_DADOS_v1.csv lacrado com 10 linhas",,PENDENTE,,

@@ -1,0 +1,15 @@
+{
+  "proof_id": "PRF-TIER0-20260403-001",
+  "req_id": "REQ-UNICO-020",
+  "doc_ref": "DOC-UNICO-PSA-MESTRE-20260403",
+  "fase": "TIER0",
+  "titulo_curto": "Ficheiro PSA_GATE_CONSELHO_ULTIMO.txt existe na pasta de relatorios",
+  "artefacto_obrigatorio": "04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt",
+  "comando_ou_predicado": "Path.exists(repo_root / artefacto_obrigatorio)",
+  "resultado_esperado": "True",
+  "resultado_actual": "True",
+  "veredito": "PASS",
+  "bloqueador": null,
+  "git_head": "2b906ec774a8fadca7fb3fc257ed3ef28746f1c5",
+  "ts_utc": "2026-04-03T12:00:00Z"
+}
