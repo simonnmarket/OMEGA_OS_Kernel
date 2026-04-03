@@ -1,4 +1,4 @@
-# Documento oficial — Fecho de auditoria Tier-0 PSA (envio ao PSA)
+Documento oficial — Fecho de auditoria Tier-0 PSA (envio ao PSA)
 
 | Campo | Valor |
 |--------|--------|
@@ -6,7 +6,7 @@
 | **Destinatário** | PSA — Núcleo de Validação / Conselho |
 | **Data do documento** | 2026-03-27 |
 | **Repositório** | `nebular-kuiper` (raiz lógica de trabalho) |
-| **HEAD Git (evidência de execução)** | `31e913c204817a94bc45b0fc1e8d71e6ce15e917` |
+| **HEAD Git (evidência de execução)** | `8a3fbcb589ea1f65880208118cdc07d8f9272662` |
 
 ---
 
@@ -106,7 +106,7 @@ Cada passo deve ser **executado na raiz do repositório** `nebular-kuiper` (ou c
 | `verify_tier0_psa.py` | exit 0 | **PASS** |
 | `psa_gate_conselho_tier0.py` | `GATE_GLOBAL: PASS` | **PASS** |
 | PRFs PHFS02/03/04 | `psa_refutation_checklist.py --validate` | **PASS** (cada uma) |
-| Manifesto | `git_commit_sha` = `git rev-parse HEAD` | **PASS** (`31e913c…`) |
+| Manifesto | `git_commit_sha` = `git rev-parse HEAD` | **PASS** (`8a3fbcb…`) |
 
 ---
 

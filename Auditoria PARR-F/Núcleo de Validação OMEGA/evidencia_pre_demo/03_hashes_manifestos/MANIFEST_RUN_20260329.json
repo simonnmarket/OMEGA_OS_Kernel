@@ -1,7 +1,7 @@
 {
     "run_id": "OMEGA_20260329_211905",
     "git_rev": "V10.4-SOVEREIGN-F4.2-FINAL",
-    "git_commit_sha": "a2ace131faa797000ad904162cc296bf1c9a7e94",
+    "git_commit_sha": "8a3fbcb589ea1f65880208118cdc07d8f9272662",
     "version": "V10.4 OMNIPRESENT",
     "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
     "ts_audit": "2026-03-29T21:19:05.641018Z",
@@ -170,8 +170,8 @@
             "type": "DOCUMENT",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt",
-            "bytes": 9095,
-            "sha3_256_full": "5bad45b58b25f3a09c0ff9136eed7ae8bc8d52fb524ad1a7ba98a2fd0889c704"
+            "bytes": 9478,
+            "sha3_256_full": "c5b994ba327404121d6791ae3ac3a0b1e5978b5372d69a562be5268836e211ce"
         },
         {
             "type": "DOCUMENT",
@@ -354,6 +354,20 @@
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOCUMENTO_FINAL_EXECUCAO_E_CORRECOES_FASE_PH_TR01.md",
             "bytes": 10873,
             "sha3_256_full": "9c090e64238c63cf6b464e7314da848e2871b3b5f5a90aeb7b2ea1042b8c639c"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "DOCUMENTO_OFICIAL_PSA_MANDATO_EXECUCAO_PERMANENTE_E_ENCERRAMENTO_CEO.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOCUMENTO_OFICIAL_PSA_MANDATO_EXECUCAO_PERMANENTE_E_ENCERRAMENTO_CEO.md",
+            "bytes": 0,
+            "sha3_256_full": ""
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "DOCUMENTO_OFC_CEO_FECHO_AUDITORIA_PSA.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOCUMENTO_OFC_CEO_FECHO_AUDITORIA_PSA.md",
+            "bytes": 0,
+            "sha3_256_full": ""
         }
     ]
 }

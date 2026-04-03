@@ -1,9 +1,9 @@
-Diretriz subsequente — Após PH-TR-01 (roteiro FIN-SENSE / PSA)
+# Diretriz subsequente — Após PH-TR-01 (roteiro FIN-SENSE / PSA)
 
 | Campo | Valor |
 |-------|--------|
 | **Doc-ID** | `DOC-DIRETRIZ-POS-PH-TR01-20260327` |
-| **Versão** | 1.0 |
+| **Versão** | 1.1 |
 | **Tipo** | Ordem de continuidade pós-transição Tier-0 |
 | **Precedência** | Complementa `DOC-UNICO-ENCERRAMENTO-AUDITORIA-20260327` v2.0 e `DOC-FINAL-EXEC-PH-TR01-20260327` |
 
@@ -74,10 +74,23 @@ Entregar pasta **`04_relatorios_tarefa`** (ou ZIP) com **mínimo**:
 
 ---
 
-## 7. Fecho
+## 7. Fecho (v1.0)
 
-A **diretriz subsequente** imediata é: **executar PH-PS-01** + **pacote Conselho** + **garantir coerência gate/manifesto**; depois, **cadência** de gate em cada alteração relevante.
+A **diretriz subsequente** imediata era: **executar PH-PS-01** + **pacote Conselho** + **garantir coerência gate/manifesto**; depois, **cadência** de gate em cada alteração relevante.
 
 ---
 
-*Fim — `DOC-DIRETRIZ-POS-PH-TR01-20260327` v1.0*
+## 8. Actualização v1.1 — PH-PS-01 **cumprido** (evidência)
+
+| Verificação | Estado |
+|-------------|--------|
+| `RPT-PILOTO-ADMINISTRACAO-20260403-001.md` | Presente (`Doc-ID` no cabeçalho) |
+| Matriz | Linha `SOL-20260403-004` / `TAR-PHPS01-001` / `DEC-20260403-004` |
+| `PSA_RUN_LOG.jsonl` | `phase_complete` **PH-PS-01** com artefacto do relatório |
+| Tag Git | `fin-sense-mvp-audit-20260403` → commit **`31e913c…`** (mensagem PH-PS-01) |
+
+**Próximo documento operacional:** `DOCUMENTO_ORIENTACAO_EXPORTACAO_E ENGENHARIA_POS_PS01.md` (`DOC-ORIENT-POS-PS01-20260327`).
+
+---
+
+*Fim — `DOC-DIRETRIZ-POS-PH-TR01-20260327` v1.1*
