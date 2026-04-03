@@ -1,18 +1,4 @@
-Segue o que ficou criado e como usar.
-
-Documento único (ID oficial)
-Campo	Valor
-ID	RUNBOOK-OMEGA-PEND-20260403-001
-Ficheiro	DOC_RUNBOOK_FECHO_PENDENCIAS_OPERACIONAIS_OMEGA_20260403_001.md
-Local	nebular-kuiper/Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/
-O que o documento faz
-Secção 1 — Incorpora o vosso critério: módulo validado por testes; o que vem depois trata-se de variáveis operacionais / estado do repo, salvo falha objectiva (hash, exit code, contrato).
-Secções P1–P7 — Cada linha da tabela de pendências virou ação + comandos + critério de fecho (submódulos, push, sync/AVISO, gate/PRFs, narrativa de métricas, manifesto, ambiente).
-Ordem única — Sequência recomendada numa só passagem.
-Script PowerShell — Bloco único (com $REPO_ROOT a editar) para sync → verify → gate → sync → verify + git status.
-Definição de “fechado” — Condições C1–C5 para o PSA poder fechar sem reabrir estes pontos.
-
-Runbook único — Fecho de pendências operacionais OMEGA / PSA Tier-0
+# Runbook único — Fecho de pendências operacionais OMEGA / PSA Tier-0
 
 | **ID do documento** | `RUNBOOK-OMEGA-PEND-20260403-001` |
 |---------------------|-----------------------------------|
