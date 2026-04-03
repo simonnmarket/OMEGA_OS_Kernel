@@ -1,4 +1,4 @@
-# Documento único PSA — FIN-SENSE DATA MODULE, Tier-0 e roteiro completo
+Documento único PSA — FIN-SENSE DATA MODULE, Tier-0 e roteiro completo
 
 | Campo | Valor |
 |-------|--------|
@@ -6,7 +6,7 @@
 | **Versão** | 1.0 |
 | **Data** | 3 de abril de 2026 |
 | **Para** | PSA (único executor; custódia de actualizações no repositório) |
-| **Função** | **Um só ficheiro** com normas, script, instruções, métricas, IDs e estado de execução — envio oficial ao PSA |
+| **Função** | **Um só ficheiro** com normas, script, instruções, métricas, IDs e estado de execution — envio oficial ao PSA |
 | **Substitui para envio** | Leitura conjunta de `HANDOFF_*`, `SCRIPT_EXECUCAO_*`, `SCRIPT_PSA_FASE_PH-FS-01_*` (o conteúdo essencial está **aqui**; os outros permanecem como cópias de trabalho no disco) |
 
 ---
@@ -43,6 +43,7 @@
 | `STATUS-ANEXOS-CONSELHO-20260403` | Referência: anexos ausentes declarados |
 | `CERTIFICADO-CONCLUSAO-PH-FS-01` | PH-FS-01 concluída (ver §2) |
 | `DOC-OFC-PSA-PROVAS-AUD-20260403` | **Provas rastreáveis + checklist objectiva** (`DOCUMENTO_OFICIAL_PSA_PROVAS_E_AUDITORIA.md`) |
+| `DOC-OFC-MODELO-TAR-20260403` | **Solicitação vs tarefa vs veredito** (`DOCUMENTO_OFICIAL_MODELO_SOLICITACAO_APROVACAO_TAREFA.md`) + `MATRIZ_SOL_TAR_REQ_PRF_DEC_TEMPLATE.csv` |
 
 ---
 
@@ -293,6 +294,7 @@ FIN_SENSE_DATA/bronze/market_data/ohlcv/symbol=<ID>/timeframe=<TF>/year=<YYYY>/m
 | Certificado PH-FS-01 | `DECLARACAO_CONCLUSAO_PH_FS_01.md` |
 | Anexos | `STATUS_ANEXOS_CONSELHO.md` |
 | Provas / auditoria | `DOCUMENTO_OFICIAL_PSA_PROVAS_E_AUDITORIA.md`, `templates_auditoria_psa/`, `psa_refutation_checklist.py` |
+| Modelo SOL/TAR/DEC | `DOCUMENTO_OFICIAL_MODELO_SOLICITACAO_APROVACAO_TAREFA.md`, `MATRIZ_SOL_TAR_REQ_PRF_DEC_TEMPLATE.csv` |
 
 ---
 

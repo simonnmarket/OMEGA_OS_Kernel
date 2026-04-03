@@ -1,0 +1,2 @@
+sol_id,tar_id,fase_roteiro,descricao_solicitacao,req_id,proof_id,veredito_tarefa,dec_id,git_head,ts_utc_decisao,responsavel,notas
+SOL-20260403-001,TAR-PHFS02-001,PH-FS-02,"Implementar plano de catálogo OHLCV unificado (CATALOGO_OHLCV_PLANO_v1.md)",REQ-PHFS02-001,,PENDENTE,,,,"PSA","Preencher proof_id após PRF; dec_id após DEC"
