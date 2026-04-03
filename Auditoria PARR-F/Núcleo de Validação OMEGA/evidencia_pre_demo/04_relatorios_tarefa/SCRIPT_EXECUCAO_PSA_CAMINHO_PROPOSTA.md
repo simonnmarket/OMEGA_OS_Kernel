@@ -6,6 +6,7 @@
 | **Para** | PSA — desenvolvimento e execução |
 | **Função** | Apresentar **só** o **roteiro sequencial** da proposta; normas completas, IDs e KPIs estão em `HANDOFF_PSA_INSTRUCOES_FINAIS_20260403.md` (`DOC-HANDOFF-PSA-20260403-UNIFIED`) |
 | **Diretriz tática** | **Principal processual** para a nova camada de dados centrais (acto CEO — adopção oficial) |
+| **Pacote único (envio PSA)** | `DOCUMENTO_UNICO_PSA_MESTRE_FIN_SENSE.md` (`DOC-UNICO-PSA-MESTRE-20260403`) — normas + script + instruções + métricas |
 
 ---
 
@@ -23,6 +24,23 @@
 **Decisão:** Fase 0 **fecha com luz verde**. **Autorização imediata** para iniciar **PH-FS-01** (Inventário de fontes de dados).
 
 **Nota de auditoria:** a ausência sistémica dos três espelhos textuais **não** bloqueia PH-FS-01; no `INVENTARIO_FONTES_DADOS_v1.*`, onde um relatório depender de especificação ainda não anexada, usar marcação `PENDENTE-CTO` ou `RISCO-AUDITORIA` conforme gate da fase (nunca omitir a dependência).
+
+---
+
+## Registo de execução — PH-FS-01 (CONCLUÍDA)
+
+**Data de encerramento:** 3 de abril de 2026  
+**Run de referência:** `PS-20260403-PH-FS-01-593fe79`  
+**Certificado ao Conselho:** `DECLARACAO_CONCLUSAO_PH_FS_01.md` (`CERTIFICADO-CONCLUSAO-PH-FS-01`)
+
+| # | Entrega | Evidência | Estado |
+|---|---------|-----------|--------|
+| **PH-FS-01.a** | Inventário v1 lacrado | `INVENTARIO_FONTES_DADOS_v1.csv` (10 linhas) | OK |
+| **PH-FS-01.b** | Log append-only | `PSA_RUN_LOG.jsonl` (`start_phase`, `file_saved`, `phase_complete`) | OK |
+| **PH-FS-01.c** | Declaração / custódia | `DECLARACAO_CONCLUSAO_PH_FS_01.md` | OK |
+| **PH-FS-01.d** | Tier-0 | `PSA_GATE_CONSELHO_ULTIMO.txt` (última passagem) | OK (ver nota HEAD no certificado) |
+
+**Decisão:** **Luz verde** para iniciar **PH-FS-02** (catálogo OHLCV unificado).
 
 ---
 

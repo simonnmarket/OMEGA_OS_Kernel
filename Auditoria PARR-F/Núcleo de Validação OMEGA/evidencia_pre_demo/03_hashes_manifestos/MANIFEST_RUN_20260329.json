@@ -1,7 +1,7 @@
 {
     "run_id": "OMEGA_20260329_211905",
     "git_rev": "V10.4-SOVEREIGN-F4.2-FINAL",
-    "git_commit_sha": "593fe7938abe058af8779745bbb55f2209586391",
+    "git_commit_sha": "2b906ec774a8fadca7fb3fc257ed3ef28746f1c5",
     "version": "V10.4 OMNIPRESENT",
     "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
     "ts_audit": "2026-03-29T21:19:05.641018Z",
@@ -170,8 +170,8 @@
             "type": "DOCUMENT",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt",
-            "bytes": 4899,
-            "sha3_256_full": "13cea560b5b3bf24fe7643d8d2eaea5e7573efcf3126f3729df119b202e27db9"
+            "bytes": 5868,
+            "sha3_256_full": "830f5e817600fbec4aab3d2d3c6f234cd41e70641e6096343a5b14cced9bbd0c"
         },
         {
             "type": "DOCUMENT",
@@ -219,15 +219,22 @@
             "type": "DOCUMENT",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_RUN_LOG.jsonl",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_RUN_LOG.jsonl",
-            "bytes": 834,
-            "sha3_256_full": "a6b86e874422cba23bdf5e95512233d146510c9ff0ff7efb3d0426d8db39a9a2"
+            "bytes": 1707,
+            "sha3_256_full": "fd62a2fda14b58fcc95086958395a0acc15b4e94ad60372e6072f7d133e5b847"
         },
         {
             "type": "DOCUMENT",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/ph_fs01/README.md",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/ph_fs01/README.md",
-            "bytes": 104,
-            "sha3_256_full": "f2fe7590c1f19d4f65b47be892116e590d897fb2b13d0fd57b4e937e55377b89"
+            "bytes": 321,
+            "sha3_256_full": "67542c26fcbc9f34ebc6bd596d0b6fde67835196c7d4e2bc7649ab4d6d6e3457"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOCUMENTO_UNICO_PSA_MESTRE_FIN_SENSE.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOCUMENTO_UNICO_PSA_MESTRE_FIN_SENSE.md",
+            "bytes": 14658,
+            "sha3_256_full": "71571dd81287096b42cedc9492e78da1768a0f520f05106808857bc457b05902"
         }
     ]
 }

@@ -10,7 +10,8 @@
 | **Estado** | **EXECUTÁVEL** — instruções objectivas com parâmetros, métricas auditáveis e catálogo de IDs |
 | **Envio** | Transmitir **integralmente** ao PSA; manter `DOC-ID` em todas as comunicações derivadas |
 
-**Relacionado:** `HANDOFF_PSA_INSTRUCOES_FINAIS_20260401.md` (histórico apenas). **Roteiro só de tarefas (caminho):** `SCRIPT_EXECUCAO_PSA_CAMINHO_PROPOSTA.md` (`DOC-SCRIPT-EXEC-PSA-20260327`).
+**Relacionado:** `HANDOFF_PSA_INSTRUCOES_FINAIS_20260401.md` (histórico apenas). **Roteiro só de tarefas (caminho):** `SCRIPT_EXECUCAO_PSA_CAMINHO_PROPOSTA.md` (`DOC-SCRIPT-EXEC-PSA-20260327`).  
+**Documento único para envio ao PSA (tudo consolidado):** `DOCUMENTO_UNICO_PSA_MESTRE_FIN_SENSE.md` (`DOC-UNICO-PSA-MESTRE-20260403`).
 
 ---
 
