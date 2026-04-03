@@ -1,0 +1,15 @@
+{
+  "proof_id": "PRF-PHFS03-20260403-001",
+  "req_id": "REQ-UNICO-040",
+  "doc_ref": "DOC-OFC-ENVIO-PSA-20260327 \u00a73 Passo 2",
+  "fase": "PH-FS-03",
+  "titulo_curto": "Mapeamento DEMO LOG para TBL ORDERS e EXECUTIONS",
+  "artefacto_obrigatorio": "MAP-DEMO-TBL_v1.md",
+  "comando_ou_predicado": "Verificar presen\u00e7a de mapeamento campo-a-campo garantindo de-normaliza\u00e7\u00e3o e campos ingestion_id",
+  "resultado_esperado": "Objeto MD cobrindo TBL_ORDERS e TBL_EXECUTIONS no formato FIN-SENSE MVP",
+  "resultado_actual": "MAP-DEMO-TBL_v1.md gerado definindo mapeamento exato com deriva\u00e7\u00e3o de IDs via Hash e FKs isolando Ordens de Execu\u00e7\u00f5es.",
+  "veredito": "PASS",
+  "bloqueador": null,
+  "git_head": "c3ea3be41d5e3f538e14afb3eb1b78ad9fa4b045",
+  "ts_utc": "2026-04-03T20:34:00Z"
+}

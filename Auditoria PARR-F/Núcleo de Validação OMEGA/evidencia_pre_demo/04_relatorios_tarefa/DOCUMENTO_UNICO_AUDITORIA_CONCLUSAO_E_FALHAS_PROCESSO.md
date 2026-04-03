@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | **Doc-ID** | `DOC-AUD-CONCLUSAO-PROCESSO-20260403` |
-| **Versão** | 1.1 |
+| **Versão** | 1.2 |
 | **Tipo** | Auditoria **objectiva** — distingue **prova** de **reconfirmação narrativa** |
 | **Auditor** | Núcleo de Validação OMEGA (gerado com verificação de artefactos no disco) |
 | **Para** | PSA — **executar** instruções §7 antes de avançar fases |
@@ -30,14 +30,15 @@
 | Verificação | Resultado | Evidência |
 |-------------|-----------|-----------|
 | `INVENTARIO_FONTES_DADOS_v1.csv` existe | **SIM** | ≥10 linhas de dados (INV-001…010) |
-| `PSA_RUN_LOG.jsonl` | **SIM** | ≥6 linhas JSON; inclui `audit_record` → `DOC-AUD-CONCLUSAO-PROCESSO-20260403` |
-| `CATALOGO_OHLCV_PLANO_v1.md` | **SIM** | Ficheiro presente (PH-FS-02) |
+| `PSA_RUN_LOG.jsonl` | **SIM** | ≥8 linhas JSON; inclui `audit_record` v1.1/v1.2 e **`head_reconciled_post_commit`** com `canonical_head` **`c3ea3be…`** |
+| `CATALOGO_OHLCV_PLANO_v1.md` | **SIM** | §4 declara **KPI-06 PENDENTE** (não afirma 1,0 medido) — **F4** formal no plano |
 | `prova_PRF-PHFS02-20260403-001.json` | **CORRIGIDO → PASS** | Inicialmente `REQ-PHFS02-001` era **inválido** para o regex do validador; após **`REQ-UNICO-030`**, `--validate` → **exit 0** |
 | `_INDEX.csv` com colunas `ingestion_id`, `file_hash` | **NÃO VERIFICADO** | Plano **declara** obrigatoriedade; **não** há prova de ficheiro `_INDEX` já migrado neste audit |
-| `PSA_GATE_CONSELHO_ULTIMO.txt` HEAD | **27a6d0b7fc515dedc1d4caab8c4b8bc4af3c3f8f** | Lido em 2026-04-03 (timestamp ficheiro `17:30:35Z`); **≠** vários `git_head` em PRFs/logs anteriores |
+| `git rev-parse HEAD` (repo) | **`c3ea3befa954b6ca41b1422317e4e277a0f533d1`** | Verificado por comando; alinhado a linha `head_reconciled_post_commit` no `PSA_RUN_LOG.jsonl` |
+| `PSA_GATE_CONSELHO_ULTIMO.txt` HEAD (snapshot ficheiro) | **6a746b53b62e4d366ed741c9ec4dc27930327359** | **Desalinhado** do HEAD actual — **reexecutar** gate após commits para actualizar o ficheiro; `verify_tier0` pode falhar por artefactos em falta (ex.: `prova_TEMPLATE_PREENCHER.json`) |
 | `MATRIZ_SOL_TAR_REQ_PRF_DEC_TEMPLATE.csv` | **PARCIAL** | Linha PH-FS-02 com `proof_id` e `DEC-*`; **`req_id`** deve coincidir com a PRF (**`REQ-UNICO-030`**) |
 
-**Conclusão imediata:** existe **prova escrita** de trabalho (inventário, log, plano); **F2** (formato `req_id`) foi **corrigido** — `--validate` na PRF **PASS**. Persistem **deriva de HEAD** entre artefactos e **KPI-06 não medido** (F4).
+**Conclusão imediata:** **F2** fechado (PRF `--validate` PASS). **F4** (narrativa 1,0) **neutralizado no plano:** §4 do catálogo fixa **KPI-06 PENDENTE** até `KPI_REPORT`. **F3:** linha **`head_reconciled_post_commit`** registada no log com **`c3ea3be…`** (prova objectiva acrescentada na v1.2 onde faltava). **Risco residual:** `PSA_GATE_ULTIMO.txt` e HEAD de PRFs antigas **não** coincidem todos com o HEAD actual — esperado até novo gate limpo; não confundir “HEAD no log” com “gate PASS”.
 
 ---
 
@@ -49,7 +50,7 @@
 |------|---------------|-----------------------------------|----------|
 | **0** | **CONCLUÍDO_COM_PROVA** | `STATUS_ANEXOS_CONSELHO.md` | Presente |
 | **PH-FS-01** | **CONCLUÍDO_COM_PROVA** | CSV inventário + `PSA_RUN_LOG` + certificado | Ficheiros presentes; **nota:** paths no inventário são **parciais** (ex. `01_raw_mt5/...`) — ficheiros existem sob `evidencia_pre_demo/01_raw_mt5/` mas **não** batem certo com path relativo único sem convenção explícita → **risco de rastreio** |
-| **PH-FS-02** | **PARCIAL_COM_PROVA** | `CATALOGO_OHLCV_PLANO_v1.md` + gate KPI-06 **testável** | Plano **existe**; **KPI-06 = 1.0** no texto do plano é **afirmação**, não medição — **não** prova até existir `KPI_REPORT` ou script que calcule CC sobre conjunto S vs C; PRF JSON **`PASS`** em `--validate` (após `REQ-UNICO-030`) |
+| **PH-FS-02** | **PARCIAL_COM_PROVA** | `CATALOGO_OHLCV_PLANO_v1.md` + KPI-06 **testável** ou **PENDENTE** explícito | Plano **existe**; §4 **declara KPI-06 PENDENTE** (sem afirmação 1,0); **medição** continua **pendente** até `KPI_REPORT`; PRF JSON **`PASS`** (`REQ-UNICO-030`) |
 | **PH-FS-03** | **NÃO_EXECUTADO** | `MAP-DEMO-TBL_v1.md` | Ausente (não encontrado) |
 | **PH-FS-04** | **NÃO_EXECUTADO** | `run_kpi_batch.py` + `KPI_REPORT_*.json` | Script checklist existe; batch KPI **não** entregue |
 | **PH-TR-01** | **PARCIAL** | Gate + verify OK **no âmbito** | `PSA_GATE` presente; reexecutar após cada alteração |
@@ -82,7 +83,7 @@
 |----|--------------|--------|-------|-------|
 | CP-FS02-01 | Plano MD existe | CONCLUÍDO_COM_PROVA | `CATALOGO_OHLCV_PLANO_v1.md` | — |
 | CP-FS02-02 | PRF JSON válido pelo script | **CONCLUÍDO_COM_PROVA** (após correção) | `--validate` → **PASS** com `REQ-UNICO-030` | Alinhar `MATRIZ_*` ao mesmo `req_id` |
-| CP-FS02-03 | KPI-06 medido (não só afirmado) | PENDENTE | Sem `KPI_REPORT` | **Falha de rigor** no texto do plano |
+| CP-FS02-03 | KPI-06 medido **ou** PENDENTE formal | **PARCIAL_COM_PROVA** | Plano §4: **KPI-06 PENDENTE**; medição numérica **ainda** sem `KPI_REPORT` | — |
 
 ### D. Provas REQ/PRF (regime anti-subjetividade)
 
@@ -99,8 +100,8 @@
 |---|----------|----------------|------------------------|
 | **F1** | Reconfirmações em vez de provas | Documentos descrevem o que “deveria” estar feito | Exigir **PRF PASS** + artefacto antes de “concluído” |
 | **F2** | `req_id` inválido no JSON | Formato `REQ-PHFS02-001` **não** compatível com regex `REQ-[A-Z]+-\\d{3}` (dígitos no meio) | **Aplicado:** `REQ-UNICO-030` — validador **PASS** |
-| **F3** | HEAD múltiplos | Commits entre geração de artefactos | Registar **sempre** `git rev-parse HEAD` no momento da prova; linha `head_reconciled` |
-| **F4** | KPI-06 “1.0” no plano | Confundiu **desenho** com **medição** | Calcular CC ou marcar **PENDENTE** até haver `KPI_REPORT` |
+| **F3** | HEAD múltiplos | Commits entre geração de artefactos | **Registo** `head_reconciled_post_commit` → **`c3ea3be…`** no `PSA_RUN_LOG.jsonl`; **reexecutar** `PSA_GATE` para alinhar ficheiro gate ao HEAD |
+| **F4** | KPI-06 “1.0” no plano | Confundiu **desenho** com **medição** | **Mitigado:** §4 catálogo = **PENDENTE** até `KPI_REPORT` |
 | **F5** | Matriz SOL/TAR estagnada | `proof_id`/`dec_id` vazios | Preencher após PRF válido e decisão |
 
 ---
@@ -111,13 +112,13 @@
 
 2. **Opcional:** alargar o validador para aceitar `REQ-PHFS02-001` (mudança de código = novo commit + PRF a referir o commit).
 
-3. **Não** declarar PH-FS-02 **fechada em todos os gates** até: (a) ~~PRF válido~~ **OK**; (b) `KPI_REPORT` com CC **ou** plano/matriz com **PENDENTE** explícito para KPI-06 nas `notas`.
+3. **Não** declarar PH-FS-02 **CONCLUÍDA** (100 %) até: ~~PRF válido~~ **OK**; ~~plano com KPI-06 explícito~~ **OK** (§4 **PENDENTE**); **ainda** falta **valor** de CC em `KPI_REPORT` para fecho métrico.
 
-4. ~~**Actualizar** matriz com `proof_id`~~ — **feito**; manter **`req_id`** idêntico ao JSON da PRF.
+4. ~~**Actualizar** matriz com `proof_id`~~ — **feito**; notas actualizadas (F3/F4).
 
-5. ~~**Registar** `audit_record` no `PSA_RUN_LOG.jsonl`~~ — ver linha acrescentada com `doc_id` **`DOC-AUD-CONCLUSAO-PROCESSO-20260403`**.
+5. ~~**Registar** `audit_record` + **`head_reconciled_post_commit`**~~ — **feito** v1.2 (linhas com `c3ea3be…`).
 
-6. **Próxima fase executável:** completar **PH-FS-02** (provas) **ou** formalizar **PARCIAL** com **DEC-*** — só então **PH-FS-03**.
+6. **Próxima fase executável:** emitir **SOL/TAR** para **PH-FS-03** (`MAP-DEMO-TBL_v1.md`) + **PRF** nova + `--validate`; **opcional:** corrigir ficheiros em falta no manifesto e **reexecutar** gate para alinhar `PSA_GATE_CONSELHO_ULTIMO.txt` ao HEAD.
 
 ---
 
@@ -127,17 +128,17 @@
 |----------|-----------|
 | **Documentação normativa** | Gerada e presente — **PROVA OK** |
 | **PH-FS-01** | **CONCLUÍDO_COM_PROVA** (com ressalva de paths) |
-| **PH-FS-02** | **PARCIAL** — plano existe; **PRF válida** (`--validate` PASS); **KPI-06 não medido** |
+| **PH-FS-02** | **PARCIAL** — plano + §4 **KPI-06 PENDENTE**; **PRF válida**; **KPI_REPORT** ainda não protocolado |
 | **Fases PH-FS-03+** | **NÃO_EXECUTADO** |
 | **Processo SOL/TAR/DEC** | **PARCIAL** (linha PH-FS-02 preenchida; outras fases sem linhas) |
-| **Risco global** | Avançar para PH-FS-03 **sem** fechar provas PH-FS-02 = **repetição do erro F1** |
+| **Risco global** | PH-FS-03 exige **nova PRF** + entrada na matriz; não avançar só com narrativa |
 
 ---
 
 ## 8. Fecho
 
-Este documento **não** “reprova” o trabalho global — **localiza** falhas **verificáveis** na cadeia **prova → validador → decisão**. **F2** está **fechado** com validação automática. Próximo passo **obrigatório:** **F4** (KPI-06 medido ou **PENDENTE** formal), reconciliação explícita de **HEAD** (F3), depois **PH-FS-03** com PRF própria.
+Este documento **não** “reprova” o trabalho global — **localiza** falhas **verificáveis** na cadeia **prova → validador → decisão**. **F2** fechado; **F4** mitigado no **texto** do plano (§4); **F3** com linha de log **`c3ea3be…`**. Próximo passo: **PH-FS-03** com **TAR + PRF**; **opcional** alinhar **PSA_GATE** ao HEAD e corrigir lacunas do manifesto.
 
 ---
 
-*Fim — `DOC-AUD-CONCLUSAO-PROCESSO-20260403` — v1.1: PRF `--validate` PASS; matriz `req_id` alinhado; `audit_record` em `PSA_RUN_LOG.jsonl`.*
+*Fim — `DOC-AUD-CONCLUSAO-PROCESSO-20260403` — v1.2: catálogo §4 KPI-06 PENDENTE; `PSA_RUN_LOG` com `head_reconciled_post_commit` + `audit_record` v1.2; notas matriz.*
