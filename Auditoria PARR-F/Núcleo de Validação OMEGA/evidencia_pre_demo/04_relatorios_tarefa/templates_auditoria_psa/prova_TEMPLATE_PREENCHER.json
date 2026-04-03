@@ -1,0 +1,15 @@
+{
+  "proof_id": "PRF-TEMPLATE-20260403-001",
+  "req_id": "REQ-TPL-001",
+  "doc_ref": "DOC-TEMPLATE-PREENCHER-ANTES-PRF",
+  "fase": "TIER0",
+  "titulo_curto": "TEMPLATE — copiar, preencher campos e renomear para prova_PRF-XXXX-YYYYMMDD-NNN.json antes da submissão PSA",
+  "artefacto_obrigatorio": "(caminho relativo ao repositório do artefacto verificado)",
+  "comando_ou_predicado": "(predicado ou comando reprodutível)",
+  "resultado_esperado": "(valor esperado)",
+  "resultado_actual": "(valor observado na execução)",
+  "veredito": "FAIL",
+  "bloqueador": "Ficheiro modelo: substituir placeholders e alterar veredito para PASS apenas após evidência técnica válida.",
+  "git_head": "31e913c204817a94bc45b0fc1e8d71e6ce15e917",
+  "ts_utc": "2026-04-03T12:00:00Z"
+}

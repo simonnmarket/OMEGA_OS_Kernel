@@ -1,7 +1,7 @@
 {
     "run_id": "OMEGA_20260329_211905",
     "git_rev": "V10.4-SOVEREIGN-F4.2-FINAL",
-    "git_commit_sha": "879554f72d74c0997b154f545caaf64b119d4fac",
+    "git_commit_sha": "31e913c204817a94bc45b0fc1e8d71e6ce15e917",
     "version": "V10.4 OMNIPRESENT",
     "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
     "ts_audit": "2026-03-29T21:19:05.641018Z",
@@ -170,8 +170,8 @@
             "type": "DOCUMENT",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt",
-            "bytes": 9063,
-            "sha3_256_full": "6e624856c9274c6f0d240e42d23357584a6c99973b2751ef7448b6f0e42e5c59"
+            "bytes": 9095,
+            "sha3_256_full": "5bad45b58b25f3a09c0ff9136eed7ae8bc8d52fb524ad1a7ba98a2fd0889c704"
         },
         {
             "type": "DOCUMENT",
@@ -268,8 +268,8 @@
             "type": "DOCUMENT",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/templates_auditoria_psa/prova_TEMPLATE_PREENCHER.json",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/templates_auditoria_psa/prova_TEMPLATE_PREENCHER.json",
-            "bytes": 0,
-            "sha3_256_full": ""
+            "bytes": 791,
+            "sha3_256_full": "6dbb0b166824000f0ce6d165a6102d51d9266b35aaf159adc24aa0e829f1b6dd"
         },
         {
             "type": "DOCUMENT",
@@ -289,8 +289,8 @@
             "type": "DOCUMENT",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/templates_auditoria_psa/MATRIZ_SOL_TAR_REQ_PRF_DEC_TEMPLATE.csv",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/templates_auditoria_psa/MATRIZ_SOL_TAR_REQ_PRF_DEC_TEMPLATE.csv",
-            "bytes": 1305,
-            "sha3_256_full": "fd2d6381e973071847963d333e23c25e13c9b21ddece42e2045aefc1581d06fa"
+            "bytes": 1327,
+            "sha3_256_full": "c561cf67e8a9a175fe2c4b29eaa133c5d2ac741e6b15df9f6324e39be59c2149"
         },
         {
             "type": "DOCUMENT",
