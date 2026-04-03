@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | **Doc-ID** | `DOC-FINAL-EXEC-PH-TR01-20260327` |
-| **Versão** | 1.0 |
+| **Versão** | 1.1 |
 | **Tipo** | Pacote **executável** — PSA / equipa técnica |
 | **Fase alvo** | **PH-TR-01** (transição Tier-0, gate, prontidão para Conselho) **após** conclusão **PH-FS-01…PH-FS-04** |
 | **Normas** | `DOC-UNICO-ENCERRAMENTO-AUDITORIA-20260327` v2.0 · `DOC-UNICO-PSA-MESTRE-20260403` · `DOC-OFC-PSA-PROVAS-AUD-20260403` |
@@ -173,4 +173,11 @@ Este documento é o **pacote único de execução** para a fase **PH-TR-01**: sc
 
 ---
 
-*Fim — `DOC-FINAL-EXEC-PH-TR01-20260327` v1.0*
+## 10. Pós-execução — diretriz subsequente
+
+- **Documento oficial:** `DOCUMENTO_DIRETRIZ_SUBSEQUENTE_POS_PH_TR01.md` (`DOC-DIRETRIZ-POS-PH-TR01-20260327`) — fase **PH-PS-01**, pacote Conselho, cadência de gate.
+- **Nota de coerência:** o último `PSA_GATE_CONSELHO_ULTIMO.txt` gravado no disco deve reflectir **`GATE_GLOBAL: PASS`** e `verify_tier0_psa exit: 0`; se ainda constar **FALHA** por ficheiro em falta no manifesto, aplicar §5 deste documento e **reexecutar** o gate antes de arquivo externo.
+
+---
+
+*Fim — `DOC-FINAL-EXEC-PH-TR01-20260327` v1.1*
