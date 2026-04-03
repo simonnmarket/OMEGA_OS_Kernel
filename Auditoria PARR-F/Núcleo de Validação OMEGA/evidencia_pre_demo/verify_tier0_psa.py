@@ -88,7 +88,11 @@ def main() -> int:
             path = (REPO_ROOT / rel.replace("/", os.sep)).resolve() if rel else Path()
             name = name or Path(rel).name
         else:
-            path = REPO_ROOT / name
+            rel = entry.get("relpath", "")
+            if rel:
+                path = (REPO_ROOT / rel.replace("/", os.sep)).resolve()
+            else:
+                path = REPO_ROOT / name
 
         if not path.is_file():
             errors.append(f"ficheiro em falta: {path}")

@@ -7,7 +7,7 @@ Documento oficial — Mandato de execução PSA e encerramento do processo (CEO 
 | **Assunto** | Responsabilidade de execução das verificações; encerramento da fase corrente |
 | **Data** | 2026-03-27 |
 | **Referência técnica** | `DOCUMENTO_OFC_CEO_FECHO_AUDITORIA_PSA.md` (mesma pasta) |
-| **HEAD de referência (repositório `nebular-kuiper`)** | `8a3fbcb589ea1f65880208118cdc07d8f9272662` |
+| **HEAD de referência (repositório `nebular-kuiper`)** | `9acc534b16ba3c297933f218d07ea5bc3c447f31` |
 
 ---
 

@@ -1,10 +1,10 @@
 PSA_GATE_CONSELHO_TIER0
-timestamp_utc: 2026-04-03T20:21:20Z
+timestamp_utc: 2026-04-03T20:45:57Z
 repo_root: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper
 stress_csv: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Núcleo de Validação OMEGA\evidencia_pre_demo\02_logs_execucao\STRESS_V10_5_SWING_TRADE.csv
 
 === GIT HEAD (exit 0) ===
-8a3fbcb589ea1f65880208118cdc07d8f9272662
+405565eafd12bdadadaced9a50cc00b98ead0bb0
 
 === audit_trade_count.py STRESS_V10_5 (exit 0) ===
 === audit_trade_count.py ===
@@ -21,14 +21,14 @@ aviso_outlier: abs_z_max muito elevado — possível artefacto numérico; para n
 criterios_opcionais: OK
 
 
-=== verify_tier0_psa.py (exit 1) ===
+=== verify_tier0_psa.py (exit 0) ===
 === verify_tier0_psa.py ===
 REPO_ROOT: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper
 MANIFEST:  C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Núcleo de Validação OMEGA\evidencia_pre_demo\03_hashes_manifestos\MANIFEST_RUN_20260329.json
 
 [1] Git HEAD vs manifest git_commit_sha
-    HEAD:             8a3fbcb589ea1f65880208118cdc07d8f9272662
-    manifest:         8a3fbcb589ea1f65880208118cdc07d8f9272662
+    HEAD:             405565eafd12bdadadaced9a50cc00b98ead0bb0
+    manifest:         405565eafd12bdadadaced9a50cc00b98ead0bb0
     OK: coincidem.
 
 [2] git cat-file -t <sha_manifest>
@@ -57,7 +57,7 @@ MANIFEST:  C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditor
     [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/psa_gate_conselho_tier0.py bytes=4156 sha3=11c80b6f2f070fa3...
     [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/run_psa_gate_conselho_tier0.ps1 bytes=605 sha3=ab3e417f83f33491...
     [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/ENTREGA_PSA_CONSELHO_CONSOLIDADO_FINAL.md bytes=7622 sha3=1292e74d87f24b49...
-    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt bytes=9095 sha3=5bad45b58b25f3a0...
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt bytes=9478 sha3=c5b994ba32740412...
     [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/PARAMETRO_PSA_INSTRUCOES_CONSELHO_ATUAL.md bytes=13836 sha3=749cae30a0f00aa9...
     [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/HANDOFF_PSA_INSTRUCOES_FINAIS_20260401.md bytes=6904 sha3=1eb4b827a04eddea...
     [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/ROTEIRO_EXECUCAO_FIN_SENSE_PSA.md bytes=6822 sha3=6c86a7d461da5627...
@@ -84,19 +84,18 @@ MANIFEST:  C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditor
     [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/KPI_REPORT_20260403-001.json bytes=467 sha3=1367cb4ba9bcb1eb...
     [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/templates_auditoria_psa/prova_PRF-PHFS04-20260403-001.json bytes=792 sha3=b54e034cbbb483c5...
     [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOCUMENTO_FINAL_EXECUCAO_E_CORRECOES_FASE_PH_TR01.md bytes=10873 sha3=9c090e64238c63cf...
-    FALTA: DOCUMENTO_OFICIAL_PSA_MANDATO_EXECUCAO_PERMANENTE_E_ENCERRAMENTO_CEO.md
-    FALTA: DOCUMENTO_OFC_CEO_FECHO_AUDITORIA_PSA.md
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOCUMENTO_OFICIAL_PSA_MANDATO_EXECUCAO_PERMANENTE_E_ENCERRAMENTO_CEO.md bytes=3662 sha3=94381c0113af65f2...
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOCUMENTO_OFC_CEO_FECHO_AUDITORIA_PSA.md bytes=7925 sha3=24918ad7c1aeb00c...
+    [OK] Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOC_GOV_BLINDAGEM_ENCERRAMENTO_TIER0_PSA_20260327_FINAL.md bytes=5476 sha3=a94bd85376e1827d...
 
 [4] Gateway — opportunity_cost
     OK: encontrado `abs(y_price - (0.5 * x_price))`
 
 --- RESUMO ---
-ESTADO: FALHA
-  - ficheiro em falta: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\DOCUMENTO_OFICIAL_PSA_MANDATO_EXECUCAO_PERMANENTE_E_ENCERRAMENTO_CEO.md
-  - ficheiro em falta: C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\DOCUMENTO_OFC_CEO_FECHO_AUDITORIA_PSA.md
+ESTADO: OK (Tier-0 verificação automática passou)
 
 
 --- RESUMO ---
 audit_trade_count exit: 0
-verify_tier0_psa exit: 1
-GATE_GLOBAL: FAIL
+verify_tier0_psa exit: 0
+GATE_GLOBAL: PASS
