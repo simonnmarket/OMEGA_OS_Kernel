@@ -20,4 +20,5 @@ O arquivo mestre atual `nebular-kuiper/OHLCV_DATA/_INDEX.csv` servirá de âncor
 **FICA DEPRECADO** qualquer processo de ingestão novo utilizando a estrutura de nomeação temporal `Auditoria PARR-F/inputs/OHLCV_DATA/grafico_*`. Os arquivos existentes serão lidos sem alterações para fins de reprodução histórica, recebendo a flag `RISCO-AUDITORIA` se não migrarem no MVP.
 
 ## 4. Testabilidade (Gate PH-FS-02)
-O modelo atinge `KPI-06 = 1.0` (Catalog Coverage Pleno) pois qualifica os 2 ativos base do motor Sniper (`XAUUSD`, `XAGUSD`) dentro da diretriz formal de caminhos (símbolos S ⊆  catálogo C).
+**Situação: KPI-06 PENDENTE.**
+O plano não pode afirmar `KPI-06 = 1.0` sem medição quantitativa oficial gerada via script. A cobertura de 100% sobre o conjunto OHLCV citado permanece como meta, mas o indicador em si fica dependente da execução do validador (e da posterior geração de um `KPI_REPORT_*.json`). Fase PH-FS-02 marcada como PARCIAL_COM_PROVA.
