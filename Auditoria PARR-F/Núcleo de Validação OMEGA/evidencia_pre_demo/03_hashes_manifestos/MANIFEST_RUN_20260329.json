@@ -1,7 +1,7 @@
 {
     "run_id": "OMEGA_20260329_211905",
     "git_rev": "V10.4-SOVEREIGN-F4.2-FINAL",
-    "git_commit_sha": "f925c8d24e4aeab7cb928476edd82eb040aaa088",
+    "git_commit_sha": "593fe7938abe058af8779745bbb55f2209586391",
     "version": "V10.4 OMNIPRESENT",
     "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
     "ts_audit": "2026-03-29T21:19:05.641018Z",
@@ -170,8 +170,8 @@
             "type": "DOCUMENT",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt",
-            "bytes": 4746,
-            "sha3_256_full": "2217900de00a00a913618fa409205c0f093d21914ef73809372c9b64f21cebcf"
+            "bytes": 4899,
+            "sha3_256_full": "13cea560b5b3bf24fe7643d8d2eaea5e7573efcf3126f3729df119b202e27db9"
         },
         {
             "type": "DOCUMENT",
@@ -186,6 +186,48 @@
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/HANDOFF_PSA_INSTRUCOES_FINAIS_20260401.md",
             "bytes": 6904,
             "sha3_256_full": "1eb4b827a04eddea2c68a2313db1cb56916d34aa424c76479dcfbf1d14a44a21"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/ROTEIRO_EXECUCAO_FIN_SENSE_PSA.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/ROTEIRO_EXECUCAO_FIN_SENSE_PSA.md",
+            "bytes": 6822,
+            "sha3_256_full": "6c86a7d461da5627d3aa2c58a0d364f1479815a3586eaca911dc8fd16b90fe3b"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/STATUS_ANEXOS_CONSELHO.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/STATUS_ANEXOS_CONSELHO.md",
+            "bytes": 1574,
+            "sha3_256_full": "34684abd26c32236c590f691b8f7b783552442c177e912a8d85f5be7fc96bb4b"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/SCRIPT_PSA_FASE_PH-FS-01_INSTRUCOES_OPERACIONAIS.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/SCRIPT_PSA_FASE_PH-FS-01_INSTRUCOES_OPERACIONAIS.md",
+            "bytes": 7928,
+            "sha3_256_full": "0cdd8d627f4a0b3c50a908e1ec22f90f2a097f531e02ae3684c4cd28b8d1c609"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/INVENTARIO_FONTES_DADOS_v1.csv",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/INVENTARIO_FONTES_DADOS_v1.csv",
+            "bytes": 1718,
+            "sha3_256_full": "0476268e91ad53fa6e0c8ab7b4e4f42176052157b7d0a36fe8d4b9a09faf1f44"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_RUN_LOG.jsonl",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_RUN_LOG.jsonl",
+            "bytes": 834,
+            "sha3_256_full": "a6b86e874422cba23bdf5e95512233d146510c9ff0ff7efb3d0426d8db39a9a2"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/ph_fs01/README.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/ph_fs01/README.md",
+            "bytes": 104,
+            "sha3_256_full": "f2fe7590c1f19d4f65b47be892116e590d897fb2b13d0fd57b4e937e55377b89"
         }
     ]
 }

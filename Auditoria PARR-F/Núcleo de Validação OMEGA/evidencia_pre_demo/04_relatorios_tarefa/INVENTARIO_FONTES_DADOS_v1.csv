@@ -1,0 +1,11 @@
+row_id,module_code,asset_or_scope,source_type,path_relative,schema_version,consumes_reports_or_runs,last_known_git_head,dependency_status,notes
+INV-001,FS,XAUUSD,CSV,01_raw_mt5/XAUUSD_M1_RAW.csv,v1.0,Todas simulações V10,593fe7938abe058af8779745bbb55f2209586391,OK,Histórico 2 anos M1
+INV-002,FS,XAGUSD,CSV,01_raw_mt5/XAGUSD_M1_RAW.csv,v1.0,Todas simulações V10,593fe7938abe058af8779745bbb55f2209586391,OK,Histórico 2 anos M1
+INV-003,OM,GLOBAL,REPORT_MD,02_logs_execucao/STRESS_V10_5_SWING_TRADE.csv,v10.5,Dossiê V10.5,593fe7938abe058af8779745bbb55f2209586391,OK,Tese Consolidada Offline
+INV-004,OM,GLOBAL,DEMO_LOG,evidencia_demo_20260401/DEMO_LOG_SWING_TRADE_20260401_T0046.csv,N/D,Fase E,593fe7938abe058af8779745bbb55f2209586391,OK,Teste Noturno Live
+INV-005,MD,GLOBAL,OHLCV_INDEX,nebular-kuiper/OHLCV_DATA/_INDEX.csv,N/D,Legado,593fe7938abe058af8779745bbb55f2209586391,PENDENTE-CTO,Aguardando unificação PH-FS-02
+INV-006,TR,GLOBAL,SCRIPT,psa_gate_conselho_tier0.py,v1.0,Gate Oficial,593fe7938abe058af8779745bbb55f2209586391,OK,Tier-0 Execution
+INV-007,TR,GLOBAL,SCRIPT,verify_tier0_psa.py,v1.0,Verify Oficial,593fe7938abe058af8779745bbb55f2209586391,OK,Tier-0 Check
+INV-008,FS,GLOBAL,OTHER,ABS:Inventário Expandido e Especificação de Dados.txt,N/D,Roadmap,593fe7938abe058af8779745bbb55f2209586391,file_not_found,Declarado no STATUS_ANEXOS_CONSELHO
+INV-009,FS,GLOBAL,OTHER,ABS:DDL em estilo Parquet Delta.txt,N/D,Estrutura DB,593fe7938abe058af8779745bbb55f2209586391,file_not_found,Declarado no STATUS_ANEXOS_CONSELHO
+INV-010,FS,GLOBAL,OTHER,ABS:Scripts Spark SQL Delta-compatible.txt,N/D,Operações,593fe7938abe058af8779745bbb55f2209586391,file_not_found,Declarado no STATUS_ANEXOS_CONSELHO
