@@ -1,7 +1,7 @@
 {
     "run_id": "OMEGA_20260329_211905",
     "git_rev": "V10.4-SOVEREIGN-F4.2-FINAL",
-    "git_commit_sha": "fd64467f696362acf5cf519ecf94c59f38bf3fc9",
+    "git_commit_sha": "f2fa72da5a3a610b667441071dfb80c58d4e406a",
     "version": "V10.4 OMNIPRESENT",
     "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
     "ts_audit": "2026-03-29T21:19:05.641018Z",
@@ -170,8 +170,8 @@
             "type": "DOCUMENT",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_GATE_CONSELHO_ULTIMO.txt",
-            "bytes": 8508,
-            "sha3_256_full": "640e3ec61860197bb2d36817cc57d0344c85bd18b962edef171126ce5f37f65e"
+            "bytes": 9063,
+            "sha3_256_full": "6e624856c9274c6f0d240e42d23357584a6c99973b2751ef7448b6f0e42e5c59"
         },
         {
             "type": "DOCUMENT",
@@ -219,8 +219,8 @@
             "type": "DOCUMENT",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_RUN_LOG.jsonl",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/PSA_RUN_LOG.jsonl",
-            "bytes": 5511,
-            "sha3_256_full": "a1cf99419f35f349366e0a6d3ab3b6422f3c7c7a9fb155003058f84da1441c00"
+            "bytes": 5928,
+            "sha3_256_full": "26ac6e48897bb15e0499134509624218f062f9e121408dae67293460f4f76dbc"
         },
         {
             "type": "DOCUMENT",
@@ -289,8 +289,8 @@
             "type": "DOCUMENT",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/templates_auditoria_psa/MATRIZ_SOL_TAR_REQ_PRF_DEC_TEMPLATE.csv",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/templates_auditoria_psa/MATRIZ_SOL_TAR_REQ_PRF_DEC_TEMPLATE.csv",
-            "bytes": 1048,
-            "sha3_256_full": "de0afdd15d19391545adde937321e311542f140d1b2bcf9004b33576fb90df3c"
+            "bytes": 1058,
+            "sha3_256_full": "0d8f77c9dd0cfb93047331f0991e61e8f7993e5ab82af9782b91bf189a50ec2a"
         },
         {
             "type": "DOCUMENT",
@@ -331,8 +331,8 @@
             "type": "DOCUMENT",
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOCUMENTO_UNICO_OFICIAL_PSA_ENCERRAMENTO_AUDITORIA_E_PROXIMOS_PASSOS.md",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOCUMENTO_UNICO_OFICIAL_PSA_ENCERRAMENTO_AUDITORIA_E_PROXIMOS_PASSOS.md",
-            "bytes": 7533,
-            "sha3_256_full": "cf5b8c880d5bc0258b983a88e721ab2f5ce5bc14c1319dcb487e8e9dd8379da8"
+            "bytes": 8110,
+            "sha3_256_full": "720c0d88b4bfa25b82407204a3d5284eb67977b4aa2d355b9f3fd025077bc2a2"
         },
         {
             "type": "DOCUMENT",
@@ -346,7 +346,14 @@
             "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/templates_auditoria_psa/prova_PRF-PHFS04-20260403-001.json",
             "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/templates_auditoria_psa/prova_PRF-PHFS04-20260403-001.json",
             "bytes": 792,
-            "sha3_256_full": "297d95b608b7a14d274b377795170e51678544086e6483feed3fba41e8cc7b23"
+            "sha3_256_full": "b26e379359eb93fb1e645f4245456ed824aea7ef283aea7317cb0f06fb1ecc65"
+        },
+        {
+            "type": "DOCUMENT",
+            "filename": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOCUMENTO_FINAL_EXECUCAO_E_CORRECOES_FASE_PH_TR01.md",
+            "relpath": "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/DOCUMENTO_FINAL_EXECUCAO_E_CORRECOES_FASE_PH_TR01.md",
+            "bytes": 10354,
+            "sha3_256_full": "d2d6dcd0852cd215d08b0d796e29589aba81e502fa4ed0e4be093d1ff9e94625"
         }
     ]
 }

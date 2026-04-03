@@ -3,29 +3,30 @@
 | Campo | Valor |
 |-------|--------|
 | **Doc-ID** | `DOC-UNICO-ENCERRAMENTO-AUDITORIA-20260327` |
-| **Versão** | 1.0 |
-| **Tipo** | **Instrução única consolidada** para o **PSA** — encerramento formal da auditoria de processo **até PH-FS-03** e transição para **PH-FS-04** |
+| **Versão** | **2.0** |
+| **Tipo** | **Instrução única consolidada** para o **PSA** — tranche **PH-FS-01 → PH-FS-04** **concluída com prova**; transição para **PH-TR-01** / relatório ao Conselho |
 | **Emitido por** | Núcleo de Validação OMEGA / Comando |
 | **Destinatário** | **PSA** (executor único in-repo) |
 | **Documentos absorvidos** | `DOC-AUD-CONCLUSAO-PROCESSO-20260403` v1.3 · `DOC-OFC-ENVIO-PSA-20260327` v1.1 · normas MESTRE/PROVAS/SOL-TAR |
 | **Base de pastas** | `Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/` |
+| **HEAD de referência (última verificação)** | `f2fa72da5a3a610b667441071dfb80c58d4e406a` (= `MANIFEST_RUN_20260329.json` → `git_commit_sha`) |
 
 ---
 
 ## Parte A — O que aconteceu e porquê (leitura executiva)
 
-Esta auditoria visou **eliminar a ambiguidade entre “procedimento descrito” e “prova verificável”** (erro **F1**). Ao longo do trackeamento surgiram falhas **nomeadas** e **corrigidas**:
+Esta auditoria visou **eliminar a ambiguidade entre “procedimento descrito” e “prova verificável”** (erro **F1**). Falhas **nomeadas** e **corrigidas**:
 
 | Código | O que foi | Porquê (causa) | Como se resolveu |
 |--------|-----------|----------------|------------------|
-| **F1** | Texto dizia que algo estava feito sem artefacto ou validador | Confundir narrativa com evidência | Exigir **PRF** + `--validate` exit 0 + ficheiros no repo |
-| **F2** | PRF PH-FS-02 reprovada | `req_id` no formato errado para o regex do script | Uso de **`REQ-UNICO-030`** alinhado à matriz |
-| **F3** | Vários **HEAD** em documentos diferentes | Commits sucessivos sem registo | Linhas **`head_reconciled_post_commit`** e **`audit_record`** em `PSA_RUN_LOG.jsonl` |
-| **F4** | Catálogo sugeria KPI-06 = 1,0 sem medição | Confundir **desenho** com **medida** | §4 do catálogo: **KPI-06 PENDENTE** até existir **`KPI_REPORT`** |
-| **F5** | Matriz incompleta | Tarefas sem linha SOL/TAR/PRF/DEC | Preenchimento progressivo por fase |
-| **F6** | Campo `git_head` na PRF PH-FS-03 inválido | Hex que **não** correspondia a `commit` no Git (`git cat-file` falhou) | Correcção para **`fd64467f696362acf5cf519ecf94c59f38bf3fc9`** = HEAD/manifesto/gate verificados |
+| **F1** | Texto dizia que algo estava feito sem artefacto ou validador | Confundir narrativa com evidência | **PRF** + `--validate` exit 0 + ficheiros no repo |
+| **F2** | PRF PH-FS-02 reprovada | `req_id` no formato errado para o regex | **`REQ-UNICO-030`** |
+| **F3** | Vários **HEAD** em documentos diferentes | Commits sucessivos sem registo | **`PSA_RUN_LOG.jsonl`** (`head_reconciled`, `audit_record`, fases) |
+| **F4** | Catálogo sugeria KPI-06 = 1,0 sem medição | Desenho vs. medida | §4 **PENDENTE** até **`KPI_REPORT`** → **agora PROVADO** (v2.0) |
+| **F5** | Matriz incompleta | Tarefas sem linha SOL/TAR/PRF/DEC | Preenchimento até **FS-04** |
+| **F6** | `git_head` na PRF **não** resolvia para `commit` | Hex errado ou desatualizado | **Sempre** `git rev-parse HEAD` + `git cat-file -t`; PRF PH-FS-04 ajustada a **`f2fa72…`** |
 
-**Conclusão de causalidade:** os problemas não foram “falha de intenção”, e sim **lacunas de disciplina de prova**: IDs, validador, commit Git verificável e registo no **log JSONL**. Com **F2–F4–F6** tratados e **PH-FS-03** entregue, a tranche **FS-01 → FS-03** está **auditável**. O que **permanece aberto** por **design** é a **métrica KPI-06** (PH-FS-02 **PARCIAL**) até **PH-FS-04** produzir **`KPI_REPORT_*.json`**.
+**Conclusão de causalidade:** com **`KPI_REPORT_20260403-001.json`**, **PRF PH-FS-04** (`REQ-UNICO-050`) e **§4 do catálogo** alinhados, **F4** no domínio KPI-06 está **fechado**. A malha **FS-01 a FS-04** está **integralmente documentada e validável**.
 
 ---
 
@@ -36,15 +37,14 @@ Esta auditoria visou **eliminar a ambiguidade entre “procedimento descrito” 
 | Fase | Estado | Prova mínima | Situação |
 |------|--------|--------------|----------|
 | **0** | CONCLUÍDO_COM_PROVA | `STATUS_ANEXOS_CONSELHO.md` | OK |
-| **PH-FS-01** | CONCLUÍDO_COM_PROVA | `INVENTARIO_FONTES_DADOS_v1.csv` + log | OK (ressalva: paths relativos — rastreio parcial) |
-| **PH-FS-02** | **PARCIAL_COM_PROVA** | Catálogo + PRF + **KPI-06** | `CATALOGO_OHLCV_PLANO_v1.md` §4 **KPI-06 PENDENTE**; PRF **`REQ-UNICO-030`** PASS — **falta valor medido** em `KPI_REPORT` |
-| **PH-FS-03** | **CONCLUÍDO_COM_PROVA** | Mapa demo + PRF + matriz + DEC | `MAP-DEMO-TBL_v1.md`; `PRF-PHFS03-20260403-001` / **`REQ-UNICO-040`**; **`DEC-20260403-002`** |
-| **PH-FS-04** | **NÃO_EXECUTADO** | Batch + `KPI_REPORT_*.json` | **Próximo passo obrigatório** |
-| **PH-TR-01** | PARCIAL | Gate | `PSA_GATE_CONSELHO_ULTIMO.txt` — reexecutar quando o manifesto mudar |
+| **PH-FS-01** | CONCLUÍDO_COM_PROVA | Inventário + log | OK |
+| **PH-FS-02** | **CONCLUÍDO_COM_PROVA** (métrica) | Catálogo + PRF + **KPI-06 medido** | §4 **KPI-06 = 1.0 (PROVADO)** → `KPI_REPORT_20260403-001.json` (`KPI-06_CC`: 1.0) |
+| **PH-FS-03** | CONCLUÍDO_COM_PROVA | Mapa demo + PRF + DEC | `MAP-DEMO-TBL_v1.md`; `PRF-PHFS03-20260403-001` / **`REQ-UNICO-040`**; **`DEC-20260403-002`** |
+| **PH-FS-04** | **CONCLUÍDO_COM_PROVA** | `KPI_REPORT_*.json` + PRF + matriz + DEC | `KPI_REPORT_20260403-001.json`; `PRF-PHFS04-20260403-001` / **`REQ-UNICO-050`**; **`DEC-20260403-003`** |
+| **PH-TR-01** | PARCIAL | Gate / transição | **Próximo foco** — renovar gate após alterações ao manifesto |
 | **PH-PS-01** | NÃO_EXECUTADO | Relatório piloto | — |
 
-**Commit de referência verificado (HEAD):** `fd64467f696362acf5cf519ecf94c59f38bf3fc9`  
-**Alinhamento:** `MANIFEST_RUN_20260329.json` (`git_commit_sha`) · `PSA_GATE_CONSELHO_ULTIMO.txt` (GIT HEAD) — **coerentes** na última verificação.
+**Limitação de escopo:** o `KPI_REPORT` reflecte **métricas declaradas no JSON** (incl. `catalogs_scanned`: XAUUSD, XAGUSD). Auditorias futuras podem exigir **reexecução** do pipeline sobre outros conjuntos.
 
 ---
 
@@ -54,54 +54,85 @@ Esta auditoria visou **eliminar a ambiguidade entre “procedimento descrito” 
 |------|-----|-----|-----|-----|-----|
 | PH-FS-02 | SOL-20260403-001 | TAR-PHFS02-001 | REQ-UNICO-030 | PRF-PHFS02-20260403-001 | DEC-20260403-001 |
 | PH-FS-03 | SOL-20260403-002 | TAR-PHFS03-001 | REQ-UNICO-040 | PRF-PHFS03-20260403-001 | DEC-20260403-002 |
-| PH-FS-04 | *(a emitir)* | *(a emitir)* | *(a atribuir)* | *(a gerar)* | *(a emitir)* |
+| PH-FS-04 | SOL-20260403-003 | TAR-PHFS04-001 | REQ-UNICO-050 | PRF-PHFS04-20260403-001 | DEC-20260403-003 |
 
 Ficheiro-fonte: `templates_auditoria_psa/MATRIZ_SOL_TAR_REQ_PRF_DEC_TEMPLATE.csv`.
 
 ---
 
-## Parte D — Checklist: “auditoria desta tranche está encerrada?”
-
-Marque **SIM** apenas com prova no disco ou comando.
+## Parte D — Checklist: auditoria da tranche FS encerrada?
 
 | # | Critério | SIM / NÃO |
 |---|----------|-----------|
-| D1 | Todas as PRFs em uso passam `psa_refutation_checklist.py --validate` (exit 0) | **SIM** (PH-FS-02 e PH-FS-03) |
-| D2 | Cada PRF tem `git_head` = `git rev-parse HEAD` **no momento do selo** e `git cat-file -t <sha>` = `commit` | **SIM** (após correcção F6 na PH-FS-03) |
-| D3 | `PSA_RUN_LOG.jsonl` contém trilho para fases entregues (ex.: `file_saved`, `prf_validated`, `phase_complete` PH-FS-03) | **SIM** |
-| D4 | Matriz reflecte SOL/TAR/REQ/PRF/DEC para cada TAR fechada | **SIM** (FS-02 e FS-03) |
-| D5 | Catálogo OHLCV não afirma KPI-06 medido sem `KPI_REPORT` | **SIM** (§4 PENDENTE) |
-| D6 | **PH-FS-04** executada e `KPI_REPORT` produzido | **NÃO** — *isto define o “próximo passo”* |
-| D7 | **PH-FS-02** fechada em **métrica** (KPI-06 com valor) | **NÃO** — depende de D6 |
+| D1 | Todas as PRFs FS passam `psa_refutation_checklist.py --validate` (exit 0) | **SIM** (FS-02, FS-03, FS-04) |
+| D2 | `git_head` em cada PRF resolvível com `git cat-file -t <sha>` = `commit` (último selo **f2fa72…**) | **SIM** (após alinhamento PRF PH-FS-04) |
+| D3 | `PSA_RUN_LOG.jsonl` com trilho **FS-04** (`file_saved`, `prf_validated`, `phase_complete`) | **SIM** |
+| D4 | Matriz com linhas para FS-02, FS-03, FS-04 | **SIM** |
+| D5 | Catálogo §4 com KPI-06 **e** referência ao `KPI_REPORT` | **SIM** |
+| D6 | `KPI_REPORT_20260403-001.json` presente e referenciado | **SIM** |
+| D7 | Manifesto lista `KPI_REPORT` e `git_commit_sha` coerente com HEAD | **SIM** (`MANIFEST_RUN_20260329.json`) |
 
-**Interpretação:** a **auditoria de processo e integridade de provas até PH-FS-03** pode ser considerada **encerrada para envio ao Conselho** com a ressalva explícita: **métrica analítica global (FS-04 + KPI_REPORT)** ainda **não** concluída. Não há contradição — são **camadas diferentes** (processo vs. medição).
+**Interpretação:** a **tranche FS (FS-01 a FS-04)** está **encerrada ao nível de prova** definido neste programa. Segue-se **PH-TR-01** (transição / gate) e, se aplicável, **relatório ao Conselho**.
 
 ---
 
-## Parte E — Instruções obrigatórias ao PSA (próximo passo: PH-FS-04)
+## Parte E — Instruções ~~PH-FS-04~~ **CUMPRIDAS** — próximo passo: **PH-TR-01** / Conselho
 
-1. **Emitir** **SOL-20260403-003** (ou próximo ID livre) e **TAR-PHFS04-001** segundo `DOCUMENTO_OFICIAL_MODELO_SOLICITACAO_APROVACAO_TAREFA.md`.
-2. **Executar** o pipeline de métricas acordado no roteiro (ex.: `run_kpi_batch.py` ou script oficial no repo).
-3. **Gerar** ficheiro **`KPI_REPORT_*.json`** com indicadores necessários para **fechar KPI-06** (e outros definidos no kit), com **rastreio** (timestamp, conjunto de dados, comando).
-4. **Criar PRF** nova (ex.: `prova_PRF-PHFS04-YYYYMMDD-001.json`) com:
-   - `req_id` válido para o validador (padrão `REQ-UNICO-0xx`);
-   - `git_head` **copiado** de `git rev-parse HEAD` após commit;
-   - referência ao artefacto `KPI_REPORT_*.json`.
-5. **Validar:**  
-   `python psa_refutation_checklist.py --validate templates_auditoria_psa/prova_PRF-PHFS04-….json` → **exit 0**.
-6. **Actualizar** `MATRIZ_SOL_TAR_REQ_PRF_DEC_TEMPLATE.csv` com nova linha e **DEC-***.
-7. **Registar** em `PSA_RUN_LOG.jsonl`: `file_saved` (KPI_REPORT), `prf_validated`, `phase_complete` para **PH-FS-04**.
-8. **Actualizar** `MANIFEST_RUN_*.json` (ou processo oficial de sync) para incluir novos ficheiros e **`git_commit_sha`** correcto.
-9. **Reexecutar** `psa_gate_conselho_tier0` / script de gate para renovar `PSA_GATE_CONSELHO_ULTIMO.txt` se o manifesto exigir.
-10. **Actualizar** `CATALOGO_OHLCV_PLANO_v1.md` §4: quando existir medição, substituir **PENDENTE** por **valor + referência ao `KPI_REPORT`** (nunca número sem ficheiro).
+~~(Lista de 10 itens para FS-04 — **executada**.)~~
+
+1. **Emitir** documento ou **SOL/TAR** para **PH-TR-01** segundo o roteiro (ex.: verificação de gate, stress, manifesto).
+2. **Reexecutar** `psa_gate_conselho_tier0` (ou script oficial) e **actualizar** `PSA_GATE_CONSELHO_ULTIMO.txt` se o Conselho exigir snapshot fresco.
+3. **Preparar** pacote ao Conselho: este **DOC-UNICO v2.0**, `DOC-AUD-CONCLUSAO-PROCESSO-20260403`, matriz, amostra de `PSA_RUN_LOG.jsonl`, `KPI_REPORT_20260403-001.json`.
+4. **PH-PS-01** (relatório piloto): emitir **SOL/TAR** quando o Comando autorizar.
 
 ---
 
 ## Parte F — Comandos de verificação (reproducibilidade)
 
-...
-*(Restringe-se conforme layout original)*
+Na raiz do repositório `nebular-kuiper`:
+
+```bash
+git rev-parse HEAD
+git cat-file -t "$(git rev-parse HEAD)"
+```
+
+Validação das PRFs (ajustar caminho se necessário):
+
+```bash
+python "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/psa_refutation_checklist.py" --validate "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/templates_auditoria_psa/prova_PRF-PHFS02-20260403-001.json"
+python "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/psa_refutation_checklist.py" --validate "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/templates_auditoria_psa/prova_PRF-PHFS03-20260403-001.json"
+python "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/psa_refutation_checklist.py" --validate "Auditoria PARR-F/Núcleo de Validação OMEGA/evidencia_pre_demo/04_relatorios_tarefa/templates_auditoria_psa/prova_PRF-PHFS04-20260403-001.json"
+```
+
+**Esperado:** `git cat-file` → `commit`; três validações → `PASS` / exit 0.
 
 ---
 
-*Fim — `DOC-UNICO-ENCERRAMENTO-AUDITORIA-20260327` v1.0*
+## Parte G — Documentos normativos
+
+| ID | Ficheiro |
+|----|----------|
+| MESTRE | `DOCUMENTO_UNICO_PSA_MESTRE_FIN_SENSE.md` |
+| PROVAS | `DOCUMENTO_OFICIAL_PSA_PROVAS_E_AUDITORIA.md` |
+| SOL/TAR | `DOCUMENTO_OFICIAL_MODELO_SOLICITACAO_APROVACAO_TAREFA.md` |
+| Auditoria detalhada | `DOCUMENTO_UNICO_AUDITORIA_CONCLUSAO_E_FALHAS_PROCESSO.md` (v1.3) |
+
+---
+
+## Parte H — Proibições (resumo)
+
+- **Anti-F1:** não substituir prova por narrativa.
+- **Anti-F6:** todo `git_head` em PRF deve coincidir com commit real no momento do selo (verificar com Git).
+
+---
+
+## Parte I — Fecho
+
+| Tranche | Estado |
+|---------|--------|
+| **PH-FS-01 a PH-FS-04** | **CONCLUÍDA COM PROVA** (v2.0) |
+| **PH-TR-01 / Conselho** | **Próximo passo operacional** |
+
+---
+
+*Fim — `DOC-UNICO-ENCERRAMENTO-AUDITORIA-20260327` **v2.0** — FS-04 fechada; KPI-06 provado via `KPI_REPORT_20260403-001.json`; HEAD **f2fa72…**.*

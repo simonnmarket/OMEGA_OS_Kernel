@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | **Doc-ID** | `DOC-AUD-CONCLUSAO-PROCESSO-20260403` |
-| **Versão** | 1.3 |
+| **Versão** | 1.4 |
 | **Tipo** | Auditoria **objectiva** — distingue **prova** de **reconfirmação narrativa** |
 | **Auditor** | Núcleo de Validação OMEGA (gerado com verificação de artefactos no disco) |
 | **Para** | PSA — **executar** instruções §7 antes de avançar fases |
@@ -52,9 +52,9 @@
 |------|---------------|-----------------------------------|----------|
 | **0** | **CONCLUÍDO_COM_PROVA** | `STATUS_ANEXOS_CONSELHO.md` | Presente |
 | **PH-FS-01** | **CONCLUÍDO_COM_PROVA** | CSV inventário + `PSA_RUN_LOG` + certificado | Ficheiros presentes; **nota:** paths no inventário são **parciais** (ex. `01_raw_mt5/...`) — ficheiros existem sob `evidencia_pre_demo/01_raw_mt5/` mas **não** batem certo com path relativo único sem convenção explícita → **risco de rastreio** |
-| **PH-FS-02** | **PARCIAL_COM_PROVA** | `CATALOGO_OHLCV_PLANO_v1.md` + KPI-06 **testável** ou **PENDENTE** explícito | Plano **existe**; §4 **declara KPI-06 PENDENTE** (sem afirmação 1,0); **medição** continua **pendente** até `KPI_REPORT`; PRF JSON **`PASS`** (`REQ-UNICO-030`) |
+| **PH-FS-02** | **CONCLUÍDO_COM_PROVA** (métrica) | Catálogo + PRF + **`KPI_REPORT`** para KPI-06 | §4 **KPI-06 = 1.0 (PROVADO)** → `KPI_REPORT_20260403-001.json`; fechamento via **PH-FS-04** |
 | **PH-FS-03** | **CONCLUÍDO_COM_PROVA** | `MAP-DEMO-TBL_v1.md` + PRF + matriz + DEC | `prova_PRF-PHFS03-20260403-001.json` PASS; `DOC-MAP-DEMO-TBL-20260403` |
-| **PH-FS-04** | **NÃO_EXECUTADO** | `run_kpi_batch.py` + `KPI_REPORT_*.json` | Script checklist existe; batch KPI **não** entregue |
+| **PH-FS-04** | **CONCLUÍDO_COM_PROVA** | `KPI_REPORT_*.json` + PRF + DEC | `KPI_REPORT_20260403-001.json`; `PRF-PHFS04-20260403-001` / `REQ-UNICO-050`; `DEC-20260403-003`; HEAD **`f2fa72…`** |
 | **PH-TR-01** | **PARCIAL** | Gate + verify OK **no âmbito** | `PSA_GATE` presente; reexecutar após cada alteração |
 | **PH-PS-01** | **NÃO_EXECUTADO** | `RPT-PILOTO-*` com cabeçalho | Ausente |
 
@@ -154,4 +154,4 @@ Este documento **não** “reprova” o trabalho global — **localiza** falhas 
 
 ---
 
-*Fim — `DOC-AUD-CONCLUSAO-PROCESSO-20260403` — v1.3: PH-FS-03 fechado; F6; `PSA_RUN_LOG` PH-FS-03; gate/manifesto alinhados a **fd64467…**.*
+*Fim — `DOC-AUD-CONCLUSAO-PROCESSO-20260403` — v1.4: PH-FS-04 + KPI-06 fechados; ver `DOC-UNICO-ENCERRAMENTO-AUDITORIA-20260327` v2.0.*
