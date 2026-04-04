@@ -96,6 +96,7 @@ git log --oneline -5
 | `DOC-OFC-ENCERRAMENTO-DEFINITIVO-CICLO-FINSENSE-PSA-20260404-004` | Encerramento técnico-administrativo do ciclo com checklist e tag. |
 | **`DOC-OFC-CONFIRMACAO-ENCERRAMENTO-OFICIAL-PSA-FINSENSE-20260404-005`** | **Este documento** — confirmação formal PSA e encerramento de etapa. |
 | `DOC-OFC-REQUISITO-VALIDACAO-PSA-OBRIGATORIA-SEM-GAP-20260404-006` | **Crítico:** requisito de rubrica PSA para evitar gap de governança. |
+| `DOC-OFC-GUIA-UNICO-PSA-RUBRICA-TRANSICAO-FASE2-20260404-007` | **Guia único:** rubrica, README pós-homologação, commit único, congelamento, Fase 2. |
 
 ---
 
@@ -129,7 +130,8 @@ O **PSA** declara, após verificação local e remota:
 
 ## 7. Próximos passos (opcional, fora do âmbito deste encerramento)
 
-- Evolução do hub (Parquet, S3, streams) — novo planeamento e eventual novo `DOC-OFC-*`.
+- Procedimento consolidado e Fase 2 (tecnologia): **`DOC-OFC-GUIA-UNICO-PSA-RUBRICA-TRANSICAO-FASE2-20260404-007`** (secção 5).
+- Evolução do hub (Parquet, S3, streams) — novo `DOC-OFC-*` quando o CEO autorizar o arranque.
 - Integração com módulos de análise — contrato de API/views versionadas.
 
 ---
