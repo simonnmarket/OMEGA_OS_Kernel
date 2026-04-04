@@ -61,12 +61,11 @@ HUB_ROOT=...\nebular-kuiper\FIN_SENSE_DATA\hub
 ## 4. Prova de versão (Git)
 
 - **Repositório:** `nebular-kuiper` (branch `main`).
-- **Acção:** commit único de consolidação incluindo `governance\`, `modules\FIN_SENSE_DATA_MODULE\`, `FIN_SENSE_DATA\`, `Auditoria...\LEIA-ME-AUDITORIA-CONSELHO.md`, este ficheiro, actualização de `.gitignore` (exclusão de `/bronze/` legado na raiz).
-- **Push:** `git push origin main` — executado após commit para que o histórico exista no **remoto** (requisito de arquivo DOC-003).
+- **Acção:** commit de consolidação incluindo `governance\`, `modules\FIN_SENSE_DATA_MODULE\`, `FIN_SENSE_DATA\`, `Auditoria...\LEIA-ME-AUDITORIA-CONSELHO.md`, este ficheiro, actualização de `.gitignore` (exclusão de `/bronze/` legado na raiz).
+- **Tag de arquivo (recomendada para auditoria):** `finsense-psa-cycle-20260404` — aponta para o commit de consolidação do ciclo.
+- **Push:** `git push origin main` e `git push origin finsense-psa-cycle-20260404` — para histórico no **remoto** (requisito DOC-003).
 
-**Commit de consolidação:** `d6dcdbc` — mensagem: *governance: encerramento definitivo ciclo FIN-SENSE PSA (DOC-004); SSOT modules/FIN_SENSE_DATA_MODULE; hub FIN_SENSE_DATA; governance indexado*.
-
-**Hash completo:** `git rev-parse d6dcdbc` no repositório.
+**Verificação local:** `git show finsense-psa-cycle-20260404 --stat`
 
 ---
 
