@@ -1,6 +1,10 @@
 # Governança OMEGA — Índice de documentos oficiais
 
-**Estado do ciclo FIN-SENSE:** **ENCERRADO E HOMOLOGADO** — ver `DOC-OFC-ENCERRAMENTO-DEFINITIVO-CICLO-FINSENSE-PSA-20260404-004` (checklists) e `DOC-OFC-CONFIRMACAO-ENCERRAMENTO-OFICIAL-PSA-FINSENSE-20260404-005` (confirmação PSA / selo). **Tag Git:** `finsense-psa-cycle-20260404` (no `origin`).
+**Estado do ciclo FIN-SENSE (técnico-documental):** **ENCERRADO** — ver `DOC-OFC-ENCERRAMENTO-DEFINITIVO-CICLO-FINSENSE-PSA-20260404-004`.
+
+**Homologação PSA (obrigatória para fechar gap):** **PENDENTE** até o PSA validar e rubricar **`DOC-OFC-CONFIRMACAO-ENCERRAMENTO-OFICIAL-PSA-FINSENSE-20260404-005`** (secção 5). **Sem esta validação existe GAP de governança** — ver **`DOC-OFC-REQUISITO-VALIDACAO-PSA-OBRIGATORIA-SEM-GAP-20260404-006`**.
+
+**Tag Git:** `finsense-psa-cycle-20260404` (no `origin`).
 
 | ID | Título |
 |----|--------|
@@ -10,7 +14,8 @@
 | `DOC-OFC-RESOLUCAO-REALINHAMENTO-FINSENSE-20260404-002` | Resolução + logs de validação e ingestão |
 | `DOC-OFC-CIENCIA-ARQUIVO-HISTORICO-PSA-FINSENSE-20260404-003` | Ciência PSA e arquivo histórico de todas as execuções (obrigatório continuidade) |
 | `DOC-OFC-ENCERRAMENTO-DEFINITIVO-CICLO-FINSENSE-PSA-20260404-004` | **Encerramento definitivo** — checklist PSA, log final, prova Git, sem pendências |
-| `DOC-OFC-CONFIRMACAO-ENCERRAMENTO-OFICIAL-PSA-FINSENSE-20260404-005` | **Confirmação PSA** — diretórios canónicos + GitHub + rubrica de encerramento de etapa |
+| `DOC-OFC-CONFIRMACAO-ENCERRAMENTO-OFICIAL-PSA-FINSENSE-20260404-005` | **Confirmação PSA** — diretórios canónicos + GitHub + **rubrica obrigatória** (secção 5) |
+| `DOC-OFC-REQUISITO-VALIDACAO-PSA-OBRIGATORIA-SEM-GAP-20260404-006` | **Crítico:** validação PSA obrigatória — evitar **gap** se não houver homologação formal |
 
 ---
 **Observação:** Auditoria Conselho (apenas trânsito): `Auditoria PARR-F\Auditoria Conselho\LEIA-ME-AUDITORIA-CONSELHO.md`

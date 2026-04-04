@@ -71,7 +71,7 @@ HUB_ROOT=...\nebular-kuiper\FIN_SENSE_DATA\hub
 
 **Verificação:** `git show finsense-psa-cycle-20260404 --stat`
 
-A **homologação formal** da etapa (diretórios + GitHub + selo PSA) está em **DOC-005**.
+A **homologação formal** da etapa (validação PSA sem gap) depende da **rubrica na secção 5 do DOC-005**; requisito explícito em **DOC-006**.
 
 ---
 

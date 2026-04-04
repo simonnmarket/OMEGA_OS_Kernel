@@ -12,6 +12,12 @@
 
 ---
 
+## Aviso crítico — validação PSA obrigatória (sem gap)
+
+A **rubrica do PSA** na **secção 5** deste documento é **obrigatória** para fechar o ciclo ao nível de **homologação institucional**. Sem essa validação, permanece um **gap de governança** entre execução técnica e aprovação formal — ver **`DOC-OFC-REQUISITO-VALIDACAO-PSA-OBRIGATORIA-SEM-GAP-20260404-006`**. Não declare a etapa como totalmente homologada até o PSA concluir este passo.
+
+---
+
 ## 1. Finalidade
 
 Este documento serve para que o **PSA** possa **oficialmente encerrar esta etapa**, mediante **confirmação explícita** de dois eixos:
