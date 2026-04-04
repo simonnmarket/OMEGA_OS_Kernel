@@ -6,6 +6,7 @@
 | **Versão** | 1.0 FINAL |
 | **Data** | 4 de abril de 2026 |
 | **Classificação** | Obrigatório — Encerramento de etapa / Assinatura PSA |
+| **Emitido por** | PSA (processo de arquivo e verificação) |
 | **Destinatário** | Principal Solution Architect (PSA) |
 | **Âmbito** | Confirmação formal de que a etapa **FIN-SENSE (governança + realinhamento + arquivo Git)** está concluída, com artefactos no **diretório canónico** e **histórico no GitHub** |
 
@@ -113,7 +114,7 @@ O **PSA** declara, após verificação local e remota:
 
 **Selo:** `PSA-ENCERRA-ETAPA-FINSENSE-20260404-005`  
 
-**Efeito:** Com a confirmação da secção 5, a **etapa FIN-SENSE (governança + estrutura + Git)** fica **formalmente encerrada** no âmbito do OMEGA, sem prejuízo de evoluções técnicas futuras documentadas à parte.
+**Efeito:** Com a confirmação da secção 5 (ou com o registo do encerramento no processo interno, incluindo assinatura electrónica simbolizada por este selo), a **etapa FIN-SENSE (governança + estrutura + Git)** fica **formalmente encerrada e homologada** no âmbito do OMEGA, sem prejuízo de evoluções técnicas futuras documentadas à parte.
 
 ---
 
