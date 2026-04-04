@@ -10,6 +10,7 @@
 | `DOC-OFC-RESOLUCAO-REALINHAMENTO-FINSENSE-20260404-002` | Resolução + logs de validação e ingestão |
 | `DOC-OFC-CIENCIA-ARQUIVO-HISTORICO-PSA-FINSENSE-20260404-003` | Ciência PSA e arquivo histórico de todas as execuções (obrigatório continuidade) |
 | `DOC-OFC-ENCERRAMENTO-DEFINITIVO-CICLO-FINSENSE-PSA-20260404-004` | **Encerramento definitivo** — checklist PSA, log final, prova Git, sem pendências |
+| `DOC-OFC-CONFIRMACAO-ENCERRAMENTO-OFICIAL-PSA-FINSENSE-20260404-005` | **Confirmação PSA** — diretórios canónicos + GitHub + rubrica de encerramento de etapa |
 
 ---
 **Observação:** Auditoria Conselho (apenas trânsito): `Auditoria PARR-F\Auditoria Conselho\LEIA-ME-AUDITORIA-CONSELHO.md`
