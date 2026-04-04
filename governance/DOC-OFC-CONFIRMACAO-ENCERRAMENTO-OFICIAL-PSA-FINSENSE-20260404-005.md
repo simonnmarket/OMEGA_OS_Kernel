@@ -92,7 +92,7 @@ git log --oneline -5
 | `DOC-OFC-CONCLUSAO-INTEGRACAO-FINSENSE-PSA-20260404-001` | Conclusão intermédia + addendum de caminhos. |
 | `DOC-OFC-DESVIO-PADRAO-ESTRUTURAL-MODULES-FINSENSE-20260404-002` | Diagnóstico estrutural. |
 | `DOC-OFC-RESOLUCAO-REALINHAMENTO-FINSENSE-20260404-002` | Execução e provas. |
-| `DOC-OFC-CIENCIA-ARQUIVO-HISTORICO-PSA-FINSENSE-20260404-003` | Arquivo histórico e obrigações PSA. |
+| `DOC-OFC-CIENCIA-ARQUIVO-HISTORICO-PSA-FINSENSE-20260404-003` | Ciência PSA e arquivo histórico de todas as execuções (obrigatório continuidade) |
 | `DOC-OFC-ENCERRAMENTO-DEFINITIVO-CICLO-FINSENSE-PSA-20260404-004` | Encerramento técnico-administrativo do ciclo com checklist e tag. |
 | **`DOC-OFC-CONFIRMACAO-ENCERRAMENTO-OFICIAL-PSA-FINSENSE-20260404-005`** | **Este documento** — confirmação formal PSA e encerramento de etapa. |
 | `DOC-OFC-REQUISITO-VALIDACAO-PSA-OBRIGATORIA-SEM-GAP-20260404-006` | **Crítico:** requisito de rubrica PSA para evitar gap de governança. |
