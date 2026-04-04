@@ -1,5 +1,7 @@
 # Governança OMEGA — Índice de documentos oficiais
 
+**Versão do índice:** 1.1 — alinhamento final (encerramento técnico-documental vs homologação PSA; DOC-004 no índice sem ambiguidade).
+
 **Estado do ciclo FIN-SENSE (técnico-documental):** **ENCERRADO** — ver `DOC-OFC-ENCERRAMENTO-DEFINITIVO-CICLO-FINSENSE-PSA-20260404-004`.
 
 **Homologação PSA (obrigatória para fechar gap):** **PENDENTE** até o PSA validar e rubricar **`DOC-OFC-CONFIRMACAO-ENCERRAMENTO-OFICIAL-PSA-FINSENSE-20260404-005`** (secção 5). **Sem esta validação existe GAP de governança** — ver **`DOC-OFC-REQUISITO-VALIDACAO-PSA-OBRIGATORIA-SEM-GAP-20260404-006`**.
