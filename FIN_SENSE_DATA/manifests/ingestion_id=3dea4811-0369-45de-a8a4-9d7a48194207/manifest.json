@@ -1,0 +1,8 @@
+{
+    "ingestion_id": "3dea4811-0369-45de-a8a4-9d7a48194207",
+    "table_name": "TBL_SECURITIES_MASTER",
+    "ts_manifest": "2026-04-03T22:22:52.104247Z",
+    "file_path": "bronze\\tbl_securities_master\\symbol=AAPL\\timeframe=NONE\\year=2026\\month=04\\batch_3dea4811-0369-45de-a8a4-9d7a48194207.json",
+    "record_count": 1,
+    "operator_id": "system"
+}

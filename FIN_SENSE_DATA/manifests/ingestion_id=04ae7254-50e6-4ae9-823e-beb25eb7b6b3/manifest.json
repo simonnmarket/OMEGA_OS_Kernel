@@ -1,0 +1,7 @@
+{
+    "ingestion_id": "04ae7254-50e6-4ae9-823e-beb25eb7b6b3",
+    "table_name": "TBL_MACRO_EVENTS",
+    "ts_manifest": "2026-04-03T23:19:55.640836Z",
+    "file_path": "bronze\\tbl_macro_events\\entity=US\\sub=NA\\year=2026\\month=04\\batch_04ae7254-50e6-4ae9-823e-beb25eb7b6b3.json",
+    "record_count": 1
+}

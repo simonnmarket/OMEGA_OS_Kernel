@@ -1,0 +1,8 @@
+{
+    "ingestion_id": "b55f7e2c-be80-4fa4-8837-68961a7590c2",
+    "table_name": "TBL_MARKET_TICKS_RAW",
+    "ts_manifest": "2026-04-03T22:22:52.107763Z",
+    "file_path": "bronze\\tbl_market_ticks_raw\\symbol=AAPL\\timeframe=NONE\\year=2026\\month=04\\batch_b55f7e2c-be80-4fa4-8837-68961a7590c2.json",
+    "record_count": 1,
+    "operator_id": "system"
+}

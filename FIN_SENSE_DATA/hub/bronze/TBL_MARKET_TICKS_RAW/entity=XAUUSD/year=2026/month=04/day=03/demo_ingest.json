@@ -1,0 +1,21 @@
+[
+  {
+    "symbol": "XAUUSD",
+    "exchange": "MT5",
+    "figi": "BBG000B9XRY7",
+    "isin": "US8807791022",
+    "timestamp_utc": "2026-04-03T23:06:35.553225+00:00",
+    "seq_no": 1,
+    "bid": 2650.0,
+    "ask": 2650.1,
+    "recv_ts": "2026-04-03T23:06:35.553225+00:00",
+    "ingestion_id": "dd30e920-f0f7-439d-af4a-ea86b92da482",
+    "source": "DEMO",
+    "schema_version": "v1.2",
+    "file_hash": "2aa4fcf5247629a3d86e4625050f0398285904d141f4dacdd3b082b3c8a59b09",
+    "ingest_ts": "2026-04-03T23:06:35.553225+00:00",
+    "quality_status": "OK",
+    "operator": "ingest_demo",
+    "checksum": "3e549c286ddc384f8bd6bb3cef05f1c30d4a4182e0929f009fdea221d814385c"
+  }
+]

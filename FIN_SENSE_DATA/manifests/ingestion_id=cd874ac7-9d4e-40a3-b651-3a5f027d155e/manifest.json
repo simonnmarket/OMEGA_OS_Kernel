@@ -1,0 +1,7 @@
+{
+    "ingestion_id": "cd874ac7-9d4e-40a3-b651-3a5f027d155e",
+    "table_name": "TBL_MARKET_TICKS_RAW",
+    "ts_manifest": "2026-04-03T23:19:55.643352Z",
+    "file_path": "bronze\\tbl_market_ticks_raw\\entity=XAUUSD\\sub=NA\\year=2026\\month=04\\batch_cd874ac7-9d4e-40a3-b651-3a5f027d155e.json",
+    "record_count": 1
+}

@@ -40,3 +40,12 @@ venv/
 # OS
 Thumbs.db
 .DS_Store
+
+# FIN-SENSE: legado duplicado na raiz (hub canónico em FIN_SENSE_DATA/hub)
+/bronze/
+
+# Instalação local do pacote Python
+*.egg-info/
+
+# Especificação local / scratch
+.finsense_full_spec.txt
