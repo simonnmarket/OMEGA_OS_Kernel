@@ -11,6 +11,12 @@
 
 ---
 
+## Aviso restritivo — alcance e limite do selo deste documento
+
+Este **DOC-004** comprova **encerramento técnico-documental** (checklists, logs, prova Git, tag). **Não** substitui, isoladamente, a **homologação institucional completa**: o **selo final** ao nível de governança (sem gap) depende da **rubrica humana na secção 5 do DOC-005**, conforme **`DOC-OFC-REQUISITO-VALIDACAO-PSA-OBRIGATORIA-SEM-GAP-20260404-006`**. Sem esse passo, o estado correcto é: **ciclo técnico-documental encerrado**; **homologação PSA pendente**.
+
+---
+
 ## 1. Âmbito do encerramento
 
 Este documento **fecha** o processo iniciado com `DOC-OFC-VIOLACAO-REGRA-CEO-INTEGRACAO-FINSENSE-PSA-20260327-001` e percorrido pelos documentos **001–003**, confirmando estrutura canónica, arquivo histórico, verificação técnica e integração no repositório remoto. A **confirmação formal PSA** e a **rubrica** de encerramento de etapa encontram-se em **`DOC-OFC-CONFIRMACAO-ENCERRAMENTO-OFICIAL-PSA-FINSENSE-20260404-005`**.
@@ -81,11 +87,11 @@ Não bloqueiam o encerramento: Kafka/Redis, Parquet/S3, RBAC em produção; test
 
 ---
 
-## 7. Selo de encerramento (ciclo documental)
+## 7. Selo de encerramento (ciclo técnico-documental)
 
 **Selo:** `ENCERR-OMEGA-FINSENSE-PSA-20260404-004`  
 
-**Estado do ciclo:** **ENCERRADO — SEM PENDÊNCIAS** no âmbito governança + estrutura + arquivo + verificação reproduzível.
+**Estado:** **ENCERRADO** no âmbito **técnico-documental e Git** (estrutura, artefactos, verificação reproduzível). **Homologação institucional total** — ver **DOC-005** secção 5 e **DOC-006**; até lá, **GAP de governança** possível se assim não estiver declarado no índice.
 
 ---
 

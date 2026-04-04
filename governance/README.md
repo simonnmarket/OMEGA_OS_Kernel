@@ -4,6 +4,8 @@
 
 **Homologação PSA (obrigatória para fechar gap):** **PENDENTE** até o PSA validar e rubricar **`DOC-OFC-CONFIRMACAO-ENCERRAMENTO-OFICIAL-PSA-FINSENSE-20260404-005`** (secção 5). **Sem esta validação existe GAP de governança** — ver **`DOC-OFC-REQUISITO-VALIDACAO-PSA-OBRIGATORIA-SEM-GAP-20260404-006`**.
 
+**Estado operacional:** **Pronto para rubrica** — assim que a secção 5 do DOC-005 estiver preenchida e arquivada (localmente e, se aplicável, em acta/ticket), o sistema pode ser declarado **totalmente homologado** ao nível institucional.
+
 **Tag Git:** `finsense-psa-cycle-20260404` (no `origin`).
 
 | ID | Título |
