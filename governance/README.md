@@ -1,6 +1,6 @@
 # Governança OMEGA — Índice de documentos oficiais
 
-**Estado do ciclo FIN-SENSE:** **ENCERRADO** — ver `DOC-OFC-ENCERRAMENTO-DEFINITIVO-CICLO-FINSENSE-PSA-20260404-004`.
+**Estado do ciclo FIN-SENSE:** **ENCERRADO** — ver `DOC-OFC-ENCERRAMENTO-DEFINITIVO-CICLO-FINSENSE-PSA-20260404-004`. **Tag Git:** `finsense-psa-cycle-20260404` (enviada a `origin`).
 
 | ID | Título |
 |----|--------|
