@@ -31,7 +31,7 @@ O PSA confirma a conclusão dos seguintes requisitos técnicos:
 
 ## 3. Checklist de governança
 
-- [x] **Cadeia documental:** IDs 001 a 005 consolidados em `governance/` (005 = confirmação PSA).
+- [x] **Cadeia documental:** IDs 001 a 006 consolidados em `governance/` (006 = Requisito Validação).
 - [x] **Índice de governança:** `governance/README.md` actualizado.
 - [x] **Aviso de trânsito:** `LEIA-ME-AUDITORIA-CONSELHO.md` implementado em Auditoria Conselho.
 

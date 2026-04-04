@@ -57,7 +57,7 @@ O PSA confirma, para efeitos de arquivo, que a estrutura abaixo é a **referênc
 
 *Nota:* o nome do repositório no GitHub é **OMEGA_OS_Kernel**; o conteúdo do ciclo FIN-SENSE foi integrado na branch **`main`** deste remoto.
 
-### 3.2 Evidências de versão no remoto
+### 3.2 Evidências de versionamento remoto
 
 | Elemento | Descrição |
 |----------|-----------|
@@ -93,6 +93,7 @@ git log --oneline -5
 | `DOC-OFC-CIENCIA-ARQUIVO-HISTORICO-PSA-FINSENSE-20260404-003` | Arquivo histórico e obrigações PSA. |
 | `DOC-OFC-ENCERRAMENTO-DEFINITIVO-CICLO-FINSENSE-PSA-20260404-004` | Encerramento técnico-administrativo do ciclo com checklist e tag. |
 | **`DOC-OFC-CONFIRMACAO-ENCERRAMENTO-OFICIAL-PSA-FINSENSE-20260404-005`** | **Este documento** — confirmação formal PSA e encerramento de etapa. |
+| `DOC-OFC-REQUISITO-VALIDACAO-PSA-OBRIGATORIA-SEM-GAP-20260404-006` | **Crítico:** requisito de rubrica PSA para evitar gap de governança. |
 
 ---
 
