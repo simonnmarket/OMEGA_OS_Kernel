@@ -124,7 +124,7 @@ O **PSA** declara, após verificação local e remota:
 
 **Selo:** `PSA-ENCERRA-ETAPA-FINSENSE-20260404-005`  
 
-**Efeito:** Com a confirmação da secção 5 (ou com o registo do encerramento no processo interna, incluindo assinatura electrónica simbolizada por este selo), a **etapa FIN-SENSE (governança + estrutura + Git)** fica **formalmente encerrada e homologada** no âmbito do OMEGA, sem prejuízo de evoluções técnicas futuras documentadas à parte.
+**Efeito:** Com a confirmação da secção 5 (ou com o registo do encerramento no processo interno, incluindo assinatura electrónica simbolizada por este selo), a **etapa FIN-SENSE (governança + estrutura + Git)** fica **formalmente encerrada e homologada** no âmbito do OMEGA, sem prejuízo de evoluções técnicas futuras documentadas à parte.
 
 ---
 
