@@ -1,20 +1,20 @@
 # Governança OMEGA — Índice de documentos oficiais
 
-**Versão do índice:** 1.9 — inclui **DOC-013** (solicitação formal ao PSA + ordem CEO para execução encerramento gap); **congelamento** dos DOC-001–007 até rubrica PSA ou ordem CEO v2.
+**Versão do índice:** 1.9 — inclui **DOC-013** (solicitação formal de execução PSA); **congelamento** dos DOC-001–007 até rubrica PSA ou ordem CEO v2.
 
-**Solicitação ao PSA (CEO aprovado):** `DOC-OFC-SOLICITACAO-EXECUCAO-PSA-ENCERRAMENTO-GAP-FINSENSE-CEO-20260404-013` — executar **008/009**, rubrica **005**, **Anexo A** README, commit, **011** arquivada.
+**Solicitação de execução PSA (Mandato Único):** `DOC-OFC-SOLICITACAO-EXECUCAO-PSA-ENCERRAMENTO-GAP-FINSENSE-CEO-20260404-013` (013) — ordem CEO: **APROVADO**; roteiro 008 → 009 → 005 → Anexo A README → commit/push → 011.
 
-**Registo de falha e prevenção (PSA):** `DOC-OFC-REGISTO-FALHA-INDICE-DOC003-CORRECAO-PREVENTIVA-PSA-20260403-012` — falha apontada, motivo, correcção, checklist P1–P4.
+**Registo de falha e prevenção (PSA):** `DOC-OFC-REGISTO-FALHA-INDICE-DOC003-CORRECAO-PREVENTIVA-PSA-20260403-012` (012).
 
-**Acta de encerramento (PSA — saída):** `DOC-OFC-ACTA-ENCERRAMENTO-OFICIAL-ETAPA-FINSENSE-HOMOLOGACAO-PSA-20260402-011` — documento para **assinar** e **arquivar** quando a etapa estiver **efectivamente** concluída (não substitui **DOC-009**).
+**Acta de encerramento (PSA — saída):** `DOC-OFC-ACTA-ENCERRAMENTO-OFICIAL-ETAPA-FINSENSE-HOMOLOGACAO-PSA-20260402-011` (011).
 
-**Notificação final ao PSA:** `DOC-OFC-NOTIFICACAO-FINAL-PSA-ENCERRAMENTO-CICLO-FINSENSE-20260401-010` — canal documental para este encerramento; execução via **DOC-009** (M1–M6).
+**Notificação final ao PSA:** `DOC-OFC-NOTIFICACAO-FINAL-PSA-ENCERRAMENTO-CICLO-FINSENSE-20260401-010` (010).
 
-**Ordem final de encerramento (definitiva):** `DOC-OFC-ORDEM-ENCERRAMENTO-DEFINITIVO-PSA-HOMOLOGACAO-FINSENSE-20260331-009` — mandato M1–M6, assinatura PSA, efeito de fecho do gap (DOC-006).
+**Ordem final de encerramento (definitiva):** `DOC-OFC-ORDEM-ENCERRAMENTO-DEFINITIVO-PSA-HOMOLOGACAO-FINSENSE-20260331-009` (009).
 
-**Procedimento único para o PSA:** `DOC-OFC-GUIA-UNICO-PSA-RUBRICA-TRANSICAO-FASE2-20260404-007` (rubrica, commit único pós-homologação, transição fase 2).
+**Procedimento único para o PSA:** `DOC-OFC-GUIA-UNICO-PSA-RUBRICA-TRANSICAO-FASE2-20260404-007` (007).
 
-**Pacote de envio imediato (instruções consolidadas):** `DOC-OFC-ENVIO-IMEDIATO-PSA-PACOTE-HOMOLOGACAO-CICLO-FINSENSE-20260327-008` — checklist, PowerShell, Anexo A, commit.
+**Pacote de envio imediato (instruções consolidadas):** `DOC-OFC-ENVIO-IMEDIATO-PSA-PACOTE-HOMOLOGACAO-CICLO-FINSENSE-20260327-008` (008).
 
 **Estado do ciclo FIN-SENSE (técnico-documental):** **ENCERRADO** — ver `DOC-OFC-ENCERRAMENTO-DEFINITIVO-CICLO-FINSENSE-PSA-20260404-004`.
 
@@ -39,8 +39,8 @@
 | `DOC-OFC-ORDEM-ENCERRAMENTO-DEFINITIVO-PSA-HOMOLOGACAO-FINSENSE-20260331-009` | **Ordem definitiva PSA:** encerramento institucional (M1–M6), declaração e assinatura; **1.0 DEFINITIVA** |
 | `DOC-OFC-NOTIFICACAO-FINAL-PSA-ENCERRAMENTO-CICLO-FINSENSE-20260401-010` | **Notificação final ao PSA:** canal documental encerrado; apenas executar **DOC-009** + **DOC-008** |
 | `DOC-OFC-ACTA-ENCERRAMENTO-OFICIAL-ETAPA-FINSENSE-HOMOLOGACAO-PSA-20260402-011` | **Acta oficial PSA:** encerramento da **pendência/etapa** após M1–M6; checklist + assinatura (documento de **saída**) |
-| `DOC-OFC-REGISTO-FALHA-INDICE-DOC003-CORRECAO-PREVENTIVA-PSA-20260403-012` | **Registo de falha:** índice DOC-003 (ARQUICO→ARQUIVO), causa, commit `21eae3d`, medidas **P1–P4** para não repetir |
-| `DOC-OFC-SOLICITACAO-EXECUCAO-PSA-ENCERRAMENTO-GAP-FINSENSE-CEO-20260404-013` | **Solicitação PSA:** execução encerramento gap (008/009, 005, README, 011) — **ordem CEO APROVADO** |
+| `DOC-OFC-REGISTO-FALHA-INDICE-DOC003-CORRECAO-PREVENTIVA-PSA-20260403-012` | **Registo de falha:** índice DOC-003 (ARQUIVO), causa, commit `21eae3d`, medidas **P1–P4** para não repetir |
+| `DOC-OFC-SOLICITACAO-EXECUCAO-PSA-ENCERRAMENTO-GAP-FINSENSE-CEO-20260404-013` | **Solicitação formal:** execução dos mandatos de encerramento; ordem CEO: **APROVADO** |
 
 ### Fase 2 — engenharia (nova iniciativa; não reabre DOC-001–007)
 

@@ -1,66 +1,53 @@
-# Documento Oficial — Solicitação de execução ao PSA: encerramento do gap de governança (ciclo FIN-SENSE)
+# Documento Oficial — Solicitação de execução PSA: encerramento de gap (FIN-SENSE)
 
 | Campo | Valor |
 |--------|--------|
 | **ID completo** | `DOC-OFC-SOLICITACAO-EXECUCAO-PSA-ENCERRAMENTO-GAP-FINSENSE-CEO-20260404-013` |
-| **Referência curta** | `DOC-OFC-013` |
+| **Referência curta** | `DOC-013` |
 | **Versão** | 1.0 |
 | **Data** | 4 de abril de 2026 |
-| **Emitido por** | Comando / Chancelaria institucional (OMEGA) |
-| **Destinatário** | **Principal Solution Architect (PSA)** |
-| **Assunto** | **Solicitação formal** de execução imediata do encerramento homologável do ciclo FIN-SENSE (gap DOC-006) |
+| **Ordem CEO** | **APROVADO** — execução imediata solicitada |
+| **Destinatário** | Principal Solution Architect (PSA) |
 
 ---
 
-## 1. Fundamento
+## 1. Solicitação Formal
 
-A documentação normativa necessária encontra-se **publicada** no repositório **`OMEGA_OS_Kernel`** (branch **`main`**). Falta apenas a **execução humana** pelo PSA, nos termos do **DOC-006** e da cadeia **007 → 009 → 011**.
-
-**Ordem do CEO:** **APROVADO** o prosseguimento do encerramento institucional por este roteiro (sem nova redacção de fundo dos DOC-001–007).
+O Comando OMEGA solicita ao **PSA** a execução imediata dos mandatos de encerramento do ciclo **FIN-SENSE**, visando fechar o **gap de governança** identificado no **DOC-006**. Esta solicitação baseia-se na conclusão técnica e documental de todos os requisitos do hub de dados.
 
 ---
 
-## 2. O que se solicita ao PSA (entregável único)
+## 2. Roteiro de Execução (6 Passos)
 
-Executar **integralmente**, **nesta ordem**:
+O PSA deve seguir a sequência abaixo, utilizando os documentos de apoio já publicados:
 
-| # | Acção | Documento de apoio |
-|---|--------|---------------------|
-| 1 | Verificação Git + caminhos canónicos + tag | **`DOC-OFC-ENVIO-IMEDIATO-PSA-PACOTE-HOMOLOGACAO-CICLO-FINSENSE-20260327-008`** (Passos 1–2) |
-| 2 | Mandatos **M1 a M6** | **`DOC-OFC-ORDEM-ENCERRAMENTO-DEFINITIVO-PSA-HOMOLOGACAO-FINSENSE-20260331-009`** |
-| 3 | Rubrica **DOC-005** secção **5** | `governance/DOC-OFC-CONFIRMACAO-ENCERRAMENTO-OFICIAL-PSA-FINSENSE-20260404-005.md` |
-| 4 | Substituir **uma vez** o bloco **PENDENTE** no **`governance/README.md`** pelo **Anexo A** do **DOC-007** | `DOC-OFC-GUIA-UNICO-PSA-RUBRICA-TRANSICAO-FASE2-20260404-007` |
-| 5 | **Commit único** + **`git push`** `main` | Mensagem sugerida no **DOC-007** / **DOC-009** |
-| 6 | Preencher e **arquivar** a **acta de saída** | **`DOC-OFC-ACTA-ENCERRAMENTO-OFICIAL-ETAPA-FINSENSE-HOMOLOGACAO-PSA-20260402-011`** |
-
-**Repositório:** `https://github.com/simonnmarket/OMEGA_OS_Kernel.git`  
-**Raiz de trabalho típica (referência):** `C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper`
+| Passo | Documento de Apoio | Acção Principal |
+|-------|--------------------|-----------------|
+| 1 | **DOC-008** | Preparação do ambiente (PowerShell) e verificação Git. |
+| 2 | **DOC-009** | Execução dos mandatos **M1 a M6**. |
+| 3 | **DOC-005** | Rubrica humana na **Secção 5** (tabela de confirmação). |
+| 4 | **DOC-007** | Aplicação do **Anexo A** ao `governance/README.md`. |
+| 5 | **DOC-009** | Realização do **Commit Único** e **Push** para `origin/main`. |
+| 6 | **DOC-011** | Preenchimento e assinatura da **Acta de Encerramento Oficial**. |
 
 ---
 
-## 3. Efeito esperado
+## 3. Limites de Âmbito
 
-- O **`governance/README.md`** deixa de indicar apenas **PENDENTE** e passa a reflectir **Homologação PSA CONCLUÍDA** (placeholders preenchidos).  
-- O **gap** referido no **DOC-006** fica **fechado** ao nível **institucional**, com prova em **Git** e **arquivo** (DOC-011 / ticket).
-
----
-
-## 4. Limites (clareza)
-
-- Esta solicitação **não** substitui a **Fase 2** técnica (pipeline PostgreSQL, etc.) — continua nos respectivos **DOC-OFC-FASE2-***.  
-- **Não** é necessário novo `DOC-OFC` para “autorizar” a execução — a presente solicitação + ordem CEO + **DOC-009** bastam.
+- **Incluído:** Blindagem de governança, estrutura de diretórios canónicos, histórico Git e homologação institucional do hub.
+- **Excluído:** Implementação técnica de alta performance da **Fase 2** (Kafka/Redis/S3), que segue cronograma próprio.
 
 ---
 
-## 5. Ciência e aceitação pelo PSA
+## 4. Ciência e Aceitação (PSA)
 
-**Declaro receber esta solicitação e executar os itens da secção 2 conforme competência.**
+**Declaro ter recebido a solicitação e comprometo-me a executar os passos descritos para a homologação do ciclo.**
 
 **Nome / função PSA:** _____________________________________________  
 
 **Data:** ____ / ____ / ______  
 
-**Assinatura / registo interno:** _____________________________________________  
+**Assinatura / Registo Interno:** _____________________________________________  
 
 ---
 
