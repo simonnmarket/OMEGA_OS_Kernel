@@ -60,4 +60,10 @@ Esta **acta** não substitui relatórios de **PnL**, **produção MT5**, nem o *
 
 ---
 
+## Finalização do Encerramento
+
+**Acta de Homologação Final — Documento de Arquivo.**
+
+---
+
 **Fim do documento `DOC-OFC-ACTA-ENCERRAMENTO-OFICIAL-ETAPA-FINSENSE-HOMOLOGACAO-PSA-20260402-011`.**
