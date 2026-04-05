@@ -24,8 +24,8 @@ Este tipo de erro **já ocorreu anteriormente** no projecto (padrão de **desvio
 | Campo | Detalhe |
 |--------|---------|
 | **Onde** | Tabela de documentos no **`governance/README.md`** (coluna ID, linha do DOC-003). |
-| **Errado** | `DOC-OFC-CIENCIA-**ARQUICO**-HISTORICO-PSA-FINSENSE-20260404-003` |
-| **Correcto** | `DOC-OFC-CIENCIA-**ARQUIVO**-HISTORICO-PSA-FINSENSE-20260404-003` |
+| **Errado** | `DOC-OFC-CIENCIA-ARQUICO-HISTORICO-PSA-FINSENSE-20260404-003` |
+| **Correcto** | `DOC-OFC-CIENCIA-ARQUIVO-HISTORICO-PSA-FINSENSE-20260404-003` |
 | **Ficheiro real no repositório** | `governance/DOC-OFC-CIENCIA-ARQUIVO-HISTORICO-PSA-FINSENSE-20260404-003.md` |
 | **Impacto** | Referência **incorrecta** no índice mestre; risco de **falha de auditoria** (cópia do ID para tickets, buscas, hiperligações); **não** altera o conteúdo do DOC-003 em si. |
 
@@ -52,7 +52,7 @@ Este tipo de erro **já ocorreu anteriormente** no projecto (padrão de **desvio
 | C3 | **Ausência de verificação obrigatória pré-commit** | Não havia **checklist** nem **script** que exigisse: “cada ID na tabela = ficheiro existente no disco”. |
 | C4 | **Padrão recorrente** | Não é a **primeira** vez que o índice documental diverge da verdade do repositório — indica **fragilidade de processo**, não um evento isolado. |
 
-**O que **não** se infere sem investigação formal:** intenção negligente de um indivíduo nomeado. O registo foca **processo** e **controlo**.
+**O que não se infere sem investigação formal:** intenção negligente de um indivíduo nomeado. O registo foca **processo** e **controlo**.
 
 ---
 
@@ -93,6 +93,12 @@ O **PSA** (ou revisor designado) deve **antes** de `git push` de qualquer altera
 **Data:** ____ / ____ / ______  
 
 **Assinatura / registo interno:** _____________________________________________  
+
+---
+
+## Encerramento do Ciclo de Correção Preventiva
+
+**Documento de Qualidade Governamental — Padrão OMEGA.**
 
 ---
 
