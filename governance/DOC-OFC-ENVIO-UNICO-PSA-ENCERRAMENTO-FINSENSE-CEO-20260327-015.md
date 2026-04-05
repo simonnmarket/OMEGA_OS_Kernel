@@ -8,7 +8,7 @@
 | **Data** | 27 de março de 2026 |
 | **Emitido por** | **Presidência / CEO** (OMEGA) |
 | **Destinatário principal** | **PSA** (execução, rubrica, arquivo) |
-| **Referência Git histórica** | Pacote **013 + 014 + README 2.0:** commit **`9e884ff`** (`main`, `OMEGA_OS_Kernel`) |
+| **Referência Git histórica** | Pacote **013 + 014 + README 2.0:** commit **`9e884ff`**. **DOC-015** está em `main` no commit que adiciona este ficheiro (ver `git log -- governance/DOC-OFC-ENVIO-UNICO-PSA-ENCERRAMENTO-FINSENSE-CEO-20260327-015.md`). |
 
 ---
 
@@ -32,7 +32,7 @@ Segue **um único documento oficial** que substitui envios anteriores fragmentad
 
 **Pedido:** executar **de imediato** o roteiro da secção C (6 passos), com apoio nos **DOC-008** a **DOC-011** já publicados no repositório **`OMEGA_OS_Kernel`** (`main`).
 
-**Referência de pacote no Git:** commit **`9e884ff`** (inclui README índice 2.0 e histórico 013/014). A versão **única de envio** é o ficheiro **DOC-015** no commit em que este documento foi publicado (ver `main`).
+**Referência de pacote no Git:** commit **`9e884ff`** (README 2.0 + 013/014 antes da unificação). **Envio único:** ficheiro **DOC-015** na ponta actual de **`main`**.
 
 **Ordem CEO:** **APROVADO** — encerramento homologável do ciclo FIN-SENSE, sem novo `DOC-OFC` para o mesmo efeito.
 
