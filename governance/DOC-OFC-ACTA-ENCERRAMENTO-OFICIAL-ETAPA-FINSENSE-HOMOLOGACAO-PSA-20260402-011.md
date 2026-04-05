@@ -4,7 +4,7 @@
 |--------|--------|
 | **ID completo** | `DOC-OFC-ACTA-ENCERRAMENTO-OFICIAL-ETAPA-FINSENSE-HOMOLOGACAO-PSA-20260402-011` |
 | **Referência curta** | `DOC-OFC-011` |
-| **Versão** | 1.0 |
+| **Versão** | 1.1 |
 | **Data do modelo** | 2 de abril de 2026 |
 | **Natureza** | **Acta de saída** — preenchida pelo **PSA** **após** cumprimento dos mandatos **DOC-009** (M1–M6); **não** substitui a ordem de execução (**009** / **008**). |
 | **Efeito** | Formalizar o **encerramento oficial** da **pendência** e da **etapa** de homologação institucional deste ciclo, nos termos do **DOC-006**, com prova documental única. |
@@ -60,9 +60,9 @@ Esta **acta** não substitui relatórios de **PnL**, **produção MT5**, nem o *
 
 ---
 
-## Finalização do Encerramento
+## Finalização do encerramento
 
-**Acta de Homologação Final — Documento de Arquivo.**
+**Acta de homologação final — documento de arquivo** (evidência institucional definitiva após assinatura).
 
 ---
 
