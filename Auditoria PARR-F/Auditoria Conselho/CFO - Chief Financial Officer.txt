@@ -1,0 +1,181 @@
+RELATÓRIO DE AUDITORIA TÉCNICA — DOS_MODULE (omega-dos v1.1.0)
+ID: AUDIT-DOS-MODULE-CONSELHO-20260406-001 Data: 06 de abril de 2026 Auditor: MACE-MAX (IA — Conselheiro Técnico Principal) Destinatário: Conselho OMEGA, CEO, PSA Classificação: Institucional — Restrito Escopo: 20 ficheiros · ~52 kB · pacote omega_dos completo
+
+1. Resumo Executivo (C-Level)
+O DOS_MODULE (omega-dos v1.1.0) representa um salto qualitativo significativo em relação ao protótipo monolítico anterior (texto-base DOS.txt). O código foi refatorado numa arquitetura modular de pacote Python com separação de responsabilidades (métricas, trading, bridge, proveniência), testes automatizados, tipagem estática (py.typed) e documentação de Conselho integrada.
+
+Veredito Global: ⚠️ APROVAÇÃO CONDICIONAL — O módulo é adequado para pesquisa quantitativa e backtesting interno, mas requer hardening antes de qualquer caminho para execução automatizada com capital real ou clearing institucional.
+
+Risco Principal que bloqueia produção:
+
+Uso de float IEEE 754 para preços e PnL (imprecisão cumulativa).
+Loop iterrows() no gerador de sinais (gargalo de performance linear).
+Ausência de autenticação/autorização no acesso a Postgres.
+O que mudou vs. protótipo anterior: O módulo corrigiu 5 falhas do texto-base original (ver CONSELHO_DOS_MODULE.md §2), adicionou proveniência SHA-256, validação de colunas, logging condicional e mapeamento explícito vol_regime → filtros. Estas correções demonstram maturidade de engenharia.
+
+2. Tabela de Conformidade Institucional
+Organização	Padrão Avaliado	Status	Justificação
+NASA / SpaceX	Resiliência e Determinismo	⚠️ Parcial	Núcleo de risco determinístico (sem RNG nas métricas); falta checkpointing, circuit breakers e mode degradado formal.
+Goldman Sachs	Precisão Financeira e Auditoria	⚠️ Parcial	SHA-256 canónico implementado; porém float para preços/PnL (não Decimal); imutabilidade de transações parcial.
+BlackRock	Gestão de Risco (Aladdin-like)	⚠️ Parcial	VaR/CVaR/RAROC/Sortino/Omega/Calmar implementados e testados; falta stress testing e cenários extremos (fat-tail).
+Amazon (AWS)	Escalabilidade e Observabilidade	⚠️ Parcial	Logging presente mas não estruturado (JSON); sem tracing distribuído; variáveis de ambiente para config (bom).
+Oracle	Segurança e Portabilidade	⚠️ Parcial	DDL parametrizável; sem hardcoding de credenciais (usa PGPASS); falta validação de input contra injeção SQL.
+SpaceX	Tempo Real / Near-Real-Time	❌ Não Conforme	iterrows() e df.copy() repetidos impossibilitam latência sub-segundo em séries > 100k ticks.
+3. Vulnerabilidades Críticas e Médias
+3.1 Severidade CRÍTICA
+#	Vulnerabilidade	Ficheiro	Linha(s)	Impacto	Probabilidade
+C1	Float IEEE 754 para preços e PnL	trading/dos_trading_v1.py	51, 208, 273-279	Erros de arredondamento cumulativos em operações financeiras de alto volume	Alta
+C2	SQL sem parameterização segura em concatenação	bridge_fin_sense.py	81-94	O SQL é construído com concatenação de strings (sql +=), embora use %s placeholders — a estrutura pode ser estendida inseguramente	Baixa
+C3	Ausência de autenticação no pipeline	pipeline.py	65-77	Qualquer chamador pode executar run_dos_pipeline sem verificação de identidade ou permissão	Média
+3.2 Severidade MÉDIA
+#	Vulnerabilidade	Ficheiro	Linha(s)	Impacto	Probabilidade
+M1	iterrows() no gerador de sinais	trading/dos_trading_v1.py	203	O(n) lento; 1M ticks → minutos; inviabiliza near-real-time	Alta
+M2	Múltiplos df.copy() sequenciais	trading/dos_trading_v1.py	109, 121, 135, 156	4× multiplicação de memória para cada DataFrame de entrada	Média
+M3	Backtest com viés de look-ahead	trading/dos_trading_v1.py	267-270	future['high'].max() e future['low'].min() usam o melhor preço futuro — backtest irrealista	Alta
+M4	Digest de inputs em memória total	pipeline.py	53-62	np.asarray(df.values).tolist() materializa toda a tabela em lista Python — OOM em séries > 10M linhas	Média
+M5	warnings.filterwarnings('ignore') global	(ausente na v1.1, corrigido)	—	Corrigido na refatoração. ✅	—
+M6	Logs não estruturados	trading/dos_trading_v1.py	34	Formato texto plano, sem correlation ID, sem JSON, dificulta agregação (ELK/Splunk)	Média
+M7	Sem validação de schema no CSV MT5	trading/dos_trading_v1.py	90	pd.read_csv sem dtype enforcement — colunas inesperadas ou tipos errados passam silenciosamente	Média
+M8	connect_timeout=30 fixo	bridge_fin_sense.py	96	Sem retry com backoff exponencial; uma falha de rede aborta o pipeline inteiro	Média
+3.3 Severidade BAIXA
+#	Vulnerabilidade	Ficheiro	Linha(s)	Impacto
+L1	datetime.now() sem timezone	trading/dos_trading_v1.py	336	Timestamps ambíguos em ambientes multi-timezone
+L2	pd.cut com bins fixos de volatilidade	trading/dos_trading_v1.py	138-141	Bins [0, 0.005, 0.015, inf] são arbitrários; podem não ser representativos para ativos diferentes de XAUUSD
+L3	Pesos empíricos hardcoded	trading/dos_trading_v1.py	157-159	0.3 / 0.25 / 0.45 sem justificação estatística formal ou calibração por ativo
+4. Trechos de Código que Violam Padrões
+4.1 Violação de Precisão Financeira (Goldman Sachs)
+python
+# trading/dos_trading_v1.py, L51-52
+entry_price: float
+stop_loss: float
+IEEE 754 float64 introduz erros de representação binária. Para $2000.15, a representação interna pode ser 2000.1499999999999.... Em milhões de operações, o erro é auditável.
+
+4.2 Violação de Performance (SpaceX / HFT)
+python
+# trading/dos_trading_v1.py, L203
+for _, row in strong.iterrows():
+iterrows() é ~100× mais lento que apply() e ~1000× mais lento que operações vetorizadas NumPy. Inaceitável para pipelines com > 500k ticks.
+
+4.3 Violação de Backtest Realista (BlackRock)
+python
+# trading/dos_trading_v1.py, L267-270
+if signal.direction > 0:
+    exit_price = float(future["high"].max())  # ← Melhor preço possível!
+Look-ahead bias: O backtest assume que o trader captura o high.max() de uma janela futura — resultado impossível em execução real. Infla artificialmente o Profit Factor e Winrate.
+
+4.4 Violação de Segurança (Oracle)
+python
+# bridge_fin_sense.py, L81-94
+sql = """SELECT ... FROM bronze.demo_log_swing_trade"""
+if ingestion_id:
+    sql += " WHERE ingestion_id = %s"
+Embora os placeholders %s do psycopg protejam contra SQL injection direta, a construção dinâmica de SQL por concatenação abre margem para extensões futuras inseguras. Padrão institucional exige query builder ou ORM com prepared statements.
+
+4.5 Digest OOM (Amazon / Escala)
+python
+# pipeline.py, L60-61
+payload = {
+    "columns": list(df.columns),
+    "values": np.asarray(df.values).tolist(),  # ← Materializa tudo em RAM
+}
+Para um DataFrame de 10M linhas × 12 colunas, .tolist() cria ~120M objetos Python. Em ambiente serverless (Lambda 512MB), isto causa MemoryError.
+
+5. Recomendações Específicas de Correção
+R1. Precisão Financeira (Prioridade: CRÍTICA)
+python
+from decimal import Decimal, getcontext
+getcontext().prec = 28  # Padrão bancário
+@dataclass
+class TradingSignal:
+    entry_price: Decimal
+    stop_loss: Decimal
+    take_profit: Decimal
+    # float apenas para métricas estatísticas (Sharpe, etc.)
+R2. Vetorização de Sinais (Prioridade: ALTA)
+python
+# Substituir iterrows() por operação vetorizada
+def generate_signals_vectorized(self, data, symbol):
+    mask = (data["signal_strength"] >= min_strength) & (data["direction"].abs() == 1)
+    strong = data.loc[mask].copy()
+    strong["timestamp"] = strong["time"].dt.isoformat()
+    strong["symbol"] = symbol
+    # ... construir DataFrame de sinais de uma vez
+R3. Backtest sem Look-Ahead (Prioridade: ALTA)
+python
+# Usar stop-loss / take-profit como critério de saída
+for bar in future.itertuples():
+    if signal.direction > 0:
+        if bar.low <= signal.stop_loss:
+            exit_price = signal.stop_loss; break
+        if bar.high >= signal.take_profit:
+            exit_price = signal.take_profit; break
+    # fallback: fechar no close da última barra
+    exit_price = future.iloc[-1]["close"]
+R4. Digest Incremental (Prioridade: MÉDIA)
+python
+import hashlib
+def _digest_frame_chunked(df, chunk_size=10_000):
+    h = hashlib.sha256()
+    h.update(str(list(df.columns)).encode())
+    for start in range(0, len(df), chunk_size):
+        chunk = df.iloc[start:start+chunk_size]
+        h.update(chunk.to_csv(index=False).encode())
+    return h.hexdigest()
+R5. Logging Estruturado (Prioridade: MÉDIA)
+python
+import json, logging
+class JSONFormatter(logging.Formatter):
+    def format(self, record):
+        return json.dumps({
+            "ts": self.formatTime(record),
+            "level": record.levelname,
+            "module": record.module,
+            "func": record.funcName,
+            "msg": record.getMessage(),
+            "trace_id": getattr(record, "trace_id", None)
+        })
+R6. Retry com Backoff (Prioridade: MÉDIA)
+python
+import time
+def connect_with_retry(dsn, max_retries=3, base_delay=1.0):
+    for attempt in range(max_retries):
+        try:
+            return psycopg.connect(dsn, connect_timeout=10)
+        except Exception:
+            if attempt == max_retries - 1:
+                raise
+            time.sleep(base_delay * (2 ** attempt))
+6. Pontos Fortes (Acima dos Padrões do Mercado)
+#	Ponto Forte	Detalhe
+S1	Proveniência SHA-256 Canónica	O provenance.py com sha256_canonical (chaves ordenadas, separadores compactos, serialização numpy) é exemplar. A maioria dos frameworks quant NÃO implementa hash reprodutível de inputs.
+S2	Determinismo por Design	Seed fixa no clustering (random_state=42), sem RNG nas métricas de risco, qcut determinístico. Isto garante reprodutibilidade total — requisito NASA/SpaceX.
+S3	Separação Pipeline FIN-SENSE ↔ MT5 Trading	Dois pipelines independentes que partilham apenas pandas/numpy, sem escrita cruzada em tabelas. Arquitetura limpa.
+S4	Validação de Contratos de Dados	REQUIRED_SWING_COLS e REQUIRED_OHLC como tuplas constantes com verificação explícita de colunas em falta — padrão de engenharia defensiva.
+S5	Backtrader como Dependência Opcional	Import condicional com _require_backtrader() e extra [backtrader] no pyproject.toml. Não polui o núcleo.
+S6	DDL Parametrizável	Schema dos configurável via variável de ambiente, sem hardcoding de credenciais.
+S7	Suite de Testes com Dados Sintéticos	3 ficheiros de teste que cobrem pipeline, trading e métricas sem necessidade de rede ou Postgres — CI/CD-friendly.
+S8	py.typed Marker	Sinaliza suporte a type checkers (mypy/pyright) — raro em código quant Python.
+S9	Documento de Conselho Integrado	CONSELHO_DOS_MODULE.md com tabela explícita de riscos, limitações e conflitos — transparência institucional.
+7. Prazo Estimado para Correção Total
+Sprint	Escopo	Horas	Equipa
+Sprint 1	Precisão financeira (Decimal), validação CSV, datetime UTC	60h	1 Quant Senior
+Sprint 2	Vetorização de sinais, eliminação de iterrows, backtest sem look-ahead	80h	1 Quant Senior + 1 Backend
+Sprint 3	Logging JSON, retry com backoff, digest chunked, OpenTelemetry básico	50h	1 SRE/DevOps
+Sprint 4	Testes de integração, stress test 10M ticks, cobertura > 80%, CI/CD	50h	Toda a equipa
+Total	Hardening completo para Tier-0 Production	240h	3 Seniores · 8 semanas
+8. Matriz de Risco Residual (Pós-Correção)
+Risco	Severidade Actual	Severidade Pós-Sprint	Mitigação
+Imprecisão numérica	CRÍTICA	BAIXA	Decimal para preços; float apenas para rácios estatísticos
+Look-ahead bias	MÉDIA	ELIMINADO	Backtest bar-a-bar com SL/TP
+OOM em séries grandes	MÉDIA	BAIXA	Digest chunked + streaming
+SQL injection	BAIXA	ELIMINADA	Query builder / ORM
+Falta de observabilidade	MÉDIA	BAIXA	OpenTelemetry + JSON logs
+9. Conclusão
+O DOS_MODULE v1.1.0 é uma evolução estrutural significativa do protótipo original. A refatoração em pacote Python modular, com proveniência criptográfica, testes automatizados e documentação de Conselho, demonstra um nível de maturidade raro em projetos quant internos.
+
+No entanto, o módulo opera actualmente no domínio de pesquisa e backtesting académico. Para transitar para produção com capital real, as correções das Sprints 1-4 são mandatórias.
+
+Recomendação ao Conselho: Aprovar o módulo para uso interno de pesquisa e autorizar o roadmap de hardening (240h) como pré-requisito para qualquer caminho de deploy com execução automatizada.
+
+Fim do relatório AUDIT-DOS-MODULE-CONSELHO-20260406-001.
+

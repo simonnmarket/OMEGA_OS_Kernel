@@ -1,0 +1,110 @@
+Pacote DOS_MODULE — Nota para Auditoria do ConselhoVersão: 1.1.0 (omega-dos)
+Especificação de referência: DOC-OFC-DOS-TRADING-V1.0-20260405-001 — DATA OPERATING SYSTEM - DOS (documento final, 05/04/2026, utilizador Desktop).
+Data de referência implementação: 2026-03-27
+Repositório: nebular-kuiper (módulos DOS_MODULE + FIN_SENSE_DATA_MODULE)1. Objetivo do Pacote
+FIN-SENSE — Ingestão lógica e métricas sobre bronze.demo_log_swing_trade (run_dos_pipeline, proveniência SHA-256).
+DOS-TRADING V1.0 — Replicação fiel do blueprint do Conselho: camadas 1–4 sobre OHLC MT5, sinais, diagnóstico de falsos negativos, backtest simplificado; campo spec_id no relatório.
+Métricas Tier-0 — Classe Tier0Metrics alinhada ao anexo metrics_tier0.py do documento (VaR/CVaR/RAROC/Sortino/Omega/Sharpe/Calmar).
+Backtrader — Módulo opcional backtrader_dos (extra [backtrader]), sem dependência obrigatória no núcleo.
+2. Correções Aplicadas Relativamente ao Texto-base PDF/TXT
+
+Item	Ação
+adaptive_filters vs vol_regime	Mapeamento explícito low/medium/high → low_vol/medium_vol/high_vol.
+TradingSignal	Inclusão de direction e vol_regime; symbol passado explicitamente (não row.name).
+inputs_sha256	Cálculo via sha256_canonical sobre OHLC (evita hash frágil).
+Logging	Ficheiro apenas se DOS_LOG_FILE estiver definido (evita falhas de permissão).
+Quantil spread	Proteção quando quantile(0.3) é NaN.
+
+3. Pontos Fortes (Auditoria)
+Núcleo de risco determinístico (quantis empíricos, sem RNG nos defaults de Tier0Metrics / risk.py).
+Contratos de dados explícitos: REQUIRED_SWING_COLS (FIN-SENSE) e time/open/high/low/close (MT5).
+Testes automatizados (pytest): pipeline FIN-SENSE, DOS-TRADING com CSV sintético, Tier0Metrics.
+4. Riscos e Limitações
+
+Tópico	Severidade	Descrição
+PnL sintético FIN-SENSE	Média	Ramo sintético até existir livro real.
+Backtest DOS-TRADING	Média	Modelo acadêmico simplificado (slippage fixo, saída por janela); não valida produção.
+VaR/CVaR	Média	Históricos sobre amostra; não cobrem eventos fora da cauda observada.
+Backtrader	Baixa	Dependência opcional; versão fixada em pyproject — validar ambiente antes de CI.
+Digest JSON	Baixa	Séries gigantes: custo de memória/CPU no sha256_canonical de OHLC completo.
+
+5. Conflitos Potenciais
+Schemas: DDL DOS em dos.* não altera bronze FIN-SENSE.
+Dois “pipelines” (FIN-SENSE vs MT5) partilham apenas dependências (pandas/nump*); não há escrita cruzada em tabelas sem código explícito do utilizador.*
+6. Verificação Recomendada ao Conselho
+python -m pytest -q em modules/DOS_MODULE.
+Revisão: omega_dos/trading/dos_trading_v1.py, omega_dos/metrics/institutional.py, omega_dos/pipeline.py, omega_dos/bridge_fin_sense.py.
+Paridade PGPASS se usar Postgres.
+Este documento descreve o desenho e limites técnicos; não substitui auditoria jurídica ou de negócio.=====OMEGA Data Operating System (DOS) — omega-dosVersão: 1.1.0Biblioteca Python alinhada à especificação do Conselho DOC-OFC-DOS-TRADING-V1.0-20260405-001 (DATA OPERATING SYSTEM - DOS, documento final 05/04/2026). Inclui:
+FIN-SENSE — run_dos_pipeline sobre bronze.demo_log_swing_trade (ou DataFrame equivalente).
+DOS-TRADING V1.0 — Quatro camadas de interpretação sobre ticks/barras MT5 (CSV mt5_data/{SYMBOL}_M1_{YEAR}.csv).
+Métricas Tier-0 — Tier0Metrics (VaR/CVaR/RAROC/Sortino/Omega/Sharpe/Calmar) sobre séries de retornos.
+Backtrader (opcional) — omega_dos.trading.backtrader_dos.run_backtrader_mt5 com extra [backtrader].
+1. FIN-SENSE — Pipeline omega_dos.pipeline
+Entrada: Colunas do demo swing (y, x, spread, z, beta, flags, ram_mb, cpu_pct, proc_ms, opp_cost) alinhadas ao CSV/ingest FIN-SENSE.
+Saída: DosPipelineResult com VaR/CVaR histórico, regimes, clusters e proveniência SHA-256.
+Nota: O PnL derivado de synthetic_positions_trades_from_swing é sintético até existir livro/posições reais.
+
+from omega_dos.pipeline import run_dos_pipeline
+
+result = run_dos_pipeline(market=df, source="frame", notional_usd=10_000.0)
+result = run_dos_pipeline(source="postgres", limit_rows=50_000)
+
+2. DOS-TRADING V1.0 — MT5 (omega_dos.trading.dos_trading_v1)
+Entrada: OHLC + time nos CSV por ano; diretório por defeito mt5_data/ ou DOS_MT5_DIR.
+Camadas: (1) Estrutura de preço, (2) Microestrutura, (3) Regime vol + trend/range/breakout, (4) Sinal composto; depois sinais, diagnóstico de falsos negativos e backtest simplificado.
+Execução standalone (equivalente ao script da especificação):
+
+mkdir mt5_data
+# Copiar XAUUSD_M1_2024.csv, etc.
+python dos_trading_v1.py
+
+
+Ou em código:
+
+from omega_dos import DOS_TRADING_V1
+
+trader = DOS_TRADING_V1("mt5_data/")
+report = trader.run_full_pipeline("XAUUSD")
+
+Logging em ficheiro: opcional via DOS_LOG_FILE=caminho/dos.log.
+3. Métricas Institucionais — Tier0Metrics
+
+from omega_dos import Tier0Metrics
+import pandas as pd
+
+returns = pd.Series(...)  # retornos por período
+m = Tier0Metrics(returns, exposure=1_000_000.0)
+print(m.full_analysis())
+
+4. Backtrader (opcional)
+pip install "omega-dos[backtrader]"
+
+from omega_dos.trading.backtrader_dos import run_backtrader_mt5
+run_backtrader_mt5("mt5_data/XAUUSD_M1_2025.csv")
+
+Instalação (monorepo)
+cd modules/FIN_SENSE_DATA_MODULE && pip install -e .
+cd modules/DOS_MODULE && pip install -e ".[dev]"
+
+Postgres opcional: pip install -e ".[postgres]" e PGPASS (mesmo contrato que get_connection_dsn()).Variáveis de Ambiente
+
+Variável	Significado
+DOS_PG_SCHEMA	Schema DDL opcional (default dos).
+FIN_SENSE_SCHEMA_VERSION	Referência documental FIN-SENSE (ver omega_dos.config).
+DOS_MT5_DIR	Diretório de CSV MT5 para o wrapper main() de dos_trading_v1.
+DOS_LOG_FILE	Se definido, registo adicional em ficheiro.
+
+DDL Opcionalomega_dos/sql/ddl_dos.sql — tabela dos.pipeline_run.Testes
+cd modules/DOS_MODULE && python -m pytest -q
+
+
+Limitações
+Resultados de backtest e sinais no DOS-TRADING dependem dos CSV e dos parâmetros fixados; não constituem promessa de desempenho futuro.
+Métricas históricas não substituem stress testing nem validação de negócio.
+Digest de inputs em séries muito grandes pode exigir estratégia de chunking em evoluções futuras.
+Documento para o ConselhoVer CONSELHO_DOS_MODULE.md
+
+
+
+
