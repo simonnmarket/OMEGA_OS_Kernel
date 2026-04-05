@@ -41,6 +41,15 @@ Centralizar formatos de dados num **contrato único**; servir research, execuç�
 - `scripts/validate_hub_integrity.py` — `GATE_GLOBAL: PASS` (23 tabelas)
 - `scripts/ingest_demo_to_bronze.py` — demo Bronze em `FIN_SENSE_DATA\hub\`
 
+## Consumo por outros módulos (métricas / relatórios)
+
+Contrato estável para um módulo que **gira métricas e relatórios** em cima deste hub:
+
+- **Schemas e versão:** `from fin_sense_data_module.schemas.schema_definitions import get_schema, SCHEMA_VERSION`
+- **Armazenamento lake:** `from fin_sense_data_module.storage import FinSenseStorage`
+- **Fase 2 / demo swing (Postgres):** após gate DB, dados alinhados em `bronze.demo_log_swing_trade` — ver `fin_sense_data_module.demo_log_swing_ingest` e `sql/ddl_bronze_demo_log.sql`
+- **Evidências de teste (Fatia 1):** `DOC-TESTES-FASE2-FATIA1.md` (raiz do repositório)
+
 ## Governança
 
 - `DOC-OFC-DESVIO-PADRAO-ESTRUTURAL-MODULES-FINSENSE-20260404-002`
