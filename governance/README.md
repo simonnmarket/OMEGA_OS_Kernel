@@ -1,8 +1,10 @@
 # Governança OMEGA — Índice de documentos oficiais
 
-**Versão do índice:** 1.3 — inclui **Fase 2 / Fatia 1** (novo `DOC-OFC`, iniciativa separada); **congelamento** dos DOC-001–007 até rubrica PSA ou ordem CEO v2.
+**Versão do índice:** 1.4 — inclui **DOC-008** (pacote de envio imediato ao PSA); **congelamento** dos DOC-001–007 até rubrica PSA ou ordem CEO v2.
 
 **Procedimento único para o PSA:** `DOC-OFC-GUIA-UNICO-PSA-RUBRICA-TRANSICAO-FASE2-20260404-007` (rubrica, commit único pós-homologação, transição fase 2).
+
+**Pacote de envio imediato (instruções consolidadas):** `DOC-OFC-ENVIO-IMEDIATO-PSA-PACOTE-HOMOLOGACAO-CICLO-FINSENSE-20260327-008` — checklist, PowerShell, Anexo A, commit.
 
 **Estado do ciclo FIN-SENSE (técnico-documental):** **ENCERRADO** — ver `DOC-OFC-ENCERRAMENTO-DEFINITIVO-CICLO-FINSENSE-PSA-20260404-004`.
 
@@ -23,6 +25,7 @@
 | `DOC-OFC-CONFIRMACAO-ENCERRAMENTO-OFICIAL-PSA-FINSENSE-20260404-005` | **Confirmação PSA** — diretórios canónicos + GitHub + **rubrica obrigatória** (secção 5) |
 | `DOC-OFC-REQUISITO-VALIDACAO-PSA-OBRIGATORIA-SEM-GAP-20260404-006` | **Crítico:** validação PSA obrigatória — evitar **gap** se não houver homologação formal |
 | `DOC-OFC-GUIA-UNICO-PSA-RUBRICA-TRANSICAO-FASE2-20260404-007` | **Guia único:** rubrica, README pós-homologação, commit único, **fase 2** (alta performance), **congelamento** |
+| `DOC-OFC-ENVIO-IMEDIATO-PSA-PACOTE-HOMOLOGACAO-CICLO-FINSENSE-20260327-008` | **Envio imediato ao PSA:** pacote completo (verificação Git, DOC-005 §5, README Anexo A, commit único) |
 
 ### Fase 2 — engenharia (nova iniciativa; não reabre DOC-001–007)
 
