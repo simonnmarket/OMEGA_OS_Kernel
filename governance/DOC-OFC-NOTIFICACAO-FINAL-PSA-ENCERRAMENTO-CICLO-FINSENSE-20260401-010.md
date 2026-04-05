@@ -4,7 +4,7 @@
 |--------|--------|
 | **ID completo** | `DOC-OFC-NOTIFICACAO-FINAL-PSA-ENCERRAMENTO-CICLO-FINSENSE-20260401-010` |
 | **Referência curta** | `DOC-OFC-010` |
-| **Versão** | 1.0 FINAL |
+| **Versão** | 1.1 FINAL |
 | **Data** | 1 de abril de 2026 |
 | **Destinatário** | Principal Solution Architect (PSA) |
 | **Assunto** | **Notificação final** — nenhum documento adicional de governança será emitido para concluir este ciclo além dos já publicados |
@@ -37,7 +37,7 @@ A presente notificação informa o **PSA**, de forma **definitiva**, que:
 
 ## 3. Reconhecimento
 
-Ao concluir o passo 2 da secção anterior, o PSA reconhece que:
+Após executar **integralmente** os passos **1 a 6** da secção 2 (em conjunto com o **DOC-009**), o PSA reconhece que:
 
 - O **ciclo técnico-documental** FIN-SENSE já foi dado como **encerrado** no **DOC-004**;  
 - Falta apenas a **homologação institucional** (DOC-005 + README + Git) para **fechar o gap** do **DOC-006**;  
@@ -76,10 +76,11 @@ Com a publicação desta **DOC-010**, o processo de **emissão de novos document
 
 ---
 
-## Finalização do Ciclo
+## 7. Finalização do ciclo (canal documental)
 
-**Fim definitivo do canal de emissão de governança para o ciclo FIN-SENSE (DOC-001 a 010).**
-**Próximo comando: EXECUÇÃO HUMANA.**
+**Fim definitivo do canal de emissão de governança** destinado a “completar” o encerramento homologável do ciclo **FIN-SENSE** no âmbito **DOC-001 a DOC-010** (incluindo a presente notificação).
+
+**Próximo comando:** **execução humana** — mandatos **M1–M6** do **DOC-009**, com apoio do **DOC-008**; **não** nova redacção por IA nem novo `DOC-OFC` para o mesmo efeito, salvo **ordem CEO**.
 
 ---
 
