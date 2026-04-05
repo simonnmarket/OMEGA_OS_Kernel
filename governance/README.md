@@ -6,6 +6,8 @@
 
 **Trilha Git (histórico):** **`9e884ff`** → **`f0e9373`** → **`078107c`**. **Publicação DOC-017 (finalização única):** **`9205097`** (`main`).
 
+**Padronização:** antes de `git push` que altere `governance/`, executar `python scripts/verify_governance_refs.py` na raiz do repo (verifica se cada `DOC-OFC-…` citado no README existe como `.md`). Opcional: `--write-manifest` actualiza `MANIFESTO_DOCUMENTOS.json`.
+
 **Registo de falha e prevenção (PSA):** `DOC-OFC-REGISTO-FALHA-INDICE-DOC003-CORRECAO-PREVENTIVA-PSA-20260403-012` (012).
 
 **Acta de encerramento (PSA — saída):** `DOC-OFC-ACTA-ENCERRAMENTO-OFICIAL-ETAPA-FINSENSE-HOMOLOGACAO-PSA-20260402-011` (011).
@@ -42,8 +44,8 @@
 | `DOC-OFC-NOTIFICACAO-FINAL-PSA-ENCERRAMENTO-CICLO-FINSENSE-20260401-010` | **Notificação final ao PSA:** canal documental encerrado; apenas executar **DOC-009** + **DOC-008** |
 | `DOC-OFC-ACTA-ENCERRAMENTO-OFICIAL-ETAPA-FINSENSE-HOMOLOGACAO-PSA-20260402-011` | **Acta oficial PSA:** encerramento da **pendência/etapa** após M1–M6; checklist + assinatura (documento de **saída**) |
 | `DOC-OFC-REGISTO-FALHA-INDICE-DOC003-CORRECAO-PREVENTIVA-PSA-20260403-012` | **Registo de falha:** índice DOC-003 (ARQUIVO), causa, commit `21eae3d`, medidas **P1–P4** para não repetir |
-| `DOC-OFC-SOLICITACAO-EXECUCAO-PSA-ENCERRAMENTO-GAP-FINSENSE-CEO-20260404-013` | **[Arquivo]** redireciona para **015** |
-| `DOC-OFC-CERTIFICADO-CONCLUSAO-ETAPA-FINSENSE-LACUNAS-RESOLVIDAS-CEO-20260404-014` | **[Arquivo]** redireciona para **015** |
+| `DOC-OFC-SOLICITACAO-EXECUCAO-PSA-ENCERRAMENTO-GAP-FINSENSE-CEO-20260404-013` | **[Arquivo]** redireciona para **017** |
+| `DOC-OFC-CERTIFICADO-CONCLUSAO-ETAPA-FINSENSE-LACUNAS-RESOLVIDAS-CEO-20260404-014` | **[Arquivo]** redireciona para **017** |
 | `DOC-OFC-ENVIO-UNICO-PSA-ENCERRAMENTO-FINSENSE-CEO-20260327-015` | **[Arquivo]** redireciona para **017** |
 | `DOC-OFC-REGISTO-PSA-TRANSICAO-MODULO-METRICAS-RELATORIOS-CEO-20260327-016` | **[Arquivo]** redireciona para **017** |
 | `DOC-OFC-FINALIZACAO-UNICA-PSA-FINSENSE-TRANSICAO-CEO-20260327-017` | **Finalização única PSA:** 015+016+regra congelamento §8; único anexo para fechar ciclo |
@@ -55,7 +57,7 @@ Contratos técnicos e roadmap pós-ciclo FIN-SENSE. Gate de engenharia e PSA **a
 | ID | Título |
 |----|--------|
 | `DOC-OFC-FASE2-FATIA1-PIPELINE-ZERO-LOSS-CSV-POSTGRES-20260412` | **Fatia 1:** pipeline zero-loss CSV → PostgreSQL (`scripts/ingest_pipeline.py`), A1–A5, métricas, prazo 12/04, auditoria 13/04 |
-| *(futuro)* `DOC-OFC-FASE2-FATIA2-…` | Idempotência + reprocessamento |
+| *(futuro)* Fase 2 Fatia 2 (DOC-OFC a definir) | Idempotência + reprocessamento |
 
 **Evidências de teste (Fatia 1):** `DOC-TESTES-FASE2-FATIA1.md` (raiz; estado `FECHADO_CODIGO` + gate DB documentado).
 
