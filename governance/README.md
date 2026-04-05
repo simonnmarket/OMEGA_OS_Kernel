@@ -4,7 +4,7 @@
 
 **Único documento a anexar ao PSA (CEO):** `DOC-OFC-FINALIZACAO-UNICA-PSA-FINSENSE-TRANSICAO-CEO-20260327-017` (**017**) — substitui **013–016** para **envio**; **013/014/015/016** = arquivo de ID apenas.
 
-**Trilha Git (histórico):** **`9e884ff`** → **`f0e9373`** → **`078107c`**.
+**Trilha Git (histórico):** **`9e884ff`** → **`f0e9373`** → **`078107c`**. **Publicação DOC-017 (finalização única):** **`9205097`** (`main`).
 
 **Registo de falha e prevenção (PSA):** `DOC-OFC-REGISTO-FALHA-INDICE-DOC003-CORRECAO-PREVENTIVA-PSA-20260403-012` (012).
 
@@ -16,7 +16,7 @@
 
 **Procedimento único para o PSA:** `DOC-OFC-GUIA-UNICO-PSA-RUBRICA-TRANSICAO-FASE2-20260404-007` (007).
 
-**Pacote de envio imediato (instruções consolidadas):** `DOC-OFC-ENVIO-IMEDIATE-PSA-PACOTE-HOMOLOGACAO-CICLO-FINSENSE-20260327-008` (008).
+**Pacote de envio imediato (instruções consolidadas):** `DOC-OFC-ENVIO-IMEDIATO-PSA-PACOTE-HOMOLOGACAO-CICLO-FINSENSE-20260327-008` (008).
 
 **Estado do ciclo FIN-SENSE (técnico-documental):** **ENCERRADO** — ver `DOC-OFC-ENCERRAMENTO-DEFINITIVO-CICLO-FINSENSE-PSA-20260404-004`.
 

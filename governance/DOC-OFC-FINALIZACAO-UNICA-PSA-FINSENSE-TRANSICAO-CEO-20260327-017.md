@@ -4,7 +4,8 @@
 |--------|--------|
 | **ID completo** | `DOC-OFC-FINALIZACAO-UNICA-PSA-FINSENSE-TRANSICAO-CEO-20260327-017` |
 | **Referência curta** | **DOC-017** |
-| **Versão** | **1.0 FECHADO** — **único anexo** para o PSA finalizar este processo (substitui **015** e **016** para envio) |
+| **Versão** | **1.0 FECHADO** — **único anexo** ao PSA; substitui **013 a 016** para envio |
+| **Ref. Git (publicação deste texto)** | **`9205097`** — `main` / `origin` (congelamento institucional DOC-017) |
 | **Data** | 27 de março de 2026 |
 | **Ordem CEO** | **APROVADO** — encerramento + transição conforme abaixo |
 | **Ref. Git (trilha)** | `9e884ff` → `f0e9373` → `078107c` (marcos inalteráveis na história) |
