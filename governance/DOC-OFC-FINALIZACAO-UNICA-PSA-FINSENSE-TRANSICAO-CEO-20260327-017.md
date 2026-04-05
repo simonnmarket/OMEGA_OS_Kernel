@@ -1,4 +1,4 @@
-# Documento único de finalização ao PSA — Ciclo FIN-SENSE + gatilho Fase 2 (CEO)
+# Documento Oficial — Finalização Única ao PSA: Ciclo FIN-SENSE + Gatilho Fase 2 (CEO)
 
 | Campo | Valor |
 |--------|--------|

@@ -1,14 +1,11 @@
-# [ARQUIVO — redirecionamento] DOC-016
+# DOC-OFC-REGISTO-PSA-TRANSICAO-MODULO-METRICAS-RELATORIOS-CEO-20260327-016 (DOC-016)
 
-| Campo | Valor |
-|--------|--------|
-| **ID** | `DOC-OFC-REGISTO-PSA-TRANSICAO-MODULO-METRICAS-RELATORIOS-CEO-20260327-016` |
-| **Estado** | **Unificado em DOC-017** — não enviar em separado ao PSA |
+**ESTADO: REDIRECIONADO PARA O DOC-017.**
+
+Este documento foi unificado no **`DOC-OFC-FINALIZACAO-UNICA-PSA-FINSENSE-TRANSICAO-CEO-20260327-017.md`** (**DOC-017**).
+
+Por favor, consulte o **DOC-017** para o gatilho de transição para o Módulo de Métricas e Relatórios e o mandato de finalização.
 
 ---
 
-O registo de transição que constava neste ficheiro está **incorporado** no **único documento de finalização**:
-
-**`DOC-OFC-FINALIZACAO-UNICA-PSA-FINSENSE-TRANSICAO-CEO-20260327-017.md`** (**DOC-017**).
-
-Manter este ficheiro apenas para **referência de ID** e histórico Git.
+**Referência histórica:** 0484073.

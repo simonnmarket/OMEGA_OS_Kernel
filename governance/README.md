@@ -16,7 +16,7 @@
 
 **Procedimento único para o PSA:** `DOC-OFC-GUIA-UNICO-PSA-RUBRICA-TRANSICAO-FASE2-20260404-007` (007).
 
-**Pacote de envio imediato (instruções consolidadas):** `DOC-OFC-ENVIO-IMEDIATO-PSA-PACOTE-HOMOLOGACAO-CICLO-FINSENSE-20260327-008` (008).
+**Pacote de envio imediato (instruções consolidadas):** `DOC-OFC-ENVIO-IMEDIATE-PSA-PACOTE-HOMOLOGACAO-CICLO-FINSENSE-20260327-008` (008).
 
 **Estado do ciclo FIN-SENSE (técnico-documental):** **ENCERRADO** — ver `DOC-OFC-ENCERRAMENTO-DEFINITIVO-CICLO-FINSENSE-PSA-20260404-004`.
 
