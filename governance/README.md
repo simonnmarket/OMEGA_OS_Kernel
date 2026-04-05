@@ -1,8 +1,12 @@
 # Governança OMEGA — Índice de documentos oficiais
 
-**Versão do índice:** 2.1 — **envio único ao PSA:** **DOC-015** (mandato + certificado + minuta); **013/014** → redirecionamento apenas.
+**Versão do índice:** 2.2 — **DOC-016:** registo PSA — transição para módulo métricas/relatórios após retorno PSA (DOC-015).
 
-**Único documento a anexar ao PSA (CEO):** `DOC-OFC-ENVIO-UNICO-PSA-ENCERRAMENTO-FINSENSE-CEO-20260327-015` (**015**) — trilha Git: **`9e884ff`** → **`f0e9373`** → **`078107c`** (pin v2.1); evoluções em `main` sem novo encerramento.
+**Registo PSA (transição pós-retorno):** `DOC-OFC-REGISTRO-PSA-TRANSICAO-MODULO-METRICAS-RELATORIOS-CEO-20260327-016` (**016**) — gatilho: execução **DOC-015** Sec. C; próximo passo: integração módulo consumidor do **FIN_SENSE_DATA_MODULE**.
+
+**Único documento de encerramento ciclo (CEO):** `DOC-OFC-ENVIO-UNICO-PSA-ENCERRAMENTO-FINSENSE-CEO-20260327-015` (**015**) — trilha Git: **`9e884ff`** → **`f0e9373`** → **`078107c`** (pin v2.1).
+
+**013/014** → redirecionamento apenas para **015**.
 
 **Solicitação / certificado (redirecionamento):** `…-013` e `…-014` apontam para **015** — arquivo histórico de ID apenas.
 
@@ -45,6 +49,7 @@
 | `DOC-OFC-SOLICITACAO-EXECUCAO-PSA-ENCERRAMENTO-GAP-FINSENSE-CEO-20260404-013` | **[Arquivo]** redireciona para **015** |
 | `DOC-OFC-CERTIFICADO-CONCLUSAO-ETAPA-FINSENSE-LACUNAS-RESOLVIDAS-CEO-20260404-014` | **[Arquivo]** redireciona para **015** |
 | `DOC-OFC-ENVIO-UNICO-PSA-ENCERRAMENTO-FINSENSE-CEO-20260327-015` | **Único envio PSA:** mandato + certificado + assunto/corpo e-mail; substitui 013+014 para envio |
+| `DOC-OFC-REGISTRO-PSA-TRANSICAO-MODULO-METRICAS-RELATORIOS-CEO-20260327-016` | **Registo PSA:** após retorno/execução DOC-015 — autorizar transição para módulo métricas/relatórios (consumo FIN_SENSE) |
 
 ### Fase 2 — engenharia (nova iniciativa; não reabre DOC-001–007)
 
