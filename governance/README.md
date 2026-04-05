@@ -1,8 +1,10 @@
 # Governança OMEGA — Índice de documentos oficiais
 
-**Versão do índice:** 2.3 — **finalização única ao PSA:** **DOC-017** (mandato + transição + regra de congelamento §8).
+**Versão do índice:** 2.4 — **DOC-018:** comunicação PSA (correcções índice + procedimento validação); **DOC-017** mantém-se mandato de encerramento único.
 
-**Único documento a anexar ao PSA (CEO):** `DOC-OFC-FINALIZACAO-UNICA-PSA-FINSENSE-TRANSICAO-CEO-20260327-017` (**017**) — substitui **013–016** para **envio**; **013/014/015/016** = arquivo de ID apenas.
+**Finalização do ciclo (CEO → PSA):** `DOC-OFC-FINALIZACAO-UNICA-PSA-FINSENSE-TRANSICAO-CEO-20260327-017` (**017**) — substitui **013–016** para **envio**; **013/014/015/016** = arquivo de ID apenas.
+
+**Comunicação operacional (transparência + SOP):** `DOC-OFC-COMUNICACAO-PSA-CORRECOES-PROCEDIMENTO-VALIDACAO-GOV-CEO-20260327-018` (**018**) — **não** altera **§8** do **017**; informa correcções e `verify_governance_refs.py`.
 
 **Trilha Git (histórico):** **`9e884ff`** → **`f0e9373`** → **`078107c`**. **Publicação DOC-017 (finalização única):** **`9205097`** (`main`).
 
@@ -49,6 +51,7 @@
 | `DOC-OFC-ENVIO-UNICO-PSA-ENCERRAMENTO-FINSENSE-CEO-20260327-015` | **[Arquivo]** redireciona para **017** |
 | `DOC-OFC-REGISTO-PSA-TRANSICAO-MODULO-METRICAS-RELATORIOS-CEO-20260327-016` | **[Arquivo]** redireciona para **017** |
 | `DOC-OFC-FINALIZACAO-UNICA-PSA-FINSENSE-TRANSICAO-CEO-20260327-017` | **Finalização única PSA:** 015+016+regra congelamento §8; único anexo para fechar ciclo |
+| `DOC-OFC-COMUNICACAO-PSA-CORRECOES-PROCEDIMENTO-VALIDACAO-GOV-CEO-20260327-018` | **Comunicação PSA:** conclusão correcções README + procedimento validação automática; sequência novo módulo |
 
 ### Fase 2 — engenharia (nova iniciativa; não reabre DOC-001–007)
 
