@@ -1,6 +1,8 @@
 # Governança OMEGA — Índice de documentos oficiais
 
-**Versão do índice:** 1.8 — inclui **DOC-012** (registo de falha índice DOC-003 **ARQUICO→ARQUIVO**, correcção commit `21eae3d`, medidas preventivas PSA); **congelamento** dos DOC-001–007 até rubrica PSA ou ordem CEO v2.
+**Versão do índice:** 1.9 — inclui **DOC-013** (solicitação formal ao PSA + ordem CEO para execução encerramento gap); **congelamento** dos DOC-001–007 até rubrica PSA ou ordem CEO v2.
+
+**Solicitação ao PSA (CEO aprovado):** `DOC-OFC-SOLICITACAO-EXECUCAO-PSA-ENCERRAMENTO-GAP-FINSENSE-CEO-20260404-013` — executar **008/009**, rubrica **005**, **Anexo A** README, commit, **011** arquivada.
 
 **Registo de falha e prevenção (PSA):** `DOC-OFC-REGISTO-FALHA-INDICE-DOC003-CORRECAO-PREVENTIVA-PSA-20260403-012` — falha apontada, motivo, correcção, checklist P1–P4.
 
@@ -38,6 +40,7 @@
 | `DOC-OFC-NOTIFICACAO-FINAL-PSA-ENCERRAMENTO-CICLO-FINSENSE-20260401-010` | **Notificação final ao PSA:** canal documental encerrado; apenas executar **DOC-009** + **DOC-008** |
 | `DOC-OFC-ACTA-ENCERRAMENTO-OFICIAL-ETAPA-FINSENSE-HOMOLOGACAO-PSA-20260402-011` | **Acta oficial PSA:** encerramento da **pendência/etapa** após M1–M6; checklist + assinatura (documento de **saída**) |
 | `DOC-OFC-REGISTO-FALHA-INDICE-DOC003-CORRECAO-PREVENTIVA-PSA-20260403-012` | **Registo de falha:** índice DOC-003 (ARQUICO→ARQUIVO), causa, commit `21eae3d`, medidas **P1–P4** para não repetir |
+| `DOC-OFC-SOLICITACAO-EXECUCAO-PSA-ENCERRAMENTO-GAP-FINSENSE-CEO-20260404-013` | **Solicitação PSA:** execução encerramento gap (008/009, 005, README, 011) — **ordem CEO APROVADO** |
 
 ### Fase 2 — engenharia (nova iniciativa; não reabre DOC-001–007)
 
