@@ -1,16 +1,10 @@
 # Governança OMEGA — Índice de documentos oficiais
 
-**Versão do índice:** 2.2 — **TRANSIÇÃO** (**DOC-016**); gatilho de operação para o Módulo de Métricas e Relatórios.
+**Versão do índice:** 2.3 — **finalização única ao PSA:** **DOC-017** (mandato + transição + regra de congelamento §8).
 
-**Registo PSA de transição (métricas):** `DOC-OFC-REGISTO-PSA-TRANSICAO-MODULO-METRICAS-RELATORIOS-CEO-20260327-016` (**016**) — pronto para integração técnica após cumprimento do mandato **DOC-015** (Secção C).
+**Único documento a anexar ao PSA (CEO):** `DOC-OFC-FINALIZACAO-UNICA-PSA-FINSENSE-TRANSICAO-CEO-20260327-017` (**017**) — substitui **013–016** para **envio**; **013/014/015/016** = arquivo de ID apenas.
 
-**Envio único ao PSA (consolidado):** `DOC-OFC-ENVIO-UNICO-PSA-ENCERRAMENTO-FINSENSE-CEO-20260327-015` (**015**) — mandato único (6 passos); substitui **013** e **014**.
-
-**Trilha Git (DOC-015):** **`9e884ff`** → **`f0e9373`** → **`078107c`** (pin v2.1).
-
-**013/014** → redirecionamento apenas para **015**.
-
-**Solicitação / certificado (redirecionamento):** `…-013` e `…-014` apontam para **015** — arquivo histórico de ID apenas.
+**Trilha Git (histórico):** **`9e884ff`** → **`f0e9373`** → **`078107c`**.
 
 **Registo de falha e prevenção (PSA):** `DOC-OFC-REGISTO-FALHA-INDICE-DOC003-CORRECAO-PREVENTIVA-PSA-20260403-012` (012).
 
@@ -50,8 +44,9 @@
 | `DOC-OFC-REGISTO-FALHA-INDICE-DOC003-CORRECAO-PREVENTIVA-PSA-20260403-012` | **Registo de falha:** índice DOC-003 (ARQUIVO), causa, commit `21eae3d`, medidas **P1–P4** para não repetir |
 | `DOC-OFC-SOLICITACAO-EXECUCAO-PSA-ENCERRAMENTO-GAP-FINSENSE-CEO-20260404-013` | **[Arquivo]** redireciona para **015** |
 | `DOC-OFC-CERTIFICADO-CONCLUSAO-ETAPA-FINSENSE-LACUNAS-RESOLVIDAS-CEO-20260404-014` | **[Arquivo]** redireciona para **015** |
-| `DOC-OFC-ENVIO-UNICO-PSA-ENCERRAMENTO-FINSENSE-CEO-20260327-015` | **Único envio PSA:** mandato + certificado + assunto/corpo e-mail; substitui 013+014 para envio |
-| `DOC-OFC-REGISTO-PSA-TRANSICAO-MODULO-METRICAS-RELATORIOS-CEO-20260327-016` | **Registo de transição:** gatilho operacional para Módulo de Métricas / relatórios (consumo **FIN_SENSE_DATA_MODULE**) após **DOC-015** |
+| `DOC-OFC-ENVIO-UNICO-PSA-ENCERRAMENTO-FINSENSE-CEO-20260327-015` | **[Arquivo]** redireciona para **017** |
+| `DOC-OFC-REGISTO-PSA-TRANSICAO-MODULO-METRICAS-RELATORIOS-CEO-20260327-016` | **[Arquivo]** redireciona para **017** |
+| `DOC-OFC-FINALIZACAO-UNICA-PSA-FINSENSE-TRANSICAO-CEO-20260327-017` | **Finalização única PSA:** 015+016+regra congelamento §8; único anexo para fechar ciclo |
 
 ### Fase 2 — engenharia (nova iniciativa; não reabre DOC-001–007)
 
