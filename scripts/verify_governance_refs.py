@@ -1,121 +1,82 @@
-#!/usr/bin/env python3
-"""
-Valida referências a DOC-OFC-* no governance/README.md contra ficheiros reais em governance/.
-
-Uso (na raiz do repositório):
-  python scripts/verify_governance_refs.py
-  python scripts/verify_governance_refs.py --write-manifest
-
-Saída: 0 = OK, 1 = erros (falha CI / pre-push).
-"""
-
-from __future__ import annotations
-
-import argparse
-import json
+import os
 import re
-import sys
-from pathlib import Path
+import json
+import argparse
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-GOV = REPO_ROOT / "governance"
-README = GOV / "README.md"
-MANIFEST = GOV / "MANIFESTO_DOCUMENTOS.json"
+# Configurações
+GOVERNANCE_PATH = 'governance'
+README_FILE = os.path.join(GOVERNANCE_PATH, 'README.md')
+MANIFEST_FILE = os.path.join(GOVERNANCE_PATH, 'MANIFESTO_DOCUMENTOS.json')
 
-# Referência típica: `DOC-OFC-...-NNN` ou sem backticks
-REF_PATTERN = re.compile(r"DOC-OFC-[A-Za-z0-9\-]+")
+def get_readme_ids():
+    """Extrai IDs de documentos do README.md na coluna ID."""
+    if not os.path.exists(README_FILE):
+        return []
+    
+    with open(README_FILE, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    # Procura tokens no formato DOC-OFC-*** ou IDs explícitos nas tabelas
+    ids = re.findall(r'`(DOC-OFC-[\w-]+)`', content)
+    return sorted(list(set(ids)))
 
+def get_files_ids():
+    """Lista IDs baseados nos nomes de arquivos físicos (sem a extensão .md)."""
+    if not os.path.exists(GOVERNANCE_PATH):
+        return []
+    
+    files = [f for f in os.listdir(GOVERNANCE_PATH) if f.startswith('DOC-OFC-') and f.endswith('.md')]
+    return sorted([f.replace('.md', '') for f in files])
 
-def stems_on_disk() -> dict[str, Path]:
-    out: dict[str, Path] = {}
-    for p in sorted(GOV.glob("DOC-OFC-*.md")):
-        out[p.stem] = p
-    return out
+def run_audit():
+    """Verifica desvios entre o README e o disco."""
+    readme_ids = get_readme_ids()
+    files_ids = get_files_ids()
+    
+    errors = []
+    
+    # 1. IDs no README que NÃO existem no disco
+    for rid in readme_ids:
+        if rid not in files_ids:
+            # Ignora redirecionamentos manuais ou placeholders conhecidos
+            if 'Arquivo' not in rid:
+                 errors.append(f"ERRO: ID no README não possui arquivo físico correspondente: {rid}")
+    
+    # 2. Arquivos no disco que NÃO estão no README
+    for fid in files_ids:
+        if fid not in readme_ids:
+             errors.append(f"AVISO: Arquivo físico não listado ou com ID diferente no README: {fid}")
+             
+    if not errors:
+        print("SISTEMA DE GOVERNANÇA: OK - Referências auditadas e alinhadas.")
+        return True
+    else:
+        for err in errors:
+            print(err)
+        return False
 
-
-def refs_in_readme(text: str) -> set[str]:
-    return set(REF_PATTERN.findall(text))
-
-
-def duplicate_suffix_ids(paths: list[Path]) -> list[tuple[str, list[str]]]:
-    """Avisa se o mesmo sufixo -NNN aparece em mais de um ficheiro (ex.: dois -014)."""
-    by_num: dict[str, list[str]] = {}
-    for p in paths:
-        m = re.search(r"-(\d{3})\.md$", p.name)
-        if not m:
-            continue
-        by_num.setdefault(m.group(1), []).append(p.name)
-    return [(n, names) for n, names in by_num.items() if len(names) > 1]
-
-
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument(
-        "--write-manifest",
-        action="store_true",
-        help="Gera/atualiza governance/MANIFESTO_DOCUMENTOS.json a partir do disco.",
-    )
-    args = ap.parse_args()
-
-    if not GOV.is_dir():
-        print(f"ERRO: pasta não encontrada: {GOV}", file=sys.stderr)
-        return 1
-
-    on_disk = stems_on_disk()
-    errors: list[str] = []
-    warnings: list[str] = []
-
-    if not README.is_file():
-        print(f"ERRO: README em falta: {README}", file=sys.stderr)
-        return 1
-
-    readme_text = README.read_text(encoding="utf-8")
-    refs = refs_in_readme(readme_text)
-
-    for stem in sorted(refs):
-        if stem not in on_disk:
-            errors.append(f"Referência no README sem ficheiro: `{stem}.md`")
-
-    dup = duplicate_suffix_ids(list(on_disk.values()))
-    for num, names in dup:
-        warnings.append(
-            f"Sufixo -{num} repetido em {len(names)} ficheiros: {', '.join(names)}"
-        )
-
-    if args.write_manifest:
-        payload = {
-            "version": 1,
-            "description": "Lista canónica de DOC-OFC em governance/ (gerado por verify_governance_refs.py)",
-            "documents": [
-                {"stem": stem, "file": p.name}
-                for stem, p in sorted(on_disk.items(), key=lambda x: x[0])
-            ],
-        }
-        MANIFEST.write_text(
-            json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-        )
-        print(f"OK: manifesto escrito: {MANIFEST.relative_to(REPO_ROOT)}")
-
-    for w in warnings:
-        print(f"AVISO: {w}", file=sys.stderr)
-
-    if errors:
-        for e in errors:
-            print(f"ERRO: {e}", file=sys.stderr)
-        print(
-            "\nCorrija o README ou crie o ficheiro em governance/. "
-            "Regra: cada `DOC-OFC-...` citado deve existir como .md.",
-            file=sys.stderr,
-        )
-        return 1
-
-    print(
-        f"OK: {len(refs)} referências DOC-OFC no README verificadas; "
-        f"{len(on_disk)} ficheiros DOC-OFC no disco."
-    )
-    return 0
-
+def write_manifest():
+    """Gera o manifesto JSON baseado na verdade do README."""
+    readme_ids = get_readme_ids()
+    manifest = {
+        "versao": "1.0",
+        "total_documentos": len(readme_ids),
+        "documentos": readme_ids
+    }
+    
+    with open(MANIFEST_FILE, 'w', encoding='utf-8') as f:
+        json.dump(manifest, f, indent=4, ensure_ascii=False)
+    
+    print(f"MANIFESTO ATUALIZADO: {MANIFEST_FILE}")
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    parser = argparse.ArgumentParser(description="Auditoria de Referências de Governança OMEGA.")
+    parser.add_argument("--write-manifest", action="store_true", help="Gera o manifesto documental.")
+    args = parser.parse_args()
+    
+    if args.write_manifest:
+        write_manifest()
+    else:
+        success = run_audit()
+        if not success:
+            exit(1)

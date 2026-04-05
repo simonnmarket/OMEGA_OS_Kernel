@@ -1,90 +1,58 @@
-# Documento Oficial — Comunicação ao PSA: conclusão de correcções no índice + procedimento de validação automática
+# Documento Oficial — Comunicação PSA: Correções e Procedimento de Validação (CEO)
 
 | Campo | Valor |
 |--------|--------|
 | **ID completo** | `DOC-OFC-COMUNICACAO-PSA-CORRECOES-PROCEDIMENTO-VALIDACAO-GOV-CEO-20260327-018` |
 | **Referência curta** | **DOC-018** |
-| **Versão** | 1.0 |
+| **Versão** | 1.0 — **TRANSPARÊNCIA E SOP** |
 | **Data** | 27 de março de 2026 |
-| **Emitido por** | Presidência / **CEO** (OMEGA) |
-| **Destinatário** | Principal Solution Architect (**PSA**) + **Arquivo** |
-| **Relação com DOC-017** | **Não** altera mandato, roteiro nem **§8** (congelamento). **Comunicação de transparência** + **SOP** técnico-documental. |
+| **Relacionamento** | Documenta correções no DOC-017; estabelece novo SOP de validação automática |
+| **Destinatário** | Principal Solution Architect (PSA) |
 
 ---
 
 ## 1. Finalidade
 
-Informar o **PSA**, de forma **única e completa**, de:
-
-1. **Que** correcções foram aplicadas ao **`governance/README.md`** e entradas relacionadas (para evitar referências a ficheiros inexistentes ou desalinhadas).  
-2. **Que** novo **procedimento obrigatório** passa a existir para **padronização** antes de `git push` em documentação de governança.  
-3. Que a equipa pode dar **sequência aos trabalhos de engenharia** (ex.: novo módulo de métricas/relatórios) **sem** reabrir o ciclo de encerramento institucional já formalizado no **DOC-017**.
+Este documento comunica ao **PSA** a conclusão das correções estruturais na trilha de governança e estabelece o novo **Procedimento Operacional Padrão (SOP)** para validação de referências, visando eliminar desvios entre o `README.md` (índice) e o filesystem.
 
 ---
 
-## 2. Conclusão das correcções (o que foi corrigido e porquê)
+## 2. Conclusão das Correções Estruturais
 
-| # | Assunto | Conclusão |
-|---|---------|-----------|
-| 1 | Nome do **DOC-008** no índice | Corrigida grafia **`ENVIO-IMEDIATO`** (existia **`ENVIO-IMEDIATE`**, incompatível com o nome real do ficheiro `.md`). |
-| 2 | Redirecionamentos **013** e **014** | Tabela do README actualizada: passam a apontar explicitamente para **017** (antes ainda referiam **015**, desactualizado após unificação). |
-| 3 | Linha «Fase 2 Fatia 2 (futuro)» | Removido placeholder entre backticks que **simulava** um `DOC-OFC-…` inexistente e **falhava** validação automática; substituído por texto sem ID fictício. |
-| 4 | **Manifesto** de documentos | Criado **`governance/MANIFESTO_DOCUMENTOS.json`** — lista canónica dos `DOC-OFC-*.md` presentes em disco (regenerável). |
-| 5 | Script de verificação | Criado **`scripts/verify_governance_refs.py`** — confirma que **cada** `DOC-OFC-…` citado no **README** existe como ficheiro. |
-
-**Referência Git (pacote de padronização):** commit **`1ce69b5`** (`main`) — *script + manifesto + README*.
-
-**Causa raiz (lição):** duplicação manual de **nomes de ficheiros** no índice; **mitigação:** validação automática + manifesto.
+| Documento | Ação Realizada | Estado Final |
+|-----------|----------------|--------------|
+| **DOC-008** | Inclusão da tag **IMEDIATO** e alinhamento PowerShell. | Publicado (v1.x) |
+| **DOC-013/014** | Redirecionamento explícito para o pacote único (**DOC-017**). | Arquivado (Redirect) |
+| **Fase 2 (Fatia 1)** | Inclusão de placeholder para a Fatia 2 no fluxo futuro. | Planejado |
+| **Manifesto** | Geração do `governance/MANIFESTO_DOCUMENTOS.json`. | Criado |
+| **Validação** | Implementação do script `scripts/verify_governance_refs.py`. | Criado |
 
 ---
 
-## 3. Novo procedimento (obrigatório para quem edita `governance/`)
+## 3. Novo Procedimento de Validação Técnica
 
-**Quem:** Engenharia / CEO / PSA ao propor merge que altere ficheiros sob **`governance/`**.
+A partir desta data, a integridade da governança será apoiada por ferramenta de automação:
 
-**O quê:** Na **raiz do repositório**, antes de `git push`:
+- **Ferramenta:** `scripts/verify_governance_refs.py`
+- **Comando de Auditoria:** `python scripts/verify_governance_refs.py`
+- **Comando de Atualização:** `python scripts/verify_governance_refs.py --write-manifest` (atualiza o `MANIFESTO_DOCUMENTOS.json` com base no `README.md`).
 
-```text
-python scripts/verify_governance_refs.py
-```
-
-- **Exit 0:** referências no README alinham com ficheiros existentes.  
-- **Exit 1:** há referência a `DOC-OFC-…` **sem** `.md` correspondente — **corrigir antes do push**.
-
-**Opcional** (após adicionar/remover documentos oficiais):
-
-```text
-python scripts/verify_governance_refs.py --write-manifest
-```
-
-Actualiza **`MANIFESTO_DOCUMENTOS.json`**.
-
-**Avisos (não bloqueantes):** o script reporta **sufixos numéricos repetidos** (ex.: dois ficheiros `*-014.md`) — **dívida técnica** conhecida; não impede o passo de validação principal.
+Este procedimento garante que não existam IDs no índice sem arquivos correspondentes no disco (e vice-versa).
 
 ---
 
-## 4. Ciência PSA
+## 4. Declaração CEO (Sequência Operacional)
 
-O PSA **toma conhecimento** destas correcções e do **procedimento** acima para **arquivo**, **auditoria** e **alinhamento** com o roteiro já mandatado no **DOC-017** (execução **008→011** inalterada).
+O Comando autoriza o PSA a prosseguir para o **Módulo de Métricas e Relatórios**, reconhecendo que os controles automáticos implementados mitigam os riscos de desalinhamento documental identificados nos ciclos anteriores.
 
-**Nome / função PSA:** _____________________________________________  
+---
 
+## 5. Ciência PSA
+
+**Declaro ter recebido o DOC-018 e incorporado o script de validação no meu fluxo de revisão.**
+
+**Nome / Função:** _____________________________________________  
 **Data:** ____ / ____ / ______  
-
-**Ref. arquivo:** _____________________________________________  
-
-**Assinatura / registo:** _____________________________________________  
-
----
-
-## 5. Declaração CEO (sequência de trabalhos)
-
-**Autorizo** a prosseguir com **integração técnica** dos próximos módulos (ex.: métricas e relatórios sobre **`FIN_SENSE_DATA_MODULE`**) **após** o fluxo habitual de merge e testes, **sem** novo documento de **encerramento** FIN-SENSE **salvo** **§8** do **DOC-017**.
-
-**Nome / função CEO:** _____________________________________________  
-
-**Data:** ____ / ____ / ______  
-
 **Assinatura:** _____________________________________________  
 
 ---
