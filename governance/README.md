@@ -1,6 +1,8 @@
 # Governança OMEGA — Índice de documentos oficiais
 
-**Versão do índice:** 1.9 — inclui **DOC-013** (solicitação formal de execução PSA); **congelamento** dos DOC-001–007 até rubrica PSA ou ordem CEO v2.
+**Versão do índice:** 2.0 — **certificado CEO** **DOC-014**: conclusão de etapa e mapa de lacunas institucionais **resolvidas** (execução PSA remanescente); **DOC-013** mantido como mandato de execução.
+
+**Certificado de conclusão (CEO — definitivo):** `DOC-OFC-CERTIFICADO-CONCLUSAO-ETAPA-FINSENSE-LACUNAS-RESOLVIDAS-CEO-20260404-014` (014) — **lacunas documentais** do ciclo **001–013** fechadas; **único passo** remanescente: **PSA** executar **008 → 009 → 005 → README (Anexo A) → push → 011**.
 
 **Solicitação de execução PSA (Mandato Único):** `DOC-OFC-SOLICITACAO-EXECUCAO-PSA-ENCERRAMENTO-GAP-FINSENSE-CEO-20260404-013` (013) — ordem CEO: **APROVADO**; roteiro 008 → 009 → 005 → Anexo A README → commit/push → 011.
 
@@ -41,6 +43,7 @@
 | `DOC-OFC-ACTA-ENCERRAMENTO-OFICIAL-ETAPA-FINSENSE-HOMOLOGACAO-PSA-20260402-011` | **Acta oficial PSA:** encerramento da **pendência/etapa** após M1–M6; checklist + assinatura (documento de **saída**) |
 | `DOC-OFC-REGISTO-FALHA-INDICE-DOC003-CORRECAO-PREVENTIVA-PSA-20260403-012` | **Registo de falha:** índice DOC-003 (ARQUIVO), causa, commit `21eae3d`, medidas **P1–P4** para não repetir |
 | `DOC-OFC-SOLICITACAO-EXECUCAO-PSA-ENCERRAMENTO-GAP-FINSENSE-CEO-20260404-013` | **Solicitação formal:** execução dos mandatos de encerramento; ordem CEO: **APROVADO** |
+| `DOC-OFC-CERTIFICADO-CONCLUSAO-ETAPA-FINSENSE-LACUNAS-RESOLVIDAS-CEO-20260404-014` | **Certificado CEO (definitivo):** conclusão de etapa; lacunas institucionais mapeadas como **resolvidas**; Fase 2 = engenharia separada |
 
 ### Fase 2 — engenharia (nova iniciativa; não reabre DOC-001–007)
 
