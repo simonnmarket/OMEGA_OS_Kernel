@@ -4,11 +4,19 @@
 |--------|--------|
 | **ID** | `DOC-OFC-FASE2-FATIA1-PIPELINE-ZERO-LOSS-CSV-POSTGRES-20260412` |
 | **Referência curta** | `DOC-OFC-FASE2-FATIA1` |
-| **Versão** | 1.0 CONGELADA |
+| **Versão** | 1.1 (correção de papéis; conteúdo técnico §1–§5 inalterado) |
 | **Data** | 12 de abril de 2026 |
-| **Prazo operacional** | Execução Fatia 1 até **12/04/2026**; auditoria CKO/CTO **13/04/2026** |
+| **Prazo operacional** | Execução Fatia 1 até **12/04/2026**; revisão / auditoria **13/04/2026** (CKO/CTO conforme calendário institucional; **COO** valida GO operacional) |
 | **Classificação** | Nova iniciativa de engenharia — **independente** do congelamento DOC-001–007 (ciclo FIN-SENSE PSA) |
-| **Responsável técnico** | MACE-MAX |
+
+### Papéis (RACI resumido)
+
+| Papel | Função neste DOC |
+|--------|-------------------|
+| **COO** (Chief Operating Officer) | Autoridade **operacional**: prazos, recursos, **GO / no-GO** da Fatia 1; recebe o pacote quando o gate técnico está completo; escalões de custo/excepção alinhados ao Conselho. |
+| **Engenharia** | **Execução técnica**: código, testes, `DOC-TESTES-FASE2-FATIA1.md`, checklist §6 (implementação). |
+| **PSA** | **Assinatura de governança** §7 (processo Tier-0 / PAF-PSA), **sem** substituir métricas A1–A5. |
+| **MACE-MAX** | **Conselheiro apenas** — parecer, auditoria e orientação; **não** é responsável pela implementação nem pelo fechamento operacional do gate (isso é **Engenharia** + **COO**). |
 
 ---
 
@@ -70,14 +78,16 @@ Ambiente de referência: Windows 10/11, PostgreSQL 16.x local, SSD, 16 GB RAM.
 
 ---
 
-## 6. Gate técnico (engenharia → PSA)
+## 6. Gate técnico (engenharia → COO → PSA)
 
 - [ ] `modules/FIN_SENSE_DATA_MODULE/scripts/ingest_pipeline.py` executável e documentado  
 - [ ] `tests/stress_test_10k.py` — 100 % PASS  
 - [ ] A1–A5 validados com **10k linhas sintéticas**  
 - [ ] `DOC-TESTES-FASE2-FATIA1.md` anexado com outputs e ambiente  
 
-**Responsável:** MACE-MAX | **Data:** ____/____/2026 | **Hash commit (opcional):** ________________
+**Fecho técnico (implementação):** Engenharia — Nome: ____________________ | **Data:** ____/____/2026 | **Hash commit (opcional):** ________________  
+
+**GO operacional Fatia 1:** **COO** (Chief Operating Officer) — Nome: ____________________ | **Data:** ____/____/2026  
 
 ---
 
@@ -160,13 +170,11 @@ python modules/FIN_SENSE_DATA_MODULE/scripts/ingest_pipeline.py --file "DEMO_LOG
 
 ---
 
-## 12. Mudanças incorporadas (v1.0)
+## 12. Mudanças incorporadas
 
-- `ingest_pipeline.py` em `modules/FIN_SENSE_DATA_MODULE/scripts/`  
-- A1 com tabela explícita `bronze.demo_log_swing_trade`  
-- A3 (100 ms CPU batch) vs métrica 3 (150 ms COPY) separados  
-- Estrutura real do repo (`fin_sense_data_module/` + `scripts/`)  
-- Roadmap com dependências lineares  
+**v1.0:** `ingest_pipeline.py` em `scripts/`; A1 com `bronze.demo_log_swing_trade`; A3 vs métrica 3 separados; estrutura repo; roadmap linear.  
+
+**v1.1:** Papéis corrigidos — **MACE-MAX** = conselheiro apenas; **COO** = GO operacional e validação pós-gate técnico; **Engenharia** = execução e fecho §6.  
 
 ---
 

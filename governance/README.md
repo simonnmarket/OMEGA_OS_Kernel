@@ -35,5 +35,7 @@ Contratos técnicos e roadmap pós-ciclo FIN-SENSE. Gate de engenharia e PSA **a
 
 **Evidências de teste (Fatia 1):** `DOC-TESTES-FASE2-FATIA1.md` (raiz do repositório; preencher após `stress_test_10k` / `validate_a1_a5`).
 
+**Papéis (DOC Fatia 1 v1.1):** **Engenharia** executa e fecha o gate técnico; **COO** (Chief Operating Officer) dá **GO operacional**; **MACE-MAX** permanece **conselheiro** (não substitui execução nem COO); **PSA** assina §7 (governança processual).
+
 ---
 **Observação:** Auditoria Conselho (apenas trânsito): `Auditoria PARR-F\Auditoria Conselho\LEIA-ME-AUDITORIA-CONSELHO.md`
