@@ -1,8 +1,10 @@
 # Governança OMEGA — Índice de documentos oficiais
 
-**Versão do índice:** 1.6 — inclui **DOC-010** (notificação final ao PSA — canal documental encerrado); **congelamento** dos DOC-001–007 até rubrica PSA ou ordem CEO v2.
+**Versão do índice:** 1.7 — inclui **DOC-011** (**acta** de encerramento oficial — preencher **após** M1–M6); **congelamento** dos DOC-001–007 até rubrica PSA ou ordem CEO v2.
 
-**Notificação final ao PSA:** `DOC-OFC-NOTIFICACAO-FINAL-PSA-ENCERRAMENTO-CICLO-FINSENSE-20260401-010` — último documento de governança para este encerramento; execução exclusiva via **DOC-009** (M1–M6).
+**Acta de encerramento (PSA — saída):** `DOC-OFC-ACTA-ENCERRAMENTO-OFICIAL-ETAPA-FINSENSE-HOMOLOGACAO-PSA-20260402-011` — documento para **assinar** e **arquivar** quando a etapa estiver **efectivamente** concluída (não substitui **DOC-009**).
+
+**Notificação final ao PSA:** `DOC-OFC-NOTIFICACAO-FINAL-PSA-ENCERRAMENTO-CICLO-FINSENSE-20260401-010` — canal documental para este encerramento; execução via **DOC-009** (M1–M6).
 
 **Ordem final de encerramento (definitiva):** `DOC-OFC-ORDEM-ENCERRAMENTO-DEFINITIVO-PSA-HOMOLOGACAO-FINSENSE-20260331-009` — mandato M1–M6, assinatura PSA, efeito de fecho do gap (DOC-006).
 
@@ -32,6 +34,7 @@
 | `DOC-OFC-ENVIO-IMEDIATO-PSA-PACOTE-HOMOLOGACAO-CICLO-FINSENSE-20260327-008` | **Envio imediato ao PSA:** pacote completo (verificação Git, DOC-005 §5, README Anexo A, commit único) |
 | `DOC-OFC-ORDEM-ENCERRAMENTO-DEFINITIVO-PSA-HOMOLOGACAO-FINSENSE-20260331-009` | **Ordem definitiva PSA:** encerramento institucional (M1–M6), declaração e assinatura; **1.0 DEFINITIVA** |
 | `DOC-OFC-NOTIFICACAO-FINAL-PSA-ENCERRAMENTO-CICLO-FINSENSE-20260401-010` | **Notificação final ao PSA:** canal documental encerrado; apenas executar **DOC-009** + **DOC-008** |
+| `DOC-OFC-ACTA-ENCERRAMENTO-OFICIAL-ETAPA-FINSENSE-HOMOLOGACAO-PSA-20260402-011` | **Acta oficial PSA:** encerramento da **pendência/etapa** após M1–M6; checklist + assinatura (documento de **saída**) |
 
 ### Fase 2 — engenharia (nova iniciativa; não reabre DOC-001–007)
 
