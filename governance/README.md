@@ -1,6 +1,8 @@
 # Governança OMEGA — Índice de documentos oficiais
 
-**Versão do índice:** 1.4 — inclui **DOC-008** (pacote de envio imediato ao PSA); **congelamento** dos DOC-001–007 até rubrica PSA ou ordem CEO v2.
+**Versão do índice:** 1.5 — inclui **DOC-009** (ordem de encerramento **definitiva** PSA); **congelamento** dos DOC-001–007 até rubrica PSA ou ordem CEO v2.
+
+**Ordem final de encerramento (definitiva):** `DOC-OFC-ORDEM-ENCERRAMENTO-DEFINITIVO-PSA-HOMOLOGACAO-FINSENSE-20260331-009` — mandato M1–M6, assinatura PSA, efeito de fecho do gap (DOC-006).
 
 **Procedimento único para o PSA:** `DOC-OFC-GUIA-UNICO-PSA-RUBRICA-TRANSICAO-FASE2-20260404-007` (rubrica, commit único pós-homologação, transição fase 2).
 
@@ -26,6 +28,7 @@
 | `DOC-OFC-REQUISITO-VALIDACAO-PSA-OBRIGATORIA-SEM-GAP-20260404-006` | **Crítico:** validação PSA obrigatória — evitar **gap** se não houver homologação formal |
 | `DOC-OFC-GUIA-UNICO-PSA-RUBRICA-TRANSICAO-FASE2-20260404-007` | **Guia único:** rubrica, README pós-homologação, commit único, **fase 2** (alta performance), **congelamento** |
 | `DOC-OFC-ENVIO-IMEDIATO-PSA-PACOTE-HOMOLOGACAO-CICLO-FINSENSE-20260327-008` | **Envio imediato ao PSA:** pacote completo (verificação Git, DOC-005 §5, README Anexo A, commit único) |
+| `DOC-OFC-ORDEM-ENCERRAMENTO-DEFINITIVO-PSA-HOMOLOGACAO-FINSENSE-20260331-009` | **Ordem definitiva PSA:** encerramento institucional (M1–M6), declaração e assinatura; **1.0 DEFINITIVA** |
 
 ### Fase 2 — engenharia (nova iniciativa; não reabre DOC-001–007)
 
