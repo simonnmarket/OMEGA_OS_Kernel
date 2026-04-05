@@ -9,14 +9,14 @@
 | **Ordem CEO** | **APROVADO** — encerramento homologável sem novos documentos |
 | **Ref. Git (pré-unificação)** | `9e884ff` (README v2.0; histórico 013/014) — marco **inalterável** |
 | **Ref. Git (consolidação)** | `f0e9373` (primeira publicação do envio único em `main`) — marco **inalterável** |
-| **Ref. Git (pin actual / HEAD)** | **`078107c`** — DOC-015 v2.1 e metadados consolidados; **`origin/main`** ao fechar trilha de auditoria |
+| **Ref. Git (pin v2.1 consolidado)** | **`078107c`** — DOC-015 v2.1 e metadados consolidados no `main` (marco **inalterável** na história) |
 | **Destinatário** | Principal Solution Architect (PSA) |
 
 ---
 
 ## Secção A — Minuta de Comunicação (E-mail / Ticket)
 
-**Assunto:** [OMEGA / CEO] Encerramento FIN-SENSE — mandato único PSA (DOC-015) + ref. 9e884ff / f0e9373 / HEAD **078107c**
+**Assunto:** [OMEGA / CEO] Encerramento FIN-SENSE — mandato único PSA (DOC-015) + ref. 9e884ff / f0e9373 / **078107c**
 
 **Corpo:**
 
@@ -26,7 +26,7 @@ Segue um único documento oficial que substitui envios anteriores fragmentados (
 
 Pedido: executar de imediato o roteiro da secção C (6 passos), com apoio nos DOC-008 a DOC-011 já publicados no repositório OMEGA_OS_Kernel (main).
 
-Referência de pacote no Git: **9e884ff** (pré-unificação); **f0e9373** (primeira consolidação do envio único); **078107c** (pin final v2.1 ÚNICO — HEAD de `main` ao homologar este texto para o PSA).
+Referência de pacote no Git: **9e884ff** (pré-unificação); **f0e9373** (primeira consolidação do envio único); **078107c** (pin v2.1 consolidado). Alterações posteriores: sempre na **ponta de `main`** (sem novo DOC-OFC de encerramento).
 
 Ordem CEO: APROVADO — encerramento homologável do ciclo FIN-SENSE, sem novo DOC-OFC para o mesmo efeito.
 

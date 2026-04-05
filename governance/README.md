@@ -2,7 +2,7 @@
 
 **Versão do índice:** 2.1 — **envio único ao PSA:** **DOC-015** (mandato + certificado + minuta); **013/014** → redirecionamento apenas.
 
-**Único documento a anexar ao PSA (CEO):** `DOC-OFC-ENVIO-UNICO-PSA-ENCERRAMENTO-FINSENSE-CEO-20260327-015` (**015**) — pins Git: **`9e884ff`** → **`f0e9373`** → **`078107c`** (HEAD pin v2.1 ÚNICO).
+**Único documento a anexar ao PSA (CEO):** `DOC-OFC-ENVIO-UNICO-PSA-ENCERRAMENTO-FINSENSE-CEO-20260327-015` (**015**) — trilha Git: **`9e884ff`** → **`f0e9373`** → **`078107c`** (pin v2.1); evoluções em `main` sem novo encerramento.
 
 **Solicitação / certificado (redirecionamento):** `…-013` e `…-014` apontam para **015** — arquivo histórico de ID apenas.
 
