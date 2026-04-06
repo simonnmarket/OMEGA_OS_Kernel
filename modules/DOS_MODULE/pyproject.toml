@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "omega-dos"
-version = "1.1.0"
-description = "OMEGA Data Operating System — métricas, risco e relatórios sobre FIN-SENSE DATA MODULE"
+version = "2.0.0"
+description = "OMEGA Data Operating System — métricas, risco e relatórios sobre FIN-SENSE DATA MODULE (HARDENED)"
 readme = "DOCUMENTATION.md"
 requires-python = ">=3.10"
 dependencies = [

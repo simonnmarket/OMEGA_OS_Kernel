@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 from omega_dos.bridge_fin_sense import (
+    PNL_DISCLAIMER,
     FinSenseSwingBundle,
     load_demo_swing_from_postgres,
     synthetic_positions_trades_from_swing,
@@ -167,6 +168,8 @@ def run_dos_pipeline(
         "notional_usd": notional_usd,
         "positions_rows": int(len(positions)),
         "trades_rows": int(len(trades)),
+        "pnl_type": "HYPOTHETICAL",
+        "pnl_disclaimer": PNL_DISCLAIMER,
     }
 
     risk = {
