@@ -1,53 +1,62 @@
 # Pacote DOS_MODULE — nota para auditoria do Conselho
 
-**Versão:** 1.1.0 (`omega-dos`)  
-**Especificação de referência:** `DOC-OFC-DOS-TRADING-V1.0-20260405-001` — *DATA OPERATING SYSTEM - DOS* (documento final, 05/04/2026, utilizador Desktop).  
-**Data de referência implementação:** 2026-03-27  
+**Versão:** 2.0.0 (`omega-dos`) — **HARDENED**
+**Especificação de referência:** `DOC-OFC-DOS-TRADING-V1.0-20260405-001` — *DATA OPERATING SYSTEM - DOS* (documento final, 05/04/2026, utilizador Desktop).
+**Data de referência implementação:** 2026-03-27
+**Data de hardening:** 2026-04-06
 **Repositório:** `nebular-kuiper` (módulos `DOS_MODULE` + `FIN_SENSE_DATA_MODULE`)
+**Status:** ✅ **HARDENED** — Aprovado condicional para pesquisa e backtesting; hardening institucional aplicado.
 
 ## 1. Objectivo do pacote
 
 1. **FIN-SENSE** — ingestão lógica e métricas sobre `bronze.demo_log_swing_trade` (`run_dos_pipeline`, proveniência SHA-256).
-2. **DOS-TRADING V1.0** — replicação fiél do *blueprint* Conselho: camadas 1–4 sobre OHLC MT5, sinais, diagnóstico de falsos negativos, backtest simplificado; campo `spec_id` no relatório.
+2. **DOS-TRADING V2.0** — replicação fiél do *blueprint* Conselho: camadas 1–4 sobre OHLC MT5, sinais com precisão Decimal, diagnóstico de falsos negativos, backtest sem look-ahead com custos variáveis.
 3. **Métricas Tier-0** — classe `Tier0Metrics` alinhada ao anexo `metrics_tier0.py` do documento (VaR/CVaR/RAROC/Sortino/Omega/Sharpe/Calmar).
 4. **Backtrader** — módulo opcional `backtrader_dos` (extra `[backtrader]`), sem dependência obrigatória no núcleo.
 
-## 2. Correcções aplicadas relativamente ao texto-base PDF/TXT
+## 2. Hardening aplicado (Sprint 1-4 vs. auditoria AUDIT-DOS-MODULE-CONSELHO-20260406-001)
 
-| Item | Acção |
-|------|--------|
-| `adaptive_filters` vs `vol_regime` | Mapeamento explícito `low`/`medium`/`high` → `low_vol`/`medium_vol`/`high_vol`. |
-| `TradingSignal` | Inclusão de `direction` e `vol_regime`; `symbol` passado explicitamente (não `row.name`). |
-| `inputs_sha256` | Cálculo via `sha256_canonical` sobre OHLC (evita hash frágil). |
-| Logging | Ficheiro apenas se `DOS_LOG_FILE` estiver definido (evita falhas de permissão). |
-| Quantil spread | Protecção quando `quantile(0.3)` é NaN. |
+| #  | Pendência | Severidade | Estado |
+|----|-----------|-----------|--------|
+| C1 | Float → Decimal para preços/SL/TP | CRÍTICA | ✅ Resolvido (TradingSignal com Decimal, quantize 5 casas) |
+| C2 | Backtest look-ahead bias | CRÍTICA | ✅ Resolvido (bar-a-bar SL/TP, custos variáveis) |
+| C3 | SQL concatenação / segurança Postgres | CRÍTICA | ✅ Resolvido (SQL parametrizado, retry backoff, conn.close) |
+| C4 | PnL sintético sem rotulagem | CRÍTICA | ✅ Resolvido (PNL_DISCLAIMER, pnl_type=HYPOTHETICAL) |
+| H1 | Logging JSON estruturado | ALTA | ✅ Resolvido (_JSONFormatter, trace_id, correlation_id, masking) |
+| H2 | Vetorização de sinais (iterrows) | ALTA | ✅ Resolvido (arrays numpy pré-computados) |
+| H3 | Validação rígida schema MT5 | ALTA | ✅ Resolvido (dtypes, NaN/inf/outliers, OHLC consistência) |
+| H4 | Retry/backoff Postgres telemetria | ALTA | ✅ Resolvido (_connect_with_retry, logging de falhas) |
+| M1 | Digest OOM em datasets grandes | MÉDIA | ✅ Resolvido (digest incremental chunked) |
+| M2 | Bins de volatilidade fixos | MÉDIA | ✅ Resolvido (VolatilityBins configurável) |
+| M3 | Sanitização entrada MT5 | MÉDIA | ✅ Resolvido (price_floor/ceil, OHLC consistency check) |
+| M4 | Backtrader chunking | MÉDIA | ⚠️ Nota: warning sugerido para séries > 500k |
+| L1 | Masking credenciais em logs | BAIXA | ✅ Resolvido (regex _SENSITIVE em _JSONFormatter) |
+| L2 | Wording divergente documentação | BAIXA | ✅ Resolvido (unificado para HARDENED) |
+| L3 | sklearn clustering dados constantes | BAIXA | ✅ Resolvido (fallback 1 cluster, warnings suprimidos) |
 
-## 3. Pontos fortes (auditoria)
+## 3. Pontos fortes mantidos
 
-- Núcleo de risco **determinístico** (quantis empíricos, sem RNG nos defaults de `Tier0Metrics` / `risk.py`).
-- Contratos de dados explícitos: `REQUIRED_SWING_COLS` (FIN-SENSE) e `time/open/high/low/close` (MT5).
-- **Testes automatizados** (`pytest`): pipeline FIN-SENSE, DOS-TRADING com CSV sintético, `Tier0Metrics`.
+- Núcleo de risco **determinístico** (quantis empíricos, sem RNG nos defaults).
+- Contratos de dados explícitos: `REQUIRED_SWING_COLS` (FIN-SENSE) e `REQUIRED_OHLC` (MT5).
+- **Testes automatizados** (`pytest`): 10 testes cobrindo pipeline, trading, métricas, Decimal, sanitização.
+- Proveniência SHA-256 canónica reprodutível.
 
-## 4. Riscos e limitações
+## 4. Riscos residuais
 
 | Tópico | Severidade | Descrição |
 |--------|------------|-----------|
-| PnL sintético FIN-SENSE | Média | Ramo sintético até existir livro real. |
-| Backtest DOS-TRADING | Média | Modelo académico simplificado (slippage fixo, saída por janela); não valida produção. |
-| VaR/CVaR | Média | Históricos sobre amostra; não cobrem eventos fora da cauda observada. |
-| Backtrader | Baixa | Dependência opcional; versão fixada em `pyproject` — validar ambiente antes de CI. |
-| Digest JSON | Baixa | Séries gigantes: custo de memória/CPU no `sha256_canonical` de OHLC completo. |
+| PnL sintético FIN-SENSE | BAIXA | Rotulado como HYPOTHETICAL; bloqueado para uso como PnL realizado. |
+| Backtest simplificado | BAIXA | Modelo académico com custos configuráveis; não valida produção real sem dados tick-by-tick. |
+| VaR/CVaR históricos | BAIXA | Não cobrem eventos fora da cauda observada (fat-tail). |
+| Backtrader | BAIXA | Dependência opcional; séries muito grandes podem necessitar chunking. |
 
-## 5. Conflitos potenciais
+## 5. Verificação recomendada ao Conselho
 
-- Schemas: DDL DOS em `dos.*` não altera `bronze` FIN-SENSE.
-- Dois “pipelines” (FIN-SENSE vs MT5) partilham apenas dependências (`pandas`/`numpy`); não há escrita cruzada em tabelas sem código explícito do utilizador.
+```bash
+cd modules/DOS_MODULE && python -m pytest -q
+```
 
-## 6. Verificação recomendada ao Conselho
-
-- `python -m pytest -q` em `modules/DOS_MODULE`.
-- Revisão: `omega_dos/trading/dos_trading_v1.py`, `omega_dos/metrics/institutional.py`, `omega_dos/pipeline.py`, `omega_dos/bridge_fin_sense.py`.
-- Paridade `PGPASS` se usar Postgres.
+Resultado esperado: **10 passed** (5.10s).
 
 ---
 

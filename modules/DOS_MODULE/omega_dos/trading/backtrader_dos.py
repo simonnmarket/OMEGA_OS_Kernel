@@ -23,14 +23,32 @@ def _require_backtrader():
     return __import__("backtrader", fromlist=["*"])
 
 
+_LARGE_SERIES_THRESHOLD = 500_000
+
+
 def run_backtrader_mt5(
     csv_path: str,
     *,
     initial_cash: float = 1_000_000.0,
     commission: float = 0.0001,
+    max_rows_warn: int = _LARGE_SERIES_THRESHOLD,
 ) -> Dict[str, Any]:
-    """Executa cerebro Backtrader com estratégia DOS e analisador de métricas."""
+    """Executa cerebro Backtrader com estratégia DOS e analisador de métricas.
+
+    ⚠️  Para séries com mais de 500k barras, considere amostrar ou particionar
+    os dados para evitar consumo excessivo de memória.
+    """
     bt = _require_backtrader()
+
+    # Verificar tamanho do CSV antes de carregar
+    import os
+    file_size_mb = os.path.getsize(csv_path) / (1024 * 1024)
+    if file_size_mb > 100:
+        logger.warning(
+            "Backtrader: CSV grande detectado (%.1f MB): %s — "
+            "considere amostrar/particionar para evitar OOM",
+            file_size_mb, csv_path,
+        )
 
     class DOSTradingStrategy(bt.Strategy):
         params = (("size", 100_000), ("sl_pct", 0.01), ("tp_pct", 0.018), ("min_strength", 0.6))
