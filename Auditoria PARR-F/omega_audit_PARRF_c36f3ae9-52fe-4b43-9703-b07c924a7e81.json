@@ -1,0 +1,50 @@
+{
+  "doc_id": "REQ-PARRF-DIRETRIZES-CRITICAS-CODIGO-TIER0-V120-20260411",
+  "orchestrator_version": "1.2.0",
+  "trace_id": "c36f3ae9-52fe-4b43-9703-b07c924a7e81",
+  "symbol": "XAUUSD",
+  "timestamp_utc": "2026-04-09T20:12:10.154568+00:00",
+  "layers": {
+    "dos": {
+      "symbol": "XAUUSD",
+      "var_95_usd": 10000.0,
+      "cvar_95_usd": 11500.0,
+      "regime_data": "CHOPPY_NOISE",
+      "momentum_1m_pct": 0.0,
+      "effective_spread": 0.12,
+      "timestamp": "2026-04-09T20:12:10.154568+00:00",
+      "provenance_sha256": "4059bcb94ee7863e33064203165c934fd0f87a879ce23876cdfb9b1fd5e497a8",
+      "errors": []
+    },
+    "kernel": {
+      "symbol": "XAUUSD",
+      "direction": "HOLD",
+      "confidence": 0.25,
+      "position_size": 0.0,
+      "regime": "CHOPPY_NOISE",
+      "strategy_tag": "DEFAULT",
+      "var_exposure": 10000.0
+    },
+    "risk": {
+      "cleared": false,
+      "reasons": [
+        "HOLD_OR_NEUTRAL",
+        "LOW_CONFIDENCE",
+        "REGIME_CHOPPY"
+      ]
+    },
+    "executor": {
+      "order_id": null,
+      "symbol": "XAUUSD",
+      "direction": "HOLD",
+      "size": 0.0,
+      "status": "EXECUTOR_REFUSED_RISK_NOT_CLEARED",
+      "reasons": [
+        "HOLD_OR_NEUTRAL",
+        "LOW_CONFIDENCE",
+        "REGIME_CHOPPY"
+      ]
+    }
+  },
+  "status": "RISK_BLOCKED"
+}
