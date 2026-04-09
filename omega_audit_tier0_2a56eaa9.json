@@ -1,0 +1,40 @@
+{
+  "doc_id": "DOC-CTO-ORQUESTADOR-V1.1.1-20260409",
+  "trace_id": "2a56eaa9-ae9a-45eb-a184-307297968620",
+  "symbol": "XAUUSD",
+  "timestamp_utc": "2026-04-09T00:29:39.870116+00:00",
+  "layers": {
+    "dos": {
+      "symbol": "XAUUSD",
+      "var_95_usd": 24567.89,
+      "cvar_95_usd": 28253.0735,
+      "regime_data": "CHOPPY_NOISE",
+      "momentum_1m_pct": 0.003,
+      "effective_spread": 0.12,
+      "timestamp": "2026-04-09T00:29:39.871124+00:00",
+      "provenance_sha256": "284b3b80da96eca54601fd4a3f94051ead9bd45c81f0f3dd57c3ad60852b670f",
+      "errors": []
+    },
+    "kernel": {
+      "symbol": "XAUUSD",
+      "direction": "BUY",
+      "confidence": 0.6100000000000001,
+      "position_size": 0.01,
+      "regime": "TREND_MOMENTUM",
+      "strategy_tag": "MOMENTUM",
+      "var_exposure": 24567.89
+    },
+    "risk": {
+      "cleared": true,
+      "reasons": []
+    },
+    "executor": {
+      "order_id": "DRY_47F601DABDBB",
+      "symbol": "XAUUSD",
+      "direction": "BUY",
+      "size": 0.01,
+      "status": "DRY_RUN_SUCCESS"
+    }
+  },
+  "status": "EXECUTED_DRY_RUN"
+}
