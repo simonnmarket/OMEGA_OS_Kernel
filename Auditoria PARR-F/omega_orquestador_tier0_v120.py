@@ -207,6 +207,14 @@ class OmegaOrchestrator:
     risk: RiskValveLayer = field(default_factory=RiskValveLayer)
     executor: MQL5ExecutorLayer = field(default_factory=MQL5ExecutorLayer)
 
+    def __post_init__(self) -> None:
+        if os.environ.get("OMEGA_USE_FIN_SENSE_L1") == "1":
+            from fin_sense_l1_esqueleto_v120 import FinSenseL1Layer
+            self.dos = FinSenseL1Layer()
+            logger.info("L1: FinSenseL1Layer ativo")
+        else:
+            logger.info("L1: DOSMetricsLayer stub")
+
     def full_pipeline(self, symbol: str = "XAUUSD") -> Dict[str, Any]:
         trace_id = str(uuid.uuid4())
         out: Dict[str, Any] = {
