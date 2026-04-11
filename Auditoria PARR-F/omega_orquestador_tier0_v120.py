@@ -220,6 +220,8 @@ class OmegaOrchestrator:
         out: Dict[str, Any] = {
             "doc_id": "REQ-PARRF-DIRETRIZES-CRITICAS-CODIGO-TIER0-V120-20260411",
             "orchestrator_version": "1.2.0",
+            "l1_integration_requested": os.environ.get("OMEGA_USE_FIN_SENSE_L1") == "1",
+            "l1_class": self.dos.__class__.__name__,
             "trace_id": trace_id,
             "symbol": symbol,
             "timestamp_utc": datetime.now(timezone.utc).isoformat(),

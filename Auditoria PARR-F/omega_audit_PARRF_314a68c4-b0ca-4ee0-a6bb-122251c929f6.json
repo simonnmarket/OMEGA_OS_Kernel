@@ -1,20 +1,27 @@
 {
   "doc_id": "REQ-PARRF-DIRETRIZES-CRITICAS-CODIGO-TIER0-V120-20260411",
   "orchestrator_version": "1.2.0",
-  "trace_id": "287c86df-d9e6-4b6d-b4c4-12c7e453bf92",
+  "l1_integration_requested": true,
+  "l1_class": "FinSenseL1Layer",
+  "trace_id": "314a68c4-b0ca-4ee0-a6bb-122251c929f6",
   "symbol": "XAUUSD",
-  "timestamp_utc": "2026-04-09T20:12:09.460267+00:00",
+  "timestamp_utc": "2026-04-11T16:57:30.552339+00:00",
   "layers": {
     "dos": {
       "symbol": "XAUUSD",
-      "var_95_usd": 10000.0,
-      "cvar_95_usd": 11500.0,
-      "regime_data": "CHOPPY_NOISE",
-      "momentum_1m_pct": 0.0,
-      "effective_spread": 0.12,
-      "timestamp": "2026-04-09T20:12:09.461283+00:00",
-      "provenance_sha256": "4059bcb94ee7863e33064203165c934fd0f87a879ce23876cdfb9b1fd5e497a8",
-      "errors": []
+      "var_95_usd": 12500.5,
+      "cvar_95_usd": 14375.08,
+      "regime_data": "TREND_MOMENTUM",
+      "momentum_1m_pct": 0.0012,
+      "effective_spread": 0.08,
+      "timestamp": "2026-04-11T16:57:30.552339+00:00",
+      "provenance_sha256": "58ed658ec579f07ecb4f0f49f46aa8f69b35a4f5531239caf3b41d5235db2308",
+      "errors": [],
+      "extras": {
+        "source_batch_id": "fase7_docker_mock_20260411",
+        "computed_at": "2026-04-11 16:57:30.552339+00:00",
+        "view": "v_omega_l1_features_by_symbol"
+      }
     },
     "kernel": {
       "symbol": "XAUUSD",
@@ -23,7 +30,7 @@
       "position_size": 0.0,
       "regime": "CHOPPY_NOISE",
       "strategy_tag": "DEFAULT",
-      "var_exposure": 10000.0
+      "var_exposure": 12500.5
     },
     "risk": {
       "cleared": false,
