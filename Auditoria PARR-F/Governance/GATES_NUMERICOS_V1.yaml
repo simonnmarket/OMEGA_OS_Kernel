@@ -1,0 +1,18 @@
+# GATES_NUMERICOS_V1.yaml - Baseline TIER-0 v1.2.0
+# ID: DOC-PSA-EXEC-INTEGRACAO-GOLDEN-POINTS-V120-20260414 | Ref: RT-B1
+# Org: CFO/Red Team baseline | Class: Confidential
+
+operational_gates:
+  latency:
+    p99_ingestion_ms: 500
+    p50_execution_ms: 100
+  market_impact:
+    max_slippage_points: 2.0
+    max_requote_percentage: 10.0
+  risk:
+    max_daily_drawdown_pct: 3.5
+    max_notional_exposure_usd: 5000000
+  compliance:
+    audit_trail_coverage_pct: 100
+    schema_version_match: "1.0"
+    kill_switch_response_ms: 500

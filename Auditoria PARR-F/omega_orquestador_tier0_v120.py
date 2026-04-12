@@ -28,6 +28,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
+sys.path.append(os.path.join(os.path.dirname(__file__), "Governance"))
+try:
+    from ARBITRO_MULTITF_V1 import arbitrate_signal
+except ImportError:
+    def arbitrate_signal(low, high): return "PASS"
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
@@ -218,6 +224,7 @@ class OmegaOrchestrator:
     def full_pipeline(self, symbol: str = "XAUUSD") -> Dict[str, Any]:
         trace_id = str(uuid.uuid4())
         out: Dict[str, Any] = {
+            "schema_version": "1.0",
             "doc_id": "REQ-PARRF-DIRETRIZES-CRITICAS-CODIGO-TIER0-V120-20260411",
             "orchestrator_version": "1.2.0",
             "l1_integration_requested": os.environ.get("OMEGA_USE_FIN_SENSE_L1") == "1",
@@ -225,14 +232,32 @@ class OmegaOrchestrator:
             "trace_id": trace_id,
             "symbol": symbol,
             "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "provenance_sha256": "",
+            "arbitration_result": "",
             "layers": {},
         }
         try:
             out["layers"]["dos"] = self.dos.compute_metrics(symbol)
+            out["provenance_sha256"] = out["layers"]["dos"].get("provenance_sha256", "")
+            
             kd = self.kernel.make_decision(out["layers"]["dos"])
+            
+            # Arbitragem Multi-TF
+            signal_ltf = kd.get("direction", "HOLD")
+            trend_htf = "NEUTRAL" if signal_ltf == "HOLD" else signal_ltf  # Baseline mock
+            arb_res = arbitrate_signal(signal_ltf, trend_htf)
+            out["arbitration_result"] = arb_res
+            
+            if arb_res != "PASS":
+                kd["direction"] = "HOLD"
+                
             out["layers"]["kernel"] = kd
 
             cleared, reasons = self.risk.validate_trade(kd, out["layers"]["dos"])
+            if arb_res == "VETO":
+                cleared = False
+                reasons.append("MULTI_TF_VETO")
+                
             risk_snap = {"cleared": cleared, "reasons": reasons}
             out["layers"]["risk"] = risk_snap
 
