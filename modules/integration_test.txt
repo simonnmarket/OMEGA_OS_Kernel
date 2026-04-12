@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+ImportError: cannot import name 'OmegaKernel' from 'omega_kernel_v5_1_refined' (C:\Users\Lenovo\Desktop\OMEGA_OS_Kernel\modules\omega_kernel_v5_1_refined.py)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<string>", line 10, in <module>
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u274c' in position 0: character maps to <undefined>

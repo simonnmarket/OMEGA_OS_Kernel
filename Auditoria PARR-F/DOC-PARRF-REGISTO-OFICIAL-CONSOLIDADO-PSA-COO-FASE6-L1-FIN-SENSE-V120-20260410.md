@@ -22,7 +22,7 @@ O estado do núcleo do sistema foi congelado e validado com os seguintes metadad
 | **Git Hash-Object (.py)** | `5ffd653825c997958fd810a705f57ecf4b70b920` |
 | **Tamanho do Ficheiro** | 9562 bytes |
 | **Versão Orquestrador** | 1.2.0 |
-| **Linha de Base PARR-F** | 15 Audit JSONs gerados e validados |
+| **Linha de Base PARR-F** | 15× `omega_audit_PARRF_*.json` (conforme inventário / corridas arquivadas pelo Conselho) |
 
 ---
 
@@ -41,7 +41,7 @@ O estado do núcleo do sistema foi congelado e validado com os seguintes metadad
 
 1. **AMBIENTE:** Verificação de DSN e View via variáveis de ambiente (Staging).
 2. **ISOLAMENTO:** Teste do esqueleto L1 para garantir captura de erros de DB.
-3. **INTEGRAÇÃO:** Execução do `full_pipeline` com 100% de sucesso nos bloqueios risk-aware.
+3. **INTEGRAÇÃO:** Execução do `full_pipeline` com outcome esperado nos cenários risk-aware (bloqueios e dry-run conforme matriz abaixo).
 
 | Cenário | Resultado Esperado | Status |
 |---------|--------------------|--------|
@@ -54,9 +54,15 @@ O estado do núcleo do sistema foi congelado e validado com os seguintes metadad
 
 ## 5. DOCUMENTAÇÃO CORRELATA (HIERARQUIA)
 
-- **Subject/Tag principal:** `REQ-PARRF-COO-APRESENTACAO-FASE6-L1-FIN-SENSE-SSOT-V120-20260406`
-- **Diretrizes Técnicas:** `REQ-PARRF-DIRETRIZES-CRITICAS-CODIGO-TIER0-V120-20260411`
-- **Avaliação CEO:** `DOC-CEO-PSA-EXEC-...-20260409_2345`
+**Pacote de homologação (três ficheiros — manter referência cruzada):**
+
+1. `DOC-PARRF-REGISTO-OFICIAL-CONSOLIDADO-PSA-COO-FASE6-L1-FIN-SENSE-V120-20260410.md` (este)  
+2. `REQ-PARRF-COO-APRESENTACAO-FASE6-L1-FIN-SENSE-SSOT-V120-20260406.md`  
+3. `DOC-CEO-PSA-EXEC-REQ-PARRF-COO-APRESENTACAO-FASE6-L1-V120-20260409_2345.md`  
+
+- **REQ apresentação:** `REQ-PARRF-COO-APRESENTACAO-FASE6-L1-FIN-SENSE-SSOT-V120-20260406`  
+- **Diretrizes Técnicas:** `REQ-PARRF-DIRETRIZES-CRITICAS-CODIGO-TIER0-V120-20260411`  
+- **PSA execução (ID completo):** `DOC-CEO-PSA-EXEC-REQ-PARRF-COO-APRESENTACAO-FASE6-L1-V120-20260409_2345`
 
 ---
 

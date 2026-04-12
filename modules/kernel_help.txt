@@ -1,0 +1,1 @@
+2026-04-08 23:49:56,130 | INFO | State: CHOPPY_NOISE | Strength: 0.25 | Bias: NEUTRAL | Aggressive: False | details={'hfd': 2.0, 'z_price': 2.0647338706674927, 'z_vol': 2.8084097106628287, 'wick_ratio': 0.5085966161262525, 'wick_ratio_avg': 0.623102109781514, 'wick_norm': 0.39152472255603243, 'atr': 1.4900079773449306, 'ha_bias': 'NEUTRAL', 'ha_vol_ok': True, 'raw_score': 25}

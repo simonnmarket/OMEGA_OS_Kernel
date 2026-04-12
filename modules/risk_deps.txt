@@ -1,0 +1,1 @@
+DEPEND╩NCIAS: ['json', 'typing', 'hashlib', 'datetime', 'numpy']

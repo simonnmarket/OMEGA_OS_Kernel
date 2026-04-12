@@ -1,0 +1,13 @@
+
+class HardVolatilityTrailingStopGeometric:
+    def __init__(self, atr_multiplier: float = 3.0, min_multiplier: float = 1.0):
+    def update(self, current_price: float, atr_value: float, direction: int) -> Tuple[Optional[float], bool]:
+class ProgressivePartialCloseComplete:
+    def __init__(self):
+    def initialize_position(self, entry_price: float, lots: float, direction: int):
+    def check_partials(self, current_price: float, atr_value: float) -> List[Dict]:
+class EmergencyTailRiskHalt:
+    def __init__(self, max_drawdown_per_event: float = 0.03, cooldown_hours: int = 24):
+    def set_starting_equity(self, equity: float):
+    def check_tail_risk(self, current_equity: float) -> Tuple[bool, Dict]:
+

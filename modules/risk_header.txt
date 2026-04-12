@@ -1,0 +1,30 @@
+import json
+import hashlib
+from typing import Optional, Tuple, List, Dict
+from datetime import datetime, timezone
+import numpy as np
+
+class HardVolatilityTrailingStopGeometric:
+    """
+    VÁLVULA I: Hard Volatility Trailing Stop (Geométrico)
+    Implementação Tier-0 para OMEGA OS V3.2
+    """
+    def __init__(self, atr_multiplier: float = 3.0, min_multiplier: float = 1.0):
+        self.atr_multiplier = atr_multiplier
+        self.min_multiplier = min_multiplier
+        self.entry_price: Optional[float] = None
+        self._peak_price: Optional[float] = None
+        self._trailing_sl: Optional[float] = None
+        
+    def update(self, current_price: float, atr_value: float, direction: int) -> Tuple[Optional[float], bool]:
+        if direction == 0:
+            return None, False
+            
+        if self.entry_price is None:
+            self.entry_price = current_price
+            self._peak_price = current_price
+            
+        # Calcular lucro atual em múltiplos de ATR
+        if direction == 1:
+            profit_ratio = (current_price - self.entry_price) / (atr_value + 1e-10)
+        else:
