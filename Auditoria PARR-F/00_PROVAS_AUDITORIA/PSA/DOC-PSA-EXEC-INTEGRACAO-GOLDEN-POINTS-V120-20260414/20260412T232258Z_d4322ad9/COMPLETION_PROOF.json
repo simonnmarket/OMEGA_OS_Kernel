@@ -1,0 +1,17 @@
+{
+    "doc_id":  "DOC-PSA-EXEC-INTEGRACAO-GOLDEN-POINTS-V120-20260414",
+    "run_id":  "20260412T232258Z_d4322ad9",
+    "utc_completed":  "2026-04-12T23:22:59.5210262Z",
+    "operator_env_USER":  "Lenovo",
+    "operator_env_COMPUTERNAME":  "LAPTOP-SJN2KACD",
+    "manifest_sha256_line":  "009c13223ba3c3bbd3fa9086c0f13f3eb18b53076c10576f1590aa0899e80d8e  MANIFEST.json",
+    "gate_paths_within_audit_zone":  true,
+    "gate_four_files_present":  true,
+    "gate_manifest_matches_mirror":  true,
+    "gate_python_arbiter_selftest":  true,
+    "gate_json_schema_parseable":  true,
+    "gate_yaml_parseable":  true,
+    "gate_completion_artifacts_present":  true,
+    "outcome":  "PASS",
+    "spec_reference":  "protocol/PSA/SPEC_PSA_COMPLETION_PROOF.md"
+}

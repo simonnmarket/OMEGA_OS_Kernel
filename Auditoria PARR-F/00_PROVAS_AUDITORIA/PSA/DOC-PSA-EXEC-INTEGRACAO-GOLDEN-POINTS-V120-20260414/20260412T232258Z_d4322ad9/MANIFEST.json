@@ -1,0 +1,39 @@
+{
+    "doc_id":  "DOC-PSA-EXEC-INTEGRACAO-GOLDEN-POINTS-V120-20260414",
+    "run_id":  "20260412T232258Z_d4322ad9",
+    "utc_started":  "2026-04-12T23:22:58.7562135Z",
+    "parrf_audit_tree_root":  "C:\\Users\\Lenovo\\Desktop\\OMEGA_OS_Kernel\\Auditoria PARR-F",
+    "audit_evidence_zone":  "C:\\Users\\Lenovo\\Desktop\\OMEGA_OS_Kernel\\Auditoria PARR-F\\00_PROVAS_AUDITORIA",
+    "git_head":  null,
+    "git_head_note":  "sem .git em C:\\Users\\Lenovo\\Desktop\\OMEGA_OS_Kernel\\Auditoria PARR-F",
+    "files":  [
+                  {
+                      "role":  "DOC-PSA-EXEC-INTEGRACAO-GOLDEN-POINTS-V120-20260414.md",
+                      "canonical_relative_path":  "Conselho/DOC-PSA-EXEC-INTEGRACAO-GOLDEN-POINTS-V120-20260414.md",
+                      "mirror_relative_path":  "mirror/DOC-PSA-EXEC-INTEGRACAO-GOLDEN-POINTS-V120-20260414.md",
+                      "size_bytes":  5131,
+                      "sha256":  "a4aaf818990cef12130213267b8655978838f9f3aece11d6265cd1cd80e3634e"
+                  },
+                  {
+                      "role":  "GATES_NUMERICOS_V1.yaml",
+                      "canonical_relative_path":  "Conselho/GATES_NUMERICOS_V1.yaml",
+                      "mirror_relative_path":  "mirror/GATES_NUMERICOS_V1.yaml",
+                      "size_bytes":  545,
+                      "sha256":  "1b7c395b566d2750c97a57874d160c8dfdb09ee4700c74f33c28492af59e6589"
+                  },
+                  {
+                      "role":  "ARBITRO_MULTITF_V1.py",
+                      "canonical_relative_path":  "Conselho/ARBITRO_MULTITF_V1.py",
+                      "mirror_relative_path":  "mirror/ARBITRO_MULTITF_V1.py",
+                      "size_bytes":  926,
+                      "sha256":  "a241e0db7014cffe694d48d4717eb2ca57edcaad010dad5b23bd01a9f21b95c5"
+                  },
+                  {
+                      "role":  "AUDIT_JSON_SCHEMA_V1.0.json",
+                      "canonical_relative_path":  "Conselho/AUDIT_JSON_SCHEMA_V1.0.json",
+                      "mirror_relative_path":  "mirror/AUDIT_JSON_SCHEMA_V1.0.json",
+                      "size_bytes":  1542,
+                      "sha256":  "5840b5e7f0e3906624edcc68c1bbf0900394c6fcf87f7ec2b85310257796a57c"
+                  }
+              ]
+}

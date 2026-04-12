@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://omega.local/schemas/audit/OMEGA_AUDIT_JSON_SCHEMA_V1.0.json",
+  "title": "OMEGA Audit JSON Schema v1.0",
+  "description": "Schema baseline PARR-F TIER-0 (RT-B4). Evolução: bump schema_version (nunca mutar 1.0 in-place).",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "trace_id",
+    "orchestrator_version",
+    "l1_integration_requested",
+    "l1_class",
+    "provenance_sha256",
+    "arbitration_result",
+    "layers"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "const": "1.0" },
+    "trace_id": { "type": "string", "description": "UUID v4" },
+    "orchestrator_version": { "type": "string", "const": "1.2.0" },
+    "l1_integration_requested": { "type": "boolean" },
+    "l1_class": { "type": "string" },
+    "provenance_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 hex (64 chars) do payload canónico L1 / bloco auditado"
+    },
+    "arbitration_result": {
+      "type": "string",
+      "enum": ["PASS", "VETO", "HOLD"],
+      "description": "Resultado do árbitro multi-TF (RT-B2)"
+    },
+    "layers": {
+      "type": "object",
+      "required": ["dos"],
+      "properties": {
+        "dos": { "type": "object" },
+        "kernel": { "type": "object" },
+        "risk": { "type": "object" },
+        "executor": { "type": "object" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
