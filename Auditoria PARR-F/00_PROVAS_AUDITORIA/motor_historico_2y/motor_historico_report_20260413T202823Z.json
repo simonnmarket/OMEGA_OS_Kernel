@@ -1,0 +1,34 @@
+{
+  "timestamp_utc": "2026-04-13T20:28:19.155099+00:00",
+  "min_days_required": 90,
+  "profiles": {
+    "SCALPING": {
+      "rows": 100000,
+      "span_days": 102,
+      "span_gate_ok": true,
+      "charts_generated": [
+        "C:\\Users\\Lenovo\\Desktop\\OMEGA_OS_Kernel\\Auditoria PARR-F\\00_PROVAS_AUDITORIA\\motor_historico_2y\\LINE_SCALPING.png",
+        "C:\\Users\\Lenovo\\Desktop\\OMEGA_OS_Kernel\\Auditoria PARR-F\\00_PROVAS_AUDITORIA\\motor_historico_2y\\CANDLES_SYNTH_SCALPING.png"
+      ]
+    },
+    "DAY_TRADE": {
+      "rows": 100000,
+      "span_days": 102,
+      "span_gate_ok": true,
+      "charts_generated": [
+        "C:\\Users\\Lenovo\\Desktop\\OMEGA_OS_Kernel\\Auditoria PARR-F\\00_PROVAS_AUDITORIA\\motor_historico_2y\\LINE_DAY_TRADE.png",
+        "C:\\Users\\Lenovo\\Desktop\\OMEGA_OS_Kernel\\Auditoria PARR-F\\00_PROVAS_AUDITORIA\\motor_historico_2y\\CANDLES_SYNTH_DAY_TRADE.png"
+      ]
+    },
+    "SWING_TRADE": {
+      "rows": 100000,
+      "span_days": 102,
+      "span_gate_ok": true,
+      "charts_generated": [
+        "C:\\Users\\Lenovo\\Desktop\\OMEGA_OS_Kernel\\Auditoria PARR-F\\00_PROVAS_AUDITORIA\\motor_historico_2y\\LINE_SWING_TRADE.png",
+        "C:\\Users\\Lenovo\\Desktop\\OMEGA_OS_Kernel\\Auditoria PARR-F\\00_PROVAS_AUDITORIA\\motor_historico_2y\\CANDLES_SYNTH_SWING_TRADE.png"
+      ]
+    }
+  },
+  "global_pass": true
+}

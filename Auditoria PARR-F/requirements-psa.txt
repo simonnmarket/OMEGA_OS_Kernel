@@ -1,2 +1,4 @@
 # PSA / validação L-04 (jsonschema)
 jsonschema>=4.0.0
+pandas
+matplotlib

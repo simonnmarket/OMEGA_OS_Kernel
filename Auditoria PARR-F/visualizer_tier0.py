@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 
 # PATHS
-BASE_DIR = r"C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F"
+BASE_DIR = os.environ.get("OMEGA_PARRF_ROOT") or r"C:\Users\Lenovo\Desktop\OMEGA_OS_Kernel\Auditoria PARR-F"
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
 ASSETS_DIR = os.path.join(BASE_DIR, "Declaracoes", "Assets")
 os.makedirs(ASSETS_DIR, exist_ok=True)
