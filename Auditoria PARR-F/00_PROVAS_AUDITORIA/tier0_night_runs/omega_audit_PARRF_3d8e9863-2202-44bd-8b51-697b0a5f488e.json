@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "doc_id": "REQ-PARRF-DIRETRIZES-CRITICAS-CODIGO-TIER0-V120-20260411",
+  "orchestrator_version": "1.2.0",
+  "l1_integration_requested": true,
+  "l1_class": "FinSenseL1Layer",
+  "trace_id": "3d8e9863-2202-44bd-8b51-697b0a5f488e",
+  "symbol": "XAUUSD",
+  "timestamp_utc": "2026-04-13T22:11:59.374718+00:00",
+  "provenance_sha256": "",
+  "arbitration_result": "PASS",
+  "layers": {
+    "dos": {
+      "symbol": "XAUUSD",
+      "var_95_usd": NaN,
+      "cvar_95_usd": NaN,
+      "regime_data": "NO_DATA_AVAILABLE",
+      "momentum_1m_pct": 0.0,
+      "effective_spread": NaN,
+      "timestamp": "2026-04-13T22:11:59.374718+00:00",
+      "provenance_sha256": "",
+      "errors": [
+        "FIN_SENSE_DSN_NOT_SET"
+      ]
+    },
+    "kernel": {
+      "symbol": "XAUUSD",
+      "direction": "HOLD",
+      "confidence": 0.0,
+      "position_size": 0.0,
+      "regime": "NO_DATA",
+      "strategy_tag": "NO_DATA",
+      "var_exposure": NaN
+    },
+    "risk": {
+      "cleared": false,
+      "reasons": [
+        "DOS_ERRORS",
+        "HOLD_OR_NEUTRAL",
+        "LOW_CONFIDENCE",
+        "NO_DATA_REGIME"
+      ]
+    },
+    "executor": {
+      "order_id": null,
+      "symbol": "XAUUSD",
+      "direction": "HOLD",
+      "size": 0.0,
+      "status": "EXECUTOR_REFUSED_RISK_NOT_CLEARED",
+      "reasons": [
+        "DOS_ERRORS",
+        "HOLD_OR_NEUTRAL",
+        "LOW_CONFIDENCE",
+        "NO_DATA_REGIME"
+      ]
+    }
+  },
+  "status": "RISK_BLOCKED"
+}
