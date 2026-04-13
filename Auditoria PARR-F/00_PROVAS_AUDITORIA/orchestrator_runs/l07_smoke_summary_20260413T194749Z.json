@@ -1,0 +1,78 @@
+{
+  "timestamp_utc": "2026-04-13T19:47:49.185889+00:00",
+  "total_runs": 10,
+  "success_count": 10,
+  "l07_accepted": true,
+  "details": [
+    {
+      "run": 1,
+      "exit_code": 0,
+      "stdout": "2026-04-13 21:47:47,763 | OMEGA.ORCHESTRATOR.PARRF | INFO | L1: DOSMetricsLayer stub\n2026-04-13 21:47:47,763 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L1 DOS] compute_metrics symbol=XAUUSD\n2026-04-13 21:47:47,763 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L2 KERNEL] make_decision\n2026-04-13 21:47:47,763 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L3 RISK] validate_trade\n2026-04-13 21:47:47,763 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L4 EXEC] execute\n2026-04-13 21:47:47,765 | OMEGA.ORCHESTRATOR.PARRF | INFO | Audit: 00_PROVAS_AUDITORIA\\orchestrator_runs\\omega_audit_PARRF_e147f691-f48c-4247-b580-b2e899256857.json\nSTATUS: RISK_BLOCKED\nTRACE: e147f691-f48c-4247-b580-b2e899256857",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "run": 2,
+      "exit_code": 0,
+      "stdout": "2026-04-13 21:47:47,944 | OMEGA.ORCHESTRATOR.PARRF | INFO | L1: DOSMetricsLayer stub\n2026-04-13 21:47:47,944 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L1 DOS] compute_metrics symbol=XAUUSD\n2026-04-13 21:47:47,945 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L2 KERNEL] make_decision\n2026-04-13 21:47:47,945 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L3 RISK] validate_trade\n2026-04-13 21:47:47,945 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L4 EXEC] execute\n2026-04-13 21:47:47,947 | OMEGA.ORCHESTRATOR.PARRF | INFO | Audit: 00_PROVAS_AUDITORIA\\orchestrator_runs\\omega_audit_PARRF_9f49b4b2-ba5b-4901-85cc-da23b757212b.json\nSTATUS: RISK_BLOCKED\nTRACE: 9f49b4b2-ba5b-4901-85cc-da23b757212b",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "run": 3,
+      "exit_code": 0,
+      "stdout": "2026-04-13 21:47:48,098 | OMEGA.ORCHESTRATOR.PARRF | INFO | L1: DOSMetricsLayer stub\n2026-04-13 21:47:48,098 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L1 DOS] compute_metrics symbol=XAUUSD\n2026-04-13 21:47:48,099 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L2 KERNEL] make_decision\n2026-04-13 21:47:48,099 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L3 RISK] validate_trade\n2026-04-13 21:47:48,099 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L4 EXEC] execute\n2026-04-13 21:47:48,100 | OMEGA.ORCHESTRATOR.PARRF | INFO | Audit: 00_PROVAS_AUDITORIA\\orchestrator_runs\\omega_audit_PARRF_857f7466-064f-40a5-a764-0142c22a5ca1.json\nSTATUS: RISK_BLOCKED\nTRACE: 857f7466-064f-40a5-a764-0142c22a5ca1",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "run": 4,
+      "exit_code": 0,
+      "stdout": "2026-04-13 21:47:48,284 | OMEGA.ORCHESTRATOR.PARRF | INFO | L1: DOSMetricsLayer stub\n2026-04-13 21:47:48,285 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L1 DOS] compute_metrics symbol=XAUUSD\n2026-04-13 21:47:48,285 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L2 KERNEL] make_decision\n2026-04-13 21:47:48,285 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L3 RISK] validate_trade\n2026-04-13 21:47:48,285 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L4 EXEC] execute\n2026-04-13 21:47:48,285 | OMEGA.ORCHESTRATOR.PARRF | INFO | Audit: 00_PROVAS_AUDITORIA\\orchestrator_runs\\omega_audit_PARRF_363c6cd8-9752-4853-a0aa-da39c0f54966.json\nSTATUS: RISK_BLOCKED\nTRACE: 363c6cd8-9752-4853-a0aa-da39c0f54966",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "run": 5,
+      "exit_code": 0,
+      "stdout": "2026-04-13 21:47:48,424 | OMEGA.ORCHESTRATOR.PARRF | INFO | L1: DOSMetricsLayer stub\n2026-04-13 21:47:48,424 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L1 DOS] compute_metrics symbol=XAUUSD\n2026-04-13 21:47:48,424 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L2 KERNEL] make_decision\n2026-04-13 21:47:48,424 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L3 RISK] validate_trade\n2026-04-13 21:47:48,424 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L4 EXEC] execute\n2026-04-13 21:47:48,425 | OMEGA.ORCHESTRATOR.PARRF | INFO | Audit: 00_PROVAS_AUDITORIA\\orchestrator_runs\\omega_audit_PARRF_41961309-5872-4ac6-9f7d-a0776cf990da.json\nSTATUS: RISK_BLOCKED\nTRACE: 41961309-5872-4ac6-9f7d-a0776cf990da",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "run": 6,
+      "exit_code": 0,
+      "stdout": "2026-04-13 21:47:48,564 | OMEGA.ORCHESTRATOR.PARRF | INFO | L1: DOSMetricsLayer stub\n2026-04-13 21:47:48,564 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L1 DOS] compute_metrics symbol=XAUUSD\n2026-04-13 21:47:48,565 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L2 KERNEL] make_decision\n2026-04-13 21:47:48,565 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L3 RISK] validate_trade\n2026-04-13 21:47:48,565 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L4 EXEC] execute\n2026-04-13 21:47:48,565 | OMEGA.ORCHESTRATOR.PARRF | INFO | Audit: 00_PROVAS_AUDITORIA\\orchestrator_runs\\omega_audit_PARRF_c744b84f-8d81-402a-8610-64583482bdc1.json\nSTATUS: RISK_BLOCKED\nTRACE: c744b84f-8d81-402a-8610-64583482bdc1",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "run": 7,
+      "exit_code": 0,
+      "stdout": "2026-04-13 21:47:48,707 | OMEGA.ORCHESTRATOR.PARRF | INFO | L1: DOSMetricsLayer stub\n2026-04-13 21:47:48,708 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L1 DOS] compute_metrics symbol=XAUUSD\n2026-04-13 21:47:48,708 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L2 KERNEL] make_decision\n2026-04-13 21:47:48,708 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L3 RISK] validate_trade\n2026-04-13 21:47:48,708 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L4 EXEC] execute\n2026-04-13 21:47:48,709 | OMEGA.ORCHESTRATOR.PARRF | INFO | Audit: 00_PROVAS_AUDITORIA\\orchestrator_runs\\omega_audit_PARRF_2585cd23-d86b-49aa-b84c-7bae472c554b.json\nSTATUS: RISK_BLOCKED\nTRACE: 2585cd23-d86b-49aa-b84c-7bae472c554b",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "run": 8,
+      "exit_code": 0,
+      "stdout": "2026-04-13 21:47:48,855 | OMEGA.ORCHESTRATOR.PARRF | INFO | L1: DOSMetricsLayer stub\n2026-04-13 21:47:48,855 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L1 DOS] compute_metrics symbol=XAUUSD\n2026-04-13 21:47:48,855 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L2 KERNEL] make_decision\n2026-04-13 21:47:48,855 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L3 RISK] validate_trade\n2026-04-13 21:47:48,855 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L4 EXEC] execute\n2026-04-13 21:47:48,858 | OMEGA.ORCHESTRATOR.PARRF | INFO | Audit: 00_PROVAS_AUDITORIA\\orchestrator_runs\\omega_audit_PARRF_4cd6fc8e-91b7-4b54-85a8-639a2eeb1f70.json\nSTATUS: RISK_BLOCKED\nTRACE: 4cd6fc8e-91b7-4b54-85a8-639a2eeb1f70",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "run": 9,
+      "exit_code": 0,
+      "stdout": "2026-04-13 21:47:49,036 | OMEGA.ORCHESTRATOR.PARRF | INFO | L1: DOSMetricsLayer stub\n2026-04-13 21:47:49,036 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L1 DOS] compute_metrics symbol=XAUUSD\n2026-04-13 21:47:49,036 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L2 KERNEL] make_decision\n2026-04-13 21:47:49,036 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L3 RISK] validate_trade\n2026-04-13 21:47:49,036 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L4 EXEC] execute\n2026-04-13 21:47:49,037 | OMEGA.ORCHESTRATOR.PARRF | INFO | Audit: 00_PROVAS_AUDITORIA\\orchestrator_runs\\omega_audit_PARRF_71e8d747-3702-4747-8ff6-b0d4b0de54f5.json\nSTATUS: RISK_BLOCKED\nTRACE: 71e8d747-3702-4747-8ff6-b0d4b0de54f5",
+      "stderr": "",
+      "passed": true
+    },
+    {
+      "run": 10,
+      "exit_code": 0,
+      "stdout": "2026-04-13 21:47:49,171 | OMEGA.ORCHESTRATOR.PARRF | INFO | L1: DOSMetricsLayer stub\n2026-04-13 21:47:49,172 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L1 DOS] compute_metrics symbol=XAUUSD\n2026-04-13 21:47:49,172 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L2 KERNEL] make_decision\n2026-04-13 21:47:49,172 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L3 RISK] validate_trade\n2026-04-13 21:47:49,172 | OMEGA.ORCHESTRATOR.PARRF | INFO | [L4 EXEC] execute\n2026-04-13 21:47:49,173 | OMEGA.ORCHESTRATOR.PARRF | INFO | Audit: 00_PROVAS_AUDITORIA\\orchestrator_runs\\omega_audit_PARRF_aad15ad2-ed7a-4351-9599-7e869493df8f.json\nSTATUS: RISK_BLOCKED\nTRACE: aad15ad2-ed7a-4351-9599-7e869493df8f",
+      "stderr": "",
+      "passed": true
+    }
+  ]
+}

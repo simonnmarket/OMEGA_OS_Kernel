@@ -28,6 +28,8 @@ def main() -> int:
     ap.add_argument("--schema", required=True, type=Path)
     ap.add_argument("--glob", required=True, help="Glob de ficheiros JSON a validar")
     ap.add_argument("--max", type=int, default=100)
+    ap.add_argument("--csv-out", type=str, help="Saída opcional CSV")
+    ap.add_argument("--json-summary", type=str, help="Saída resumo JSON")
     args = ap.parse_args()
 
     schema_path = args.schema.resolve()
@@ -54,6 +56,28 @@ def main() -> int:
         except Exception as e:  # noqa: BLE001
             failures.append((p, str(e)))
 
+    pass_count = len(paths) - len(failures)
+    pass_rate = pass_count / len(paths)
+    
+    if args.json_summary:
+        import datetime
+        summary = {
+            "exit_ok": bool(len(failures) == 0),
+            "pass_rate": pass_rate,
+            "total_files": len(paths),
+            "failed_files": len(failures),
+            "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat()
+        }
+        with open(args.json_summary, 'w', encoding='utf-8') as fs:
+            json.dump(summary, fs, indent=2)
+            
+    if args.csv_out:
+        with open(args.csv_out, 'w', encoding='utf-8') as fc:
+            fc.write("path,error_msgn")
+            for p, m in failures:
+                m_no_commas = m.replace(',', ';').replace('\n', ' ')
+                fc.write(f'"{p}","{m_no_commas}"\n')
+                
     if failures:
         print(f"FAIL: {len(failures)}/{len(paths)}")
         for path, msg in failures[:50]:
