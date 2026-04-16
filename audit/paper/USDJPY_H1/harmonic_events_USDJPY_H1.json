@@ -2,8 +2,8 @@
   "asset": "USDJPY",
   "timeframe": "H1",
   "status": "COMPLETED",
-  "created_at": "2026-03-20T21:13:14.447133+00:00",
-  "updated_at": "2026-03-20T21:13:14.447133+00:00",
+  "created_at": "2026-04-14T20:58:52.570417+00:00",
+  "updated_at": "2026-04-14T20:58:52.570417+00:00",
   "agent_version": "ami_analyzer_v3.0",
   "omega_integration": false,
   "checksum_sources": {
@@ -538174,5 +538174,5 @@
       ]
     }
   },
-  "checksum": "a787f436231d32c1ffb05afc1b28d433ef40b58369d81b88712283e67a314cac"
+  "checksum": "a6ba83c867ce7ffcd2db8cad10f6b5d135421cdf7c3def7798fbc05ebebf64cd"
 }

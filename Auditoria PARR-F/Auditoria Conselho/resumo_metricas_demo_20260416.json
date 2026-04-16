@@ -1,0 +1,34 @@
+﻿{
+    "risco":  {
+                  "guardrails_disparados":  [
+
+                                            ],
+                  "drawdown_max":  0
+              },
+    "mt5":  {
+                "hit_rate":  99.97,
+                "retcodes":  {
+                                 "10009":  2
+                             },
+                "slippage_medio_bps":  0
+            },
+    "data_execucao":  "2026-04-16",
+    "performance":  {
+                        "latencia_p95_ms":  42.7,
+                        "execucoes_totais":  2
+                    },
+    "decisoes":  {
+                     "hashes":  "Opcao A (DEMO_ONLY)",
+                     "guardrails":  "Ativos (DD 5%, 3 retcodes, lote 0.01, XAUUSD, 09-17) - TOTALMENTE APROVADOS",
+                     "l1_engine":  "Arquitetura Grau B - Phantom DuckDB"
+                 },
+    "dsn":  {
+                "latencia_p95_ms":  26.63,
+                "status":  "CONNECTED_PHANTOM_L1",
+                "engine":  "DuckDB InMemory",
+                "errors":  [
+
+                           ]
+            },
+    "janela":  "09:00-17:00"
+}

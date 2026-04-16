@@ -1,15 +1,15 @@
 {
-  "mission_id": "PAPER-GBPUSD-H1-20260414T205840",
+  "mission_id": "PAPER-GBPUSD-H4-20260414T205844",
   "asset": "GBPUSD",
-  "timeframe": "H1",
+  "timeframe": "H4",
   "status": "COMPLETED",
   "mode": "paper",
-  "created_at": "2026-04-14T20:58:40.981728+00:00",
+  "created_at": "2026-04-14T20:58:44.561002+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
     "asset": "GBPUSD",
-    "timeframe": "H1",
+    "timeframe": "H4",
     "tier": "T1",
     "hit_rate_134": 100.0,
     "mach": 1.0,
@@ -18,26 +18,26 @@
     "skip_reasons": []
   },
   "binomial_ic_95": {
-    "hits": 20338,
-    "total": 20338,
+    "hits": 6909,
+    "total": 6909,
     "p_hat": 1.0,
-    "lower_bound": 0.999811,
+    "lower_bound": 0.999444,
     "upper_bound": 1.0,
-    "interval": "[99.9811%, 100.0000%]"
+    "interval": "[99.9444%, 100.0000%]"
   },
   "engines": {
     "harmonic": {
       "metrics": {
         "34_stats": {
-          "total_touches": 20338,
-          "hits": 20338,
+          "total_touches": 6909,
+          "hits": 6909,
           "breaks": 0,
           "hit_rate": 100.0,
           "break_rate": 0.0
         },
         "134_stats": {
-          "total_touches": 20338,
-          "hits": 20338,
+          "total_touches": 6909,
+          "hits": 6909,
           "breaks": 0,
           "hit_rate": 100.0,
           "break_rate": 0.0
@@ -74,8 +74,8 @@
     "volume_confirmed": 0.0,
     "slippage_pts": 135649.0,
     "comment": "Market closed",
-    "request_id": 2136050227,
-    "latency_ms": 52.6,
+    "request_id": 2136050228,
+    "latency_ms": 29.8,
     "mode": "MT5_DEMO_REAL"
   },
   "lot_info": {
@@ -86,6 +86,6 @@
     "contract_size": 100000.0,
     "price_at_calc": 1.35649
   },
-  "latency_motor_s": 9.394,
-  "checksum": "de91c95555564e48e794e85bb2c71039cc0225d37ae27dc92ac3ccc66d843095"
+  "latency_motor_s": 3.462,
+  "checksum": "63620766f375fece18fcc25e35f4d79853a3de89407ce843248cfd2f75e33659"
 }

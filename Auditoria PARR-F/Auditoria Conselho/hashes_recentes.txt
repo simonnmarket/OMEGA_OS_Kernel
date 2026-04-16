@@ -1,0 +1,5 @@
+﻿C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Auditoria Conselho\omega_audit_PARRF_1fd6a828-a7b5-46b0-bfd6-421cf9165f7f.json|62fe097a3c960ff6cc6cb62c42394ca1218ba9e5bfd6bc76851182ec380cc276
+C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Auditoria Conselho\audit_run_20260416_131557.log|b2385d2458fa738fb92bbd7d6a4b449ef46f9ec7d699c6cacecd2e33ba13027d
+C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Auditoria Conselho\paper_loop_20260416_111601.log|281408c3d83361303ddc0e1c62c7a5bbfb54a584ddcf6a26317b83270c165e40
+C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Auditoria Conselho\manifest.json|5d6053991dbc5619ed443dfb16681f9914b8241a9171d9e0e4496daf14ef5307
+C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F\Auditoria Conselho\resumo_metricas_demo_20260416_PRODUCAO.json|f0e6555e25212481b96e088eb08666691f32c4d3eb62cc8839a79d80dc68b647

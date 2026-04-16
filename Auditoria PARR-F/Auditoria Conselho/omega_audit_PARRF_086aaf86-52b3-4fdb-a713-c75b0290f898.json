@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "doc_id": "REQ-PARRF-DIRETRIZES-CRITICAS-CODIGO-TIER0-V120-20260411",
+  "orchestrator_version": "1.2.0",
+  "l1_integration_requested": true,
+  "l1_class": "FinSenseL1Layer",
+  "trace_id": "086aaf86-52b3-4fdb-a713-c75b0290f898",
+  "symbol": "XAUUSD",
+  "timestamp_utc": "2026-04-15T19:20:26.158381+00:00",
+  "provenance_sha256": "",
+  "arbitration_result": "PASS",
+  "layers": {
+    "dos": {
+      "symbol": "XAUUSD",
+      "var_95_usd": NaN,
+      "cvar_95_usd": NaN,
+      "regime_data": "NO_DATA_AVAILABLE",
+      "momentum_1m_pct": 0.0,
+      "effective_spread": NaN,
+      "timestamp": "2026-04-15T19:20:30.290356+00:00",
+      "provenance_sha256": "",
+      "errors": [
+        "POSTGRES_ERROR:connection to server at \"localhost\" (::1), port 5432 failed: Connection refused (0x0000274D/10061)\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at \"localhost\" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)\n\tIs the server running on that host and accepting TCP/IP connections?\n"
+      ]
+    },
+    "kernel": {
+      "symbol": "XAUUSD",
+      "direction": "HOLD",
+      "confidence": 0.0,
+      "position_size": 0.0,
+      "regime": "NO_DATA",
+      "strategy_tag": "NO_DATA",
+      "var_exposure": NaN
+    },
+    "risk": {
+      "cleared": false,
+      "reasons": [
+        "DOS_ERRORS",
+        "HOLD_OR_NEUTRAL",
+        "LOW_CONFIDENCE",
+        "NO_DATA_REGIME"
+      ]
+    },
+    "executor": {
+      "order_id": null,
+      "symbol": "XAUUSD",
+      "direction": "HOLD",
+      "size": 0.0,
+      "status": "EXECUTOR_REFUSED_RISK_NOT_CLEARED",
+      "reasons": [
+        "DOS_ERRORS",
+        "HOLD_OR_NEUTRAL",
+        "LOW_CONFIDENCE",
+        "NO_DATA_REGIME"
+      ]
+    }
+  },
+  "status": "RISK_BLOCKED"
+}

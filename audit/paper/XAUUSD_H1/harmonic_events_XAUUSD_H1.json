@@ -2,8 +2,8 @@
   "asset": "XAUUSD",
   "timeframe": "H1",
   "status": "COMPLETED",
-  "created_at": "2026-03-20T21:12:54.359462+00:00",
-  "updated_at": "2026-03-20T21:12:54.359462+00:00",
+  "created_at": "2026-04-16T11:16:09.811952+00:00",
+  "updated_at": "2026-04-16T11:16:09.811952+00:00",
   "agent_version": "ami_analyzer_v3.0",
   "omega_integration": false,
   "checksum_sources": {
@@ -532586,5 +532586,5 @@
       ]
     }
   },
-  "checksum": "05de11578f6c8feb902f351cb945d0501de8a7c6819224b0e4e2a6bed6427c2c"
+  "checksum": "734336b95ecfc1744bfbf2bab3c7415ef92606ea5a1927a8089bdd45f25646ae"
 }

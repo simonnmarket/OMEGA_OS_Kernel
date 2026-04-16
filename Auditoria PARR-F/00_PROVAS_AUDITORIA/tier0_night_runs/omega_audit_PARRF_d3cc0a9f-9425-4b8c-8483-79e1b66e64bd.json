@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "doc_id": "REQ-PARRF-DIRETRIZES-CRITICAS-CODIGO-TIER0-V120-20260411",
+  "orchestrator_version": "1.2.0",
+  "l1_integration_requested": true,
+  "l1_class": "FinSenseL1Layer",
+  "trace_id": "d3cc0a9f-9425-4b8c-8483-79e1b66e64bd",
+  "symbol": "XAUUSD",
+  "timestamp_utc": "2026-04-14T21:37:31.186485+00:00",
+  "provenance_sha256": "",
+  "arbitration_result": "",
+  "layers": {
+    "dos": null
+  },
+  "status": "ERROR",
+  "error": "'NoneType' object has no attribute 'get'"
+}

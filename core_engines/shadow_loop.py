@@ -53,12 +53,11 @@ MAX_CONSEC_FAIL    = 3
 OMEGA_MAGIC        = 234001     # ID do EA OMEGA
 
 # ─── Guardrails ─────────────────────────────────────────────────────────────
-TIER1_ASSETS = {
-    "XAUUSD", "GBPUSD", "USDJPY", "AUDUSD", "AUDJPY",
-    "ETHUSD", "US500",  "SOLUSD", "DOGUSD",
-}
+TIER1_ASSETS = {"XAUUSD"} # Whitelist restrita para DEMO
 HIT_RATE_MIN = 80.0
 MACH_MAX     = 1.5
+DEMO_WINDOW  = (9, 17) # 09:00 - 17:00 Local Time
+MAX_LOT_DEMO = 0.01
 
 # ─── Retcodes MT5 ────────────────────────────────────────────────────────────
 RETCODE_OK   = {10009, 10010}   # DONE, PLACED
@@ -338,8 +337,7 @@ def calc_lot(equity: float, margin_pts: float, asset: str) -> Dict:
     stop_pts = 2.0 * margin_pts
     lot_raw  = risk_usd / max(stop_pts * pip_value_per_lot, 0.0001)
     lot      = max(0.01, round(lot_raw, 2))
-    # Não exceder 0.5 lot por segurança em paper demo
-    lot      = min(lot, 0.50)
+    lot      = min(lot, MAX_LOT_DEMO) # Guardrail Demo Centralizado
 
     return {
         "lot":            lot,
@@ -469,6 +467,22 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     try:
         for asset in ativos:
             for tf in timeframes:
+                # Guardrail de Janela (Demo) com Bypass Noturno Seguro
+                import os
+                h_now = datetime.now().hour
+                w_start, w_end = DEMO_WINDOW
+                has_night_pass = os.environ.get("OMEGA_NIGHT_PASS") == "AUTHORISED_BY_CEO"
+                is_within = (w_start <= h_now < w_end)
+
+                if not (is_within or has_night_pass):
+                    log.warning("[%s %s] FORA DA JANELA DEMO (%02d:00 - %02d:00). Agora: %02d:00", 
+                                asset, tf, w_start, w_end, h_now)
+                    results.append({"asset": asset, "timeframe": tf, "status": "SKIP_WINDOW"})
+                    continue
+
+                if has_night_pass and not is_within:
+                    log.warning("[%s %s] 🛡️ JANELA QUEBRADA | OMEGA_NIGHT_PASS ATIVO", asset, tf)
+
                 if ks.triggered:
                     log.critical("[%s %s] KS ativo — abortando.", asset, tf); break
 

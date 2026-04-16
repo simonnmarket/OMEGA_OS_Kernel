@@ -32,3 +32,54 @@
 2026-03-20 22:09:01,994 | INFO     | Output JSON checksum (SHA3-256): 7c4c7762ce183eadc72e1d4e8f7bd355780d41c655373e4374404e871a3ae6e5
 2026-03-20 22:09:01,994 | INFO     | STATUS: COMPLETED
 2026-03-20 22:09:01,995 | INFO     | ======================================================================
+2026-04-14 22:58:28,637 | INFO     | ======================================================================
+2026-04-14 22:58:28,638 | INFO     | OMEGA Harmonic Engine V3 | XAUUSD H4
+2026-04-14 22:58:28,638 | INFO     | harm_fast=34 | harm_slow=134 | margin=203.9
+2026-04-14 22:58:28,638 | INFO     | ======================================================================
+2026-04-14 22:58:28,651 | INFO     | SHA3-256 linha:  8e554d9fc5ec0ad31fb682fcc54d311958887f3fd21be8de39378fb6273e8da1
+2026-04-14 22:58:28,651 | INFO     | SHA3-256 candle: 4027477408ce9a2944c85916e8be1b1f0fed635afd485aeb32574c912e6913d9
+2026-04-14 22:58:28,687 | INFO     | [LINHA] Carregado e validado: 15000 linhas.
+2026-04-14 22:58:28,726 | INFO     | [CANDLE] Carregado e validado: 15000 linhas.
+2026-04-14 22:58:28,729 | INFO     | Merge concluído: 15000 linhas úteis.
+2026-04-14 22:58:30,660 | INFO     | Eventos detectados: 14755
+2026-04-14 22:58:31,249 | INFO     | CSV salvo: harmonic_events_XAUUSD_H4.csv
+2026-04-14 22:58:31,249 | INFO     | ----------------------------------------------------------------------
+2026-04-14 22:58:31,250 | INFO     | EMA-34  | Toques:   7424 | HIT:   7421 | BREAK:      3 | Hit Rate: 99.96%
+2026-04-14 22:58:31,250 | INFO     | EMA-134 | Toques:   7331 | HIT:   7329 | BREAK:      2 | Hit Rate: 99.97%
+2026-04-14 22:58:31,250 | INFO     | Output JSON checksum (SHA3-256): 0277d3609a718bfe38b31332af99a196bb32ccb0aff33ffda79709b51568748a
+2026-04-14 22:58:31,250 | INFO     | STATUS: COMPLETED
+2026-04-14 22:58:31,250 | INFO     | ======================================================================
+2026-04-16 12:44:11,736 | INFO     | ======================================================================
+2026-04-16 12:44:11,737 | INFO     | OMEGA Harmonic Engine V3 | XAUUSD H4
+2026-04-16 12:44:11,737 | INFO     | harm_fast=34 | harm_slow=134 | margin=203.9
+2026-04-16 12:44:11,737 | INFO     | ======================================================================
+2026-04-16 12:44:11,753 | INFO     | SHA3-256 linha:  8e554d9fc5ec0ad31fb682fcc54d311958887f3fd21be8de39378fb6273e8da1
+2026-04-16 12:44:11,753 | INFO     | SHA3-256 candle: 4027477408ce9a2944c85916e8be1b1f0fed635afd485aeb32574c912e6913d9
+2026-04-16 12:44:11,790 | INFO     | [LINHA] Carregado e validado: 15000 linhas.
+2026-04-16 12:44:11,832 | INFO     | [CANDLE] Carregado e validado: 15000 linhas.
+2026-04-16 12:44:11,839 | INFO     | Merge concluído: 15000 linhas úteis.
+2026-04-16 12:44:14,318 | INFO     | Eventos detectados: 14755
+2026-04-16 12:44:15,157 | INFO     | CSV salvo: harmonic_events_XAUUSD_H4.csv
+2026-04-16 12:44:15,158 | INFO     | ----------------------------------------------------------------------
+2026-04-16 12:44:15,158 | INFO     | EMA-34  | Toques:   7424 | HIT:   7421 | BREAK:      3 | Hit Rate: 99.96%
+2026-04-16 12:44:15,158 | INFO     | EMA-134 | Toques:   7331 | HIT:   7329 | BREAK:      2 | Hit Rate: 99.97%
+2026-04-16 12:44:15,158 | INFO     | Output JSON checksum (SHA3-256): e13a77acdc593fbb9fd2a6b70c6fc2123d7ab101fe1ab3f3a2f8dc259b371897
+2026-04-16 12:44:15,158 | INFO     | STATUS: COMPLETED
+2026-04-16 12:44:15,158 | INFO     | ======================================================================
+2026-04-16 13:16:13,770 | INFO     | ======================================================================
+2026-04-16 13:16:13,770 | INFO     | OMEGA Harmonic Engine V3 | XAUUSD H4
+2026-04-16 13:16:13,770 | INFO     | harm_fast=34 | harm_slow=134 | margin=203.9
+2026-04-16 13:16:13,770 | INFO     | ======================================================================
+2026-04-16 13:16:13,779 | INFO     | SHA3-256 linha:  8e554d9fc5ec0ad31fb682fcc54d311958887f3fd21be8de39378fb6273e8da1
+2026-04-16 13:16:13,779 | INFO     | SHA3-256 candle: 4027477408ce9a2944c85916e8be1b1f0fed635afd485aeb32574c912e6913d9
+2026-04-16 13:16:13,806 | INFO     | [LINHA] Carregado e validado: 15000 linhas.
+2026-04-16 13:16:13,839 | INFO     | [CANDLE] Carregado e validado: 15000 linhas.
+2026-04-16 13:16:13,844 | INFO     | Merge concluído: 15000 linhas úteis.
+2026-04-16 13:16:16,384 | INFO     | Eventos detectados: 14755
+2026-04-16 13:16:17,218 | INFO     | CSV salvo: harmonic_events_XAUUSD_H4.csv
+2026-04-16 13:16:17,220 | INFO     | ----------------------------------------------------------------------
+2026-04-16 13:16:17,220 | INFO     | EMA-34  | Toques:   7424 | HIT:   7421 | BREAK:      3 | Hit Rate: 99.96%
+2026-04-16 13:16:17,220 | INFO     | EMA-134 | Toques:   7331 | HIT:   7329 | BREAK:      2 | Hit Rate: 99.97%
+2026-04-16 13:16:17,220 | INFO     | Output JSON checksum (SHA3-256): 8be93287e5eb82d52210ce63012467f8f4cb2267f182c92496fef7f8917c1a48
+2026-04-16 13:16:17,221 | INFO     | STATUS: COMPLETED
+2026-04-16 13:16:17,221 | INFO     | ======================================================================

@@ -1,0 +1,145 @@
+﻿{
+    "decisao_hashes":  "Aguardando Conselho",
+    "doc_id":  "DOC-EXEC-TIER0-DEMO-FINAL-PROD-20260416",
+    "guardrails_test":  "SUCCESS",
+    "artifacts":  [
+                      {
+                          "sha256":  "7ab415eefbf09eb90c4694bcd41c4b52a1bec0fc7638663e2287ae44a9f89b38",
+                          "name":  "audit_run_20260414_225203.log",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "0d015ed4127eb0263df356f59c7fa63d53de8162a8339e7a13c85dcdc8b03e85",
+                          "name":  "audit_run_20260414_225813.log",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "bf0f089585cf9cf6d19cc0f1e1720da390cd344cc2b55242cb594052f63bb11f",
+                          "name":  "audit_run_20260414_233730.log",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "45be57f7c37949c54c1fcde997dc71bb4c9adfde2691b273aecf5ba3a81d2bae",
+                          "name":  "audit_run_20260415_212025.log",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "a1b9f8a46af2efb2cb75dd84fd0b73ca2b21c12a1689acc07dc656eac69fba14",
+                          "name":  "audit_run_20260416_124353.log",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "b2385d2458fa738fb92bbd7d6a4b449ef46f9ec7d699c6cacecd2e33ba13027d",
+                          "name":  "audit_run_20260416_131557.log",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "1d6b3e77784500537f3fd0c881977f6b5c69f652076ab79a14f6d84b9c348152",
+                          "name":  "FIN_SENSE_L1_SAMPLE.csv",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "43e858856b82eaca1ce5004ddfe051c7edb4168595cee5d67d4a5c5f8d9ddc53",
+                          "name":  "FIN_SENSE_L1_SPECS.md",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "434f79dc1a152cf33f45cc13c157401b6891d189083cc2c6676c4afd8573c40b",
+                          "name":  "omega_audit_PARRF_086aaf86-52b3-4fdb-a713-c75b0290f898.json",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "62fe097a3c960ff6cc6cb62c42394ca1218ba9e5bfd6bc76851182ec380cc276",
+                          "name":  "omega_audit_PARRF_1fd6a828-a7b5-46b0-bfd6-421cf9165f7f.json",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "87f2f07d9e89576e7cbeac4c1dadc47ef1cbaab8a49809138c092441658ec4e1",
+                          "name":  "omega_audit_PARRF_22e9a581-88b5-4fdf-8d3a-447dac39f758.json",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "cf862574c144bd915845933e77a7c27ebe71e7c7b9ffb448b53a3773bda4802c",
+                          "name":  "omega_audit_PARRF_36762a33-0396-4e65-a754-f5f7ec0aa1f1.json",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "6f70cec2869043168bd32cc79be3c998ad3df9077a5b7eeee12216671ef7bd94",
+                          "name":  "omega_audit_PARRF_d84decd1-0afb-4160-9b76-970ad2f40831.json",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "dbec84d2860d7f75ec3cefbfaadda5a8fac18b02c8c65e54961ae84c18e96652",
+                          "name":  "omega_audit_PARRF_deca5ba2-3f03-4052-bdfe-9ca7faf2ebc0.json",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "1943e537d2757d0ac6f83051101f9706b6a114e0eb9f3f7d656f2cdbfb4b8846",
+                          "name":  "omega_parr_f_engine.py",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "c96e82b9b0831422ff673260abf36a4ecc9b5e36b7f8a5ae263cce58c0422365",
+                          "name":  "omega_v550_realtime_mt5.py",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "72812a3f78b9ba6a31660e4490ca589848060824517ad57dc0402455ffc1b48b",
+                          "name":  "paper_loop_20260414_205817.log",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "f3734941deca435077d7f5c0ebac7022062ba95f420ff8f3256c83adaeaf142a",
+                          "name":  "paper_loop_20260414_213822.log",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "35b73f8d2033807b27456f69a80dbe8ef849e1bca94dadb89347076fd98beb1a",
+                          "name":  "paper_loop_20260414_225205.log",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "2c45c9979f2e3783d6594d7641d81dc0e7d6ad8e76fa8bd9d2b942c78a6060f2",
+                          "name":  "paper_loop_20260415_192033.log",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "667fb8f7a0f07ab55b3cfecddc98b657d78a062b2a9bba771937a17d87f8b34c",
+                          "name":  "paper_loop_20260416_104358.log",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "281408c3d83361303ddc0e1c62c7a5bbfb54a584ddcf6a26317b83270c165e40",
+                          "name":  "paper_loop_20260416_111601.log",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "c859303da9ebb5ac2c84c27ab54de91b9b2f7cc75b18554ec3ff2697abbd4d65",
+                          "name":  "REPLAY_FOCAL_V550_RIGOROUS.csv",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "0d9a27a5940af16951e88af55429ececc9e3fd083c591c9aaceedf890b30da14",
+                          "name":  "REPLAY_STRUCTURAL_V550_RIGOROUS.csv",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "73af92390ebb03b31dcb582616a8d032c51d6c23a3490d84489556c899d893b7",
+                          "name":  "resumo_metricas_demo_20260416.json",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "f0e6555e25212481b96e088eb08666691f32c4d3eb62cc8839a79d80dc68b647",
+                          "name":  "resumo_metricas_demo_20260416_PRODUCAO.json",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      },
+                      {
+                          "sha256":  "ea9aa9ea86099b394c4485c6e656b4bc4426560862ef7235b4780b5255bbe293",
+                          "name":  "uniqueness_proof.log",
+                          "audit_status":  "DEMO_ONLY_PROD_READY"
+                      }
+                  ],
+    "status":  "GO_FOR_REAL_DEMO",
+    "engine":  "PostgreSQL",
+    "timestamp_utc":  "2026-04-16T11:16:39Z"
+}
