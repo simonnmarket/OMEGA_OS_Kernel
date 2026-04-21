@@ -1,14 +1,14 @@
 {
   "mode": "paper",
-  "generated": "2026-04-21T05:58:20.964209+00:00",
+  "generated": "2026-04-21T06:02:54.188666+00:00",
   "equity_demo": 10000.0,
-  "total_cycles": 3,
+  "total_cycles": 28,
   "kill_switch": false,
   "ks_reason": "",
   "online_stats": {
-    "total_signals": 3,
+    "total_signals": 0,
     "executed": 0,
-    "skipped": 3,
+    "skipped": 0,
     "avg_hit_rate_134": 0,
     "avg_slippage_pts": 0.0,
     "avg_latency_ms": 0.0,
@@ -16,30 +16,146 @@
   },
   "results": [
     {
+      "asset": "AUDUSD",
+      "timeframe": "H1",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "AUDUSD",
+      "timeframe": "H4",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "SKIP_WINDOW"
+    },
+    {
       "asset": "BTCUSD",
       "timeframe": "H4",
-      "status": "SKIP",
-      "reasons": [
-        "hit_rate_134=67.59% < 70.0%"
-      ]
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H1",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H4",
+      "status": "SKIP_WINDOW"
     },
     {
       "asset": "EURUSD",
       "timeframe": "H1",
-      "status": "SKIP",
-      "reasons": [
-        "EURUSD: grafico_linha ausente"
-      ]
+      "status": "SKIP_WINDOW"
     },
     {
       "asset": "EURUSD",
       "timeframe": "H4",
-      "status": "SKIP",
-      "reasons": [
-        "EURUSD: grafico_linha ausente"
-      ]
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "GBPUSD",
+      "timeframe": "H1",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "GBPUSD",
+      "timeframe": "H4",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "GER40",
+      "timeframe": "H1",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "GER40",
+      "timeframe": "H4",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "NAS100",
+      "timeframe": "H1",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "NAS100",
+      "timeframe": "H4",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "NZDUSD",
+      "timeframe": "H1",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "NZDUSD",
+      "timeframe": "H4",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "US500",
+      "timeframe": "H1",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "US500",
+      "timeframe": "H4",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "USDCAD",
+      "timeframe": "H1",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "USDCAD",
+      "timeframe": "H4",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "USDCHF",
+      "timeframe": "H1",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "USDCHF",
+      "timeframe": "H4",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "USDJPY",
+      "timeframe": "H1",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "USDJPY",
+      "timeframe": "H4",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "XAGUSD",
+      "timeframe": "H1",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "XAGUSD",
+      "timeframe": "H4",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H1",
+      "status": "SKIP_WINDOW"
+    },
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H4",
+      "status": "SKIP_WINDOW"
     }
   ],
-  "log_file": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\audit\\paper\\paper_loop_20260421_055820.log",
-  "checksum": "1ac595fb1dae4df44b0322b3e02a761cafed56cdc4e377189dff1a583f4b624a"
+  "log_file": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\audit\\paper\\paper_loop_20260421_060254.log",
+  "checksum": "784925c43abecc698c3cdc03c8729bbeed54626e4cb20bce0f47f2f52201de86"
 }

@@ -1,42 +1,5 @@
 {
-  "generated": "2026-04-21T05:58:20.962219+00:00",
-  "skips": [
-    {
-      "asset": "BTCUSD",
-      "timeframe": "H4",
-      "tier": "T1",
-      "hit_rate_134": 67.59,
-      "mach": 1.0,
-      "margin_used": 3210.5,
-      "skip": true,
-      "skip_reasons": [
-        "hit_rate_134=67.59% < 70.0%"
-      ]
-    },
-    {
-      "asset": "EURUSD",
-      "timeframe": "H1",
-      "tier": "T1",
-      "hit_rate_134": 100.0,
-      "mach": 1.0,
-      "margin_used": 150.0,
-      "skip": true,
-      "skip_reasons": [
-        "EURUSD: grafico_linha ausente"
-      ]
-    },
-    {
-      "asset": "EURUSD",
-      "timeframe": "H4",
-      "tier": "T1",
-      "hit_rate_134": 100.0,
-      "mach": 1.0,
-      "margin_used": 150.0,
-      "skip": true,
-      "skip_reasons": [
-        "EURUSD: grafico_linha ausente"
-      ]
-    }
-  ],
-  "checksum": "a6600b7e067a296bd053a81c743351c5db0a6fe4abe102a3390a0267ddf315c4"
+  "generated": "2026-04-21T06:02:54.188128+00:00",
+  "skips": [],
+  "checksum": "3cc8aefc02db87bd5e307ea4ddab991b906afb12699df2876914c1da043ad02b"
 }
