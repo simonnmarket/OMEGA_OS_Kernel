@@ -222,8 +222,12 @@ def mt5_send_order(asset: str, tf: str, lot: float,
     price    = tick.ask
     point    = sym.point
     digits   = sym.digits
-    sl_price = round(price - sl_pts * point, digits)
-    tp_price = round(price + tp_pts * point, digits)
+    min_dist = max(getattr(sym, 'trade_stops_level', 0), getattr(sym, 'spread', 0) * 2)
+    final_sl_pts = max(sl_pts, min_dist + 50)  # Safe buffer
+    final_tp_pts = max(tp_pts, min_dist + 50)
+    
+    sl_price = round(price - final_sl_pts * point, digits)
+    tp_price = round(price + final_tp_pts * point, digits)
 
     # Selecionar filling mode suportado pelo broker (bit 0=FOK, bit 1=IOC, bit 2=RETURN)
     fm = sym.filling_mode if sym else 3
@@ -343,7 +347,8 @@ def get_price_result() -> dict:
 def check_guardrails(asset: str, tf: str, hr: float,
                      mach: float, dm: dict) -> dict:
     reasons = []
-    if hr < HIT_RATE_MIN:    reasons.append(f"hit_rate_134={hr:.2f}% < {HIT_RATE_MIN}%")
+    dyn_min_hr = get_regime_config().get('MIN_CONFIDENCE', 0.8) * 100
+    if hr < dyn_min_hr:    reasons.append(f"hit_rate_134={hr:.2f}% < {dyn_min_hr}%")
     if mach > MACH_MAX:      reasons.append(f"Mach={mach:.2f} > {MACH_MAX}")
     if asset == "EURUSD":    reasons.append("EURUSD: grafico_linha ausente")
     margin = 150.0
