@@ -204,12 +204,11 @@ def mt5_check_order(request: dict) -> Optional[dict]:
 
 # ─── MT5 — Enviar Ordem Real (Demo) ─────────────────────────────────────────
 def mt5_send_order(asset: str, tf: str, lot: float,
-                   sl_pts: float, tp_pts: float) -> Dict:
+                   sl_pts: float, tp_pts: float, direction: str = "BUY") -> Dict:
     """
-    Envia ordem de compra a mercado via mt5.order_send().
-    Usa TRADE_ACTION_DEAL + ORDER_TYPE_BUY.
-    Retorna dict com retcode, deal, price, slippage, latência, etc.
-    NOTA: Somente conta DEMO. Guardrails já foram aplicados antes desta chamada.
+    Envia ordem de execução a mercado via mt5.order_send().
+    Usa TRADE_ACTION_DEAL + ORDER_TYPE (BUY/SELL) Dinâmico!
+    Retorna dict com retcode, deal, price, slippage, latência.
     """
     import MetaTrader5 as mt5
 
@@ -219,15 +218,21 @@ def mt5_send_order(asset: str, tf: str, lot: float,
         log.error("[%s] symbol_info_tick falhou", asset)
         return {"retcode": -1, "retcode_str": "NO_TICK", "error": "symbol_info_tick returned None"}
 
-    price    = tick.ask
+    price    = tick.ask if direction == "BUY" else tick.bid
     point    = sym.point
     digits   = sym.digits
     min_dist = max(getattr(sym, 'trade_stops_level', 0), getattr(sym, 'spread', 0) * 2)
     final_sl_pts = max(sl_pts, min_dist + 50)  # Safe buffer
     final_tp_pts = max(tp_pts, min_dist + 50)
     
-    sl_price = round(price - final_sl_pts * point, digits)
-    tp_price = round(price + final_tp_pts * point, digits)
+    if direction == "BUY":
+        sl_price = round(price - final_sl_pts * point, digits)
+        tp_price = round(price + final_tp_pts * point, digits)
+        order_type_mt5 = mt5.ORDER_TYPE_BUY
+    else:
+        sl_price = round(price + final_sl_pts * point, digits)
+        tp_price = round(price - final_tp_pts * point, digits)
+        order_type_mt5 = mt5.ORDER_TYPE_SELL
 
     # Selecionar filling mode suportado pelo broker (bit 0=FOK, bit 1=IOC, bit 2=RETURN)
     fm = sym.filling_mode if sym else 3
@@ -239,13 +244,13 @@ def mt5_send_order(asset: str, tf: str, lot: float,
         "action":       mt5.TRADE_ACTION_DEAL,
         "symbol":       asset,
         "volume":       lot,
-        "type":         mt5.ORDER_TYPE_BUY,
+        "type":         order_type_mt5,
         "price":        price,
         "sl":           sl_price,
         "tp":           tp_price,
         "deviation":    20,
         "magic":        OMEGA_MAGIC,
-        "comment":      f"OMEGA-AMI-{tf}",
+        "comment":      f"OMEGA-AMI-{tf}-{direction}",
         "type_time":    mt5.ORDER_TIME_GTC,
         "type_filling": filling,
     }
@@ -613,11 +618,18 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                     intra_opportunities = intra_executor.get_opportunities(asset)
                     spoof_score = spoof_detector.analyze(asset)
                     
+                    import hashlib
+                    # Pseudo-edge direcional via modulo de precos dinamicos V553
+                    b_price = float(price_d.get("base_price", 0))
+                    a_price = float(price_d.get("price", 1))
+                    signal_dir = "BUY" if a_price > b_price else "SELL"
+                    
                     if correlation_filter.should_trade(asset, current_positions):
                         exec_result = mt5_send_order(
                             asset, tf, lot_info["lot"],
                             sl_pts=guard["margin_used"] * 2,
-                            tp_pts=guard["margin_used"] * 2)
+                            tp_pts=guard["margin_used"] * 2,
+                            direction=signal_dir)
                         success = exec_result.get("success", False)
                         open_pos = min(open_pos + (1 if success else 0), MAX_POSITIONS)
                         ks.update(success, 0.0)   # PnL real será monitorado via posições abertas
