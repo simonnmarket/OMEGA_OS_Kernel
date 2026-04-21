@@ -1,10 +1,10 @@
 {
-  "mission_id": "PAPER-XAUUSD-H4-20260416T111617",
+  "mission_id": "PAPER-XAUUSD-H4-20260421T000201",
   "asset": "XAUUSD",
   "timeframe": "H4",
   "status": "COMPLETED",
   "mode": "paper",
-  "created_at": "2026-04-16T11:16:17.394849+00:00",
+  "created_at": "2026-04-21T00:02:01.045981+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
@@ -65,17 +65,17 @@
     "retcode": 10009,
     "retcode_str": "DONE",
     "success": true,
-    "deal": 177011556,
-    "order": 175547298,
-    "fill_price": 4818.22,
-    "ask_at_send": 4818.22,
-    "sl_price": 4814.14,
-    "tp_price": 4822.3,
+    "deal": 179076644,
+    "order": 177085705,
+    "fill_price": 4823.97,
+    "ask_at_send": 4823.97,
+    "sl_price": 4819.89,
+    "tp_price": 4828.05,
     "volume_confirmed": 0.01,
     "slippage_pts": 0.0,
     "comment": "Request executed",
-    "request_id": 3893984854,
-    "latency_ms": 25.1,
+    "request_id": 1235611571,
+    "latency_ms": 35.7,
     "mode": "MT5_DEMO_REAL"
   },
   "lot_info": {
@@ -84,8 +84,8 @@
     "stop_pts": 407.8,
     "pip_value_lot": 1.0,
     "contract_size": 100.0,
-    "price_at_calc": 4818.22
+    "price_at_calc": 4823.97
   },
-  "latency_motor_s": 4.409,
-  "checksum": "89ba2cbd7a375acbfc5cabd27e3818856fe04c050d98120186afd2a16e564cda"
+  "latency_motor_s": 3.643,
+  "checksum": "1287147b38dff7c95bd473d12a9c21d976935f5802e8247ba7ccb2d8f145ca0c"
 }

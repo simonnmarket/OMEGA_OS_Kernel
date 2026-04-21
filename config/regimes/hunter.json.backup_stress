@@ -1,0 +1,30 @@
+{
+  "regime_id": "HUNTER-20260420",
+  "version": "4.0.0",
+  "ativo_por": "CEO_DIRECTIVE_2026_001",
+  "descricao": "Regime Caçador - Detecção de Assinaturas em Baixa Liquidez",
+  "janelas_operacao": {
+    "asia": { "inicio": "00:00", "fim": "08:00", "timezone": "local" },
+    "pos_ny": { "inicio": "17:00", "fim": "23:00", "timezone": "local" }
+  },
+  "parametros_execucao": {
+    "lote_maximo": 0.01,
+    "confianca_minima": 0.75,
+    "capital_alocado_pct": 0.005,
+    "max_posicoes_simultaneas": 2,
+    "panic_flat_all": true,
+    "tempo_maximo_posicao_minutos": 120
+  },
+  "slo": {
+    "dsn_p95_max_ms": 50,
+    "rtt_mt5_max_ms": 200,
+    "slippage_max_pips": 0.5,
+    "precision_min": 0.60,
+    "spread_max_pips": 3.0
+  },
+  "gates_promocao": {
+    "paper_horas_requeridas": 48
+  },
+  "hash_verificacao": "8FF9BD724B99247BD0F662EFA52859CCE9EC80B271052B6A8F875153F3436C57",
+  "criado_em": "2026-04-20T23:29:15.5541174+02:00"
+}

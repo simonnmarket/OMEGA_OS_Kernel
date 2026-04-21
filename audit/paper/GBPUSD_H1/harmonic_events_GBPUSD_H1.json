@@ -2,8 +2,8 @@
   "asset": "GBPUSD",
   "timeframe": "H1",
   "status": "COMPLETED",
-  "created_at": "2026-04-14T20:58:38.852112+00:00",
-  "updated_at": "2026-04-14T20:58:38.852112+00:00",
+  "created_at": "2026-04-21T00:26:48.467025+00:00",
+  "updated_at": "2026-04-21T00:26:48.467025+00:00",
   "agent_version": "ami_analyzer_v3.0",
   "omega_integration": false,
   "checksum_sources": {
@@ -447468,5 +447468,5 @@
       ]
     }
   },
-  "checksum": "527f92eb84f26a72b3c66883fe164bf4c422d3cc5b332e8e79560b8a6b361468"
+  "checksum": "8f0ebcf5fb59d02481ebc27c965f32c234a54d25fd3398abc516469998e5279c"
 }

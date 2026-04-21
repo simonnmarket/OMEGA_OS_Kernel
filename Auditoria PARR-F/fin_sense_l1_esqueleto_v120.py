@@ -51,16 +51,25 @@ class FinSenseL1Layer:
         canonical = json.dumps(record, sort_keys=True, default=str, ensure_ascii=False)
         digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
+        regime_val = str(record.get("regime_data") or "UNKNOWN")
+        momentum_val = float(record.get("momentum_1m_pct") or 0.0)
+        
+        cynical_errors = []
+        if regime_val in ["HIGH_VOLATILITY", "KILL_SWITCH"]:
+            cynical_errors.append(f"DEAD_MAN_OUT: Regime Inaceitável ({regime_val})")
+        elif abs(momentum_val) < 0.80:
+            cynical_errors.append(f"CÍNICO_HOLD: Momentum insignificante ({momentum_val} < 0.80)")
+
         return {
             "symbol": record.get("symbol", symbol),
             "var_95_usd": float(record.get("var_95_usd") or 0.0),
             "cvar_95_usd": float(record.get("cvar_95_usd") or 0.0),
-            "regime_data": str(record.get("regime_data") or "UNKNOWN"),
-            "momentum_1m_pct": float(record.get("momentum_1m_pct") or 0.0),
+            "regime_data": regime_val,
+            "momentum_1m_pct": momentum_val,
             "effective_spread": float(record.get("effective_spread") or 0.0),
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "provenance_sha256": digest,
-            "errors": [],
+            "errors": cynical_errors,
             "extras": {
                 "source": "FIN_SENSE_DSN",
                 "engine": "PostgreSQL"

@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "doc_id": "REQ-PARRF-DIRETRIZES-CRITICAS-CODIGO-TIER0-V120-20260411",
+  "orchestrator_version": "1.2.0",
+  "l1_integration_requested": true,
+  "l1_class": "FinSenseL1Layer",
+  "trace_id": "3525e3a0-dcb8-4d43-bcda-c821b350452a",
+  "symbol": "XAUUSD",
+  "timestamp_utc": "2026-04-17T13:06:16.290954+00:00",
+  "provenance_sha256": "c3378b4505431f5fed2b1137641575f17e633180e20d1cf763695656b8ff064e",
+  "arbitration_result": "PASS",
+  "layers": {
+    "dos": {
+      "symbol": "XAUUSD",
+      "var_95_usd": 15.53,
+      "cvar_95_usd": 21.08,
+      "regime_data": "NORMAL_PROCEED",
+      "momentum_1m_pct": 0.88,
+      "effective_spread": 0.15,
+      "timestamp": "2026-04-17T13:06:16.318718+00:00",
+      "provenance_sha256": "c3378b4505431f5fed2b1137641575f17e633180e20d1cf763695656b8ff064e",
+      "errors": [],
+      "extras": {
+        "source": "FIN_SENSE_DSN",
+        "engine": "PostgreSQL"
+      }
+    },
+    "kernel": {
+      "symbol": "XAUUSD",
+      "direction": "BUY",
+      "confidence": 0.95,
+      "position_size": 0.01,
+      "regime": "TREND_MOMENTUM",
+      "strategy_tag": "MOMENTUM",
+      "var_exposure": 15.53
+    },
+    "risk": {
+      "cleared": true,
+      "reasons": []
+    },
+    "executor": {
+      "order_id": "DRY_06a34d9302c4",
+      "symbol": "XAUUSD",
+      "direction": "BUY",
+      "size": 0.01,
+      "status": "DRY_RUN_SUCCESS",
+      "fill_price": null
+    }
+  },
+  "status": "EXECUTED_DRY_RUN"
+}

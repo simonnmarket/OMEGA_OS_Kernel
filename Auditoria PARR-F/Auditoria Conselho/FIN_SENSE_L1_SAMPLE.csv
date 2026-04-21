@@ -1,2 +1,2 @@
-﻿symbol,var_95_usd,cvar_95_usd,regime_data,momentum_1m_pct,effective_spread,source_batch_id,computed_at
-XAUUSD,25000.0,30000.0,TREND_STABLE,0.0015,0.12,BATCH_PSA_V120,2026-04-15T00:00:00Z
+symbol,var_95_usd,cvar_95_usd,regime_data,momentum_1m_pct,effective_spread,source_batch_id,computed_at
+XAUUSD,15.53,21.08,NORMAL_PROCEED,0.88,0.15,a8491f75-d6d0-4d38-891a-649aa7392f26,2026-04-17T22:31:39.063382+00:00

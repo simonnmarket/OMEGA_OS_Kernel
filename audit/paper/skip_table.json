@@ -1,5 +1,66 @@
 {
-  "generated": "2026-04-16T11:16:17.396725+00:00",
-  "skips": [],
-  "checksum": "4ac82f9197f2bdd6d685b46b636ff910b54a7ff2608447b321d837539605ce8e"
+  "generated": "2026-04-21T00:26:50.737217+00:00",
+  "skips": [
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "tier": "T1",
+      "hit_rate_134": 78.69,
+      "mach": 1.0,
+      "margin_used": 1757.2,
+      "skip": true,
+      "skip_reasons": [
+        "hit_rate_134=78.69% < 80.0%"
+      ]
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "tier": "T1",
+      "hit_rate_134": 67.59,
+      "mach": 1.0,
+      "margin_used": 3210.5,
+      "skip": true,
+      "skip_reasons": [
+        "hit_rate_134=67.59% < 80.0%"
+      ]
+    },
+    {
+      "asset": "EURUSD",
+      "timeframe": "H1",
+      "tier": "T1",
+      "hit_rate_134": 100.0,
+      "mach": 1.0,
+      "margin_used": 150.0,
+      "skip": true,
+      "skip_reasons": [
+        "EURUSD: grafico_linha ausente"
+      ]
+    },
+    {
+      "asset": "EURUSD",
+      "timeframe": "H4",
+      "tier": "T1",
+      "hit_rate_134": 100.0,
+      "mach": 1.0,
+      "margin_used": 150.0,
+      "skip": true,
+      "skip_reasons": [
+        "EURUSD: grafico_linha ausente"
+      ]
+    },
+    {
+      "asset": "GER40",
+      "timeframe": "H4",
+      "tier": "T1",
+      "hit_rate_134": 75.6,
+      "mach": 1.0,
+      "margin_used": 548.0,
+      "skip": true,
+      "skip_reasons": [
+        "hit_rate_134=75.60% < 80.0%"
+      ]
+    }
+  ],
+  "checksum": "c9348c2b37990f711df795b8893a1d0a07906945f5c0107b0a77136ba914974e"
 }

@@ -1,0 +1,91 @@
+{
+  "mission_id": "PAPER-ETHUSD-H1-20260421T002637",
+  "asset": "ETHUSD",
+  "timeframe": "H1",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-04-21T00:26:37.896259+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "ETHUSD",
+    "timeframe": "H1",
+    "tier": "T1",
+    "hit_rate_134": 99.15,
+    "mach": 1.0,
+    "margin_used": 150.0,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 19459,
+    "total": 19626,
+    "p_hat": 0.991491,
+    "lower_bound": 0.990106,
+    "upper_bound": 0.992683,
+    "interval": "[99.0106%, 99.2683%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 22805,
+          "hits": 22529,
+          "breaks": 276,
+          "hit_rate": 98.79,
+          "break_rate": 1.21
+        },
+        "134_stats": {
+          "total_touches": 19626,
+          "hits": 19459,
+          "breaks": 167,
+          "hit_rate": 99.15,
+          "break_rate": 0.85
+        }
+      }
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 150.0,
+    "tier": "T1"
+  },
+  "execution": {
+    "retcode": 10016,
+    "retcode_str": "INVALID_STOPS",
+    "success": false,
+    "deal": 0,
+    "order": 0,
+    "fill_price": 0.0,
+    "ask_at_send": 2315.031,
+    "sl_price": 2314.731,
+    "tp_price": 2315.331,
+    "volume_confirmed": 0.0,
+    "slippage_pts": 2315031.0,
+    "comment": "Invalid stops",
+    "request_id": 0,
+    "latency_ms": 0.1,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.1,
+    "risk_usd": 25.0,
+    "stop_pts": 300.0,
+    "pip_value_lot": 0.001,
+    "contract_size": 1.0,
+    "price_at_calc": 2315.031
+  },
+  "latency_motor_s": 9.238,
+  "checksum": "d2183ddaa4f0295e5dbbd32c004ea8f6d77c38572301c8af67c36ff44e65d6c7"
+}

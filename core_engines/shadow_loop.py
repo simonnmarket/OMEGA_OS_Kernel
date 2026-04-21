@@ -30,12 +30,60 @@ import hashlib
 import json
 import logging
 import sys
+sys.path.insert(0, r'C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper')
+
+
 import time
 import traceback
+from core_engines.integration_gate import OmegaIntegrationGate
+from modules.risk.scale_manager import OmegaScaleManager
+from modules.validation.mfa_engine import OmegaMFAEngine
+
 from datetime import datetime, timezone
 from math import sqrt
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+
+import sys
+sys.path.insert(0, r'C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper')
+
+
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from modules.detection import SpoofIcebergDetector
+from modules.portfolio import CorrelationFilter
+from core_engines.intra_candle_executor import IntraCandleExecutor
+
+# ─── OMEGA REGIME INJECTION (CQO MOD #5 - THREAD SAFE) ──────────────
+import os
+import json
+import threading
+from enum import Enum
+from pathlib import Path
+
+class ExecutionRegime(Enum):
+    TRADICIONAL = "TRADICIONAL"
+    HUNTER = "HUNTER"
+
+_regime_local = threading.local()
+def get_regime_config():
+    if not hasattr(_regime_local, 'config'):
+        _regime_env = os.getenv("OMEGA_REGIME", "TRADICIONAL")
+        regime = ExecutionRegime(_regime_env)
+        MAX_LOT = 0.01; MIN_CONFIDENCE = 0.65; CAPITAL_ALLOCATION = 0.01; REGIME_CONFIG = None
+        if regime == ExecutionRegime.HUNTER:
+            CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "regimes" / "hunter.json"
+            if CONFIG_PATH.exists():
+                with open(CONFIG_PATH, 'r', encoding='utf-8-sig') as f: REGIME_CONFIG = json.load(f)
+                MAX_LOT = REGIME_CONFIG['parametros_execucao']['lote_maximo']
+                MIN_CONFIDENCE = REGIME_CONFIG['parametros_execucao']['confianca_minima']
+                CAPITAL_ALLOCATION = REGIME_CONFIG['parametros_execucao']['capital_alocado_pct']
+        _regime_local.config = {'regime': regime, 'MAX_LOT': MAX_LOT, 'MIN_CONFIDENCE': MIN_CONFIDENCE, 'CAPITAL_ALLOCATION': CAPITAL_ALLOCATION, 'REGIME_CONFIG': REGIME_CONFIG}
+    return _regime_local.config
+
+def get_max_lot() -> float: return get_regime_config()['MAX_LOT']
+# ────────────────────────────────────────────────────────────────────────────
 
 # ─── Caminhos ───────────────────────────────────────────────────────────────
 ROOT        = Path(__file__).resolve().parent.parent
@@ -53,7 +101,7 @@ MAX_CONSEC_FAIL    = 3
 OMEGA_MAGIC        = 234001     # ID do EA OMEGA
 
 # ─── Guardrails ─────────────────────────────────────────────────────────────
-TIER1_ASSETS = {"XAUUSD"} # Whitelist restrita para DEMO
+TIER1_ASSETS = {"EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "XAUUSD", "XAGUSD", "US500", "NAS100", "GER40", "BTCUSD", "ETHUSD"} # Whitelist restrita para DEMO
 HIT_RATE_MIN = 80.0
 MACH_MAX     = 1.5
 DEMO_WINDOW  = (9, 17) # 09:00 - 17:00 Local Time
@@ -336,8 +384,10 @@ def calc_lot(equity: float, margin_pts: float, asset: str) -> Dict:
     risk_usd = equity * RISK_PER_TRADE_PCT
     stop_pts = 2.0 * margin_pts
     lot_raw  = risk_usd / max(stop_pts * pip_value_per_lot, 0.0001)
-    lot      = max(0.01, round(lot_raw, 2))
-    lot      = min(lot, MAX_LOT_DEMO) # Guardrail Demo Centralizado
+    min_lot  = sym.volume_min if hasattr(sym, 'volume_min') else 0.01
+    lot      = max(min_lot, round(lot_raw, 2))
+    guardrail_max = max(get_max_lot(), min_lot)
+    lot      = min(lot, guardrail_max) # Guardrail Demo / Hunter Dinâmico Centralizado
 
     return {
         "lot":            lot,
@@ -464,19 +514,34 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     skip_tbl = []
     results  = []
 
+    intra_executor = IntraCandleExecutor(symbols=list(TIER1_ASSETS))
+    spoof_detector = SpoofIcebergDetector()
+    correlation_filter = CorrelationFilter()
+
     try:
         for asset in ativos:
             for tf in timeframes:
-                # Guardrail de Janela (Demo) com Bypass Noturno Seguro
+                # Guardrail de Janela (Demo) com Dinâmica de Regimes
                 import os
                 h_now = datetime.now().hour
-                w_start, w_end = DEMO_WINDOW
+                
+                regime_cfg = get_regime_config()
+                is_within = False
+                if regime_cfg['regime'] == ExecutionRegime.HUNTER and regime_cfg['REGIME_CONFIG']:
+                    j_asia = regime_cfg['REGIME_CONFIG']['janelas_operacao']['asia']
+                    j_ny = regime_cfg['REGIME_CONFIG']['janelas_operacao']['pos_ny']
+                    asia_start = int(j_asia['inicio'].split(':')[0]); asia_end = int(j_asia['fim'].split(':')[0])
+                    ny_start = int(j_ny['inicio'].split(':')[0]); ny_end = int(j_ny['fim'].split(':')[0])
+                    is_within = (asia_start <= h_now < asia_end) or (ny_start <= h_now < ny_end)
+                else:
+                    w_start, w_end = DEMO_WINDOW
+                    is_within = (w_start <= h_now < w_end)
+
                 has_night_pass = os.environ.get("OMEGA_NIGHT_PASS") == "AUTHORISED_BY_CEO"
-                is_within = (w_start <= h_now < w_end)
 
                 if not (is_within or has_night_pass):
-                    log.warning("[%s %s] FORA DA JANELA DEMO (%02d:00 - %02d:00). Agora: %02d:00", 
-                                asset, tf, w_start, w_end, h_now)
+                    log.warning("[%s %s] FORA DA JANELA DO REGIME %s. Agora: %02d:00", 
+                                asset, tf, regime_cfg['regime'].value, h_now)
                     results.append({"asset": asset, "timeframe": tf, "status": "SKIP_WINDOW"})
                     continue
 
@@ -538,13 +603,19 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                 if not guard["skip"] and mode == "paper" and mt5_connected:
                     import MetaTrader5 as mt5
                     lot_info = calc_lot(equity, guard["margin_used"], asset)
-                    exec_result = mt5_send_order(
-                        asset, tf, lot_info["lot"],
-                        sl_pts=guard["margin_used"] * 2,
-                        tp_pts=guard["margin_used"] * 2)
-                    success = exec_result.get("success", False)
-                    open_pos = min(open_pos + (1 if success else 0), MAX_POSITIONS)
-                    ks.update(success, 0.0)   # PnL real será monitorado via posições abertas
+                    
+                    current_positions = []
+                    intra_opportunities = intra_executor.get_opportunities(asset)
+                    spoof_score = spoof_detector.analyze(asset)
+                    
+                    if correlation_filter.should_trade(asset, current_positions):
+                        exec_result = mt5_send_order(
+                            asset, tf, lot_info["lot"],
+                            sl_pts=guard["margin_used"] * 2,
+                            tp_pts=guard["margin_used"] * 2)
+                        success = exec_result.get("success", False)
+                        open_pos = min(open_pos + (1 if success else 0), MAX_POSITIONS)
+                        ks.update(success, 0.0)   # PnL real será monitorado via posições abertas
                 elif not guard["skip"] and mode == "shadow":
                     log.info("[%s %s] MONITOR | hr134=%.2f%% | margin=%.1fpts | NO ORDER",
                              asset, tf, hr_real, guard["margin_used"])

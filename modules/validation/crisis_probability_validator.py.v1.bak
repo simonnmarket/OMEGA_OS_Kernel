@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import numpy as np
+from scipy import stats
+from datetime import datetime
+from typing import Dict, Optional
+
+class CrisisProbabilityValidator:
+    def __init__(self):
+        self.coefficients = {'DXY': -0.32, 'XAU': 0.28, 'Buffett_cash': 0.41, 'BlackRock_equities': -0.19, 'intercept': -2.15}
+        self.coefficient_se = {'DXY': 0.08, 'XAU': 0.07, 'Buffett_cash': 0.12, 'BlackRock_equities': 0.06, 'intercept': 0.45}
+        self.z_score = stats.norm.ppf(0.975)
+    
+    def calculate(self, DXY: float, XAU_change_pct: float, Buffett_cash_B: float, BlackRock_equities_change_pct: float) -> Dict:
+        if not (80 <= DXY <= 120): raise ValueError(f"DXY fora de bounds fisicamente plausíveis: {DXY} ∉ [80, 120]")
+        if not (-50 <= XAU_change_pct <= 50): raise ValueError(f"XAU_change_pct fora de bounds: {XAU_change_pct} ∉ [-50%, 50%]")
+        if not (0 <= Buffett_cash_B <= 1000): raise ValueError(f"Buffett_cash_B fora de bounds: {Buffett_cash_B} ∉ [0, 1000] bilhões")
+        if not (-100 <= BlackRock_equities_change_pct <= 100): raise ValueError(f"BlackRock_equities_change_pct fora de bounds: {BlackRock_equities_change_pct} ∉ [-100%, 100%]")
+
+        X = np.array([self.coefficients['intercept'], self.coefficients['DXY'] * DXY, self.coefficients['XAU'] * XAU_change_pct, self.coefficients['Buffett_cash'] * (Buffett_cash_B / 100.0), self.coefficients['BlackRock_equities'] * BlackRock_equities_change_pct])
+        logit = np.sum(X)
+        p_crisis = 1.0 / (1.0 + np.exp(-logit))
+        
+        var_logit = 0.0
+        values = [1.0, DXY, XAU_change_pct, Buffett_cash_B/100.0, BlackRock_equities_change_pct]
+        keys = ['intercept', 'DXY', 'XAU', 'Buffett_cash', 'BlackRock_equities']
+        for k, v in zip(keys, values):
+            var_logit += (self.coefficients[k] * v * self.coefficient_se[k]) ** 2
+            
+        se_p = p_crisis * (1.0 - p_crisis) * np.sqrt(var_logit)
+        ci_lower = max(0.0, p_crisis - self.z_score * se_p)
+        ci_upper = min(1.0, p_crisis + self.z_score * se_p)
+        
+        risk_level = 'CRITICAL' if p_crisis >= 0.70 else 'HIGH' if p_crisis >= 0.50 else 'MEDIUM' if p_crisis >= 0.30 else 'LOW'
+        
+        return {
+            'probability': round(p_crisis, 6),
+            'ci_95_lower': round(ci_lower, 6),
+            'ci_95_upper': round(ci_upper, 6),
+            'risk_level': risk_level,
+            'timestamp': datetime.utcnow().isoformat()
+        }
+
+if __name__ == "__main__":
+    v = CrisisProbabilityValidator()
+    result = v.calculate(DXY=98.5, XAU_change_pct=12.3, Buffett_cash_B=325.0, BlackRock_equities_change_pct=-8.2)
+    assert result['probability'] >= 0.70
+    print("[OK] CrisisProbabilityValidator")

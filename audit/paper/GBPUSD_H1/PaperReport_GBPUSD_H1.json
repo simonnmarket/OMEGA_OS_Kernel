@@ -1,10 +1,10 @@
 {
-  "mission_id": "PAPER-GBPUSD-H1-20260414T205840",
+  "mission_id": "PAPER-GBPUSD-H1-20260421T002650",
   "asset": "GBPUSD",
   "timeframe": "H1",
   "status": "COMPLETED",
   "mode": "paper",
-  "created_at": "2026-04-14T20:58:40.981728+00:00",
+  "created_at": "2026-04-21T00:26:50.726680+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
@@ -62,30 +62,30 @@
     "tier": "T1"
   },
   "execution": {
-    "retcode": 10018,
-    "retcode_str": "NO_MONEY",
-    "success": false,
-    "deal": 0,
-    "order": 0,
-    "fill_price": 0.0,
-    "ask_at_send": 1.35649,
-    "sl_price": 1.35349,
-    "tp_price": 1.35949,
-    "volume_confirmed": 0.0,
-    "slippage_pts": 135649.0,
-    "comment": "Market closed",
-    "request_id": 2136050227,
-    "latency_ms": 52.6,
+    "retcode": 10009,
+    "retcode_str": "DONE",
+    "success": true,
+    "deal": 179090403,
+    "order": 177095862,
+    "fill_price": 1.35267,
+    "ask_at_send": 1.35267,
+    "sl_price": 1.34967,
+    "tp_price": 1.35567,
+    "volume_confirmed": 0.01,
+    "slippage_pts": 0.0,
+    "comment": "Request executed",
+    "request_id": 1235611580,
+    "latency_ms": 21.4,
     "mode": "MT5_DEMO_REAL"
   },
   "lot_info": {
-    "lot": 0.08,
+    "lot": 0.01,
     "risk_usd": 25.0,
     "stop_pts": 300.0,
     "pip_value_lot": 1.0,
     "contract_size": 100000.0,
-    "price_at_calc": 1.35649
+    "price_at_calc": 1.35267
   },
-  "latency_motor_s": 9.394,
-  "checksum": "de91c95555564e48e794e85bb2c71039cc0225d37ae27dc92ac3ccc66d843095"
+  "latency_motor_s": 9.713,
+  "checksum": "5eee50fba8405411a922f2138f50b36a7e4b7a06f0de6939cba19eb98917baf0"
 }
