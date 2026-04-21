@@ -507,6 +507,7 @@ class OnlineStats:
 
 # ─── Loop Principal ───────────────────────────────────────────────────────────
 def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float):
+    import MetaTrader5 as mt5
     log.info("=" * 72)
     log.info("OMEGA %s LOOP v3.0 | %d ativos × %d TFs | equity=USD %.2f",
              mode.upper(), len(ativos), len(timeframes), equity)
@@ -619,24 +620,31 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                 hr_real = s134.get("hit_rate", 0.0)
                 guard   = check_guardrails(asset, tf, hr_real, 1.0, dm)
 
-                # Execução
+                # Execução e Preços (PSA FIX - Zero Initialization)
                 lot_info = exec_result = None
+                a_price = b_price = 0.0
 
                 if not guard["skip"] and mode == "paper" and mt5_connected:
-                    import MetaTrader5 as mt5
                     lot_info = calc_lot(equity, guard["margin_used"], asset)
                     
                     # PSA FIX: Detecção de Tendência Real via MT5 (Matando o Viés Estático do Price Engine)
                     rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M1, 0, 5)
                     if rates is not None and len(rates) >= 3:
                         # Momentum: Preço Atual vs Média dos últimos 3 minutos
-                        c_price = mt5.symbol_info_tick(asset).ask if mode == "paper" else rates[-1]['close']
+                        tick_now = mt5.symbol_info_tick(asset)
+                        c_price = tick_now.ask if tick_now else rates[-1]['close']
                         avg_3   = (rates[-1]['close'] + rates[-2]['close'] + rates[-3]['close']) / 3
                         signal_dir = "BUY" if c_price > avg_3 else "SELL"
                         log.info("[%s %s] Sentiment: Current=%.5f | Avg3=%.5f | DIR: %s", asset, tf, c_price, avg_3, signal_dir)
                     else:
                         signal_dir = "BUY" # Safe fallback
                         log.warning("[%s %s] Falha ao ler candles MT5 para direcao. Fallback: BUY", asset, tf)
+                    
+                    current_positions = []
+                    if mt5_connected:
+                        pos_list = mt5.positions_get(symbol=asset)
+                        if pos_list:
+                            current_positions = [p._asdict() for p in pos_list]
                     
                     if correlation_filter.should_trade(asset, current_positions):
                         exec_result = mt5_send_order(
@@ -652,8 +660,9 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                              asset, tf, hr_real, guard["margin_used"])
                     ks.update(True)
 
-                report = build_report(asset, tf, mode, harmonic, price_d, guard,
-                                      exec_result, lot_info)
+                report = build_report(asset, tf, mode, harmonic, 
+                                      {"price": a_price, "base_price": b_price, "metadata": {}}, 
+                                      guard, exec_result, lot_info)
                 out_f = out_dir / f"PaperReport_{asset}_{tf}.json"
                 with open(out_f, "w", encoding="utf-8") as f:
                     json.dump(report, f, indent=2, ensure_ascii=False)

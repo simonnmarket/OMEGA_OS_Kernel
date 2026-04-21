@@ -46,6 +46,16 @@ Registrar de forma definitiva e irrefutável os erros estruturais cometidos pela
 * **Causa Raiz:** Precipitação na arquitetura e negligência mecânica para alinhar nomes de classes e instâncias de json ausentes durante a refatoração gigante do legado de 87 scripts em regime de tempo curto.
 * **A Correção:** Análise imediata dos blocos de código do original. Refatoração pura das interfaces autênticas como wrappers virtuais, enlaçando o verdadeiro Juiz `DistributedConcurrencyModel` num formato imune e adaptativo, ignorando dict keys faltantes sem romper a infraestrutura.
 
+### 📌 [ERR-ID: PSA-20260421-005] Overtrading por Falta de Consciência de Estado (Stateless Overtrading)
+* **Status:** 🟢 RESOLVIDO (Hotfix v2.4)
+* **A Falha:** O sistema abriu centenas de ordens de `BUY` em ativos como `AUDUSD`, ignorando completamente o limite de `MAX_POSITIONS=3`.
+* **Causa Raiz:** O script `shadow_loop.py` operava em modo "Stateless". A cada execução iniciada pelo orquestrador PS1, o contador `open_pos` reiniciava em 0. Como o script não consultava as posições reais já abertas no MT5, ele acreditava estar sempre vazio e abria novas ordens a cada ciclo de 180s. Somado ao viés fixo de compra, isso gerou um entupimento massivo da conta.
+* **A Intervenção (CEO):** O CEO identificou que o sistema "faz a leitura mas não atualiza", mantendo o viés e operando em fluxo irreal.
+* **A Correção:** 
+  1. **Sincronização de Estado Real:** Injeção de `mt5.positions_get(magic=OMEGA_MAGIC)` no início de cada execução para popular `open_pos` com a realidade do terminal.
+  2. **Sentimento Real (Sentiment V2):** Substituição do Mock de direção por um detector de Momentum real baseado nos últimos 5 candles de M1 do MT5 (`c_price > avg_3`).
+  3. **Nuke de Emergência:** Execução de script para fechar centenas de ordens viciadas e restabelecer a banca.
+
 ---
 
 ## 3. PROCESSO DE PUREZA EXECUCIONAL E GOVERNANÇA
