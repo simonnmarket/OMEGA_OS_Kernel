@@ -1,18 +1,18 @@
 {
   "mode": "paper",
-  "generated": "2026-04-21T00:26:50.738728+00:00",
+  "generated": "2026-04-21T00:44:31.874003+00:00",
   "equity_demo": 10000.0,
-  "total_cycles": 10,
+  "total_cycles": 6,
   "kill_switch": false,
   "ks_reason": "",
   "online_stats": {
-    "total_signals": 10,
-    "executed": 5,
-    "skipped": 5,
-    "avg_hit_rate_134": 98.928,
-    "avg_slippage_pts": 925950.2,
-    "avg_latency_ms": 30.4,
-    "max_latency_ms": 101.5
+    "total_signals": 6,
+    "executed": 3,
+    "skipped": 3,
+    "avg_hit_rate_134": 99.2333,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 42.5,
+    "max_latency_ms": 50.6
   },
   "results": [
     {
@@ -25,7 +25,7 @@
       "lot": 0.01,
       "retcode": 10009,
       "slippage_pts": 0.0,
-      "checksum": "5ed82317b645fa8b909a03db"
+      "checksum": "2de3575893cfada091ee705d"
     },
     {
       "asset": "AUDUSD",
@@ -37,85 +37,45 @@
       "lot": 0.01,
       "retcode": 10009,
       "slippage_pts": 0.0,
-      "checksum": "9578bf1fedc0e980bad99bca"
+      "checksum": "9bca6dfdc8ce4321417eb2b1"
     },
     {
       "asset": "BTCUSD",
       "timeframe": "H1",
-      "status": "SKIP",
-      "reasons": [
-        "hit_rate_134=78.69% < 80.0%"
-      ]
-    },
-    {
-      "asset": "BTCUSD",
-      "timeframe": "H4",
-      "status": "SKIP",
-      "reasons": [
-        "hit_rate_134=67.59% < 80.0%"
-      ]
-    },
-    {
-      "asset": "ETHUSD",
-      "timeframe": "H1",
       "status": "MT5_PAPER_EXECUTE",
-      "hit_rate_134": 99.15,
-      "ic_95": "[99.0106%, 99.2683%]",
-      "margin_used": 150.0,
-      "lot": 0.1,
-      "retcode": 10016,
-      "slippage_pts": 2315031.0,
-      "checksum": "d2183ddaa4f0295e5dbbd32c"
-    },
-    {
-      "asset": "ETHUSD",
-      "timeframe": "H4",
-      "status": "MT5_PAPER_EXECUTE",
-      "hit_rate_134": 95.49,
-      "ic_95": "[94.7891%, 96.0979%]",
-      "margin_used": 150.0,
-      "lot": 0.1,
-      "retcode": 10016,
-      "slippage_pts": 2314720.0,
-      "checksum": "64dc84a9df93b6dac0fad6f6"
-    },
-    {
-      "asset": "EURUSD",
-      "timeframe": "H1",
-      "status": "SKIP",
-      "reasons": [
-        "EURUSD: grafico_linha ausente"
-      ]
-    },
-    {
-      "asset": "EURUSD",
-      "timeframe": "H4",
-      "status": "SKIP",
-      "reasons": [
-        "EURUSD: grafico_linha ausente"
-      ]
-    },
-    {
-      "asset": "GBPUSD",
-      "timeframe": "H1",
-      "status": "MT5_PAPER_EXECUTE",
-      "hit_rate_134": 100.0,
-      "ic_95": "[99.9811%, 100.0000%]",
-      "margin_used": 150.0,
+      "hit_rate_134": 97.7,
+      "ic_95": "[97.4752%, 97.9138%]",
+      "margin_used": 1757.2,
       "lot": 0.01,
       "retcode": 10009,
       "slippage_pts": 0.0,
-      "checksum": "5eee50fba8405411a922f213"
+      "checksum": "9d90f0ef87cd2939ea460503"
     },
     {
-      "asset": "GER40",
+      "asset": "BTCUSD",
       "timeframe": "H4",
       "status": "SKIP",
       "reasons": [
-        "hit_rate_134=75.60% < 80.0%"
+        "hit_rate_134=67.59% < 70.0%"
+      ]
+    },
+    {
+      "asset": "EURUSD",
+      "timeframe": "H1",
+      "status": "SKIP",
+      "reasons": [
+        "EURUSD: grafico_linha ausente"
+      ]
+    },
+    {
+      "asset": "EURUSD",
+      "timeframe": "H4",
+      "status": "SKIP",
+      "reasons": [
+        "EURUSD: grafico_linha ausente"
       ]
     }
   ],
-  "log_file": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\audit\\paper\\paper_loop_20260421_002615.log",
-  "checksum": "b9b90b0cb856d841122f2d22ce740e773a011cb35e87f6bd035eb7bc090068c8"
+  "log_file": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\audit\\paper\\paper_loop_20260421_004410.log",
+  "checksum": "ffcf31490e3cfd51612e4b886565578bc49cc3f76dc83c97f0c70f1970e0c74d"
 }

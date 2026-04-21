@@ -1,10 +1,10 @@
 {
-  "mission_id": "PAPER-AUDUSD-H1-20260421T002624",
+  "mission_id": "PAPER-AUDUSD-H1-20260421T004419",
   "asset": "AUDUSD",
   "timeframe": "H1",
   "status": "COMPLETED",
   "mode": "paper",
-  "created_at": "2026-04-21T00:26:24.887213+00:00",
+  "created_at": "2026-04-21T00:44:19.399827+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
@@ -65,17 +65,17 @@
     "retcode": 10009,
     "retcode_str": "DONE",
     "success": true,
-    "deal": 179090141,
-    "order": 177095698,
-    "fill_price": 0.71723,
-    "ask_at_send": 0.71723,
-    "sl_price": 0.71423,
-    "tp_price": 0.72023,
+    "deal": 179101700,
+    "order": 177103814,
+    "fill_price": 0.71731,
+    "ask_at_send": 0.71731,
+    "sl_price": 0.71431,
+    "tp_price": 0.72031,
     "volume_confirmed": 0.01,
     "slippage_pts": 0.0,
     "comment": "Request executed",
-    "request_id": 1235611578,
-    "latency_ms": 101.5,
+    "request_id": 1235611615,
+    "latency_ms": 50.6,
     "mode": "MT5_DEMO_REAL"
   },
   "lot_info": {
@@ -84,8 +84,8 @@
     "stop_pts": 300.0,
     "pip_value_lot": 1.0,
     "contract_size": 100000.0,
-    "price_at_calc": 0.71723
+    "price_at_calc": 0.71731
   },
-  "latency_motor_s": 9.451,
-  "checksum": "5ed82317b645fa8b909a03db6d1f49ebc610cc6e82d63fedba6b70b4219d69eb"
+  "latency_motor_s": 8.91,
+  "checksum": "2de3575893cfada091ee705dc7891bc58668a299a1a9eaa11c7a9c931c90e1fd"
 }

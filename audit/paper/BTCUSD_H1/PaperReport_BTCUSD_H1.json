@@ -1,0 +1,91 @@
+{
+  "mission_id": "PAPER-BTCUSD-H1-20260421T004431",
+  "asset": "BTCUSD",
+  "timeframe": "H1",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-04-21T00:44:31.857068+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "BTCUSD",
+    "timeframe": "H1",
+    "tier": "T1",
+    "hit_rate_134": 97.7,
+    "mach": 1.0,
+    "margin_used": 1757.2,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 17538,
+    "total": 17950,
+    "p_hat": 0.977047,
+    "lower_bound": 0.974752,
+    "upper_bound": 0.979138,
+    "interval": "[97.4752%, 97.9138%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 22074,
+          "hits": 21410,
+          "breaks": 664,
+          "hit_rate": 96.99,
+          "break_rate": 3.01
+        },
+        "134_stats": {
+          "total_touches": 17950,
+          "hits": 17538,
+          "breaks": 412,
+          "hit_rate": 97.7,
+          "break_rate": 2.3
+        }
+      }
+    },
+    "price": {
+      "price": 42350.4333635,
+      "base_price": 42350.4213635,
+      "flash_crash_adjustment": 0.012,
+      "metadata": {
+        "params_checksum": "20c75b792222fe8b",
+        "rmse_expected": 0.0031,
+        "r_squared": 0.9876
+      }
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 1757.2,
+    "tier": "T1"
+  },
+  "execution": {
+    "retcode": 10009,
+    "retcode_str": "DONE",
+    "success": true,
+    "deal": 179101750,
+    "order": 177103867,
+    "fill_price": 75947.68,
+    "ask_at_send": 75947.68,
+    "sl_price": 75912.54,
+    "tp_price": 75982.82,
+    "volume_confirmed": 0.01,
+    "slippage_pts": 0.0,
+    "comment": "Request executed",
+    "request_id": 1235611617,
+    "latency_ms": 35.6,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.01,
+    "risk_usd": 25.0,
+    "stop_pts": 3514.4,
+    "pip_value_lot": 0.01,
+    "contract_size": 1.0,
+    "price_at_calc": 75947.68
+  },
+  "latency_motor_s": 8.838,
+  "checksum": "9d90f0ef87cd2939ea460503c63c41a2974c1b2b850473ac5389e6071652a765"
+}
