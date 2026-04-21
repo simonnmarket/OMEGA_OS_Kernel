@@ -341,11 +341,16 @@ def run_harmonic(asset: str, tf: str, margin: float, out_dir: Path) -> Optional[
 
 
 # ─── Price Engine ────────────────────────────────────────────────────────────
-def get_price_result() -> dict:
+def get_price_result(asset: str = "XAUUSD", current_price: float = 0.0) -> dict:
     sys.path.insert(0, str(CORE))
     from omega_module_v553 import DCECalibratedPriceEngine, ModuleConfig
-    return DCECalibratedPriceEngine(ModuleConfig()).compute_price(
-        Q=1000, PBoc=0.0, volume_anomaly=0.1)
+    cfg = ModuleConfig()
+    cfg.symbol = asset
+    if current_price > 0:
+        cfg.calibrated_params.P0 = current_price
+    
+    engine = DCECalibratedPriceEngine(cfg)
+    return engine.compute_price(Q=1000, PBoc=0.0, volume_anomaly=0.1)
 
 
 # ─── Guardrail Check ─────────────────────────────────────────────────────────
@@ -517,10 +522,17 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
             return {"error": "MT5 não conectado", "kill_switch": True}
 
     dm       = load_dynamic_margins()
-    price_d  = get_price_result()
     ks       = KillSwitch(equity)
     stats    = OnlineStats()
-    open_pos = 0
+    
+    # Sincronização de Estado Real com o MT5 (PSA FIX - State Awareness)
+    if mode == "paper" and mt5_connected:
+        real_pos = mt5.positions_get(magic=OMEGA_MAGIC)
+        open_pos = len(real_pos) if real_pos else 0
+        log.info("MT5 State Sync: %d posicoes ativas detectadas.", open_pos)
+    else:
+        open_pos = 0
+    
     skip_tbl = []
     results  = []
 
@@ -614,15 +626,17 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                     import MetaTrader5 as mt5
                     lot_info = calc_lot(equity, guard["margin_used"], asset)
                     
-                    current_positions = []
-                    intra_opportunities = intra_executor.get_opportunities(asset)
-                    spoof_score = spoof_detector.analyze(asset)
-                    
-                    import hashlib
-                    # Pseudo-edge direcional via modulo de precos dinamicos V553
-                    b_price = float(price_d.get("base_price", 0))
-                    a_price = float(price_d.get("price", 1))
-                    signal_dir = "BUY" if a_price > b_price else "SELL"
+                    # PSA FIX: Detecção de Tendência Real via MT5 (Matando o Viés Estático do Price Engine)
+                    rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M1, 0, 5)
+                    if rates is not None and len(rates) >= 3:
+                        # Momentum: Preço Atual vs Média dos últimos 3 minutos
+                        c_price = mt5.symbol_info_tick(asset).ask if mode == "paper" else rates[-1]['close']
+                        avg_3   = (rates[-1]['close'] + rates[-2]['close'] + rates[-3]['close']) / 3
+                        signal_dir = "BUY" if c_price > avg_3 else "SELL"
+                        log.info("[%s %s] Sentiment: Current=%.5f | Avg3=%.5f | DIR: %s", asset, tf, c_price, avg_3, signal_dir)
+                    else:
+                        signal_dir = "BUY" # Safe fallback
+                        log.warning("[%s %s] Falha ao ler candles MT5 para direcao. Fallback: BUY", asset, tf)
                     
                     if correlation_filter.should_trade(asset, current_positions):
                         exec_result = mt5_send_order(
