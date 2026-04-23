@@ -58,7 +58,7 @@ class SRESimulator:
         return sei
 
 def run_reconciliation():
-    path = r"C:\OMEGA_PROJETO\OHLCV_DATA\XAUUSD_H4.csv"
+    path = os.getenv("OMEGA_OHLCV_PATH", "./data/ohlcv/XAUUSD_H4.csv")
     df = pd.read_csv(path).fillna(method='ffill')
     engine = OmegaParrFEngine()
     sim = SRESimulator()
@@ -78,7 +78,10 @@ def run_reconciliation():
         if i % 2500 == 0: print(f"[*] Progresso: {i}/{len(df)}...")
 
     res_df = pd.DataFrame(results)
-    out_path = r"C:\OMEGA_PROJETO\PROJETO OMEGA QUANTITATIVE FUND\AUDIT_EVIDÊNCIA_CIENTÍFICA\FULL_RECONCILED_V590.csv"
+    projeto_root = os.getenv("OMEGA_PROJETO_PATH", "./data/projeto")
+    out_dir = os.path.join(projeto_root, "AUDIT_EVIDÊNCIA_CIENTÍFICA")
+    os.makedirs(out_dir, exist_ok=True)
+    out_path = os.path.join(out_dir, "FULL_RECONCILED_V590.csv")
     res_df.to_csv(out_path, index=False)
     
     sha = hashlib.sha256(open(out_path, 'rb').read()).hexdigest()

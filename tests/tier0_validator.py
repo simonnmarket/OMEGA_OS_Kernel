@@ -14,7 +14,8 @@ from modules.omega_parr_f_engine import OmegaParrFEngine
 class Tier0Validator:
     def __init__(self, data_path: str):
         self.data_path = data_path
-        self.output_dir = r"C:\OMEGA_PROJETO\PROJETO OMEGA QUANTITATIVE FUND\AUDIT_EVIDÊNCIA_CIENTÍFICA"
+        projeto_root = os.getenv("OMEGA_PROJETO_PATH", "./data/projeto")
+        self.output_dir = os.path.join(projeto_root, "AUDIT_EVIDÊNCIA_CIENTÍFICA")
         os.makedirs(self.output_dir, exist_ok=True)
         
     def load_long_term_data(self):
@@ -95,7 +96,7 @@ class Tier0Validator:
         print(f"✅ Laudo Gerado em: {report_path}")
 
 if __name__ == "__main__":
-    validator = Tier0Validator(r"C:\OMEGA_PROJETO\OHLCV_DATA\XAUUSD_H4.csv")
+    validator = Tier0Validator(os.getenv("OMEGA_OHLCV_PATH", "./data/ohlcv/XAUUSD_H4.csv"))
     df_history = validator.load_long_term_data()
     events = validator.detect_institutional_swings(df_history)
     telemetry = validator.run_telemetry_audit(df_history, events)

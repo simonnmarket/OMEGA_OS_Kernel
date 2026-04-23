@@ -7,12 +7,59 @@ O Cérebro Supremo: Integrador Mestre do BAU_DO_TESOURO (Sistemas Institucionais
 ================================================================================
 """
 
+import argparse
 import os
 import sys
 import json
 import time
 from pathlib import Path
 import importlib.util
+
+def parse_cli_args():
+    parser = argparse.ArgumentParser(
+        prog="omega-main",
+        description="OMEGA TIER-0 Trading System - Main Entry Point",
+        epilog="Use --version para versão, --help para uso",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version="%(prog)s 4.0.0 (TIER-0 Validated)",
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["paper", "live"],
+        default="paper",
+        help="Execution mode (default: paper)",
+    )
+    parser.add_argument(
+        "--regime",
+        choices=["tradicional", "hunter"],
+        default="tradicional",
+        help="Trading regime",
+    )
+    parser.add_argument(
+        "--config",
+        type=Path,
+        default=None,
+        help="Config file (opcional)",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Validar configuração sem executar trades",
+    )
+    args, unknown = parser.parse_known_args()
+    return args, unknown
+
+CLI_ARGS, CLI_UNKNOWN_ARGS = parse_cli_args()
+
+def safe_path(env_var: str, default_rel: str) -> Path:
+    base = os.getenv(env_var, default_rel)
+    p = Path(base).expanduser().resolve()
+    if not p.exists():
+        p.mkdir(parents=True, exist_ok=True)
+    return p
 
 # ==============================================================================
 # 0. SINGLE INSTANCE GUARD (PREVENÇÃO DE RACE CONDITIONS)
@@ -29,7 +76,7 @@ except OSError:
 # 1. MAPEAMENTO DE PASTAS (BAU_DO_TESOURO)
 # -----------------------------------------------------------------------------
 PROJ_PATH = Path(__file__).parent.resolve()
-BAU_PATH = Path(r"C:\Users\Lenovo\BAU_DO_TESOURO")
+BAU_PATH = safe_path("OMEGA_BAU_PATH", "./bau")
 
 MODULES = {
     "RISK_ENGINE": BAU_PATH / "01_RISK_ENGINE" / "codigo",
@@ -440,5 +487,9 @@ class OmegaKernel:
                 time.sleep(5)
 
 if __name__ == '__main__':
-    kernel = OmegaKernel()
-    kernel.run_live()
+    def main() -> int:
+        kernel = OmegaKernel()
+        kernel.run_live()
+        return 0
+
+    sys.exit(main())

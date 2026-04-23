@@ -3,8 +3,14 @@ import sqlite3
 import numpy as np
 import threading
 import time
+from pathlib import Path
 from datetime import datetime, timedelta
 import MetaTrader5 as mt5
+
+
+def _resolve_agents_db_path() -> str:
+    bau_root = Path(os.getenv("OMEGA_BAU_PATH", "./bau")).expanduser().resolve()
+    return str(bau_root / "05_DATABASE" / "omega_agents.db")
 
 class TradingAgent:
     """
@@ -42,7 +48,9 @@ class OmegaAgentManager:
     """
     Gerenciador Central de Agentes Artificiais OMEGA (O Meta-Learning).
     """
-    def __init__(self, db_path=r"C:\Users\Lenovo\BAU_DO_TESOURO\05_DATABASE\omega_agents.db"):
+    def __init__(self, db_path: str | None = None):
+        if db_path is None:
+            db_path = _resolve_agents_db_path()
         self.db_path = db_path
         self._init_db()
         self.agents = {} # Em Memória Viva

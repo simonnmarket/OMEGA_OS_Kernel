@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 import sys
+import os
 from pathlib import Path
 
 # Adiciona o kernel ao path
@@ -10,8 +11,9 @@ from modules.omega_parr_f_engine import OmegaParrFEngine
 
 def run_whale_hunter_audit():
     # PATHS
-    h4_path = 'C:/OMEGA_PROJETO/OHLCV_DATA/XAUUSD_H4.csv'
-    h1_path = 'C:/OMEGA_PROJETO/OHLCV_DATA/XAUUSD_H1.csv'
+    data_root = os.getenv("OMEGA_DATA_ROOT", "./data")
+    h4_path = str(Path(data_root) / "ohlcv" / "XAUUSD_H4.csv")
+    h1_path = str(Path(data_root) / "ohlcv" / "XAUUSD_H1.csv")
     
     # LOAD
     df_h4 = pd.read_csv(h4_path)

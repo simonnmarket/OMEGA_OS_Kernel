@@ -31,7 +31,7 @@ from typing import List, Dict, Any
 # =============================================================================
 # CONFIGURAÇÕES DE CAMINHOS
 # =============================================================================
-BASE_ROOT = Path(r"C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper\Auditoria PARR-F")
+BASE_ROOT = Path(os.getenv("OMEGA_DATA_ROOT", "./data")).expanduser().resolve() / "Auditoria PARR-F"
 REPORTS_DIR = BASE_ROOT / "outputs" / "AMI_reports"
 OUTPUT_DIR = BASE_ROOT / "outputs"
 LOG_PATH = BASE_ROOT / "logs" / "psa_stress_test_v3.log"

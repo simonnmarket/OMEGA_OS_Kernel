@@ -10,8 +10,9 @@ from modules.omega_parr_f_engine import OmegaParrFEngine
 # =============================================================================
 
 def generate_evidence_pack():
-    h4_path = r"C:\OMEGA_PROJETO\OHLCV_DATA\XAUUSD_H4.csv"
-    output_dir = r"C:\OMEGA_PROJETO\PROJETO OMEGA QUANTITATIVE FUND\CFO_EVIDENCE_PACK"
+    h4_path = os.getenv("OMEGA_OHLCV_PATH", "./data/ohlcv/XAUUSD_H4.csv")
+    projeto_root = os.getenv("OMEGA_PROJETO_PATH", "./data/projeto")
+    output_dir = os.path.join(projeto_root, "CFO_EVIDENCE_PACK")
     os.makedirs(output_dir, exist_ok=True)
     
     if not os.path.exists(h4_path):

@@ -97,7 +97,7 @@ class OmegaForensicAuditor:
         return res_df.groupby('Regime').mean()
 
 if __name__ == "__main__":
-    h4_path = r"C:\OMEGA_PROJETO\OHLCV_DATA\XAUUSD_H4.csv"
+    h4_path = os.getenv("OMEGA_OHLCV_PATH", "./data/ohlcv/XAUUSD_H4.csv")
     if os.path.exists(h4_path):
         auditor = OmegaForensicAuditor(h4_path, "H4")
         
