@@ -489,6 +489,11 @@ class OmegaKernel:
 if __name__ == '__main__':
     def main() -> int:
         kernel = OmegaKernel()
+        if CLI_ARGS.dry_run:
+            print("\n>> [DRY-RUN] Boot concluído com sucesso. Nenhuma operação será executada.")
+            print(f"   Mode: {CLI_ARGS.mode} | Regime: {CLI_ARGS.regime}")
+            print(f"   Strategies loaded: {list(kernel.strategies.keys())}")
+            return 0
         kernel.run_live()
         return 0
 
