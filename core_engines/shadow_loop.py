@@ -30,7 +30,6 @@ import hashlib
 import json
 import logging
 import sys
-sys.path.insert(0, r'C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper')
 
 
 import time
@@ -43,10 +42,6 @@ from datetime import datetime, timezone
 from math import sqrt
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
-
-import sys
-sys.path.insert(0, r'C:\Users\Lenovo\.gemini\antigravity\playground\nebular-kuiper')
-
 
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -88,7 +83,7 @@ def get_max_lot() -> float: return get_regime_config()['MAX_LOT']
 # ─── Caminhos ───────────────────────────────────────────────────────────────
 ROOT        = Path(__file__).resolve().parent.parent
 CORE        = Path(__file__).resolve().parent
-OHLCV       = Path(r"C:\OMEGA_PROJETO\OHLCV_DATA")
+OHLCV       = Path(os.getenv("OMEGA_OHLCV_PATH", str(ROOT / "data" / "ohlcv")))
 AUDIT_PAPER = ROOT / "audit" / "paper"
 AUDIT_PAPER.mkdir(parents=True, exist_ok=True)
 

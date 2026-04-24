@@ -28,9 +28,9 @@ def parse_cli_args():
     )
     parser.add_argument(
         "--mode",
-        choices=["paper", "live"],
+        choices=["paper", "live", "shadow"],
         default="paper",
-        help="Execution mode (default: paper)",
+        help="Execution mode: paper (demo orders), shadow (signals only), live",
     )
     parser.add_argument(
         "--regime",
@@ -48,6 +48,29 @@ def parse_cli_args():
         "--dry-run",
         action="store_true",
         help="Validar configuração sem executar trades",
+    )
+    parser.add_argument(
+        "--use-shadow-loop",
+        action="store_true",
+        help="Usar shadow_loop.py como pipeline principal (recomendado)",
+    )
+    parser.add_argument(
+        "--ativos",
+        nargs="+",
+        default=None,
+        help="Lista de ativos para shadow loop (ex: XAUUSD GBPUSD)",
+    )
+    parser.add_argument(
+        "--timeframes",
+        nargs="+",
+        default=["H1", "H4"],
+        help="Timeframes para shadow loop (default: H1 H4)",
+    )
+    parser.add_argument(
+        "--equity",
+        type=float,
+        default=10000.0,
+        help="Equity inicial para shadow loop (default: 10000)",
     )
     args, unknown = parser.parse_known_args()
     return args, unknown
@@ -493,7 +516,22 @@ if __name__ == '__main__':
             print("\n>> [DRY-RUN] Boot concluído com sucesso. Nenhuma operação será executada.")
             print(f"   Mode: {CLI_ARGS.mode} | Regime: {CLI_ARGS.regime}")
             print(f"   Strategies loaded: {list(kernel.strategies.keys())}")
+            print(f"   Shadow loop available: {CLI_ARGS.use_shadow_loop}")
             return 0
+
+        # ── Shadow Loop Pipeline (recomendado pelo Conselho) ──
+        if CLI_ARGS.use_shadow_loop or CLI_ARGS.mode == "shadow":
+            print("\n>> Delegando execução ao SHADOW LOOP ENGINE v3.0...")
+            from core_engines.shadow_loop import run_loop
+            mode = "shadow" if CLI_ARGS.mode == "shadow" else "paper"
+            ativos = CLI_ARGS.ativos or ["XAUUSD"]
+            result = run_loop(ativos, CLI_ARGS.timeframes, mode, CLI_ARGS.equity)
+            if result and result.get("kill_switch"):
+                print("\n>> KILL SWITCH ACTIVADO. Execução terminada.")
+                return 1
+            return 0
+
+        # ── Pipeline Original (main.py run_live) ──
         kernel.run_live()
         return 0
 
