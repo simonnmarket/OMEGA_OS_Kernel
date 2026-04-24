@@ -83,7 +83,7 @@ def get_max_lot() -> float: return get_regime_config()['MAX_LOT']
 # ─── Caminhos ───────────────────────────────────────────────────────────────
 ROOT        = Path(__file__).resolve().parent.parent
 CORE        = Path(__file__).resolve().parent
-OHLCV       = Path(os.getenv("OMEGA_OHLCV_PATH", str(ROOT / "data" / "ohlcv")))
+OHLCV       = Path(os.getenv("OMEGA_OHLCV_PATH", str(ROOT / "data" / "ohlcv"))).resolve()
 AUDIT_PAPER = ROOT / "audit" / "paper"
 AUDIT_PAPER.mkdir(parents=True, exist_ok=True)
 
@@ -99,7 +99,7 @@ OMEGA_MAGIC        = 234001     # ID do EA OMEGA
 TIER1_ASSETS = {"EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "XAUUSD", "XAGUSD", "US500", "NAS100", "GER40", "BTCUSD", "ETHUSD"} # Whitelist restrita para DEMO
 HIT_RATE_MIN = 80.0
 MACH_MAX     = 1.5
-DEMO_WINDOW  = (9, 17) # 09:00 - 17:00 Local Time
+DEMO_WINDOW  = (0, 24) # V9: sem restrição fixa (CQO/CTO liberaram 24/5)
 MAX_LOT_DEMO = 0.01
 
 # ─── Retcodes MT5 ────────────────────────────────────────────────────────────
@@ -539,32 +539,34 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     try:
         for asset in ativos:
             for tf in timeframes:
-                # Guardrail de Janela (Demo) com Dinâmica de Regimes
+                # Guardrail de Janela — V9: 24/5 liberado (CQO/CTO)
                 import os
                 h_now = datetime.now().hour
-                
+                has_night_pass = os.environ.get("OMEGA_NIGHT_PASS", "").upper() == "AUTHORISED_BY_CEO"
+
                 regime_cfg = get_regime_config()
                 is_within = False
-                if regime_cfg['regime'] == ExecutionRegime.HUNTER and regime_cfg['REGIME_CONFIG']:
+
+                if has_night_pass:
+                    is_within = True  # V9: override total — 24/5
+                elif regime_cfg['regime'] == ExecutionRegime.HUNTER and regime_cfg['REGIME_CONFIG']:
                     j_asia = regime_cfg['REGIME_CONFIG']['janelas_operacao']['asia']
                     j_ny = regime_cfg['REGIME_CONFIG']['janelas_operacao']['pos_ny']
                     asia_start = int(j_asia['inicio'].split(':')[0]); asia_end = int(j_asia['fim'].split(':')[0])
                     ny_start = int(j_ny['inicio'].split(':')[0]); ny_end = int(j_ny['fim'].split(':')[0])
                     is_within = (asia_start <= h_now < asia_end) or (ny_start <= h_now < ny_end)
                 else:
-                    w_start, w_end = DEMO_WINDOW
+                    w_start, w_end = DEMO_WINDOW  # V9: (0,24) — sem restrição
                     is_within = (w_start <= h_now < w_end)
 
-                has_night_pass = os.environ.get("OMEGA_NIGHT_PASS") == "AUTHORISED_BY_CEO"
-
-                if not (is_within or has_night_pass):
+                if not is_within:
                     log.warning("[%s %s] FORA DA JANELA DO REGIME %s. Agora: %02d:00", 
                                 asset, tf, regime_cfg['regime'].value, h_now)
                     results.append({"asset": asset, "timeframe": tf, "status": "SKIP_WINDOW"})
                     continue
 
-                if has_night_pass and not is_within:
-                    log.warning("[%s %s] 🛡️ JANELA QUEBRADA | OMEGA_NIGHT_PASS ATIVO", asset, tf)
+                if has_night_pass:
+                    log.info("[%s %s] 🛡️ NIGHT_PASS ATIVO — operação 24/5 autorizada pelo CEO", asset, tf)
 
                 if ks.triggered:
                     log.critical("[%s %s] KS ativo — abortando.", asset, tf); break
