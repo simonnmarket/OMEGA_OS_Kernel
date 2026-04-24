@@ -1,0 +1,87 @@
+{
+  "mission_id": "PAPER-EURUSD-H1-20260424T201216",
+  "asset": "EURUSD",
+  "timeframe": "H1",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-04-24T20:12:16.855430+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "EURUSD",
+    "timeframe": "H1",
+    "tier": "T1",
+    "hit_rate_134": 100.0,
+    "mach": 1.0,
+    "margin_used": 150.0,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 39275,
+    "total": 39275,
+    "p_hat": 1.0,
+    "lower_bound": 0.999902,
+    "upper_bound": 1.0,
+    "interval": "[99.9902%, 100.0000%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 39275,
+          "hits": 39275,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        },
+        "134_stats": {
+          "total_touches": 39275,
+          "hits": 39275,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        }
+      }
+    },
+    "price": {
+      "price": 0.0,
+      "base_price": 0.0,
+      "flash_crash_adjustment": null,
+      "metadata": {}
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 150.0,
+    "tier": "T1"
+  },
+  "execution": {
+    "retcode": 10009,
+    "retcode_str": "DONE",
+    "success": true,
+    "deal": 182250890,
+    "order": 179458150,
+    "fill_price": 1.17194,
+    "ask_at_send": 1.17194,
+    "sl_price": 1.16894,
+    "tp_price": 1.17494,
+    "volume_confirmed": 0.01,
+    "slippage_pts": 0.0,
+    "comment": "Request executed",
+    "request_id": 3022480970,
+    "latency_ms": 44.5,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.01,
+    "risk_usd": 25.0,
+    "stop_pts": 300.0,
+    "pip_value_lot": 1.0,
+    "contract_size": 100000.0,
+    "price_at_calc": 1.17194
+  },
+  "latency_motor_s": 26.301,
+  "checksum": "ce50aa8de8a0c3860b20c3d6321e4bf2564c157e1df32b2b04501a4c7e0273db"
+}

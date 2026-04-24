@@ -49,3 +49,15 @@ Thumbs.db
 
 # Especificação local / scratch
 .finsense_full_spec.txt
+
+# Banco de dados local (SQLite)
+*.db
+*.sqlite
+*.sqlite3
+
+# Artefatos de verificação/portabilidade (gerados, não versionar)
+path_analysis_report.txt
+portability_verification_output.txt
+
+# Dados locais (OHLCV copiados para ./data/)
+data/ohlcv/
