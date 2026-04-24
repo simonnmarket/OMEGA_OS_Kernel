@@ -90,7 +90,7 @@ AUDIT_PAPER.mkdir(parents=True, exist_ok=True)
 # ─── Configuração de Risco ───────────────────────────────────────────────────
 DEMO_EQUITY_USD    = 10_000.0
 RISK_PER_TRADE_PCT = 0.0025     # 0,25% por trade
-MAX_POSITIONS      = 3
+MAX_POSITIONS      = 6          # V10: 3 ativos × 2 TFs stress
 DD_DAILY_MAX       = 0.05       # 5% kill switch
 MAX_CONSEC_FAIL    = 3
 OMEGA_MAGIC        = 234001     # ID do EA OMEGA
@@ -355,7 +355,6 @@ def check_guardrails(asset: str, tf: str, hr: float,
     dyn_min_hr = get_regime_config().get('MIN_CONFIDENCE', 0.8) * 100
     if hr < dyn_min_hr:    reasons.append(f"hit_rate_134={hr:.2f}% < {dyn_min_hr}%")
     if mach > MACH_MAX:      reasons.append(f"Mach={mach:.2f} > {MACH_MAX}")
-    if asset == "EURUSD":    reasons.append("EURUSD: grafico_linha ausente")
     margin = 150.0
     d = dm.get(asset, {}).get(tf)
     if d and isinstance(d, dict): margin = float(d.get("margin_dynamic", 150.0))
@@ -634,8 +633,9 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         signal_dir = "BUY" if c_price > avg_3 else "SELL"
                         log.info("[%s %s] Sentiment: Current=%.5f | Avg3=%.5f | DIR: %s", asset, tf, c_price, avg_3, signal_dir)
                     else:
-                        signal_dir = "BUY" # Safe fallback
-                        log.warning("[%s %s] Falha ao ler candles MT5 para direcao. Fallback: BUY", asset, tf)
+                        import random
+                        signal_dir = random.choice(["BUY", "SELL"])  # V10: fallback neutro (sem viés)
+                        log.warning("[%s %s] Falha ao ler candles MT5 para direcao. Fallback neutro: %s", asset, tf, signal_dir)
                     
                     current_positions = []
                     if mt5_connected:
