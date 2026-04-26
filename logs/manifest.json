@@ -1,5 +1,20 @@
 {
   "version": "1.0.0",
-  "bias_audits": [],
+  "bias_audits": [
+    {
+      "audit_id": "BIAS_20260426_160218",
+      "timestamp": "2026-04-26T16:02:18.600153",
+      "sha3_256": "17acfd00da48c0ce5cbc8e209affa9cc8a526eaf4dfd96977bc7985cbd5f7d4d",
+      "alerts_count": 1,
+      "significant_bias_count": 0
+    },
+    {
+      "audit_id": "BIAS_20260426_160338",
+      "timestamp": "2026-04-26T16:03:38.568070",
+      "sha3_256": "e19eb0f4a7bd0a272add7c8f8da90459fabb6d187322ec59ad3e5cbef23bcd14",
+      "alerts_count": 1,
+      "significant_bias_count": 0
+    }
+  ],
   "created_at": "2026-04-26T14:09:00Z"
 }
