@@ -296,9 +296,11 @@ class SessionConfigCatalog:
         self._configs[MarketSession.CLOSED] = SessionConfig(
             session=MarketSession.CLOSED,
             priority_assets=["BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD"],  # FIX #3 — cripto 24h ampliado
-            active_strategies=["MARKET_MAKING", "ADAPTIVE"],    # FIX #2 — ADAPTIVE para evitar starvation cripto
+            # FIX #8 — habilita MEAN_REVERSION + SCALPING em CLOSED para operar cripto noturna
+            # (overnight 21-00 UTC). MARKET_MAKING isolado nunca emite em fim-de-semana.
+            active_strategies=["MARKET_MAKING", "ADAPTIVE", "MEAN_REVERSION", "SCALPING"],
             max_lot=0.005,
-            min_confidence=0.85,       # Confiança muito elevada
+            min_confidence=0.75,       # FIX #8 — relaxado de 0.85 → 0.75 (ainda alto; FIX #4 dinâmico)
             max_positions=1,
             max_spread_pips=5.0,
             spoof_threshold=0.50,
