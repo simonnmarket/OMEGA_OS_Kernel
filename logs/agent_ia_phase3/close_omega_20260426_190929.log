@@ -1,0 +1,42 @@
+TOTAL_POSITIONS 6
+OMEGA_POSITIONS 6
+[
+  {
+    "ticket": 179457210,
+    "symbol": "XAUUSD",
+    "retcode": 10018,
+    "comment": "Market closed"
+  },
+  {
+    "ticket": 179457325,
+    "symbol": "GBPUSD",
+    "retcode": 10018,
+    "comment": "Market closed"
+  },
+  {
+    "ticket": 179458077,
+    "symbol": "XAUUSD",
+    "retcode": 10018,
+    "comment": "Market closed"
+  },
+  {
+    "ticket": 179458150,
+    "symbol": "EURUSD",
+    "retcode": 10018,
+    "comment": "Market closed"
+  },
+  {
+    "ticket": 179537462,
+    "symbol": "BTCUSD",
+    "retcode": 10009,
+    "comment": "Request executed"
+  },
+  {
+    "ticket": 179537463,
+    "symbol": "BTCUSD",
+    "retcode": 10009,
+    "comment": "Request executed"
+  }
+]
+REMAINING_OMEGA 4
+TOTAL_REMAINING 4

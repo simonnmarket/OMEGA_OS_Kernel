@@ -1,0 +1,36 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-26T17:06:48.955250+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 3,
+  "kill_switch": true,
+  "ks_reason": "3 falhas consecutivas",
+  "online_stats": {
+    "total_signals": 0,
+    "executed": 0,
+    "skipped": 0,
+    "avg_hit_rate_134": 0,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 0.0,
+    "max_latency_ms": 0
+  },
+  "results": [
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "FAIL"
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "status": "FAIL"
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H1",
+      "status": "FAIL"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260426_170646.log",
+  "checksum": "02a0e7af61985688983ff1927e924906de048c6aa152dd1f82565b6b88bb8abe"
+}

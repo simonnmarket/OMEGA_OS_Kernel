@@ -1,0 +1,37 @@
+=== FASE A | IA OFF | CRYPTO ===
+USE_AGENT_IA = False  # ⚠️ MANTER DESLIGADO ATÉ GO DO CONSELHO
+2026-04-26 19:06:46,700 | INFO | ========================================================================
+2026-04-26 19:06:46,700 | INFO | OMEGA PAPER LOOP v3.0 | 4 ativos Î 2 TFs | equity=USD 10000.00
+2026-04-26 19:06:46,700 | INFO | Risk/trade=0.25% | MaxPos=6 | DD_max=5% | MT5_MAGIC=234001
+2026-04-26 19:06:46,700 | INFO | ========================================================================
+2026-04-26 19:06:46,746 | INFO | MT5 conectado | build=5833 | trade_allowed=True | connected=True
+2026-04-26 19:06:46,749 | INFO | MT5 State Sync: 4 posicoes ativas detectadas.
+2026-04-26 19:06:46,749 | INFO | [TESSERACT] Engine ativado para Multi-Timeframe (H4->M1, H1->M3, e buffer de ConfluÛncia M15)
+2026-04-26 19:06:46,750 | INFO | [JOHANSEN] Banco de dados de CointegraþÒo lido com sucesso. (1 anchors)
+2026-04-26 19:06:46,751 | INFO | [BTCUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-26 19:06:47,482 | ERROR | [BTCUSD H1] Motor V3 exit 1: 
+2026-04-26 19:06:47,483 | INFO | [BTCUSD H4] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-26 19:06:48,191 | ERROR | [BTCUSD H4] Motor V3 exit 1: 
+2026-04-26 19:06:48,192 | INFO | [ETHUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-26 19:06:48,950 | ERROR | [ETHUSD H1] Motor V3 exit 1: 
+2026-04-26 19:06:48,950 | CRITICAL | \U0001f480 KILL SWITCH: 3 falhas consecutivas
+2026-04-26 19:06:48,951 | CRITICAL | [ETHUSD H4] KS ativo ù abortando.
+2026-04-26 19:06:48,951 | CRITICAL | [SOLUSD H1] KS ativo ù abortando.
+2026-04-26 19:06:48,951 | CRITICAL | [DOGUSD H1] KS ativo ù abortando.
+2026-04-26 19:06:48,951 | INFO | MT5 desconectado.
+2026-04-26 19:06:48,953 | INFO | \u2500\u2500 ESTAT═STICAS ONLINE \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+2026-04-26 19:06:48,953 | INFO |   total_signals             : 0
+2026-04-26 19:06:48,953 | INFO |   executed                  : 0
+2026-04-26 19:06:48,953 | INFO |   skipped                   : 0
+2026-04-26 19:06:48,954 | INFO |   avg_hit_rate_134          : 0
+2026-04-26 19:06:48,954 | INFO |   avg_slippage_pts          : 0.0
+2026-04-26 19:06:48,954 | INFO |   avg_latency_ms            : 0.0
+2026-04-26 19:06:48,955 | INFO |   max_latency_ms            : 0
+2026-04-26 19:06:48,957 | INFO | ========================================================================
+2026-04-26 19:06:48,957 | INFO | PAPER LOOP CONCLU═DO | cycles=3 | KS=True
+2026-04-26 19:06:48,958 | INFO | SHA3 summary: 02a0e7af61985688983ff1927e924906de048c6aa152dd1f82565b6b88bb8abe
+2026-04-26 19:06:48,958 | INFO | Artifacts: C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\audit\paper
+2026-04-26 19:06:48,958 | INFO | ========================================================================
+RUN_EXIT=1
+SHA3_PAPER_SUMMARY_OFF=5f006cd80470cb50dd36e78d57089538b34e408ba7f95a62323338eca43d4b30
+COPY_OFF=audit\paper\paper_summary_OFF_20260426_190643.json
