@@ -143,16 +143,29 @@ def validate_bias_statistical_significance(bias_report, confidence_level=0.95):
 # ---------------- Validadores CQO ----------------
 def validate_with_cqo_validators():
     validators_status = {}
-    # Crisis Probability
+    # Crisis Probability — inputs from config/market_data.json (V3 fix)
     try:
         from modules.validation.crisis_probability_validator import CrisisProbabilityValidator
+        mkt_cfg_path = Path("./config/market_data.json")
+        if mkt_cfg_path.exists():
+            with open(mkt_cfg_path, "r", encoding="utf-8") as f:
+                mkt = json.load(f)
+        else:
+            mkt = {"DXY_change_pct": -2.0, "XAU_change_pct": 12.3,
+                   "Buffett_cash_B": 325.0, "BlackRock_equities_change_pct": -8.2}
         crisis_v = CrisisProbabilityValidator()
-        crisis_r = crisis_v.calculate(DXY=98.5, XAU_change_pct=12.3,
-                                      Buffett_cash_B=325.0, BlackRock_equities_change_pct=-8.2)
+        crisis_r = crisis_v.calculate(
+            DXY=mkt["DXY_change_pct"],
+            XAU_change_pct=mkt["XAU_change_pct"],
+            Buffett_cash_B=mkt["Buffett_cash_B"],
+            BlackRock_equities_change_pct=mkt["BlackRock_equities_change_pct"])
         validators_status['crisis_probability'] = {
             'status': 'PASS' if crisis_r['probability'] >= 0.70 else 'FAIL',
             'value': crisis_r['probability'],
-            'threshold': 0.70
+            'risk_level': crisis_r.get('risk_level', '?'),
+            'ci_95': [crisis_r.get('ci_95_lower'), crisis_r.get('ci_95_upper')],
+            'threshold': 0.70,
+            'inputs': mkt,
         }
     except Exception as e:
         validators_status['crisis_probability'] = {'status': 'ERROR', 'error': str(e)}
