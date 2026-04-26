@@ -53,15 +53,17 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-# Pydantic para validação de dados de entrada
+# Pydantic para validação de dados de entrada (Fix 4 — DEPENDÊNCIA OBRIGATÓRIA)
+# Antes: fallback silencioso permitia rodar sem validação. Agora aborta com
+# instrução clara para evitar dados inválidos chegarem às estratégias.
 try:
     from pydantic import BaseModel, Field, validator
     HAS_PYDANTIC = True
-except ImportError:
-    HAS_PYDANTIC = False
-    BaseModel = object
-    Field = None
-    validator = None
+except ImportError as _e:
+    raise ImportError(
+        "Pydantic é dependência obrigatória do agent_ia (M1). "
+        "Instale com: pip install pydantic>=1.10. Erro original: " + str(_e)
+    )
 
 
 # =============================================================================

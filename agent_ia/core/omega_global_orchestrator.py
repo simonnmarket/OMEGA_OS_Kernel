@@ -175,8 +175,19 @@ class OmegaGlobalOrchestrator:
         self.daily_pnl: float = 0.0
         self.daily_drawdown: float = 0.0
         self.kill_switch_triggered: bool = False
-        
-        # Thread-safety
+
+        # Fix 3 — Kill switch via highwater mark (peak_equity)
+        # peak_equity = max(equity histórico do dia); current_equity = total_capital + daily_pnl
+        self.peak_equity: float = float(total_capital)
+
+        # Fix 8 (CTO) — Idempotência: ticket → bool (já processado em close)
+        self._processed_tickets: set = set()
+        # Fix 8 (CTO) — Lock dedicado para chamadas MT5 externas (evitar reentrância
+        # quando feedback thread e loop principal coexistem). Consumidores devem
+        # adquirir mt5_lock ANTES de chamar a API MT5.
+        self.mt5_lock = threading.Lock()
+
+        # Thread-safety geral
         self.lock = threading.RLock()
         
         # Sessão de monitoramento
@@ -278,9 +289,24 @@ class OmegaGlobalOrchestrator:
                     if signal.action == SignalAction.SELL:
                         adjusted_confidence *= 0.5  # Não lutar contra big player
             
-            # 12. Calcular lote (limitado pela sessão)
-            lot = min(session_config.max_lot, agent.kelly_fraction * 10 * session_config.max_lot)
-            lot = max(0.01, round(lot, 2))
+            # 12. Calcular lote (Fix 2 — Kelly clamp determinístico, sem multiplicador mágico):
+            #     lot = clamp(kelly_fraction × max_lot, 0.01, max_lot)
+            kelly_lot = agent.kelly_fraction * session_config.max_lot
+            lot = max(0.01, min(session_config.max_lot, round(kelly_lot, 2)))
+
+            # 12b. Fix 5 — Concentração por ativo: se já há posições no mesmo ativo
+            #      representando >40% das posições abertas, reduzir lote pela metade
+            #      (proteção contra over-concentration, ex.: XAUUSD).
+            try:
+                open_pos_snapshot = self.open_positions
+                total_open = len(open_pos_snapshot)
+                if total_open > 0:
+                    same_asset = sum(1 for k in open_pos_snapshot.keys() if k == asset)
+                    concentration = same_asset / total_open
+                    if concentration > 0.40:
+                        lot = max(0.01, round(lot * 0.5, 2))
+            except Exception:
+                pass
             
             # 13. Calcular SL/TP
             atr = market_data.get('atr_14', 50)
@@ -306,36 +332,62 @@ class OmegaGlobalOrchestrator:
                 'timestamp': datetime.now(timezone.utc).isoformat()
             }
     
-    def record_trade_result(self, asset: str, agent_id: str, pnl: float) -> Dict[str, Any]:
+    def record_trade_result(self, asset: str, agent_id: str, pnl: float,
+                            ticket: Optional[int] = None) -> Dict[str, Any]:
         """
         Registra resultado de um trade fechado.
-        
+
+        Fix 3: Kill switch agora usa peak_equity (highwater) e não daily_pnl.
+        Fix 8: Idempotência por ticket — evita double-counting quando feedback
+        thread e loop principal podem chamar este método para o mesmo trade.
+
         Args:
             asset: Ativo financeiro
             agent_id: ID do agente que executou
             pnl: Lucro/Prejuízo em USD
-            
+            ticket: ID do trade no MT5 (recomendado para idempotência)
+
         Returns:
             Dict com métricas atualizadas
         """
         with self.lock:
+            # Fix 8 — idempotência por ticket
+            if ticket is not None:
+                if ticket in self._processed_tickets:
+                    return {
+                        'status': 'DUPLICATE_IGNORED',
+                        'ticket': ticket,
+                        'asset': asset,
+                        'agent_id': agent_id,
+                    }
+                # marca ANTES de mutar estado para evitar double-count em race
+                self._processed_tickets.add(ticket)
+
             # Atualizar PnL diário
             self.daily_pnl += pnl
-            
-            # Verificar drawdown
+
+            # Atualizar drawdown clássico (mantido para compat e logging)
             if self.daily_pnl < self.daily_drawdown:
                 self.daily_drawdown = self.daily_pnl
-            
-            # Verificar Kill Switch
-            dd_pct = abs(self.daily_drawdown) / self.total_capital if self.daily_pnl < 0 else 0
+
+            # Fix 3 — Highwater mark / peak_equity
+            current_equity = self.total_capital + self.daily_pnl
+            if current_equity > self.peak_equity:
+                self.peak_equity = current_equity
+            # DD% sobre o peak (não sobre capital inicial)
+            dd_from_peak = self.peak_equity - current_equity
+            dd_pct = (dd_from_peak / self.peak_equity) if self.peak_equity > 0 else 0.0
+
             if dd_pct >= 0.05:
                 self.kill_switch_triggered = True
                 return {
                     'error': 'KILL_SWITCH_TRIGGERED',
                     'daily_pnl': self.daily_pnl,
-                    'drawdown_pct': dd_pct
+                    'peak_equity': self.peak_equity,
+                    'current_equity': current_equity,
+                    'drawdown_pct': dd_pct,
                 }
-            
+
             # Atualizar ecossistema
             result = self.ecosystem.update_trade_result(
                 asset=asset,
@@ -343,27 +395,37 @@ class OmegaGlobalOrchestrator:
                 pnl=pnl,
                 session=self.current_session.value
             )
-            
+
             # Registrar no histórico
             self.trade_history.append({
                 'asset': asset,
                 'agent_id': agent_id,
                 'pnl': pnl,
+                'ticket': ticket,
                 'session': self.current_session.value,
                 'timestamp': datetime.now(timezone.utc).isoformat()
             })
-            
-            # Remover da lista de posições abertas
+
+            # Remover da lista de posições abertas (Fix 8 — dedup posição)
             if asset in self.open_positions:
                 del self.open_positions[asset]
-            
+
             return result
     
-    def register_open_position(self, asset: str, ticket: int, 
+    def register_open_position(self, asset: str, ticket: int,
                                entry_price: float, lot: float,
-                               agent_id: str) -> None:
-        """Registra uma posição aberta para rastreamento."""
+                               agent_id: str) -> bool:
+        """Registra uma posição aberta para rastreamento.
+
+        Fix 8 (CTO) — Dedup de posição: se já existe registro para o mesmo ticket
+        em qualquer ativo, retorna False sem sobrescrever (evita race entre
+        feedback thread e loop principal).
+        """
         with self.lock:
+            # Dedup por ticket: se já registrado, ignora
+            for existing in self.open_positions.values():
+                if existing.get('ticket') == ticket:
+                    return False
             self.open_positions[asset] = {
                 'ticket': ticket,
                 'entry_price': entry_price,
@@ -372,6 +434,7 @@ class OmegaGlobalOrchestrator:
                 'entry_time': datetime.now(timezone.utc).isoformat(),
                 'session': self.current_session.value
             }
+            return True
     
     def get_open_positions(self) -> Dict[str, Dict]:
         """Retorna posições abertas."""
@@ -436,7 +499,9 @@ class OmegaGlobalOrchestrator:
                 'total_capital': self.total_capital,
                 'daily_pnl': round(self.daily_pnl, 2),
                 'daily_drawdown': round(self.daily_drawdown, 2),
-                'drawdown_pct': round(abs(self.daily_drawdown) / self.total_capital * 100, 2) if self.total_capital > 0 else 0,
+                'drawdown_pct': round((self.peak_equity - (self.total_capital + self.daily_pnl)) / self.peak_equity * 100, 2) if self.peak_equity > 0 else 0,
+                'peak_equity': round(self.peak_equity, 2),
+                'current_equity': round(self.total_capital + self.daily_pnl, 2),
                 'kill_switch_triggered': self.kill_switch_triggered,
                 'open_positions': len(self.open_positions),
                 'max_positions': session_config.max_positions,
@@ -507,9 +572,10 @@ def record_trade(orchestrator: OmegaGlobalOrchestrator,
 
 
 def close_trade(orchestrator: OmegaGlobalOrchestrator,
-               asset: str, agent_id: str, pnl: float) -> Dict[str, Any]:
-    """Registra fechamento de trade no orquestrador."""
-    return orchestrator.record_trade_result(asset, agent_id, pnl)
+               asset: str, agent_id: str, pnl: float,
+               ticket: Optional[int] = None) -> Dict[str, Any]:
+    """Registra fechamento de trade no orquestrador (Fix 8 — propaga ticket)."""
+    return orchestrator.record_trade_result(asset, agent_id, pnl, ticket=ticket)
 
 
 # =============================================================================

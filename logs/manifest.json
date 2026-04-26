@@ -14,6 +14,13 @@
       "sha3_256": "e19eb0f4a7bd0a272add7c8f8da90459fabb6d187322ec59ad3e5cbef23bcd14",
       "alerts_count": 1,
       "significant_bias_count": 0
+    },
+    {
+      "audit_id": "BIAS_20260426_163834",
+      "timestamp": "2026-04-26T16:38:34.285479",
+      "sha3_256": "945fc82824fa8ca720a05b03dfc87fbdcb01ea832ce88e9c5bf018a639d68c82",
+      "alerts_count": 1,
+      "significant_bias_count": 0
     }
   ],
   "created_at": "2026-04-26T14:09:00Z"

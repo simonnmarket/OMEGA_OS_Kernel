@@ -19,6 +19,12 @@ __pycache__/
 # Logs de execução pesados
 *.log
 
+# Allowlist (Fix 6 PSA) — preservar audit trail no repo:
+!logs/agent_ia_phase3/*.log
+!logs/bias_audit/*.json
+!logs/bias_audit/*.sha3
+!logs/manifest.json
+
 # Node / Frontend
 node_modules/
 dist/

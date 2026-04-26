@@ -21,14 +21,27 @@ OMEGA SHADOW LOOP INTEGRATION v1.0.0
 Módulo M5 — Integração do Agente IA com shadow_loop.py
 Arquiteto OMEGA (CRO/CTO) — 2026-04-26
 
-Este módulo contém o código EXATO que deve ser inserido no shadow_loop.py
-para integrar o Agente IA OMEGA (M1-M4) ao pipeline de execução real.
+Fix 7 (PSA): a integração oficial é via IMPORT, não cópia de código.
+Não duplicar a classe OmegaAgentIntegration no shadow_loop.py.
 
-INSTRUÇÕES DE USO:
-1. Copie a classe OmegaAgentIntegration para o shadow_loop.py
-2. No __init__ do shadow_loop, inicialize a integração
-3. No loop principal, substitua a lógica de sinal pelas funções abaixo
-4. Após cada trade, chame record_trade_result()
+USO OFICIAL (no shadow_loop.py):
+
+    # 1. Imports (já preparados pelo patch mínimo da Fase 3)
+    from agent_ia.integration.shadow_loop_integration import OmegaAgentIntegration
+
+    # 2. Inicializar (no início de run_loop)
+    agent_ia = OmegaAgentIntegration(
+        assets=list(TIER1_ASSETS),
+        total_capital=equity,
+        enable_agent_ia=USE_AGENT_IA,
+    )
+
+    # 3. Obter sinal por ativo no ciclo
+    signal = agent_ia.get_signal(asset, signature_scores=...)
+
+    # 4. Registrar abertura/fechamento de trade (com ticket para idempotência)
+    agent_ia.record_trade_open(asset, ticket, entry_price, lot, signal['agent_id'])
+    agent_ia.record_trade_close(asset, signal['agent_id'], pnl)
 
 Hash: sha256:m5-shadow-loop-integration-v1-0-0-20260426
 """
@@ -198,21 +211,22 @@ class OmegaAgentIntegration:
     
     def _get_original_signal(self, asset: str) -> Dict[str, Any]:
         """
-        Lógica original do shadow_loop (fallback).
-        
-        Esta função replica o comportamento anterior para
-        compatibilidade quando o Agente IA está desativado.
+        Fallback neutro quando o Agente IA está desativado.
+
+        Retorna sempre HOLD para evitar viés direcional (BUY-only).
+        A direção real, se houver, deve ser determinada pelo
+        shadow_loop.py via momentum MT5 (M1 close vs avg3).
         """
         return {
-            'action': 'BUY',
-            'direction': 'BUY',
-            'confidence': 0.65,
-            'lot': 0.01,
-            'stop_loss_pips': 100.0,
-            'take_profit_pips': 150.0,
-            'strategy': 'ORIGINAL_SHADOW_LOOP',
+            'action': 'HOLD',
+            'direction': None,
+            'confidence': 0.0,
+            'lot': 0.0,
+            'stop_loss_pips': 0.0,
+            'take_profit_pips': 0.0,
+            'strategy': 'NEUTRAL_FALLBACK',
             'agent_id': 'LEGACY',
-            'reason': 'Sinal original do shadow_loop (Agente IA desativado)',
+            'reason': 'Agente IA desativado — fallback neutro (HOLD); direção via shadow_loop MT5 momentum',
             'session': 'UNKNOWN',
             'timestamp': datetime.now(timezone.utc).isoformat()
         }
@@ -231,19 +245,25 @@ class OmegaAgentIntegration:
                 lot=lot
             )
     
-    def record_trade_close(self, asset: str, agent_id: str, pnl: float) -> Dict[str, Any]:
-        """Registra fechamento de trade e atualiza aprendizado."""
+    def record_trade_close(self, asset: str, agent_id: str, pnl: float,
+                           ticket: Optional[int] = None) -> Dict[str, Any]:
+        """Registra fechamento de trade e atualiza aprendizado.
+
+        Fix 8 (CTO): aceita `ticket` para idempotência. Se passado, o
+        orquestrador deduplica chamadas (feedback thread × loop principal).
+        """
         self.total_pnl += pnl
-        
+
         if self.enable_agent_ia and self.orchestrator:
             return close_trade(
                 orchestrator=self.orchestrator,
                 asset=asset,
                 agent_id=agent_id,
-                pnl=pnl
+                pnl=pnl,
+                ticket=ticket,
             )
-        
-        return {'pnl': pnl, 'agent_ia_disabled': True}
+
+        return {'pnl': pnl, 'agent_ia_disabled': True, 'ticket': ticket}
     
     def get_session_info(self) -> Dict[str, Any]:
         """Retorna informações da sessão atual."""
