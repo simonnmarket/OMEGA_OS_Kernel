@@ -1,0 +1,22 @@
+==============================================================================
+Metrica                              BASELINE              IA_ON    Threshold
+------------------------------------------------------------------------------
+trades                                     60                 60         >=50
+hit_rate_avg %                          94.92              94.92       >=60.0
+latency_p95 ms                          292.2              305.1      <=200.0
+latency_max ms                          318.1              417.2            ù
+ks_triggers                                 0                  0          <=0
+max_concentration %                     100.0              100.0        <40.0
+==============================================================================
+
+GO/NO-GO criterion-by-criterion:
+  hit_rate               A=94.92 [PASS]  |  B=94.92 [PASS]
+  p95_latency            A=292.2 [FAIL]  |  B=305.1 [FAIL]
+  max_concentration      A=100.0 [FAIL]  |  B=100.0 [FAIL]
+  min_trades             A=60 [PASS]  |  B=60 [PASS]
+  ks_triggers            A=0 [PASS]  |  B=0 [PASS]
+
+  OVERALL  BASELINE=NO-GO   IA_ON=NO-GO
+
+[COMPARE_JSON] C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\logs\agent_ia_phase3\fase4_AB_compare_20260426_200420.json
+[COMPARE_SHA3] 46db5c833d848de4eda896ae0b1ea094e4918038c8845fc523d511c23b0978ea

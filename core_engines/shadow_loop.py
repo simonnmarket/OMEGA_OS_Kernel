@@ -55,6 +55,8 @@ if USE_AGENT_IA:
         from agent_ia.core.omega_strategy_catalog import StrategyCatalog
         from agent_ia.core.omega_agent_ecosystem import AgentEcosystem
         from agent_ia.core.omega_quantum_brain import OmegaQuantumBrain
+        # Fase 4 — integração oficial (não duplicar classe; importar)
+        from agent_ia.integration.shadow_loop_integration import OmegaAgentIntegration
         AGENT_IA_AVAILABLE = True
     except ImportError:
         AGENT_IA_AVAILABLE = False
@@ -566,6 +568,21 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     spoof_detector = SpoofIcebergDetector()
     correlation_filter = CorrelationFilter()
 
+    # Fase 4 — inicialização do Agente IA (somente se flag e imports OK)
+    agent_ia = None
+    _processed_tickets: set = set()
+    if USE_AGENT_IA and AGENT_IA_AVAILABLE:
+        try:
+            agent_ia = OmegaAgentIntegration(
+                assets=list(ativos),
+                total_capital=float(equity),
+                enable_agent_ia=True,
+            )
+            log.info("[FASE4] Agente IA inicializado (assets=%d, capital=$%.2f)", len(ativos), equity)
+        except Exception as _ia_init_err:
+            log.error("[FASE4] Falha ao inicializar Agente IA: %s — fallback momentum", _ia_init_err)
+            agent_ia = None
+
     try:
         for asset in ativos:
             for tf in timeframes:
@@ -659,36 +676,108 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         continue
 
                     lot_info = calc_lot(equity, guard["margin_used"], asset)
-                    
-                    # PSA FIX: Detecção de Tendência Real via MT5 (Matando o Viés Estático do Price Engine)
-                    rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M1, 0, 5)
-                    if rates is not None and len(rates) >= 3:
-                        # Momentum: Preço Atual vs Média dos últimos 3 minutos
-                        tick_now = mt5.symbol_info_tick(asset)
-                        c_price = tick_now.ask if tick_now else rates[-1]['close']
-                        avg_3   = (rates[-1]['close'] + rates[-2]['close'] + rates[-3]['close']) / 3
-                        signal_dir = "BUY" if c_price > avg_3 else "SELL"
-                        log.info("[%s %s] Sentiment: Current=%.5f | Avg3=%.5f | DIR: %s", asset, tf, c_price, avg_3, signal_dir)
+
+                    # === FASE 4 — Decisão IA (com fallback momentum MT5) ===
+                    signal_dir = None
+                    signal_source = "MOMENTUM_MT5"
+                    ia_signal = None
+                    ia_lot_override = None
+                    ia_sl_pts = None
+                    ia_tp_pts = None
+                    ia_agent_id = "AGENT_IA"
+
+                    if USE_AGENT_IA and AGENT_IA_AVAILABLE and agent_ia is not None:
+                        sig_scores = {}
+                        try:
+                            if spoof_detector and hasattr(spoof_detector, "get_signature_scores"):
+                                sig_scores = spoof_detector.get_signature_scores() or {}
+                        except Exception as e:
+                            log.warning("[%s %s] spoof_detector falhou: %s", asset, tf, e)
+                        try:
+                            ia_signal = agent_ia.get_signal(asset, signature_scores=sig_scores or {})
+                            required_keys = ['action', 'direction', 'confidence']
+                            if not all(k in ia_signal for k in required_keys):
+                                raise ValueError(f"Sinal IA malformado: faltam {required_keys}")
+                            MIN_CONFIDENCE = 0.65
+                            if (ia_signal.get('confidence', 0) or 0) < MIN_CONFIDENCE:
+                                ia_signal = None  # confiança insuficiente → fallback
+                        except Exception as e:
+                            log.warning("[%s %s] IA falhou: %s — fallback momentum", asset, tf, e)
+                            ia_signal = None
+
+                    if ia_signal and ia_signal.get('action') not in (None, 'HOLD'):
+                        signal_dir = ia_signal.get('direction') or ia_signal.get('action')
+                        signal_source = "AGENT_IA"
+                        ia_lot_override = ia_signal.get('lot')
+                        ia_sl_pts = ia_signal.get('stop_loss_pips')
+                        ia_tp_pts = ia_signal.get('take_profit_pips')
+                        ia_agent_id = ia_signal.get('agent_id', 'AGENT_IA')
+                        log.info("[%s %s] FASE4 DECISION=AGENT_IA | dir=%s conf=%.3f strategy=%s",
+                                 asset, tf, signal_dir, ia_signal.get('confidence', 0),
+                                 ia_signal.get('strategy'))
                     else:
-                        log.warning("[%s %s] Falha ao ler candles MT5 para direcao — SKIP (sem dados para decisão)", asset, tf)
-                        results.append({"asset": asset, "timeframe": tf, "status": "SKIP_NO_RATES"})
-                        continue
-                    
+                        # Fallback momentum MT5 (lógica original)
+                        rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M1, 0, 5)
+                        if rates is not None and len(rates) >= 3:
+                            tick_now = mt5.symbol_info_tick(asset)
+                            c_price = tick_now.ask if tick_now else rates[-1]['close']
+                            avg_3   = (rates[-1]['close'] + rates[-2]['close'] + rates[-3]['close']) / 3
+                            signal_dir = "BUY" if c_price > avg_3 else "SELL"
+                            log.info("[%s %s] Sentiment: Current=%.5f | Avg3=%.5f | DIR: %s (src=%s)",
+                                     asset, tf, c_price, avg_3, signal_dir, signal_source)
+                        else:
+                            log.warning("[%s %s] Falha ao ler candles MT5 para direcao — SKIP", asset, tf)
+                            results.append({"asset": asset, "timeframe": tf, "status": "SKIP_NO_RATES"})
+                            continue
+
                     current_positions = []
                     if mt5_connected:
                         pos_list = mt5.positions_get(symbol=asset)
                         if pos_list:
                             current_positions = [p._asdict() for p in pos_list]
-                    
+
                     if correlation_filter.should_trade(asset, current_positions):
+                        # Lote: clamp(min(lot_info, ia_lot_override or lot_info), 0.01, MAX_LOT)
+                        eff_lot = lot_info["lot"]
+                        if ia_lot_override is not None:
+                            try:
+                                eff_lot = max(0.01, min(eff_lot, float(ia_lot_override)))
+                            except Exception:
+                                pass
+                        # Concentração por ativo (Fix 5): >40% → reduz 50%
+                        try:
+                            same_asset = sum(1 for p in (mt5.positions_get(magic=OMEGA_MAGIC) or []) if p.symbol == asset)
+                            total_omega = len(mt5.positions_get(magic=OMEGA_MAGIC) or [])
+                            if total_omega > 0 and (same_asset / total_omega) > 0.40:
+                                eff_lot = max(0.01, round(eff_lot * 0.5, 2))
+                                log.info("[%s %s] FASE4 concentration>40%% → lot reduzido a %.2f", asset, tf, eff_lot)
+                        except Exception:
+                            pass
+                        eff_sl = float(ia_sl_pts) if ia_sl_pts is not None else guard["margin_used"] * 2
+                        eff_tp = float(ia_tp_pts) if ia_tp_pts is not None else guard["margin_used"] * 2
                         exec_result = mt5_send_order(
-                            asset, tf, lot_info["lot"],
-                            sl_pts=guard["margin_used"] * 2,
-                            tp_pts=guard["margin_used"] * 2,
+                            asset, tf, eff_lot,
+                            sl_pts=eff_sl,
+                            tp_pts=eff_tp,
                             direction=signal_dir)
                         success = exec_result.get("success", False)
+                        # Idempotência / dedup ticket
+                        deal_id = exec_result.get("deal")
+                        if success and deal_id is not None and deal_id not in _processed_tickets:
+                            _processed_tickets.add(deal_id)
+                            if agent_ia is not None and signal_source == "AGENT_IA":
+                                try:
+                                    agent_ia.record_trade_open(
+                                        asset, int(deal_id),
+                                        float(exec_result.get("fill_price", 0) or 0),
+                                        float(eff_lot), ia_agent_id)
+                                except Exception as _re:
+                                    log.warning("[%s %s] record_trade_open falhou: %s", asset, tf, _re)
+                        # Log de auditoria do source
+                        log.info("[%s %s] FASE4 EXEC source=%s success=%s deal=%s",
+                                 asset, tf, signal_source, success, deal_id)
                         open_pos = min(open_pos + (1 if success else 0), MAX_POSITIONS)
-                        ks.update(success, 0.0)   # PnL real será monitorado via posições abertas
+                        ks.update(success, 0.0)
                 elif not guard["skip"] and mode == "shadow":
                     log.info("[%s %s] MONITOR | hr134=%.2f%% | margin=%.1fpts | NO ORDER",
                              asset, tf, hr_real, guard["margin_used"])
