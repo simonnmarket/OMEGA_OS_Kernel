@@ -43,7 +43,6 @@ from math import sqrt
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from modules.detection import SpoofIcebergDetector
@@ -55,7 +54,6 @@ import os
 import json
 import threading
 from enum import Enum
-from pathlib import Path
 
 class ExecutionRegime(Enum):
     TRADICIONAL = "TRADICIONAL"
@@ -99,7 +97,7 @@ OMEGA_MAGIC        = 234001     # ID do EA OMEGA
 TIER1_ASSETS = {"EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "XAUUSD", "XAGUSD", "US500", "NAS100", "GER40", "BTCUSD", "ETHUSD"} # Whitelist restrita para DEMO
 HIT_RATE_MIN = 80.0
 MACH_MAX     = 1.5
-DEMO_WINDOW  = (0, 24) # V9: sem restrição fixa (CQO/CTO liberaram 24/5)
+DEMO_WINDOW  = (0, 24) # V9: 24/5 intencional (CQO/CTO liberaram). NIGHT_PASS ou HUNTER override em run_loop.
 MAX_LOT_DEMO = 0.01
 
 # ─── Retcodes MT5 ────────────────────────────────────────────────────────────
@@ -199,10 +197,9 @@ def mt5_check_order(request: dict) -> Optional[dict]:
 
 # ─── Guardrail de Mercado Aberto ──────────────────────────────────────────────
 def is_market_open(symbol: str = "XAUUSD") -> bool:
-    """Verifica se mercado está aberto via MT5 (trade_mode FULL + tick disponível)."""
+    """Verifica se mercado está aberto via MT5 (trade_mode FULL + tick disponível).
+    Reutiliza sessão MT5 existente (run_loop já fez mt5.initialize())."""
     import MetaTrader5 as mt5
-    if not mt5.initialize():
-        return False
     symbol_info = mt5.symbol_info(symbol)
     if not symbol_info:
         return False
@@ -656,9 +653,9 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         signal_dir = "BUY" if c_price > avg_3 else "SELL"
                         log.info("[%s %s] Sentiment: Current=%.5f | Avg3=%.5f | DIR: %s", asset, tf, c_price, avg_3, signal_dir)
                     else:
-                        import random
-                        signal_dir = random.choice(["BUY", "SELL"])  # V10: fallback neutro (sem viés)
-                        log.warning("[%s %s] Falha ao ler candles MT5 para direcao. Fallback neutro: %s", asset, tf, signal_dir)
+                        log.warning("[%s %s] Falha ao ler candles MT5 para direcao — SKIP (sem dados para decisão)", asset, tf)
+                        results.append({"asset": asset, "timeframe": tf, "status": "SKIP_NO_RATES"})
+                        continue
                     
                     current_positions = []
                     if mt5_connected:
