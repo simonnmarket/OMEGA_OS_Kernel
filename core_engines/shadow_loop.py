@@ -715,9 +715,18 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                             required_keys = ['action', 'direction', 'confidence']
                             if not all(k in ia_signal for k in required_keys):
                                 raise ValueError(f"Sinal IA malformado: faltam {required_keys}")
-                            MIN_CONFIDENCE = 0.65
-                            if (ia_signal.get('confidence', 0) or 0) < MIN_CONFIDENCE:
-                                ia_signal = None  # confiança insuficiente → fallback
+                            # FIX #7 (RCA #7) — Removido gate paralelo MIN_CONFIDENCE=0.65.
+                            # IA já validou contra effective_min_conf dinâmico (FIX #4) no
+                            # OmegaGlobalOrchestrator. Aqui apenas verificamos action válida,
+                            # eliminando o threshold hard-coded que anulava o trabalho do M4.
+                            if ia_signal.get('action') in (None, 'HOLD'):
+                                log.info("[%s %s] [IA] Sinal rejeitado: action=%s",
+                                         asset, tf, ia_signal.get('action'))
+                                ia_signal = None
+                            else:
+                                log.info("[%s %s] [IA] Sinal aprovado: action=%s, confidence=%.2f",
+                                         asset, tf, ia_signal['action'],
+                                         ia_signal.get('confidence', 0) or 0)
                         except Exception as e:
                             log.warning("[%s %s] IA falhou: %s — fallback momentum", asset, tf, e)
                             ia_signal = None
