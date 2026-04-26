@@ -197,6 +197,23 @@ def mt5_check_order(request: dict) -> Optional[dict]:
     return r
 
 
+# ─── Guardrail de Mercado Aberto ──────────────────────────────────────────────
+def is_market_open(symbol: str = "XAUUSD") -> bool:
+    """Verifica se mercado está aberto via MT5 (trade_mode FULL + tick disponível)."""
+    import MetaTrader5 as mt5
+    if not mt5.initialize():
+        return False
+    symbol_info = mt5.symbol_info(symbol)
+    if not symbol_info:
+        return False
+    tick = mt5.symbol_info_tick(symbol)
+    return (
+        symbol_info.trade_mode == mt5.SYMBOL_TRADE_MODE_FULL
+        and symbol_info.session_deals is not None
+        and tick is not None
+    )
+
+
 # ─── MT5 — Enviar Ordem Real (Demo) ─────────────────────────────────────────
 def mt5_send_order(asset: str, tf: str, lot: float,
                    sl_pts: float, tp_pts: float, direction: str = "BUY") -> Dict:
@@ -621,6 +638,12 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                 a_price = b_price = 0.0
 
                 if not guard["skip"] and mode == "paper" and mt5_connected:
+                    # Guardrail: mercado aberto?
+                    if not is_market_open(asset):
+                        log.warning("[%s %s] MERCADO FECHADO — skip (reenqueue na próxima iteração)", asset, tf)
+                        results.append({"asset": asset, "timeframe": tf, "status": "SKIP_MARKET_CLOSED"})
+                        continue
+
                     lot_info = calc_lot(equity, guard["margin_used"], asset)
                     
                     # PSA FIX: Detecção de Tendência Real via MT5 (Matando o Viés Estático do Price Engine)
