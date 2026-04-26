@@ -1,0 +1,62 @@
+=== STAGING ROLLBACK TEST ===
+Switched to a new branch 'rollback-test-20260426_180637'
+[rollback-test-20260426_180637 83fdb44] Revert "feat(agent-ia phase3): imports only USE_AGENT_IA=False | pre:1F9A929FF2B44DB48B4EADDAE93617C438D026DD1DA7CF41FABE7485C3B49F7A | post:CBD6704BB1F93C39F47A663EAFDD2BA97C31B010937F10CB9F1910BD3EC2017D"
+ Date: Sun Apr 26 18:06:37 2026 +0200
+ 25 files changed, 2 insertions(+), 6591 deletions(-)
+ delete mode 100644 agent_ia/config/agent_config.json
+ delete mode 100644 agent_ia/core/omega_agent_ecosystem.py
+ delete mode 100644 agent_ia/core/omega_global_orchestrator.py
+ delete mode 100644 agent_ia/core/omega_quantum_brain.py
+ delete mode 100644 agent_ia/core/omega_session_calibrator.py
+ delete mode 100644 agent_ia/core/omega_strategy_catalog.py
+ delete mode 100644 agent_ia/docs/AUDIT_M1.md
+ delete mode 100644 agent_ia/docs/AUDIT_M2.md
+ delete mode 100644 agent_ia/docs/AUDIT_M3.md
+ delete mode 100644 agent_ia/docs/AUDIT_M4.md
+ delete mode 100644 agent_ia/docs/AUDIT_M5.md
+ delete mode 100644 agent_ia/docs/AUDIT_M6.md
+ delete mode 100644 agent_ia/docs/DOC_OFICIAL_COMPLETO_AGENTE_IA_OMEGA.txt
+ delete mode 100644 agent_ia/integration/shadow_loop_integration.py
+ delete mode 100644 logs/agent_ia_phase3/bias_post_20260426_180337.log
+ delete mode 100644 logs/agent_ia_phase3/bias_pre_20260426_180216.log
+ delete mode 100644 logs/agent_ia_phase3/pycompile_post_20260426_180337.log
+ delete mode 100644 logs/agent_ia_phase3/shadow_loop_post_20260426_180337.sha256
+ delete mode 100644 logs/agent_ia_phase3/shadow_loop_pre_20260426_180216.sha256
+ delete mode 100644 logs/bias_audit/BIAS_20260426_160218.json
+ delete mode 100644 logs/bias_audit/BIAS_20260426_160218.sha3
+ delete mode 100644 logs/bias_audit/BIAS_20260426_160338.json
+ delete mode 100644 logs/bias_audit/BIAS_20260426_160338.sha3
+HASH_AFTER_REVERT=1F9A929FF2B44DB48B4EADDAE93617C438D026DD1DA7CF41FABE7485C3B49F7A
+PYCOMPILE_REVERT_EXIT=0
+[rollback-test-20260426_180637 0eabf3d] Reapply "feat(agent-ia phase3): imports only USE_AGENT_IA=False | pre:1F9A929FF2B44DB48B4EADDAE93617C438D026DD1DA7CF41FABE7485C3B49F7A | post:CBD6704BB1F93C39F47A663EAFDD2BA97C31B010937F10CB9F1910BD3EC2017D"
+ Date: Sun Apr 26 18:06:38 2026 +0200
+ 25 files changed, 6591 insertions(+), 2 deletions(-)
+ create mode 100644 agent_ia/config/agent_config.json
+ create mode 100644 agent_ia/core/omega_agent_ecosystem.py
+ create mode 100644 agent_ia/core/omega_global_orchestrator.py
+ create mode 100644 agent_ia/core/omega_quantum_brain.py
+ create mode 100644 agent_ia/core/omega_session_calibrator.py
+ create mode 100644 agent_ia/core/omega_strategy_catalog.py
+ create mode 100644 agent_ia/docs/AUDIT_M1.md
+ create mode 100644 agent_ia/docs/AUDIT_M2.md
+ create mode 100644 agent_ia/docs/AUDIT_M3.md
+ create mode 100644 agent_ia/docs/AUDIT_M4.md
+ create mode 100644 agent_ia/docs/AUDIT_M5.md
+ create mode 100644 agent_ia/docs/AUDIT_M6.md
+ create mode 100644 agent_ia/docs/DOC_OFICIAL_COMPLETO_AGENTE_IA_OMEGA.txt
+ create mode 100644 agent_ia/integration/shadow_loop_integration.py
+ create mode 100644 logs/agent_ia_phase3/bias_post_20260426_180337.log
+ create mode 100644 logs/agent_ia_phase3/bias_pre_20260426_180216.log
+ create mode 100644 logs/agent_ia_phase3/pycompile_post_20260426_180337.log
+ create mode 100644 logs/agent_ia_phase3/shadow_loop_post_20260426_180337.sha256
+ create mode 100644 logs/agent_ia_phase3/shadow_loop_pre_20260426_180216.sha256
+ create mode 100644 logs/bias_audit/BIAS_20260426_160218.json
+ create mode 100644 logs/bias_audit/BIAS_20260426_160218.sha3
+ create mode 100644 logs/bias_audit/BIAS_20260426_160338.json
+ create mode 100644 logs/bias_audit/BIAS_20260426_160338.sha3
+HASH_AFTER_RE_REVERT=CBD6704BB1F93C39F47A663EAFDD2BA97C31B010937F10CB9F1910BD3EC2017D
+PYCOMPILE_RE_REVERT_EXIT=0
+MATCH_POST=True
+MATCH_PRE_AFTER_REVERT=True
+Switched to branch 'feature/agent-ia-m1-m6'
+Deleted branch rollback-test-20260426_180637 (was 0eabf3d).
