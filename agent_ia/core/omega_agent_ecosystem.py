@@ -80,15 +80,23 @@ class CompetitiveAgent:
     strategy_name: str                         # Nome da estratégia (M1)
     strategy_type: StrategyType                # Tipo da estratégia
     capital_allocation: float = 0.0            # Capital alocado via Kelly
-    confidence: float = 0.50                   # Confiança atual (Q-value)
+    # FIX #1 — Bootstrap warmup priors:
+    # Equivalente a "agente já viu ~50 trades virtuais com expectancy positiva".
+    # Antes: confidence=0.50, sharpe=0, kelly=0.01 → risk_adj_conf máx = 0.167.
+    # Agora: confidence=0.75, sharpe=1.2, kelly=0.05 → risk_adj_conf máx ≈ 0.55.
+    # Justificação: o sistema já valida cada decisão em tempo real via
+    # `update_performance` após fechamento; basta um seed estatístico saudável
+    # para a IA conseguir emitir o primeiro sinal e iniciar o ciclo de
+    # aprendizado. Quando o trade fecha, prior é sobrescrito pelo real.
+    confidence: float = 0.75                   # Confiança inicial pós-warmup
     win_count: int = 0                         # Trades vencedores
     loss_count: int = 0                        # Trades perdedores
     total_pnl: float = 0.0                     # PnL acumulado
-    sharpe_ratio: float = 0.0                  # Sharpe Ratio
+    sharpe_ratio: float = 1.2                  # FIX #1 prior (sharpe_factor ≈ 0.733)
     max_drawdown: float = 0.0                  # Máximo drawdown
     current_drawdown: float = 0.0              # Drawdown atual
     peak_capital: float = 0.0                  # Pico de capital
-    kelly_fraction: float = 0.01               # Fração de Kelly
+    kelly_fraction: float = 0.05               # FIX #1 prior (1% → 5%)
     performance_score: float = 0.0             # Score de performance
     active: bool = True                        # Agente ativo?
     created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
@@ -379,10 +387,22 @@ class AgentEcosystem:
         
         self.allocated_capital = self.total_capital
     
-    def get_best_agent(self) -> Optional[CompetitiveAgent]:
-        """Retorna o agente com melhor performance score."""
+    def get_best_agent(self,
+                       allowed_strategies: Optional[List[str]] = None
+                       ) -> Optional[CompetitiveAgent]:
+        """Retorna o agente com melhor performance score.
+
+        FIX #2 — Filtra por `allowed_strategies` (vinda de SessionConfig)
+        antes de ordenar, evitando mismatch sessão↔estratégia.
+        """
         with self.lock:
             active_agents = [a for a in self.agents.values() if a.active]
+            if allowed_strategies:
+                filtered = [a for a in active_agents if a.strategy_name in allowed_strategies]
+                # Se filtro deixou o pool vazio, fallback ao pool ativo geral
+                # (evita starvation em sessões muito restritas).
+                if filtered:
+                    active_agents = filtered
             if not active_agents:
                 return None
             return max(active_agents, key=lambda a: a.performance_score)
@@ -527,12 +547,15 @@ class EcosystemOrchestrator:
         """Retorna o ecossistema de um ativo."""
         return self.ecosystems.get(asset)
     
-    def get_best_agent_for_asset(self, asset: str) -> Optional[CompetitiveAgent]:
-        """Retorna o melhor agente para um ativo."""
+    def get_best_agent_for_asset(self, asset: str,
+                                 allowed_strategies: Optional[List[str]] = None
+                                 ) -> Optional[CompetitiveAgent]:
+        """Retorna o melhor agente para um ativo, opcionalmente filtrando
+        por estratégias permitidas (FIX #2 — sessão-aware)."""
         ecosystem = self.ecosystems.get(asset)
         if not ecosystem:
             return None
-        return ecosystem.get_best_agent()
+        return ecosystem.get_best_agent(allowed_strategies=allowed_strategies)
     
     def get_signal_for_asset(self, asset: str, market_data: Dict[str, Any],
                             min_confidence: float = 0.60) -> Optional[StrategySignal]:

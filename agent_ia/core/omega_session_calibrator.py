@@ -141,7 +141,9 @@ class SessionConfigCatalog:
                 "XAUUSD",      # Ouro — alta liquidez 24h
                 "AUDUSD",      # Dólar australiano — sessão asiática
                 "NZDUSD",      # Dólar neozelandês — sessão asiática
-                "USDJPY"       # Iene japonês — sessão asiática
+                "USDJPY",      # Iene japonês — sessão asiática
+                "BTCUSD",      # FIX #3 — cripto opera 24/7, alta liquidez na Ásia (Coreia/Japão)
+                "ETHUSD"       # FIX #3 — idem
             ],
             active_strategies=[
                 "SCALPING",        # Curto prazo em baixa volatilidade
@@ -177,7 +179,9 @@ class SessionConfigCatalog:
                 "EURUSD",      # Euro — principal par europeu
                 "GBPUSD",      # Libra — sessão britânica
                 "XAUUSD",      # Ouro — alta liquidez
-                "GER40"        # Índice alemão — mercado europeu
+                "GER40",       # Índice alemão — mercado europeu
+                "BTCUSD",      # FIX #3 — cripto incluso
+                "ETHUSD"       # FIX #3 — cripto incluso
             ],
             active_strategies=[
                 "TREND_FOLLOWING",  # Tendências fortes na abertura
@@ -215,7 +219,9 @@ class SessionConfigCatalog:
                 "EURUSD",      # Euro — sobreposição com Londres
                 "GBPUSD",      # Libra — sobreposição
                 "US500",       # S&P 500 — mercado americano
-                "NAS100"       # NASDAQ — tecnologia
+                "NAS100",      # NASDAQ — tecnologia
+                "BTCUSD",      # FIX #3 — NY é sessão de pico de volume cripto USD
+                "ETHUSD"       # FIX #3 — idem
             ],
             active_strategies=[
                 "MOMENTUM",         # Movimentos rápidos
@@ -247,6 +253,7 @@ class SessionConfigCatalog:
         # Características: Liquidez decrescente, índices e cripto ativos
         # Edge: Arbitragem e adaptativa em mercados de transição
         # =====================================================================
+        # OVERLAP — FIX #3: SOL/DOG incluídos
         self._configs[MarketSession.OVERLAP] = SessionConfig(
             session=MarketSession.OVERLAP,
             priority_assets=[
@@ -254,12 +261,15 @@ class SessionConfigCatalog:
                 "NAS100",      # NASDAQ — after-hours
                 "BTCUSD",      # Bitcoin — mercado 24h
                 "ETHUSD",      # Ethereum — mercado 24h
-                "XAUUSD"       # Ouro — liquidez residual
+                "XAUUSD",      # Ouro — liquidez residual
+                "SOLUSD",      # FIX #3 — altcoin com volume relevante em OVERLAP
+                "DOGUSD"       # FIX #3 — altcoin de retail, alta atividade após NY
             ],
             active_strategies=[
                 "ADAPTIVE",         # Adaptativa para transição
                 "ARBITRAGE",        # Spreads entre ativos
                 "MEAN_REVERSION",   # Reversão em mercados de baixa liquidez
+                "SCALPING",         # FIX #4 — SCALPING para cobrir cripto,
                 "MARKET_MAKING"     # Spread capture residual
             ],
             max_lot=0.01,              # Lote padrão
@@ -285,8 +295,8 @@ class SessionConfigCatalog:
         # =====================================================================
         self._configs[MarketSession.CLOSED] = SessionConfig(
             session=MarketSession.CLOSED,
-            priority_assets=["BTCUSD", "ETHUSD"],  # Apenas cripto 24h
-            active_strategies=["MARKET_MAKING"],    # Apenas spread capture mínimo
+            priority_assets=["BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD"],  # FIX #3 — cripto 24h ampliado
+            active_strategies=["MARKET_MAKING", "ADAPTIVE"],    # FIX #2 — ADAPTIVE para evitar starvation cripto
             max_lot=0.005,
             min_confidence=0.85,       # Confiança muito elevada
             max_positions=1,
@@ -463,6 +473,32 @@ class SessionCalibrator:
 # =============================================================================
 # FUNÇÕES UTILITÁRIAS
 # =============================================================================
+
+def get_effective_min_confidence(base_min_confidence: float,
+                                 total_trades: int,
+                                 warmup_trades: int = 20,
+                                 juvenile_trades: int = 100) -> float:
+    """FIX #4 — min_confidence dinâmico por maturidade do agente.
+
+    Em cold-start (total_trades=0) o `risk_adj_conf` é matematicamente
+    limitado a 0.50 × 0.333 ≈ 0.167. Min_conf base de 0.65–0.85 é
+    inalcançável → HOLD eterno. Este helper relaxa o threshold em
+    duas fases (warmup ×0.50, juvenil ×0.75) até maturidade.
+
+    Args:
+        base_min_confidence: limiar maduro (de SessionConfig.min_confidence)
+        total_trades: histórico do agente
+        warmup_trades: limite superior da fase warmup (×0.50 de relax)
+        juvenile_trades: limite superior da fase juvenil (×0.75 de relax)
+
+    Returns:
+        threshold efetivo aplicado nesta tentativa de sinal.
+    """
+    if total_trades < warmup_trades:
+        return round(base_min_confidence * 0.50, 4)
+    if total_trades < juvenile_trades:
+        return round(base_min_confidence * 0.75, 4)
+    return float(base_min_confidence)
 
 def get_session_for_hour(hour: int) -> MarketSession:
     """Retorna a sessão para uma hora específica (0-23)."""

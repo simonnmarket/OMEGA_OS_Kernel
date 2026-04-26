@@ -583,8 +583,18 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
             log.error("[FASE4] Falha ao inicializar Agente IA: %s — fallback momentum", _ia_init_err)
             agent_ia = None
 
+    # FIX #5 — Scheduler de-bias: embaralha a ordem dos ativos a cada ciclo
+    # com seed determinística por minuto (auditável). Quando MAX_POSITIONS
+    # limita slots, a lista determinística fazia com que apenas o primeiro
+    # ativo (BTCUSD) recebesse 100% das ordens. Shuffle quebra esse viés.
+    import random as _rnd_fix5
+    _rnd_fix5.seed(int(time.time()) // 60)
+    ativos_scheduled = list(ativos)
+    _rnd_fix5.shuffle(ativos_scheduled)
+    log.info("[FIX5] Scheduler de-bias aplicado | ordem=%s", ativos_scheduled)
+
     try:
-        for asset in ativos:
+        for asset in ativos_scheduled:
             for tf in timeframes:
                 # Guardrail de Janela — V9: 24/5 liberado (CQO/CTO)
                 import os
@@ -694,7 +704,14 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         except Exception as e:
                             log.warning("[%s %s] spoof_detector falhou: %s", asset, tf, e)
                         try:
+                            # FIX #6 — Latency split: medimos só a decisão IA (CPU pura),
+                            # excluindo o roundtrip MT5/broker (medido em latency_ms).
+                            _t_dec_0 = time.perf_counter()
                             ia_signal = agent_ia.get_signal(asset, signature_scores=sig_scores or {})
+                            _ai_decision_ms = round((time.perf_counter() - _t_dec_0) * 1000, 2)
+                            log.info("[%s %s] FIX6 ai_decision_ms=%.2f", asset, tf, _ai_decision_ms)
+                            if isinstance(ia_signal, dict):
+                                ia_signal['_ai_decision_ms'] = _ai_decision_ms
                             required_keys = ['action', 'direction', 'confidence']
                             if not all(k in ia_signal for k in required_keys):
                                 raise ValueError(f"Sinal IA malformado: faltam {required_keys}")

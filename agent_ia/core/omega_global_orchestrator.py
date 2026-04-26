@@ -245,7 +245,11 @@ class OmegaGlobalOrchestrator:
                 return self._no_signal(asset, "Já existe posição aberta neste ativo")
             
             # 6. Obter melhor agente do ecossistema
-            agent = self.ecosystem.get_best_agent_for_asset(asset)
+            #    FIX #2 — filtra por estratégias permitidas na sessão
+            agent = self.ecosystem.get_best_agent_for_asset(
+                asset,
+                allowed_strategies=session_config.active_strategies
+            )
             if not agent or not agent.active:
                 return self._no_signal(asset, "Nenhum agente ativo disponível")
             
@@ -269,10 +273,18 @@ class OmegaGlobalOrchestrator:
             adjusted_confidence = min(0.95, adjusted_confidence)
             
             # 10. Verificar confiança mínima da sessão
-            if adjusted_confidence < session_config.min_confidence:
+            #     FIX #4 — min_confidence dinâmico por maturidade do agente.
+            from agent_ia.core.omega_session_calibrator import get_effective_min_confidence
+            effective_min_conf = get_effective_min_confidence(
+                base_min_confidence=session_config.min_confidence,
+                total_trades=agent.total_trades,
+            )
+            if adjusted_confidence < effective_min_conf:
                 return self._no_signal(
-                    asset, 
-                    f"Confiança {adjusted_confidence:.2f} < mínima {session_config.min_confidence}"
+                    asset,
+                    f"Confiança {adjusted_confidence:.2f} < efetiva "
+                    f"{effective_min_conf:.2f} (base {session_config.min_confidence}, "
+                    f"trades={agent.total_trades})"
                 )
             
             # 11. Aplicar filtro de assinaturas (se disponível)
@@ -314,9 +326,24 @@ class OmegaGlobalOrchestrator:
             tp_pips = atr * session_config.tp_atr_multiplier
             
             # 14. Verificar spread máximo
+            #     FIX bonus — `max_spread_pips` é unidade FX. Cripto/índices
+            #     reportam spread em pontos absolutos relativos ao preço; um
+            #     teto relativo (0.5% do preço) cobre todos os ativos sem
+            #     mismatch de unidade. Para FX puro (preço < 50) mantemos o
+            #     check absoluto original.
             spread = market_data.get('spread', 0)
-            if spread > session_config.max_spread_pips:
-                return self._no_signal(asset, f"Spread {spread:.1f} > máximo {session_config.max_spread_pips}")
+            price = market_data.get('close', market_data.get('price', 0)) or 1.0
+            spread_pct = (spread / price) if price else 0.0
+            if price >= 50:
+                fail = spread_pct > 0.005
+            else:
+                fail = spread > session_config.max_spread_pips
+            if fail:
+                return self._no_signal(
+                    asset,
+                    f"Spread {spread:.1f} ({spread_pct*100:.2f}%) excede limite "
+                    f"(abs<{session_config.max_spread_pips} pips ou rel<0.5%)"
+                )
             
             return {
                 'action': signal.action.value,
