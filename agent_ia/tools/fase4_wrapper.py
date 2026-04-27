@@ -213,7 +213,7 @@ def evaluate_go_no_go(metrics: Dict[str, Any],
         "min_win_rate_$":         float(os.getenv("OMEGA_GO_MIN_WIN_RATE", "0.45")),
         "min_profit_factor":      float(os.getenv("OMEGA_GO_MIN_PF", "1.3")),
         "min_expectancy":         float(os.getenv("OMEGA_GO_MIN_EXP", "0.02")),    # Goldman standard
-        "min_trades":             int(os.getenv("OMEGA_GO_MIN_TRADES", "50")),
+        "min_trades":             int(os.getenv("OMEGA_GO_MIN_TRADES", "20")),    # Fase1: 20; producao: 50
         "min_sharpe":             float(os.getenv("OMEGA_GO_MIN_SHARPE", "0.0")),
         "max_drawdown_pct":       float(os.getenv("OMEGA_GO_MAX_DD", "0.05")),
         "max_consecutive_losses": int(os.getenv("OMEGA_GO_MAX_CONSEC_LOSS", "5")),

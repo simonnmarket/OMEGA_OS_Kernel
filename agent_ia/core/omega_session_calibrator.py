@@ -323,8 +323,16 @@ class SessionConfigCatalog:
         )
     
     def get_config(self, session: MarketSession) -> SessionConfig:
-        """Retorna configuração para uma sessão."""
-        return self._configs.get(session, self._configs[MarketSession.CLOSED])
+        """Retorna configuração para uma sessão, com override via env var."""
+        cfg = self._configs.get(session, self._configs[MarketSession.CLOSED])
+        _env_conf = os.getenv("OMEGA_MIN_CONFIDENCE")
+        if _env_conf is not None:
+            try:
+                import dataclasses
+                cfg = dataclasses.replace(cfg, min_confidence=float(_env_conf))
+            except Exception:
+                pass
+        return cfg
     
     def get_all_configs(self) -> Dict[MarketSession, SessionConfig]:
         """Retorna todas as configurações."""
