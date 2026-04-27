@@ -21,11 +21,13 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import shutil
 import subprocess
 import sys
 import time
+from collections import deque
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List
@@ -46,6 +48,120 @@ XAU_SYMBOLS    = ["XAUUSD"]
 ALL_SYMBOLS    = FOREX_SYMBOLS + XAU_SYMBOLS + INDEX_SYMBOLS + CRYPTO_SYMBOLS
 TIMEFRAMES = ["H1", "H4"]
 EQUITY = 10000.0
+
+# =============================================================================
+# CQO Opcao C (27/04/2026): LatencyCircuitBreaker + PerformanceMonitor
+# Ref: Goldman Sachs Marquee (2025), Citadel Securities (2021), Two Sigma (2020)
+# =============================================================================
+
+class LatencyCircuitBreaker:
+    """Desativa IA se p95 latencia > threshold por janela sustentada."""
+
+    def __init__(self):
+        self.p95_threshold_ms  = float(os.getenv("OMEGA_LCB_P95_THRESHOLD_MS", "500.0"))
+        self.sustained_cycles  = int(os.getenv("OMEGA_LCB_SUSTAINED_CYCLES", "5"))
+        self._history: deque   = deque(maxlen=100)
+        self.triggered         = False
+        self.trigger_reason    = ""
+
+    def record(self, latency_ms: float) -> None:
+        self._history.append(latency_ms)
+        if len(self._history) >= self.sustained_cycles:
+            recent = list(self._history)[-self.sustained_cycles:]
+            p95 = sorted(recent)[int(len(recent) * 0.95)]
+            if p95 > self.p95_threshold_ms and not self.triggered:
+                self.triggered = True
+                self.trigger_reason = (
+                    f"p95={p95:.1f}ms > {self.p95_threshold_ms}ms "
+                    f"em {self.sustained_cycles} ciclos consecutivos"
+                )
+                print(f"[LCB WARNING] IA latencia degradada: {self.trigger_reason}")
+
+    def status(self) -> dict:
+        vals = list(self._history)
+        p95 = sorted(vals)[int(len(vals) * 0.95)] if vals else 0.0
+        return {"triggered": self.triggered, "reason": self.trigger_reason,
+                "current_p95_ms": round(p95, 1), "samples": len(vals)}
+
+
+class PerformanceMonitor:
+    """Monitoramento continuo de P&L com alertas em tempo real."""
+
+    def __init__(self):
+        self.window          = int(os.getenv("OMEGA_PM_WINDOW_TRADES", "20"))
+        self.sharpe_min      = float(os.getenv("OMEGA_PM_SHARPE_MIN", "0.0"))
+        self.dd_max          = float(os.getenv("OMEGA_PM_DRAWDOWN_MAX", "0.05"))
+        self.wr_min          = float(os.getenv("OMEGA_PM_WIN_RATE_MIN", "0.40"))
+        self.consec_max      = int(os.getenv("OMEGA_PM_CONSEC_LOSSES_MAX", "5"))
+        self.exp_min         = float(os.getenv("OMEGA_PM_EXPECTANCY_MIN", "0.0"))
+        self._pnls: deque    = deque(maxlen=1000)
+        self.alerts: list    = []
+
+    def record_cycle(self, pnl_cycle: dict) -> None:
+        net = pnl_cycle.get("net_pnl", 0.0)
+        n   = pnl_cycle.get("closed_positions", 0)
+        if n > 0:
+            self._pnls.append(net)
+            self._check_alerts()
+
+    def _check_alerts(self) -> None:
+        if len(self._pnls) < self.window:
+            return
+        pnls = list(self._pnls)[-self.window:]
+        arr  = [p for p in pnls]
+        wins = [p for p in arr if p > 0]
+        losses = [p for p in arr if p < 0]
+        wr   = len(wins) / len(arr) if arr else 0.0
+        exp  = sum(arr) / len(arr) if arr else 0.0
+        cum  = []
+        s = 0.0
+        for p in arr:
+            s += p
+            cum.append(s)
+        peak = max(cum) if cum else 0.0
+        dd   = (peak - cum[-1]) / max(abs(peak), 1.0) if cum else 0.0
+        consec = 0
+        for p in reversed(arr):
+            if p < 0:
+                consec += 1
+            else:
+                break
+        if wr < self.wr_min:
+            self._alert("WIN_RATE_LOW", f"wr={wr*100:.1f}% < {self.wr_min*100:.1f}%")
+        if dd > self.dd_max:
+            self._alert("DRAWDOWN_HIGH", f"dd={dd*100:.1f}% > {self.dd_max*100:.1f}%")
+        if exp < self.exp_min:
+            self._alert("EXPECTANCY_NEGATIVE", f"exp={exp:.4f} < {self.exp_min:.4f}")
+        if consec >= self.consec_max:
+            self._alert("CONSECUTIVE_LOSSES", f"{consec} perdas consecutivas")
+
+    def _alert(self, kind: str, msg: str) -> None:
+        entry = {"type": kind, "msg": msg,
+                 "ts": datetime.now(timezone.utc).isoformat()}
+        recent = [a["type"] for a in self.alerts[-5:]]
+        if kind not in recent:
+            self.alerts.append(entry)
+            sev = "CRITICAL" if "DRAWDOWN" in kind or "CONSEC" in kind else "WARNING"
+            print(f"[PM {sev}] {kind}: {msg}")
+
+    def report(self) -> dict:
+        pnls = list(self._pnls)
+        if not pnls:
+            return {"samples": 0, "alerts": self.alerts}
+        arr = pnls
+        wins = [p for p in arr if p > 0]
+        losses = [abs(p) for p in arr if p < 0]
+        pf = (sum(wins) / sum(losses)) if losses else math.inf
+        return {
+            "samples":    len(arr),
+            "net_total":  round(sum(arr), 4),
+            "win_rate":   round(len(wins) / len(arr), 4) if arr else 0.0,
+            "profit_factor": round(pf, 3) if pf != math.inf else "inf",
+            "expectancy": round(sum(arr) / len(arr), 4) if arr else 0.0,
+            "alerts_count": len(self.alerts),
+            "alerts":     self.alerts[-5:],
+        }
+
 
 # A5 (CEO+CTO 2026-04-27): TTL para fechamento — só fecha posições mais antigas
 # que TTL_SEC, deixando SL/TP atuarem em janelas curtas. Default 600s (10min).
@@ -395,6 +511,9 @@ def main() -> int:
     closes: List[List[Dict[str, Any]]] = []
     pnl_per_cycle: List[Dict[str, Any]] = []
     run_t0 = int(time.time())
+    # CQO Opcao C: monitoramento de latencia e performance em tempo real
+    lcb = LatencyCircuitBreaker()
+    pm  = PerformanceMonitor()
 
     for i in range(1, args.cycles + 1):
         t_cycle_start = int(time.time())
@@ -417,6 +536,9 @@ def main() -> int:
         n_closed = sum(1 for c in closed if c.get("retcode") == 10009)
         n_skipped = sum(1 for c in closed if "ttl_skip" in (c.get("reason") or ""))
         last = summaries[-1].get("online_stats", {}) if summaries[-1] else {}
+        # CQO: alimentar circuit breaker e performance monitor
+        lcb.record(float(last.get("max_latency_ms", 0) or 0))
+        pm.record_cycle(pnl_cycle)
         print(f"[CYCLE {i:02d}/{args.cycles}] rc={rc} executed={last.get('executed', 0)} "
               f"hit={last.get('avg_hit_rate_134', 0)} lat_max={last.get('max_latency_ms', 0)} "
               f"closed={n_closed} ttl_kept={n_skipped} "
@@ -440,6 +562,9 @@ def main() -> int:
     agg["close_ttl_sec"] = CLOSE_TTL_SEC
     # A4: critério GO/NO-GO expandido (CIO+CQO: 10 checks)
     agg["go_no_go"] = evaluate_go_no_go(pnl_run, agg=agg)
+    # CQO Opcao C: gravar relatorio de monitoramento no aggregate
+    agg["latency_circuit_breaker"] = lcb.status()
+    agg["performance_monitor"]    = pm.report()
 
     agg_path = out_dir / f"fase4_{args.label}_aggregate.json"
     with open(agg_path, "w", encoding="utf-8") as f:
@@ -474,6 +599,17 @@ def main() -> int:
     print(f"  KS_triggers={agg.get('kill_switch_triggers',0)} concentration={agg.get('max_concentration_pct',0):.1f}% corr_blocks={agg.get('corr_blocks',0)}")
     print(f"  bias_ratio={_bias_ratio:.2f} slip_avg={agg.get('slippage_avg_pts',0):.2f}pts")
     print(f"  SHA3={sha}")
+    # CQO: imprimir status de monitoramento
+    lcb_st = lcb.status()
+    pm_rep = pm.report()
+    if lcb_st["triggered"]:
+        print(f"  [LCB WARNING] Circuit breaker ativo: {lcb_st['reason']}")
+    else:
+        print(f"  [LCB OK] p95_latency={lcb_st['current_p95_ms']}ms (threshold={lcb.p95_threshold_ms}ms)")
+    if pm_rep["alerts_count"] > 0:
+        print(f"  [PM ALERTS={pm_rep['alerts_count']}] {[a['type'] for a in pm_rep['alerts']]}")
+    else:
+        print(f"  [PM OK] samples={pm_rep['samples']} net_total=${pm_rep.get('net_total',0):+.2f}")
     print("=" * 70)
     return 0 if agg["go_no_go"]["go"] else 2
 
