@@ -49,7 +49,7 @@ AGENT_IA_PATH = Path(__file__).parent.parent / "agent_ia"
 if AGENT_IA_PATH.exists():
     sys.path.insert(0, str(AGENT_IA_PATH))
 
-USE_AGENT_IA = False  # ⚠️ MANTER DESLIGADO ATÉ GO DO CONSELHO
+USE_AGENT_IA = os.getenv("OMEGA_USE_AGENT_IA", "0").strip() == "1"  # Habilitar: OMEGA_USE_AGENT_IA=1
 if USE_AGENT_IA:
     try:
         from agent_ia.core.omega_strategy_catalog import StrategyCatalog

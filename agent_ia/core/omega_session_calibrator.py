@@ -178,6 +178,8 @@ class SessionConfigCatalog:
             priority_assets=[
                 "EURUSD",      # Euro — principal par europeu
                 "GBPUSD",      # Libra — sessão britânica
+                "USDJPY",      # Iene — ativo nos cruzes europeus
+                "AUDUSD",      # Aussie — liquido em abertura Londres
                 "XAUUSD",      # Ouro — alta liquidez
                 "GER40",       # Índice alemão — mercado europeu
                 "BTCUSD",      # FIX #3 — cripto incluso
@@ -218,6 +220,9 @@ class SessionConfigCatalog:
                 "XAUUSD",      # Ouro — máxima liquidez
                 "EURUSD",      # Euro — sobreposição com Londres
                 "GBPUSD",      # Libra — sobreposição
+                "USDJPY",      # Iene — ativo durante NY
+                "AUDUSD",      # Aussie — liquido em NY
+                "USDCAD",      # Loonie — petróleo / dados CAD
                 "US500",       # S&P 500 — mercado americano
                 "NAS100",      # NASDAQ — tecnologia
                 "BTCUSD",      # FIX #3 — NY é sessão de pico de volume cripto USD

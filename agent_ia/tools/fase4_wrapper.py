@@ -40,6 +40,10 @@ LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 OMEGA_MAGIC = 234001
 CRYPTO_SYMBOLS = ["BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD"]
+FOREX_SYMBOLS  = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD"]
+INDEX_SYMBOLS  = ["US500", "NAS100"]
+XAU_SYMBOLS    = ["XAUUSD"]
+ALL_SYMBOLS    = FOREX_SYMBOLS + XAU_SYMBOLS + INDEX_SYMBOLS + CRYPTO_SYMBOLS
 TIMEFRAMES = ["H1", "H4"]
 EQUITY = 10000.0
 
@@ -50,19 +54,20 @@ CLOSE_TTL_SEC = int(os.getenv("OMEGA_CLOSE_TTL_SEC", "600"))
 CLOSE_MODE    = os.getenv("OMEGA_CLOSE_MODE", "ttl").lower()
 
 
-def close_crypto_omega(label: str) -> List[Dict[str, Any]]:
+def close_crypto_omega(label: str, symbols: List[str] = None) -> List[Dict[str, Any]]:
     """A5: respeita TTL. Em modo 'ttl' só fecha posições mais antigas que TTL.
     Em modo 'never' nunca fecha. Em 'force' fecha tudo (legado)."""
     if CLOSE_MODE == "never":
         return [{"info": "close_mode=never — SL/TP livres"}]
     if not mt5.initialize():
         return [{"error": "mt5_init_failed"}]
+    target_symbols = set(symbols or ALL_SYMBOLS)
     try:
         positions = mt5.positions_get() or []
         results = []
         now = int(time.time())
         for p in positions:
-            if p.magic != OMEGA_MAGIC or p.symbol not in CRYPTO_SYMBOLS:
+            if p.magic != OMEGA_MAGIC or p.symbol not in target_symbols:
                 continue
             age = now - int(p.time)
             if CLOSE_MODE == "ttl" and age < CLOSE_TTL_SEC:
@@ -113,7 +118,8 @@ def collect_pnl_window(t_from_unix: int, t_to_unix: int) -> Dict[str, Any]:
         from datetime import datetime as _dt
         deals = mt5.history_deals_get(_dt.fromtimestamp(t_from_unix),
                                        _dt.fromtimestamp(t_to_unix)) or []
-        deals = [d for d in deals if d.magic == OMEGA_MAGIC and d.symbol in CRYPTO_SYMBOLS]
+        _target = set(ALL_SYMBOLS)
+        deals = [d for d in deals if d.magic == OMEGA_MAGIC and d.symbol in _target]
         # Agrupar por position_id e somar profit+swap+commission
         positions: Dict[int, Dict[str, Any]] = {}
         for d in deals:
@@ -189,13 +195,17 @@ def evaluate_go_no_go(metrics: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def run_shadow_loop(cycle_log: Path) -> int:
+def run_shadow_loop(cycle_log: Path, label: str = "BASELINE",
+                    symbols: List[str] = None) -> int:
+    active_syms = symbols or ALL_SYMBOLS
     env = os.environ.copy()
     env["PYTHONPATH"] = str(ROOT) + (os.pathsep + env.get("PYTHONPATH", "") if env.get("PYTHONPATH") else "")
+    if label == "IA_ON":
+        env["OMEGA_USE_AGENT_IA"] = "1"
     cmd = [
         sys.executable, str(SHADOW_LOOP),
         "--mode", "paper",
-        "--ativos", *CRYPTO_SYMBOLS,
+        "--ativos", *active_syms,
         "--timeframes", *TIMEFRAMES,
         "--equity", str(EQUITY),
     ]
@@ -283,6 +293,8 @@ def main() -> int:
     ap.add_argument("--cycles", type=int, default=30)
     ap.add_argument("--sleep-after-run", type=float, default=2.0)
     ap.add_argument("--sleep-after-close", type=float, default=2.0)
+    ap.add_argument("--symbols", nargs="+", default=ALL_SYMBOLS,
+                    help="Lista de símbolos (default: todos 11 ativos)")
     args = ap.parse_args()
 
     ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
@@ -298,7 +310,7 @@ def main() -> int:
     for i in range(1, args.cycles + 1):
         t_cycle_start = int(time.time())
         cycle_log = out_dir / f"cycle_{i:02d}.log"
-        rc = run_shadow_loop(cycle_log)
+        rc = run_shadow_loop(cycle_log, label=args.label, symbols=args.symbols)
         time.sleep(args.sleep_after_run)
         ps_src = AUDIT_PAPER / "paper_summary.json"
         ps_dst = out_dir / f"paper_summary_{i:02d}.json"
@@ -307,7 +319,7 @@ def main() -> int:
             summaries.append(parse_paper_summary(ps_dst))
         else:
             summaries.append({})
-        closed = close_crypto_omega(args.label)
+        closed = close_crypto_omega(args.label, symbols=args.symbols)
         closes.append(closed)
         time.sleep(args.sleep_after_close)
         # A3: P&L do ciclo (janela t_cycle_start..now)
