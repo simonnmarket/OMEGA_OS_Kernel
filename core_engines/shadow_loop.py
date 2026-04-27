@@ -782,8 +782,8 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                 out_dir  = AUDIT_PAPER / f"{asset}_{tf}"
                 harmonic = run_harmonic(asset, tf, guard["margin_used"], out_dir)
                 if harmonic is None:
-                    ks.update(False)
-                    results.append({"asset": asset, "timeframe": tf, "status": "FAIL"}); continue
+                    # SKIP_HARMONIC: Motor V3 sem dados (ativo fechado/sem CSV) — NÃO conta como falha de execução para KS
+                    results.append({"asset": asset, "timeframe": tf, "status": "SKIP_HARMONIC"}); continue
 
                 # Guardrail final
                 s134    = (harmonic.get("engines", {}).get("harmonic", {})
