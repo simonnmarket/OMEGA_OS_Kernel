@@ -106,7 +106,7 @@ AUDIT_PAPER.mkdir(parents=True, exist_ok=True)
 
 # ─── Configuração de Risco ───────────────────────────────────────────────────
 DEMO_EQUITY_USD    = 10_000.0
-RISK_PER_TRADE_PCT = 0.0025     # 0,25% por trade
+RISK_PER_TRADE_PCT = float(os.getenv("OMEGA_RISK_PER_TRADE", "0.0025"))  # COO Fase1: 0.001 (0.1%)
 MAX_POSITIONS      = int(os.getenv("OMEGA_MAX_POSITIONS", "6"))          # CIO fase conservadora: 2
 DD_DAILY_MAX       = float(os.getenv("OMEGA_DD_DAILY_MAX", "0.05"))       # CIO fase conservadora: 0.01
 MAX_CONSEC_FAIL    = 3
@@ -180,6 +180,20 @@ EDGE_MIN_ATR_PCT      = float(os.getenv("OMEGA_EDGE_MIN_ATR_PCT", "0.0015"))   #
 EDGE_MIN_ATR_OVER_SPR = float(os.getenv("OMEGA_EDGE_MIN_ATR_OVER_SPR", "5.0")) # ATR ≥ 5× spread
 EDGE_MIN_ADX          = float(os.getenv("OMEGA_EDGE_MIN_ADX", "20.0"))         # ADX ≥ 20
 
+# CTO-spec: classificação por classe de ativo (thresholds de volume_ratio)
+_CRYPTO_ASSETS = {"BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD"}
+_METAL_ASSETS  = {"XAUUSD", "XAGUSD"}
+_INDEX_ASSETS  = {"US500", "NAS100", "GER40", "UK100", "US30"}
+_VOL_MIN_BY_CLASS = {"forex": 0.70, "crypto": 0.80, "metal": 0.70, "index": 0.70}
+
+def classify_asset(symbol: str) -> str:
+    """Classifica ativo em forex/crypto/metal/index (CTO spec)."""
+    s = symbol.upper()
+    if s in _CRYPTO_ASSETS: return "crypto"
+    if s in _METAL_ASSETS:  return "metal"
+    if s in _INDEX_ASSETS:  return "index"
+    return "forex"
+
 def _atr_simple(highs, lows, closes, n: int = 14) -> float:
     import numpy as np
     if len(closes) < n + 1:
@@ -236,25 +250,38 @@ def has_edge_for_momentum(symbol: str) -> Tuple[bool, dict]:
     atr_pct       = atr / price if price > 0 else 0.0
     atr_over_spr  = (atr / spread_abs) if spread_abs > 0 else 0.0
 
+    # Volume ratio (CTO spec: liquidez relativa = vol_atual / media_20c)
+    volumes = np.array([r['tick_volume'] for r in rates], dtype=float)
+    avg_vol_20    = float(np.mean(volumes[-20:])) if len(volumes) >= 20 else 0.0
+    cur_vol       = float(volumes[-1])            if len(volumes) > 0  else 0.0
+    vol_ratio     = (cur_vol / avg_vol_20) if avg_vol_20 > 0 else 1.0
+    asset_class   = classify_asset(symbol)
+    min_vol_ratio = _VOL_MIN_BY_CLASS.get(asset_class, 0.70)
+
     metrics = {
         "atr": round(atr, 6),
         "atr_pct": round(atr_pct, 6),
         "spread": round(spread_abs, 6),
         "atr_over_spread": round(atr_over_spr, 3),
         "adx": round(adx, 2),
+        "vol_ratio": round(vol_ratio, 3),
+        "asset_class": asset_class,
         "thr_atr_pct": EDGE_MIN_ATR_PCT,
         "thr_atr_over_spr": EDGE_MIN_ATR_OVER_SPR,
         "thr_adx": EDGE_MIN_ADX,
+        "thr_vol_ratio": min_vol_ratio,
     }
     ok = (atr_pct >= EDGE_MIN_ATR_PCT
           and atr_over_spr >= EDGE_MIN_ATR_OVER_SPR
-          and adx >= EDGE_MIN_ADX)
+          and adx >= EDGE_MIN_ADX
+          and vol_ratio >= min_vol_ratio)
     metrics["ok"] = ok
     if not ok:
         reasons = []
         if atr_pct < EDGE_MIN_ATR_PCT: reasons.append(f"atr_pct<{EDGE_MIN_ATR_PCT}")
         if atr_over_spr < EDGE_MIN_ATR_OVER_SPR: reasons.append(f"atr/spr<{EDGE_MIN_ATR_OVER_SPR}")
         if adx < EDGE_MIN_ADX: reasons.append(f"adx<{EDGE_MIN_ADX}")
+        if vol_ratio < min_vol_ratio: reasons.append(f"vol_ratio<{min_vol_ratio}({asset_class})")
         metrics["reason"] = "|".join(reasons)
     return ok, metrics
 
@@ -861,12 +888,15 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                             continue
 
                     current_positions = []
+                    all_open_positions = []
                     if mt5_connected:
                         pos_list = mt5.positions_get(symbol=asset)
                         if pos_list:
                             current_positions = [p._asdict() for p in pos_list]
+                        _omega_all = mt5.positions_get(magic=OMEGA_MAGIC) or []
+                        all_open_positions = [p._asdict() for p in _omega_all]
 
-                    if correlation_filter.should_trade(asset, current_positions):
+                    if correlation_filter.should_trade(asset, all_open_positions, direction=signal_dir):
                         # Lote: clamp(min(lot_info, ia_lot_override or lot_info), 0.01, MAX_LOT)
                         eff_lot = lot_info["lot"]
                         if ia_lot_override is not None:

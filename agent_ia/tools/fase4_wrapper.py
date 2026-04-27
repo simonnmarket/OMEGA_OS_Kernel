@@ -218,6 +218,9 @@ def evaluate_go_no_go(metrics: Dict[str, Any],
         "max_drawdown_pct":       float(os.getenv("OMEGA_GO_MAX_DD", "0.05")),
         "max_consecutive_losses": int(os.getenv("OMEGA_GO_MAX_CONSEC_LOSS", "5")),
         "max_concentration_pct":  float(os.getenv("OMEGA_GO_MAX_CONCENTRATION", "0.40")),
+        "min_hit_rate_pct":        float(os.getenv("OMEGA_GO_MIN_HIT_RATE", "60.0")),
+        "max_p95_latency_ms":      float(os.getenv("OMEGA_GO_MAX_P95_LAT", "200.0")),
+        "min_ia_exec":             int(os.getenv("OMEGA_GO_MIN_IA_EXEC", "30")),
     }
     pf = metrics.get("profit_factor", 0)
     if pf == "inf": pf = float("inf")
@@ -235,7 +238,7 @@ def evaluate_go_no_go(metrics: Dict[str, Any],
         "max_drawdown_ok":    metrics.get("max_drawdown_pct", 0)    <= thr["max_drawdown_pct"],
         "consec_losses_ok":   metrics.get("consecutive_losses", 0) <= thr["max_consecutive_losses"],
     }
-    # --- Checks de agg (KS + concentração) ---
+    # --- Checks de agg (KS + concentracao + COO: hit_rate, p95_lat, ia_exec) ---
     agg_checks: Dict[str, bool] = {}
     if agg:
         ks = agg.get("kill_switch_triggers", 0)
@@ -243,6 +246,14 @@ def evaluate_go_no_go(metrics: Dict[str, Any],
         if isinstance(conc, (int, float)):
             agg_checks["ks_triggers_zero"] = int(ks) == 0
             agg_checks["concentration_ok"] = float(conc) < thr["max_concentration_pct"] * 100
+        # COO + CTO: hit_rate, latencia p95, ia_exec
+        agg_checks["hit_rate_ok"]    = agg.get("hit_rate_avg", 0) * 100 >= thr["min_hit_rate_pct"]
+        agg_checks["p95_latency_ok"] = agg.get("latency_ms_p95", 9999) <= thr["max_p95_latency_ms"]
+        _label = agg.get("label", "BASELINE")
+        if _label == "IA_ON":
+            agg_checks["ia_exec_ok"] = agg.get("total_executed", 0) >= thr["min_ia_exec"]
+        else:
+            agg_checks["ia_exec_ok"] = True
     all_checks = {**mandatory, **recommended, **agg_checks}
     return {
         "go": all(mandatory.values()),
