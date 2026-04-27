@@ -1,0 +1,39 @@
+2026-04-27 14:15:19,302 | INFO | ========================================================================
+2026-04-27 14:15:19,303 | INFO | OMEGA PAPER LOOP v3.0 | 4 ativos × 2 TFs | equity=USD 10000.00
+2026-04-27 14:15:19,303 | INFO | Risk/trade=0.25% | MaxPos=6 | DD_max=5% | MT5_MAGIC=234001
+2026-04-27 14:15:19,303 | INFO | ========================================================================
+2026-04-27 14:15:19,324 | INFO | MT5 conectado | build=5833 | trade_allowed=True | connected=True
+2026-04-27 14:15:19,325 | INFO | MT5 State Sync: 0 posicoes ativas detectadas.
+2026-04-27 14:15:19,325 | INFO | [TESSERACT] Engine ativado para Multi-Timeframe (H4->M1, H1->M3, e buffer de Confluência M15)
+2026-04-27 14:15:19,326 | INFO | [JOHANSEN] Banco de dados de Cointegração lido com sucesso. (1 anchors)
+2026-04-27 14:15:19,326 | INFO | [FIX5] Scheduler de-bias aplicado | ordem=['SOLUSD', 'BTCUSD', 'ETHUSD', 'DOGUSD']
+2026-04-27 14:15:19,326 | INFO | [SOLUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 14:15:21,179 | INFO | [SOLUSD H1] [EDGE_GATE] BLOCKED reason=atr_pct<0.0015|atr/spr<5.0|adx<20.0 atr_pct=0.000713 atr/spr=0.653 adx=16.61
+2026-04-27 14:15:21,180 | INFO | [SOLUSD H4] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 14:15:22,984 | INFO | [SOLUSD H4] [EDGE_GATE] BLOCKED reason=atr_pct<0.0015|atr/spr<5.0|adx<20.0 atr_pct=0.000713 atr/spr=0.653 adx=16.61
+2026-04-27 14:15:22,984 | INFO | [BTCUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 14:15:24,675 | INFO | [BTCUSD H1] [EDGE_GATE] BLOCKED reason=atr_pct<0.0015|adx<20.0 atr_pct=0.000708 atr/spr=6.885 adx=14.32
+2026-04-27 14:15:24,675 | INFO | [BTCUSD H4] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 14:15:26,453 | INFO | [BTCUSD H4] [EDGE_GATE] BLOCKED reason=atr_pct<0.0015|adx<20.0 atr_pct=0.000708 atr/spr=6.885 adx=14.32
+2026-04-27 14:15:26,453 | INFO | [ETHUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 14:15:28,166 | INFO | [ETHUSD H1] [EDGE_GATE] BLOCKED reason=atr_pct<0.0015|atr/spr<5.0|adx<20.0 atr_pct=0.000902 atr/spr=4.08 adx=14.81
+2026-04-27 14:15:28,166 | INFO | [ETHUSD H4] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 14:15:29,879 | INFO | [ETHUSD H4] [EDGE_GATE] BLOCKED reason=atr_pct<0.0015|atr/spr<5.0|adx<20.0 atr_pct=0.000902 atr/spr=4.757 adx=14.81
+2026-04-27 14:15:29,880 | INFO | [DOGUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 14:15:31,592 | INFO | [DOGUSD H1] [EDGE_GATE] BLOCKED reason=atr_pct<0.0015|atr/spr<5.0 atr_pct=0.001098 atr/spr=0.327 adx=28.16
+2026-04-27 14:15:31,593 | INFO | [DOGUSD H4] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 14:15:33,332 | INFO | [DOGUSD H4] [EDGE_GATE] BLOCKED reason=atr_pct<0.0015|atr/spr<5.0 atr_pct=0.001099 atr/spr=0.327 adx=28.16
+2026-04-27 14:15:33,333 | INFO | MT5 desconectado.
+2026-04-27 14:15:33,333 | INFO | \u2500\u2500 ESTATÍSTICAS ONLINE \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+2026-04-27 14:15:33,334 | INFO |   total_signals             : 0
+2026-04-27 14:15:33,334 | INFO |   executed                  : 0
+2026-04-27 14:15:33,334 | INFO |   skipped                   : 0
+2026-04-27 14:15:33,334 | INFO |   avg_hit_rate_134          : 0
+2026-04-27 14:15:33,334 | INFO |   avg_slippage_pts          : 0.0
+2026-04-27 14:15:33,334 | INFO |   avg_latency_ms            : 0.0
+2026-04-27 14:15:33,334 | INFO |   max_latency_ms            : 0
+2026-04-27 14:15:33,335 | INFO | ========================================================================
+2026-04-27 14:15:33,335 | INFO | PAPER LOOP CONCLUÍDO | cycles=8 | KS=False
+2026-04-27 14:15:33,335 | INFO | SHA3 summary: 04a34534033d8a83354ce0efb7da93fefa2329bc9386d57c859096e201d1c53d
+2026-04-27 14:15:33,336 | INFO | Artifacts: C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\audit\paper
+2026-04-27 14:15:33,336 | INFO | ========================================================================

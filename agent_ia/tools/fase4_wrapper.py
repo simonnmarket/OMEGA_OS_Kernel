@@ -43,15 +43,31 @@ CRYPTO_SYMBOLS = ["BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD"]
 TIMEFRAMES = ["H1", "H4"]
 EQUITY = 10000.0
 
+# A5 (CEO+CTO 2026-04-27): TTL para fechamento — só fecha posições mais antigas
+# que TTL_SEC, deixando SL/TP atuarem em janelas curtas. Default 600s (10min).
+CLOSE_TTL_SEC = int(os.getenv("OMEGA_CLOSE_TTL_SEC", "600"))
+# Modos: "ttl" (default, respeita TTL), "never" (nunca fecha), "force" (legado)
+CLOSE_MODE    = os.getenv("OMEGA_CLOSE_MODE", "ttl").lower()
+
 
 def close_crypto_omega(label: str) -> List[Dict[str, Any]]:
+    """A5: respeita TTL. Em modo 'ttl' só fecha posições mais antigas que TTL.
+    Em modo 'never' nunca fecha. Em 'force' fecha tudo (legado)."""
+    if CLOSE_MODE == "never":
+        return [{"info": "close_mode=never — SL/TP livres"}]
     if not mt5.initialize():
         return [{"error": "mt5_init_failed"}]
     try:
         positions = mt5.positions_get() or []
         results = []
+        now = int(time.time())
         for p in positions:
             if p.magic != OMEGA_MAGIC or p.symbol not in CRYPTO_SYMBOLS:
+                continue
+            age = now - int(p.time)
+            if CLOSE_MODE == "ttl" and age < CLOSE_TTL_SEC:
+                results.append({"ticket": p.ticket, "symbol": p.symbol,
+                                "reason": f"ttl_skip age={age}s<{CLOSE_TTL_SEC}"})
                 continue
             tk = mt5.symbol_info_tick(p.symbol)
             if tk is None:
@@ -82,10 +98,95 @@ def close_crypto_omega(label: str) -> List[Dict[str, Any]]:
                 "symbol": p.symbol,
                 "retcode": r.retcode if r else None,
                 "comment": r.comment if r else None,
+                "age_s": age,
             })
         return results
     finally:
         mt5.shutdown()
+
+
+def collect_pnl_window(t_from_unix: int, t_to_unix: int) -> Dict[str, Any]:
+    """A3: KPIs financeiros reais via history_deals na janela do ciclo."""
+    if not mt5.initialize():
+        return {"error": "mt5_init_failed"}
+    try:
+        from datetime import datetime as _dt
+        deals = mt5.history_deals_get(_dt.fromtimestamp(t_from_unix),
+                                       _dt.fromtimestamp(t_to_unix)) or []
+        deals = [d for d in deals if d.magic == OMEGA_MAGIC and d.symbol in CRYPTO_SYMBOLS]
+        # Agrupar por position_id e somar profit+swap+commission
+        positions: Dict[int, Dict[str, Any]] = {}
+        for d in deals:
+            pid = d.position_id
+            if pid not in positions:
+                positions[pid] = {"symbol": d.symbol, "net": 0.0, "deals": 0,
+                                  "opened": False, "closed": False}
+            positions[pid]["net"] += float(d.profit) + float(d.swap) + float(d.commission)
+            positions[pid]["deals"] += 1
+            if d.entry == mt5.DEAL_ENTRY_IN:  positions[pid]["opened"] = True
+            if d.entry == mt5.DEAL_ENTRY_OUT: positions[pid]["closed"] = True
+        # Considerar apenas posições com entrada+saída na janela
+        closed = [p for p in positions.values() if p["closed"]]
+        nets = [p["net"] for p in closed]
+        wins   = [n for n in nets if n > 0]
+        losses = [n for n in nets if n < 0]
+        gross_profit = sum(wins)
+        gross_loss   = abs(sum(losses))
+        net_pnl      = sum(nets)
+        n            = len(nets)
+        win_rate     = (len(wins) / n) if n else 0.0
+        profit_factor= (gross_profit / gross_loss) if gross_loss > 0 else (float("inf") if gross_profit > 0 else 0.0)
+        expectancy   = (net_pnl / n) if n else 0.0
+        avg_win  = (gross_profit / len(wins))   if wins   else 0.0
+        avg_loss = (gross_loss   / len(losses)) if losses else 0.0
+        # Per-symbol
+        per_sym: Dict[str, Dict[str, Any]] = {}
+        for p in closed:
+            s = per_sym.setdefault(p["symbol"], {"n": 0, "net": 0.0, "wins": 0})
+            s["n"]   += 1
+            s["net"] += p["net"]
+            if p["net"] > 0: s["wins"] += 1
+        return {
+            "closed_positions": n,
+            "net_pnl": round(net_pnl, 4),
+            "gross_profit": round(gross_profit, 4),
+            "gross_loss": round(gross_loss, 4),
+            "win_rate_dollar": round(win_rate, 4),
+            "profit_factor": round(profit_factor, 4) if profit_factor != float("inf") else "inf",
+            "expectancy": round(expectancy, 6),
+            "avg_win": round(avg_win, 4),
+            "avg_loss": round(avg_loss, 4),
+            "per_symbol": {k: {kk: (round(vv, 4) if isinstance(vv, float) else vv)
+                              for kk, vv in v.items()} for k, v in per_sym.items()},
+        }
+    finally:
+        mt5.shutdown()
+
+
+def evaluate_go_no_go(metrics: Dict[str, Any]) -> Dict[str, Any]:
+    """A4 (CQO+CTO): critério GO/NO-GO com KPIs financeiros."""
+    thr = {
+        "min_net_pnl":       float(os.getenv("OMEGA_GO_MIN_NET_PNL", "0.0")),
+        "min_win_rate_$":    float(os.getenv("OMEGA_GO_MIN_WIN_RATE", "0.45")),
+        "min_profit_factor": float(os.getenv("OMEGA_GO_MIN_PF", "1.2")),
+        "min_expectancy":    float(os.getenv("OMEGA_GO_MIN_EXP", "0.0")),
+        "min_trades":        int(os.getenv("OMEGA_GO_MIN_TRADES", "50")),
+    }
+    pf = metrics.get("profit_factor", 0)
+    if pf == "inf": pf = float("inf")
+    checks = {
+        "net_pnl_ok":        metrics.get("net_pnl", -1e9)         >= thr["min_net_pnl"],
+        "win_rate_ok":       metrics.get("win_rate_dollar", 0)    >= thr["min_win_rate_$"],
+        "profit_factor_ok":  pf                                   >= thr["min_profit_factor"],
+        "expectancy_ok":     metrics.get("expectancy", -1e9)      >= thr["min_expectancy"],
+        "sample_size_ok":    metrics.get("closed_positions", 0)   >= thr["min_trades"],
+    }
+    return {
+        "go": all(checks.values()),
+        "checks": checks,
+        "thresholds": thr,
+        "failed": [k for k, v in checks.items() if not v],
+    }
 
 
 def run_shadow_loop(cycle_log: Path) -> int:
@@ -191,8 +292,11 @@ def main() -> int:
 
     summaries: List[Dict[str, Any]] = []
     closes: List[List[Dict[str, Any]]] = []
+    pnl_per_cycle: List[Dict[str, Any]] = []
+    run_t0 = int(time.time())
 
     for i in range(1, args.cycles + 1):
+        t_cycle_start = int(time.time())
         cycle_log = out_dir / f"cycle_{i:02d}.log"
         rc = run_shadow_loop(cycle_log)
         time.sleep(args.sleep_after_run)
@@ -206,9 +310,17 @@ def main() -> int:
         closed = close_crypto_omega(args.label)
         closes.append(closed)
         time.sleep(args.sleep_after_close)
+        # A3: P&L do ciclo (janela t_cycle_start..now)
+        pnl_cycle = collect_pnl_window(t_cycle_start - 5, int(time.time()) + 5)
+        pnl_per_cycle.append(pnl_cycle)
         n_closed = sum(1 for c in closed if c.get("retcode") == 10009)
+        n_skipped = sum(1 for c in closed if "ttl_skip" in (c.get("reason") or ""))
         last = summaries[-1].get("online_stats", {}) if summaries[-1] else {}
-        print(f"[CYCLE {i:02d}/{args.cycles}] rc={rc} executed={last.get('executed', 0)} hit={last.get('avg_hit_rate_134', 0)} lat_max={last.get('max_latency_ms', 0)} closed={n_closed}")
+        print(f"[CYCLE {i:02d}/{args.cycles}] rc={rc} executed={last.get('executed', 0)} "
+              f"hit={last.get('avg_hit_rate_134', 0)} lat_max={last.get('max_latency_ms', 0)} "
+              f"closed={n_closed} ttl_kept={n_skipped} "
+              f"net=${pnl_cycle.get('net_pnl', 0):+.2f} wr$={pnl_cycle.get('win_rate_dollar', 0)*100:.1f}% "
+              f"pf={pnl_cycle.get('profit_factor', 0)} n_pos={pnl_cycle.get('closed_positions', 0)}")
 
     agg = aggregate(summaries)
     agg["label"] = args.label
@@ -218,6 +330,15 @@ def main() -> int:
         {"cycle": i + 1, "n_success": sum(1 for c in cl if c.get("retcode") == 10009)}
         for i, cl in enumerate(closes)
     ]
+
+    # A3: P&L AGREGADO REAL via history_deals (janela do run inteiro)
+    pnl_run = collect_pnl_window(run_t0 - 5, int(time.time()) + 5)
+    agg["pnl_financial"] = pnl_run
+    agg["pnl_per_cycle"] = pnl_per_cycle
+    agg["close_mode"] = CLOSE_MODE
+    agg["close_ttl_sec"] = CLOSE_TTL_SEC
+    # A4: critério GO/NO-GO
+    agg["go_no_go"] = evaluate_go_no_go(pnl_run)
 
     agg_path = out_dir / f"fase4_{args.label}_aggregate.json"
     with open(agg_path, "w", encoding="utf-8") as f:
@@ -231,9 +352,15 @@ def main() -> int:
     print(f"  hit_rate_avg={agg['hit_rate_avg']} latency_p95={agg['latency_ms_p95']}ms latency_max={agg['latency_ms_max']}ms")
     print(f"  ks_triggers={agg['kill_switch_triggers']} max_concentration={agg['max_concentration_pct']}% on {agg['max_concentration_asset']}")
     print(f"  retcodes={agg['retcodes']}")
+    print("  --- A3 KPIs FINANCEIROS ---")
+    print(f"  net_pnl=${pnl_run.get('net_pnl', 0):+.2f} win_rate_$={pnl_run.get('win_rate_dollar', 0)*100:.2f}% "
+          f"profit_factor={pnl_run.get('profit_factor')} expectancy=${pnl_run.get('expectancy', 0):+.4f} "
+          f"closed_positions={pnl_run.get('closed_positions', 0)}")
+    go = agg["go_no_go"]
+    print(f"  --- A4 GO/NO-GO: {'GO [PASS]' if go['go'] else 'NO-GO [FAIL]'}  failed={go['failed']}")
     print(f"  SHA3={sha}")
     print("=" * 70)
-    return 0
+    return 0 if agg["go_no_go"]["go"] else 2
 
 
 if __name__ == "__main__":

@@ -171,6 +171,94 @@ def load_dynamic_margins() -> dict:
     return {}
 
 
+# ─── A2: EDGE GATE (ATR + spread + ADX) ────────────────────────────────────
+# Bloqueia fallback momentum em mercado lateral / spread caro.
+# Aprovado por CEO+CKO+COO+CTO+CQO+CIO+TECH-LEAD em 2026-04-27.
+# Fundamento: trade só tem edge se ATR ≫ spread E há tendência (ADX ≥ thr).
+
+EDGE_MIN_ATR_PCT      = float(os.getenv("OMEGA_EDGE_MIN_ATR_PCT", "0.0015"))   # 0.15% do preço
+EDGE_MIN_ATR_OVER_SPR = float(os.getenv("OMEGA_EDGE_MIN_ATR_OVER_SPR", "5.0")) # ATR ≥ 5× spread
+EDGE_MIN_ADX          = float(os.getenv("OMEGA_EDGE_MIN_ADX", "20.0"))         # ADX ≥ 20
+
+def _atr_simple(highs, lows, closes, n: int = 14) -> float:
+    import numpy as np
+    if len(closes) < n + 1:
+        return 0.0
+    tr = np.maximum.reduce([
+        highs[1:] - lows[1:],
+        np.abs(highs[1:] - closes[:-1]),
+        np.abs(lows[1:]  - closes[:-1]),
+    ])
+    return float(np.mean(tr[-n:]))
+
+def _adx_simple(highs, lows, closes, n: int = 14) -> float:
+    import numpy as np
+    if len(closes) < n + 2:
+        return 0.0
+    up   = highs[1:] - highs[:-1]
+    down = lows[:-1] - lows[1:]
+    plus_dm  = np.where((up > down) & (up > 0), up, 0.0)
+    minus_dm = np.where((down > up) & (down > 0), down, 0.0)
+    tr = np.maximum.reduce([
+        highs[1:] - lows[1:],
+        np.abs(highs[1:] - closes[:-1]),
+        np.abs(lows[1:]  - closes[:-1]),
+    ])
+    atr_ = np.convolve(tr, np.ones(n)/n, mode='valid')
+    if len(atr_) == 0 or atr_[-1] == 0:
+        return 0.0
+    plus_di  = 100 * np.convolve(plus_dm,  np.ones(n)/n, mode='valid')[-len(atr_):] / atr_
+    minus_di = 100 * np.convolve(minus_dm, np.ones(n)/n, mode='valid')[-len(atr_):] / atr_
+    dx = 100 * np.abs(plus_di - minus_di) / np.maximum(plus_di + minus_di, 1e-9)
+    if len(dx) < n:
+        return float(np.mean(dx)) if len(dx) > 0 else 0.0
+    return float(np.mean(dx[-n:]))
+
+def has_edge_for_momentum(symbol: str) -> Tuple[bool, dict]:
+    """A2: Edge gate para fallback momentum. Retorna (ok, metrics)."""
+    import MetaTrader5 as mt5
+    rates = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_M5, 0, 60)
+    if rates is None or len(rates) < 30:
+        return False, {"reason": "no_rates"}
+    import numpy as np
+    highs  = np.array([r['high']  for r in rates], dtype=float)
+    lows   = np.array([r['low']   for r in rates], dtype=float)
+    closes = np.array([r['close'] for r in rates], dtype=float)
+
+    tick = mt5.symbol_info_tick(symbol)
+    sym  = mt5.symbol_info(symbol)
+    if not tick or not sym:
+        return False, {"reason": "no_tick"}
+    spread_abs = (tick.ask - tick.bid)
+    price = float(closes[-1]) or 1.0
+    atr   = _atr_simple(highs, lows, closes, 14)
+    adx   = _adx_simple(highs, lows, closes, 14)
+    atr_pct       = atr / price if price > 0 else 0.0
+    atr_over_spr  = (atr / spread_abs) if spread_abs > 0 else 0.0
+
+    metrics = {
+        "atr": round(atr, 6),
+        "atr_pct": round(atr_pct, 6),
+        "spread": round(spread_abs, 6),
+        "atr_over_spread": round(atr_over_spr, 3),
+        "adx": round(adx, 2),
+        "thr_atr_pct": EDGE_MIN_ATR_PCT,
+        "thr_atr_over_spr": EDGE_MIN_ATR_OVER_SPR,
+        "thr_adx": EDGE_MIN_ADX,
+    }
+    ok = (atr_pct >= EDGE_MIN_ATR_PCT
+          and atr_over_spr >= EDGE_MIN_ATR_OVER_SPR
+          and adx >= EDGE_MIN_ADX)
+    metrics["ok"] = ok
+    if not ok:
+        reasons = []
+        if atr_pct < EDGE_MIN_ATR_PCT: reasons.append(f"atr_pct<{EDGE_MIN_ATR_PCT}")
+        if atr_over_spr < EDGE_MIN_ATR_OVER_SPR: reasons.append(f"atr/spr<{EDGE_MIN_ATR_OVER_SPR}")
+        if adx < EDGE_MIN_ADX: reasons.append(f"adx<{EDGE_MIN_ADX}")
+        metrics["reason"] = "|".join(reasons)
+    return ok, metrics
+
+
 # ─── MT5 — Inicialização e Shutdown ─────────────────────────────────────────
 def mt5_init() -> bool:
     try:
@@ -742,15 +830,31 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                  asset, tf, signal_dir, ia_signal.get('confidence', 0),
                                  ia_signal.get('strategy'))
                     else:
-                        # Fallback momentum MT5 (lógica original)
+                        # === A2: EDGE GATE (CEO+Conselho 2026-04-27) ===
+                        # Bloquear fallback momentum quando ATR/spread/ADX
+                        # indicarem que não há edge matemático suficiente.
+                        edge_ok, edge_m = has_edge_for_momentum(asset)
+                        if not edge_ok:
+                            log.info("[%s %s] [EDGE_GATE] BLOCKED reason=%s atr_pct=%s atr/spr=%s adx=%s",
+                                     asset, tf, edge_m.get("reason", "?"),
+                                     edge_m.get("atr_pct"), edge_m.get("atr_over_spread"),
+                                     edge_m.get("adx"))
+                            results.append({
+                                "asset": asset, "timeframe": tf,
+                                "status": "SKIP_EDGE_GATE",
+                                "edge_metrics": edge_m,
+                            })
+                            continue
+                        # Fallback momentum MT5 (lógica original) — só após edge OK
                         rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M1, 0, 5)
                         if rates is not None and len(rates) >= 3:
                             tick_now = mt5.symbol_info_tick(asset)
                             c_price = tick_now.ask if tick_now else rates[-1]['close']
                             avg_3   = (rates[-1]['close'] + rates[-2]['close'] + rates[-3]['close']) / 3
                             signal_dir = "BUY" if c_price > avg_3 else "SELL"
-                            log.info("[%s %s] Sentiment: Current=%.5f | Avg3=%.5f | DIR: %s (src=%s)",
-                                     asset, tf, c_price, avg_3, signal_dir, signal_source)
+                            log.info("[%s %s] Sentiment: Current=%.5f | Avg3=%.5f | DIR: %s (src=%s) edge=ok adx=%.1f atr/spr=%.1f",
+                                     asset, tf, c_price, avg_3, signal_dir, signal_source,
+                                     edge_m.get("adx", 0), edge_m.get("atr_over_spread", 0))
                         else:
                             log.warning("[%s %s] Falha ao ler candles MT5 para direcao — SKIP", asset, tf)
                             results.append({"asset": asset, "timeframe": tf, "status": "SKIP_NO_RATES"})

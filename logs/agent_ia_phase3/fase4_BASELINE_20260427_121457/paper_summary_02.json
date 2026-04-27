@@ -1,0 +1,157 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-27T12:15:33.334948+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 8,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 0,
+    "executed": 0,
+    "skipped": 0,
+    "avg_hit_rate_134": 0,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 0.0,
+    "max_latency_ms": 0
+  },
+  "results": [
+    {
+      "asset": "SOLUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.060714,
+        "atr_pct": 0.000713,
+        "spread": 0.093,
+        "atr_over_spread": 0.653,
+        "adx": 16.61,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0|adx<20.0"
+      }
+    },
+    {
+      "asset": "SOLUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.060714,
+        "atr_pct": 0.000713,
+        "spread": 0.093,
+        "atr_over_spread": 0.653,
+        "adx": 16.61,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0|adx<20.0"
+      }
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 55.080714,
+        "atr_pct": 0.000708,
+        "spread": 8.0,
+        "atr_over_spread": 6.885,
+        "adx": 14.32,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|adx<20.0"
+      }
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 55.080714,
+        "atr_pct": 0.000708,
+        "spread": 8.0,
+        "atr_over_spread": 6.885,
+        "adx": 14.32,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|adx<20.0"
+      }
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 2.093,
+        "atr_pct": 0.000902,
+        "spread": 0.513,
+        "atr_over_spread": 4.08,
+        "adx": 14.81,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0|adx<20.0"
+      }
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 2.093,
+        "atr_pct": 0.000902,
+        "spread": 0.44,
+        "atr_over_spread": 4.757,
+        "adx": 14.81,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0|adx<20.0"
+      }
+    },
+    {
+      "asset": "DOGUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.000108,
+        "atr_pct": 0.001098,
+        "spread": 0.00033,
+        "atr_over_spread": 0.327,
+        "adx": 28.16,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0"
+      }
+    },
+    {
+      "asset": "DOGUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.000108,
+        "atr_pct": 0.001099,
+        "spread": 0.00033,
+        "atr_over_spread": 0.327,
+        "adx": 28.16,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0"
+      }
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260427_121519.log",
+  "checksum": "04a34534033d8a83354ce0efb7da93fefa2329bc9386d57c859096e201d1c53d"
+}

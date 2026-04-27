@@ -1,0 +1,117 @@
+{
+  "cycles": 3,
+  "total_signals": 0,
+  "total_executed": 0,
+  "total_skipped": 0,
+  "total_trades_per_asset": {
+    "BTCUSD": 0,
+    "DOGUSD": 0,
+    "ETHUSD": 0,
+    "SOLUSD": 0
+  },
+  "total_trades": 0,
+  "by_action": {
+    "SKIP_EDGE_GATE": 24
+  },
+  "retcodes": {},
+  "hit_rate_avg": 0.0,
+  "hit_rate_min": 0.0,
+  "latency_ms_avg": 0.0,
+  "latency_ms_max": 0.0,
+  "latency_ms_p95": 0.0,
+  "slippage_avg_pts": 0.0,
+  "kill_switch_triggers": 0,
+  "max_concentration_pct": 0.0,
+  "max_concentration_asset": "BTCUSD",
+  "label": "BASELINE",
+  "timestamp_utc": "20260427_121457",
+  "cycles_requested": 3,
+  "closes_per_cycle": [
+    {
+      "cycle": 1,
+      "n_success": 0
+    },
+    {
+      "cycle": 2,
+      "n_success": 0
+    },
+    {
+      "cycle": 3,
+      "n_success": 0
+    }
+  ],
+  "pnl_financial": {
+    "closed_positions": 0,
+    "net_pnl": 0,
+    "gross_profit": 0,
+    "gross_loss": 0,
+    "win_rate_dollar": 0.0,
+    "profit_factor": 0.0,
+    "expectancy": 0.0,
+    "avg_win": 0.0,
+    "avg_loss": 0.0,
+    "per_symbol": {}
+  },
+  "pnl_per_cycle": [
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "per_symbol": {}
+    }
+  ],
+  "close_mode": "ttl",
+  "close_ttl_sec": 600,
+  "go_no_go": {
+    "go": false,
+    "checks": {
+      "net_pnl_ok": true,
+      "win_rate_ok": false,
+      "profit_factor_ok": false,
+      "expectancy_ok": true,
+      "sample_size_ok": false
+    },
+    "thresholds": {
+      "min_net_pnl": 0.0,
+      "min_win_rate_$": 0.45,
+      "min_profit_factor": 1.2,
+      "min_expectancy": 0.0,
+      "min_trades": 50
+    },
+    "failed": [
+      "win_rate_ok",
+      "profit_factor_ok",
+      "sample_size_ok"
+    ]
+  }
+}
