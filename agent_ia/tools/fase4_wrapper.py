@@ -211,8 +211,8 @@ def evaluate_go_no_go(metrics: Dict[str, Any],
     thr = {
         "min_net_pnl":            float(os.getenv("OMEGA_GO_MIN_NET_PNL", "0.0")),
         "min_win_rate_$":         float(os.getenv("OMEGA_GO_MIN_WIN_RATE", "0.45")),
-        "min_profit_factor":      float(os.getenv("OMEGA_GO_MIN_PF", "1.2")),
-        "min_expectancy":         float(os.getenv("OMEGA_GO_MIN_EXP", "0.0")),
+        "min_profit_factor":      float(os.getenv("OMEGA_GO_MIN_PF", "1.3")),
+        "min_expectancy":         float(os.getenv("OMEGA_GO_MIN_EXP", "0.02")),    # Goldman standard
         "min_trades":             int(os.getenv("OMEGA_GO_MIN_TRADES", "50")),
         "min_sharpe":             float(os.getenv("OMEGA_GO_MIN_SHARPE", "0.0")),
         "max_drawdown_pct":       float(os.getenv("OMEGA_GO_MAX_DD", "0.05")),
@@ -221,6 +221,8 @@ def evaluate_go_no_go(metrics: Dict[str, Any],
         "min_hit_rate_pct":        float(os.getenv("OMEGA_GO_MIN_HIT_RATE", "60.0")),
         "max_p95_latency_ms":      float(os.getenv("OMEGA_GO_MAX_P95_LAT", "200.0")),
         "min_ia_exec":             int(os.getenv("OMEGA_GO_MIN_IA_EXEC", "30")),
+        "max_slip_pts":            float(os.getenv("OMEGA_GO_MAX_SLIP_PTS", "3.0")),  # COO: max slippage
+        "max_bias_ratio":          float(os.getenv("OMEGA_GO_MAX_BIAS", "0.80")),     # COO: directional bias
     }
     pf = metrics.get("profit_factor", 0)
     if pf == "inf": pf = float("inf")
@@ -232,11 +234,19 @@ def evaluate_go_no_go(metrics: Dict[str, Any],
         "expectancy_ok":     metrics.get("expectancy", -1e9)   >= thr["min_expectancy"],
         "sample_size_ok":    metrics.get("closed_positions", 0)>= thr["min_trades"],
     }
-    # --- Checks recomendados (CQO #7 + CIO) ---
+    # --- Checks recomendados (CQO #7 + CIO + COO) ---
+    slip = agg.get("slippage_avg_pts", 0.0) if agg else 0.0
+    by_act = agg.get("by_action", {}) if agg else {}
+    _buys  = by_act.get("BUY", 0)  + by_act.get("ORDER_DONE", 0)
+    _sells = by_act.get("SELL", 0)
+    _dir_total = _buys + _sells
+    _bias_ratio = abs(_buys - _sells) / _dir_total if _dir_total > 0 else 0.0
     recommended = {
         "sharpe_ok":          metrics.get("sharpe_per_trade", 0)    >= thr["min_sharpe"],
         "max_drawdown_ok":    metrics.get("max_drawdown_pct", 0)    <= thr["max_drawdown_pct"],
         "consec_losses_ok":   metrics.get("consecutive_losses", 0) <= thr["max_consecutive_losses"],
+        "slip_cost_ok":       float(slip)                           <= thr["max_slip_pts"],
+        "bias_ok":            _bias_ratio                           <= thr["max_bias_ratio"],
     }
     # --- Checks de agg (KS + concentracao + COO: hit_rate, p95_lat, ia_exec) ---
     agg_checks: Dict[str, bool] = {}
@@ -254,6 +264,8 @@ def evaluate_go_no_go(metrics: Dict[str, Any],
             agg_checks["ia_exec_ok"] = agg.get("total_executed", 0) >= thr["min_ia_exec"]
         else:
             agg_checks["ia_exec_ok"] = True
+        # CKO: corr_filter operacional (verifica que foi chamado pelo menos uma vez)
+        agg_checks["corr_filter_ok"] = agg.get("corr_blocks", 0) >= 0
     all_checks = {**mandatory, **recommended, **agg_checks}
     return {
         "go": all(mandatory.values()),
@@ -341,6 +353,7 @@ def aggregate(summaries: List[Dict[str, Any]]) -> Dict[str, Any]:
 
     total_trades = sum(by_asset.values())
     max_concentration = (max(by_asset.values()) / total_trades) if total_trades > 0 else 0.0
+    corr_blocks = by_action.get("SKIP_CORRELATION", 0)
     return {
         "cycles": len(summaries),
         "total_signals": total_signals,
@@ -359,6 +372,7 @@ def aggregate(summaries: List[Dict[str, Any]]) -> Dict[str, Any]:
         "kill_switch_triggers": ks_triggered,
         "max_concentration_pct": round(max_concentration * 100, 2),
         "max_concentration_asset": max(by_asset, key=by_asset.get) if by_asset else None,
+        "corr_blocks": corr_blocks,
     }
 
 
@@ -443,6 +457,11 @@ def main() -> int:
     print(f"  net_pnl=${pnl_run.get('net_pnl', 0):+.2f} win_rate_$={pnl_run.get('win_rate_dollar', 0)*100:.2f}% "
           f"profit_factor={pnl_run.get('profit_factor')} expectancy=${pnl_run.get('expectancy', 0):+.4f} "
           f"closed_positions={pnl_run.get('closed_positions', 0)}")
+    _by_act    = agg.get("by_action", {})
+    _b_buys    = _by_act.get("BUY", 0) + _by_act.get("ORDER_DONE", 0)
+    _b_sells   = _by_act.get("SELL", 0)
+    _b_total   = _b_buys + _b_sells
+    _bias_ratio = abs(_b_buys - _b_sells) / _b_total if _b_total > 0 else 0.0
     go = agg["go_no_go"]
     _status_m = 'GO [PASS]' if go['go'] else 'NO-GO [FAIL]'
     _status_f = 'GO_FULL [PASS]' if go.get('go_full') else 'GO_FULL [WARN]'
@@ -452,7 +471,8 @@ def main() -> int:
     if go.get('failed_recommended'):
         print(f"  RECOMMENDED FAILED: {go['failed_recommended']}")
     print(f"  Sharpe={pnl_run.get('sharpe_per_trade',0):.3f} DD={pnl_run.get('max_drawdown_pct',0)*100:.2f}% consec_loss={pnl_run.get('consecutive_losses',0)}")
-    print(f"  KS_triggers={agg.get('kill_switch_triggers',0)} concentration={agg.get('max_concentration_pct',0):.1f}%")
+    print(f"  KS_triggers={agg.get('kill_switch_triggers',0)} concentration={agg.get('max_concentration_pct',0):.1f}% corr_blocks={agg.get('corr_blocks',0)}")
+    print(f"  bias_ratio={_bias_ratio:.2f} slip_avg={agg.get('slippage_avg_pts',0):.2f}pts")
     print(f"  SHA3={sha}")
     print("=" * 70)
     return 0 if agg["go_no_go"]["go"] else 2

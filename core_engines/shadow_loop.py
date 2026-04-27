@@ -109,6 +109,7 @@ DEMO_EQUITY_USD    = 10_000.0
 RISK_PER_TRADE_PCT = float(os.getenv("OMEGA_RISK_PER_TRADE", "0.0025"))  # COO Fase1: 0.001 (0.1%)
 MAX_POSITIONS      = int(os.getenv("OMEGA_MAX_POSITIONS", "6"))          # CIO fase conservadora: 2
 DD_DAILY_MAX       = float(os.getenv("OMEGA_DD_DAILY_MAX", "0.05"))       # CIO fase conservadora: 0.01
+CONCENTRATION_MAX  = float(os.getenv("OMEGA_CONCENTRATION_MAX", "0.40"))   # CQO/COO: max por ativo
 MAX_CONSEC_FAIL    = 3
 OMEGA_MAGIC        = 234001     # ID do EA OMEGA
 
@@ -896,7 +897,13 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         _omega_all = mt5.positions_get(magic=OMEGA_MAGIC) or []
                         all_open_positions = [p._asdict() for p in _omega_all]
 
-                    if correlation_filter.should_trade(asset, all_open_positions, direction=signal_dir):
+                    _corr_ok = correlation_filter.should_trade(asset, all_open_positions, direction=signal_dir)
+                    if not _corr_ok:
+                        log.info("[%s %s] [CORR] SKIP_CORRELATION dir=%s", asset, tf, signal_dir)
+                        results.append({"asset": asset, "timeframe": tf, "status": "SKIP_CORRELATION",
+                                        "direction": signal_dir})
+                        continue
+                    if _corr_ok:
                         # Lote: clamp(min(lot_info, ia_lot_override or lot_info), 0.01, MAX_LOT)
                         eff_lot = lot_info["lot"]
                         if ia_lot_override is not None:
@@ -904,11 +911,11 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                 eff_lot = max(0.01, min(eff_lot, float(ia_lot_override)))
                             except Exception:
                                 pass
-                        # Concentração por ativo (Fix 5): >40% → reduz 50%
+                        # Concentração por ativo (Fix 5): >CONCENTRATION_MAX → reduz 50%
                         try:
                             same_asset = sum(1 for p in (mt5.positions_get(magic=OMEGA_MAGIC) or []) if p.symbol == asset)
                             total_omega = len(mt5.positions_get(magic=OMEGA_MAGIC) or [])
-                            if total_omega > 0 and (same_asset / total_omega) > 0.40:
+                            if total_omega > 0 and (same_asset / total_omega) > CONCENTRATION_MAX:
                                 eff_lot = max(0.01, round(eff_lot * 0.5, 2))
                                 log.info("[%s %s] FASE4 concentration>40%% → lot reduzido a %.2f", asset, tf, eff_lot)
                         except Exception:
