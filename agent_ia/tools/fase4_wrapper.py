@@ -136,13 +136,18 @@ class PerformanceMonitor:
             self._alert("CONSECUTIVE_LOSSES", f"{consec} perdas consecutivas")
 
     def _alert(self, kind: str, msg: str) -> None:
-        entry = {"type": kind, "msg": msg,
-                 "ts": datetime.now(timezone.utc).isoformat()}
-        recent = [a["type"] for a in self.alerts[-5:]]
-        if kind not in recent:
-            self.alerts.append(entry)
-            sev = "CRITICAL" if "DRAWDOWN" in kind or "CONSEC" in kind else "WARNING"
-            print(f"[PM {sev}] {kind}: {msg}")
+        now = datetime.now(timezone.utc)
+        cooldown_sec = float(os.getenv("OMEGA_PM_ALERT_COOLDOWN_SEC", "300"))
+        for a in reversed(self.alerts):
+            if a["type"] == kind:
+                last = datetime.fromisoformat(a["ts"])
+                if (now - last).total_seconds() < cooldown_sec:
+                    return
+                break
+        entry = {"type": kind, "msg": msg, "ts": now.isoformat()}
+        self.alerts.append(entry)
+        sev = "CRITICAL" if "DRAWDOWN" in kind or "CONSEC" in kind else "WARNING"
+        print(f"[PM {sev}] {kind}: {msg}")
 
     def report(self) -> dict:
         pnls = list(self._pnls)

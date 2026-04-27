@@ -10,6 +10,8 @@ Uso:
 """
 import argparse
 import csv
+import hashlib
+import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -68,7 +70,20 @@ def export_symbol(symbol: str, tf_name: str, tf_mt5: int,
             dt = datetime.fromtimestamp(r["time"], tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
             writer.writerow([dt, r["close"]])
 
-    print(f"  [OK]   {symbol}_{tf_name}: {len(rates)} candles → root + candle + linha")
+    # SHA3-256 integrity hash (CQO Opcao B — look-ahead bias audit trail)
+    audit_meta = {
+        "symbol": symbol, "timeframe": tf_name, "bars": len(rates),
+        "first_time": datetime.fromtimestamp(rates[0]["time"], tz=timezone.utc).isoformat(),
+        "last_time":  datetime.fromtimestamp(rates[-1]["time"], tz=timezone.utc).isoformat(),
+        "export_ts":  datetime.now(timezone.utc).isoformat(),
+    }
+    export_hash = hashlib.sha3_256(
+        json.dumps(audit_meta, sort_keys=True).encode()
+    ).hexdigest()
+    sha3_file = out_dir / f"{symbol}_{tf_name}.sha3"
+    sha3_file.write_text(export_hash, encoding="utf-8")
+
+    print(f"  [OK]   {symbol}_{tf_name}: {len(rates)} candles → root + candle + linha | sha3={export_hash[:16]}...")
     return True
 
 
