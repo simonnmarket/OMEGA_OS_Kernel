@@ -523,22 +523,131 @@ ASSINATURAS — STATUS DE APROVACAO DO CONSELHO
 =============================================================================
 
 Emitente:  PSA-WIND / Arquiteto e Project Manager OMEGA
-Versao:    v3.0 — Integra posicoes de 6 conselheiros
-Data:      27 de Abril de 2026 — 22:00 Berlin
+Versao:    v3.1 — Integra posicoes de 7 conselheiros (Tech Lead adicionado)
+Data:      27 de Abril de 2026 — 22:30 Berlin
 
 APROVACOES RECEBIDAS (de acordo com documentos do Conselho):
-  [OK] CIO — Opcao C (Hibrida) aprovada. "Autorizar execucao imediata."
-  [OK] CTO — "Executar Fase 1 imediatamente na janela London Open."
-  [OK] CFO — Aceita execucao com ressalvas arquiteturais (roadmap)
-  [OK] CKO — "Manter configuracao atual e executar Fase 1 conforme PSA."
-  [OK] COO — "Manter papel/producao controlada, usar PnL real como portao."
-  [OK] CQO — "Executar run 120 ciclos AGORA + London Open amanha."
+  [OK] CIO       — Opcao C (Hibrida) aprovada. "Autorizar execucao imediata."
+  [OK] CTO       — "Executar Fase 1 imediatamente na janela London Open."
+  [OK] CFO       — Aceita execucao com ressalvas arquiteturais (roadmap)
+  [OK] CKO       — "Manter configuracao atual e executar Fase 1 conforme PSA."
+  [OK] COO       — "Manter papel/producao controlada, usar PnL real como portao."
+  [OK] CQO       — "Executar run 120 ciclos AGORA + London Open amanha."
+  [OK] TECH LEAD — Opcoes A+B. "Run 60 ciclos LONDON/NY. SEI <10% observation."
 
 AGUARDANDO:
   [ ] CEO — Confirmacao final para execucao London Open amanha
             (run overnight ja esta autorizado e em andamento)
 
 =============================================================================
-FIM DO DOCUMENTO — OMEGA_PSA_DIRETRIZ_CONSELHO_v3.0
-DOC-OMEGA-PSA-CONSELHO-20260427-v3
+PARTE X — EMENDA v3.1: POSICAO DO TECH LEAD (27/04/2026 22:30 Berlin)
+=============================================================================
+
+X.1 PERFIL DO DOCUMENTO
+------------------------
+  Emitente:   Agente IA / Tech Lead (protocolo ENFORCED_EXECUTION_v2.5)
+  Pontuacao:  100/100 — CONFORME
+  Data:       2026-04-27 19:45:00 UTC
+  Alinhamento com PSA: TOTAL (7/7 votos unanimes)
+
+X.2 POSICAO DO TECH LEAD POR OPCAO
+------------------------------------
+
+OPCAO A — Execucao Conservadora em Liquidez Alta (ACEITA — implementada)
+  Descricao: Manter guardrails (Edge Gate, KS, concentracao 40%).
+  Rodar apenas em LONDON/NY (08:00-17:00 UTC). Exigir >= 20 trades para GO.
+  PF >= 1.3 e win_rate_$ >= 45% para GO_FULL.
+  Referencia: Wilder (ADX, 1978); Aldridge HFT (2013); JPM desk risk norm.
+  Codigo GO/NO-GO da Opcao A: IDENTICO ao ja implementado em fase4_wrapper.py.
+  STATUS PSA: JA IMPLEMENTADO em evaluate_go_no_go(). Nenhuma acao adicional.
+
+OPCAO B — PARR-F Observation + Ajuste Dinamico de Confianca
+  Descricao: Usar resonance_score para reduzir min_conf em -0.05
+  quando score >= 30, permitindo trades com 55% em vez de 60%.
+
+  Codigo proposto pelo Tech Lead:
+    def adjusted_conf(base_conf, resonance_score, floor=0.30, ceil=0.80):
+        boost = 0.05 if resonance_score >= 30 else 0.0
+        return min(ceil, max(floor, base_conf - boost))
+
+  AVALIACAO PSA:
+  - Logica correta e segura (reducao maxima de 0.05 do base_conf).
+  - PROBLEMA CRITICO: OmegaParrFEngine NAO esta integrada no shadow_loop.py.
+  - resonance_score NAO existe no pipeline ativo.
+  - Todos os 47 arquivos que referenciam OmegaParrF estao em /inativo/ ou
+    /modules/validation/ — ZERO conexao com shadow_loop.py ou fase4_wrapper.py.
+  - SEI atual < 10% = PARR-F nao tem base estatistica para override.
+  - floor=0.30 e INACEITAVEL para Fase 1 (risco de 0.55 -> 0.30 via boosts
+    futuros encadeados). PSA recomenda floor=0.55 quando/se implementado.
+
+  DECISAO PSA:
+  - Principio aceito para ROADMAP. Funcao adjusted_conf documentada abaixo.
+  - Implementacao requer primeiro: wire PARR-F no shadow_loop.py (Priority 2).
+  - NAO IMPLEMENTAR esta noite ou amanha. PARR-F sem dados = ruido.
+  - Revisao apos Fase 1 GO + >= 500 barras de resonance_score coletadas.
+
+OPCAO C — Integracao Parcial FIN_SENSE + Spoof Simples
+  STATUS PSA: JA na Prioridade 2 do Roadmap (Part V). Nenhuma acao adicional.
+
+X.3 ACHADOS CRITICOS DO TECH LEAD (confirmados via codigo)
+-----------------------------------------------------------
+
+  [CONFIRMADO] FIN_SENSE_DATA desconectado — Motor V3 usa CSV/MT5 direto.
+  [CONFIRMADO] Spoof/Iceberg detector = stub (scores=0 no pipeline ativo).
+  [CONFIRMADO] PARR-F em observation — NAO wired em shadow_loop.py.
+  [CONFIRMADO] SEI < 10% — score_final >= 60 e raro no historico analisado.
+  [CONFIRMADO] DOGUSD spread > ATR em sessao overnight — Edge Gate correto.
+  [NOVO] PARR-F V5.3 score_final: L0(25)+L1(25)+L2(25)+L3(25)=100 max.
+         Score >= 50 + dir_vote >= 2 = sinal confirmado (compra/venda).
+         Score < 50 = neutral. SEI = mean(scores>=60)/1.5 para calibracao.
+
+X.4 RESUMO DA POSICAO DO TECH LEAD
+-------------------------------------
+
+  7 de 7 conselheiros recomendam:
+    (1) Executar Fase 1 NOW — janela LONDON/NY (08:00-17:00 UTC)
+    (2) Manter Edge Gate e Kill Switch INALTERADOS
+    (3) FIN_SENSE = roadmap pos-Fase 1
+    (4) PARR-F = roadmap quando pipeline tiver dados suficientes
+
+  VOTO FINAL TECH LEAD: "Rodar 60 ciclos LONDON/NY com env conservador.
+  Logar resonance_score/SEI e recalibrar apos >= 20 trades. Preparar plano
+  de migracao FIN_SENSE (Opcao C) para pos-Fase 1."
+
+X.5 ADJUSTED_CONF — CODIGO DOCUMENTADO (dormante ate wire-up PARR-F)
+-----------------------------------------------------------------------
+  Arquivo destino: agent_ia/core/omega_session_calibrator.py (futuro)
+  Precondição: OmegaParrFEngine wired + >= 500 barras de resonance_score
+
+  def adjusted_conf(base_conf: float, resonance_score: float,
+                    floor: float = 0.55, ceil: float = 0.80) -> float:
+      """CQO/TechLead: afrouxar min_conf em -0.05 quando PARR-F forte.
+      floor=0.55 (PSA: nao abaixo do minimo Fase 1 conservador).
+      ceil=0.80 (nao apertar acima do limite de confianca admissivel).
+      Uso: apenas quando SEI > 15% e sample_parr >= 500 barras."""
+      boost = 0.05 if resonance_score >= 30 else 0.0
+      return min(ceil, max(floor, base_conf - boost))
+
+  NOTA: floor alterado de 0.30 (Tech Lead) para 0.55 (PSA amendment).
+  Justificativa: 0.30 implica trades com 30% de confianca — inaceitavel em
+  qualquer fase. 0.55 mantem margem de seguranca acima do threshold cold-start.
+
+X.6 ROADMAP ATUALIZADO: PARR-F WIRE-UP
+----------------------------------------
+
+  PRIORIDADE 2 (pos-Fase 1 GO, antes de Fase 2):
+    [ ] Wire OmegaParrFEngine em shadow_loop.py — producao de resonance_score
+    [ ] Coletar >= 500 barras de score_final para calibrar SEI baseline
+    [ ] Validar que score >= 30 nao e trivialmente satisfeito (>80% das barras)
+    [ ] Implementar adjusted_conf no omega_session_calibrator.py
+    [ ] Logar resonance_score no paper_summary.json e aggregate.json
+
+  PRECONDICIONAIS OBRIGATORIAS:
+    - Fase 1 GO (net_pnl >= 0, trades >= 20, ks_triggers = 0)
+    - SEI > 15% em sample de >= 500 barras (Tech Lead threshold: 15%)
+    - Aprovacao do Conselho (Tech Lead mandato)
+
+=============================================================================
+FIM DO DOCUMENTO — OMEGA_PSA_DIRETRIZ_CONSELHO_v3.1
+DOC-OMEGA-PSA-CONSELHO-20260427-v3.1
 =============================================================================
