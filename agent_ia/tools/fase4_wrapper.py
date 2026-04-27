@@ -152,6 +152,30 @@ def collect_pnl_window(t_from_unix: int, t_to_unix: int) -> Dict[str, Any]:
             s["n"]   += 1
             s["net"] += p["net"]
             if p["net"] > 0: s["wins"] += 1
+        # --- Sharpe per-trade (simplificado, sem numpy) ---
+        import math as _math
+        if n >= 2:
+            _mean = net_pnl / n
+            _var = sum((x - _mean) ** 2 for x in nets) / (n - 1)
+            _std = _math.sqrt(_var) if _var > 0 else 0.0
+            sharpe = round(_mean / _std, 4) if _std > 0 else 0.0
+        else:
+            sharpe = 0.0
+        # --- Max Drawdown (% sobre pico da curva de equity) ---
+        if nets:
+            _peak = 0.0; _cum = 0.0; _max_dd = 0.0
+            for _x in nets:
+                _cum += _x
+                if _cum > _peak: _peak = _cum
+                _dd = (_peak - _cum) / _peak if _peak > 0 else 0.0
+                if _dd > _max_dd: _max_dd = _dd
+        else:
+            _max_dd = 0.0
+        # --- Perdas consecutivas (da cauda da série) ---
+        consecutive_losses = 0
+        for _x in reversed(nets):
+            if _x < 0: consecutive_losses += 1
+            else: break
         return {
             "closed_positions": n,
             "net_pnl": round(net_pnl, 4),
@@ -162,6 +186,9 @@ def collect_pnl_window(t_from_unix: int, t_to_unix: int) -> Dict[str, Any]:
             "expectancy": round(expectancy, 6),
             "avg_win": round(avg_win, 4),
             "avg_loss": round(avg_loss, 4),
+            "sharpe_per_trade": sharpe,
+            "max_drawdown_pct": round(_max_dd, 4),
+            "consecutive_losses": consecutive_losses,
             "per_symbol": {k: {kk: (round(vv, 4) if isinstance(vv, float) else vv)
                               for kk, vv in v.items()} for k, v in per_sym.items()},
         }
@@ -169,29 +196,63 @@ def collect_pnl_window(t_from_unix: int, t_to_unix: int) -> Dict[str, Any]:
         mt5.shutdown()
 
 
-def evaluate_go_no_go(metrics: Dict[str, Any]) -> Dict[str, Any]:
-    """A4 (CQO+CTO): critério GO/NO-GO com KPIs financeiros."""
+def evaluate_go_no_go(metrics: Dict[str, Any],
+                       agg: Dict[str, Any] = None) -> Dict[str, Any]:
+    """A4 (CQO+CTO+CIO): GO/NO-GO expandido 10 checks institucionais.
+
+    Checks obrigatórios (falha = NO-GO):
+      net_pnl ≥ 0, win_rate_$ ≥ 45%, profit_factor ≥ 1.2,
+      expectancy ≥ 0, sample_size ≥ 50 trades
+    Checks recomendados (CQO #7 + CIO):
+      sharpe_per_trade ≥ 0, max_drawdown ≤ 5% (Two Sigma),
+      consecutive_losses ≤ 5 (CQO auto-stop),
+      ks_triggers = 0 (CIO), max_concentration < 40% (CIO/JPMorgan)
+    """
     thr = {
-        "min_net_pnl":       float(os.getenv("OMEGA_GO_MIN_NET_PNL", "0.0")),
-        "min_win_rate_$":    float(os.getenv("OMEGA_GO_MIN_WIN_RATE", "0.45")),
-        "min_profit_factor": float(os.getenv("OMEGA_GO_MIN_PF", "1.2")),
-        "min_expectancy":    float(os.getenv("OMEGA_GO_MIN_EXP", "0.0")),
-        "min_trades":        int(os.getenv("OMEGA_GO_MIN_TRADES", "50")),
+        "min_net_pnl":            float(os.getenv("OMEGA_GO_MIN_NET_PNL", "0.0")),
+        "min_win_rate_$":         float(os.getenv("OMEGA_GO_MIN_WIN_RATE", "0.45")),
+        "min_profit_factor":      float(os.getenv("OMEGA_GO_MIN_PF", "1.2")),
+        "min_expectancy":         float(os.getenv("OMEGA_GO_MIN_EXP", "0.0")),
+        "min_trades":             int(os.getenv("OMEGA_GO_MIN_TRADES", "50")),
+        "min_sharpe":             float(os.getenv("OMEGA_GO_MIN_SHARPE", "0.0")),
+        "max_drawdown_pct":       float(os.getenv("OMEGA_GO_MAX_DD", "0.05")),
+        "max_consecutive_losses": int(os.getenv("OMEGA_GO_MAX_CONSEC_LOSS", "5")),
+        "max_concentration_pct":  float(os.getenv("OMEGA_GO_MAX_CONCENTRATION", "0.40")),
     }
     pf = metrics.get("profit_factor", 0)
     if pf == "inf": pf = float("inf")
-    checks = {
-        "net_pnl_ok":        metrics.get("net_pnl", -1e9)         >= thr["min_net_pnl"],
-        "win_rate_ok":       metrics.get("win_rate_dollar", 0)    >= thr["min_win_rate_$"],
-        "profit_factor_ok":  pf                                   >= thr["min_profit_factor"],
-        "expectancy_ok":     metrics.get("expectancy", -1e9)      >= thr["min_expectancy"],
-        "sample_size_ok":    metrics.get("closed_positions", 0)   >= thr["min_trades"],
+    # --- Checks mandatórios ---
+    mandatory = {
+        "net_pnl_ok":        metrics.get("net_pnl", -1e9)      >= thr["min_net_pnl"],
+        "win_rate_ok":       metrics.get("win_rate_dollar", 0) >= thr["min_win_rate_$"],
+        "profit_factor_ok":  pf                                >= thr["min_profit_factor"],
+        "expectancy_ok":     metrics.get("expectancy", -1e9)   >= thr["min_expectancy"],
+        "sample_size_ok":    metrics.get("closed_positions", 0)>= thr["min_trades"],
     }
+    # --- Checks recomendados (CQO #7 + CIO) ---
+    recommended = {
+        "sharpe_ok":          metrics.get("sharpe_per_trade", 0)    >= thr["min_sharpe"],
+        "max_drawdown_ok":    metrics.get("max_drawdown_pct", 0)    <= thr["max_drawdown_pct"],
+        "consec_losses_ok":   metrics.get("consecutive_losses", 0) <= thr["max_consecutive_losses"],
+    }
+    # --- Checks de agg (KS + concentração) ---
+    agg_checks: Dict[str, bool] = {}
+    if agg:
+        ks = agg.get("kill_switch_triggers", 0)
+        conc = agg.get("max_concentration_pct", 0.0)
+        if isinstance(conc, (int, float)):
+            agg_checks["ks_triggers_zero"] = int(ks) == 0
+            agg_checks["concentration_ok"] = float(conc) < thr["max_concentration_pct"] * 100
+    all_checks = {**mandatory, **recommended, **agg_checks}
     return {
-        "go": all(checks.values()),
-        "checks": checks,
+        "go": all(mandatory.values()),
+        "go_full": all(all_checks.values()),
+        "mandatory": mandatory,
+        "recommended": recommended,
+        "agg_checks": agg_checks,
         "thresholds": thr,
-        "failed": [k for k, v in checks.items() if not v],
+        "failed_mandatory": [k for k, v in mandatory.items() if not v],
+        "failed_recommended": [k for k, v in {**recommended, **agg_checks}.items() if not v],
     }
 
 
@@ -202,6 +263,9 @@ def run_shadow_loop(cycle_log: Path, label: str = "BASELINE",
     env["PYTHONPATH"] = str(ROOT) + (os.pathsep + env.get("PYTHONPATH", "") if env.get("PYTHONPATH") else "")
     if label == "IA_ON":
         env["OMEGA_USE_AGENT_IA"] = "1"
+        # CQO Mudanca #4: Trade lifecycle — SL/TP atuam naturalmente (Goldman standard)
+        # IA_ON nao deve fechar posicoes pelo wrapper; respeitar o TTL e SL/TP
+        env.setdefault("OMEGA_CLOSE_MODE", "never")
     cmd = [
         sys.executable, str(SHADOW_LOOP),
         "--mode", "paper",
@@ -349,8 +413,8 @@ def main() -> int:
     agg["pnl_per_cycle"] = pnl_per_cycle
     agg["close_mode"] = CLOSE_MODE
     agg["close_ttl_sec"] = CLOSE_TTL_SEC
-    # A4: critério GO/NO-GO
-    agg["go_no_go"] = evaluate_go_no_go(pnl_run)
+    # A4: critério GO/NO-GO expandido (CIO+CQO: 10 checks)
+    agg["go_no_go"] = evaluate_go_no_go(pnl_run, agg=agg)
 
     agg_path = out_dir / f"fase4_{args.label}_aggregate.json"
     with open(agg_path, "w", encoding="utf-8") as f:
@@ -369,7 +433,15 @@ def main() -> int:
           f"profit_factor={pnl_run.get('profit_factor')} expectancy=${pnl_run.get('expectancy', 0):+.4f} "
           f"closed_positions={pnl_run.get('closed_positions', 0)}")
     go = agg["go_no_go"]
-    print(f"  --- A4 GO/NO-GO: {'GO [PASS]' if go['go'] else 'NO-GO [FAIL]'}  failed={go['failed']}")
+    _status_m = 'GO [PASS]' if go['go'] else 'NO-GO [FAIL]'
+    _status_f = 'GO_FULL [PASS]' if go.get('go_full') else 'GO_FULL [WARN]'
+    print(f"  --- A4 GO/NO-GO: {_status_m} | {_status_f}")
+    if go['failed_mandatory']:
+        print(f"  MANDATORY FAILED: {go['failed_mandatory']}")
+    if go.get('failed_recommended'):
+        print(f"  RECOMMENDED FAILED: {go['failed_recommended']}")
+    print(f"  Sharpe={pnl_run.get('sharpe_per_trade',0):.3f} DD={pnl_run.get('max_drawdown_pct',0)*100:.2f}% consec_loss={pnl_run.get('consecutive_losses',0)}")
+    print(f"  KS_triggers={agg.get('kill_switch_triggers',0)} concentration={agg.get('max_concentration_pct',0):.1f}%")
     print(f"  SHA3={sha}")
     print("=" * 70)
     return 0 if agg["go_no_go"]["go"] else 2

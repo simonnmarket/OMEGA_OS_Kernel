@@ -107,8 +107,8 @@ AUDIT_PAPER.mkdir(parents=True, exist_ok=True)
 # ─── Configuração de Risco ───────────────────────────────────────────────────
 DEMO_EQUITY_USD    = 10_000.0
 RISK_PER_TRADE_PCT = 0.0025     # 0,25% por trade
-MAX_POSITIONS      = 6          # V10: 3 ativos × 2 TFs stress
-DD_DAILY_MAX       = 0.05       # 5% kill switch
+MAX_POSITIONS      = int(os.getenv("OMEGA_MAX_POSITIONS", "6"))          # CIO fase conservadora: 2
+DD_DAILY_MAX       = float(os.getenv("OMEGA_DD_DAILY_MAX", "0.05"))       # CIO fase conservadora: 0.01
 MAX_CONSEC_FAIL    = 3
 OMEGA_MAGIC        = 234001     # ID do EA OMEGA
 
