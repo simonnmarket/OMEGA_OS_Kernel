@@ -152,7 +152,7 @@ class PerformanceMonitor:
     def report(self) -> dict:
         pnls = list(self._pnls)
         if not pnls:
-            return {"samples": 0, "alerts": self.alerts}
+            return {"samples": 0, "alerts": self.alerts, "alerts_count": len(self.alerts)}
         arr = pnls
         wins = [p for p in arr if p > 0]
         losses = [abs(p) for p in arr if p < 0]
