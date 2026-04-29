@@ -85,10 +85,129 @@ try:
 except Exception:
     _TAIL_RISK_HALT = None
 
+# ── FLOW DETECTORS: institutional flow modules (awakened for directional trading) ─
+try:
+    from modules.v_flow_microstructure import VFlowReversalEngine as _VFlowReversalEngineCls
+    _V_FLOW_ENGINE = _VFlowReversalEngineCls(window_size=20, leverage_max=5.0)
+except Exception:
+    _V_FLOW_ENGINE = None
+
+try:
+    from modules.volume_physics import VolumePhysicsEngine as _VolumePhysicsEngineCls, PhysicsConfig as _PhysicsConfig
+    _VOL_PHYSICS_ENGINE = _VolumePhysicsEngineCls(_PhysicsConfig())
+except Exception:
+    _VOL_PHYSICS_ENGINE = None
+
+try:
+    from modules.volume_profile import VolumeProfileEngine as _VolumeProfileEngineCls
+    _VOL_PROFILE_ENGINE = _VolumeProfileEngineCls()
+except Exception:
+    _VOL_PROFILE_ENGINE = None
+
+try:
+    from modules.anomaly_detector import AnomalyDetector as _AnomalyDetectorCls
+    _ANOMALY_ENGINE = _AnomalyDetectorCls()
+except Exception:
+    _ANOMALY_ENGINE = None
+
+try:
+    from modules.momentum_physics import MomentumPhysicsEngine as _MomentumPhysicsEngineCls
+    _MOMENTUM_ENGINE = _MomentumPhysicsEngineCls()
+except Exception:
+    _MOMENTUM_ENGINE = None
+
 from datetime import datetime, timezone
 from math import sqrt
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+
+# ─── Flow Confluence Scorer ───────────────────────────────────────────────────
+def compute_flow_confluence(bar: Dict, symbol: str, direction: int) -> Tuple[float, Dict]:
+    """
+    Combina sinais dos 5 módulos de fluxo institucional em um score 0-100.
+    Retorna (confluence_score, details_dict).
+    """
+    scores = {}
+    weights = {
+        "v_flow": 0.25,
+        "vol_physics": 0.20,
+        "vol_profile": 0.20,
+        "anomaly": 0.15,
+        "momentum": 0.20
+    }
+    
+    try:
+        if _V_FLOW_ENGINE and hasattr(_V_FLOW_ENGINE, 'process_candle'):
+            # v_flow_microstructure: VFRSignal com score 0-100
+            vflow = _V_FLOW_ENGINE.process_candle(bar.get('close', 0), bar.get('high', 0), 
+                                                 bar.get('low', 0), bar.get('volume', 0))
+            if hasattr(vflow, 'score'):
+                scores['v_flow'] = vflow.score if vflow.direction == direction else 0
+            else:
+                scores['v_flow'] = 50
+        else:
+            scores['v_flow'] = 50
+    except Exception:
+        scores['v_flow'] = 50
+    
+    try:
+        if _VOL_PHYSICS_ENGINE and hasattr(_VOL_PHYSICS_ENGINE, 'update'):
+            # volume_physics: PhysicsState com trap_score, urgency
+            state = _VOL_PHYSICS_ENGINE.update(bar.get('close', 0), bar.get('high', 0),
+                                               bar.get('low', 0), bar.get('volume', 0))
+            if hasattr(state, 'trap_score'):
+                scores['vol_physics'] = state.trap_score * 100
+            elif hasattr(state, 'urgency'):
+                scores['vol_physics'] = state.urgency.value * 33
+            else:
+                scores['vol_physics'] = 50
+        else:
+            scores['vol_physics'] = 50
+    except Exception:
+        scores['vol_physics'] = 50
+    
+    try:
+        if _VOL_PROFILE_ENGINE and hasattr(_VOL_PROFILE_ENGINE, 'update'):
+            # volume_profile: VolumeState com volume_ratio
+            state = _VOL_PROFILE_ENGINE.update(symbol, bar)
+            if hasattr(state, 'volume_ratio'):
+                scores['vol_profile'] = min(state.volume_ratio * 50, 100)
+            else:
+                scores['vol_profile'] = 50
+        else:
+            scores['vol_profile'] = 50
+    except Exception:
+        scores['vol_profile'] = 50
+    
+    try:
+        if _ANOMALY_ENGINE and hasattr(_ANOMALY_ENGINE, 'detect'):
+            # anomaly_detector: AnomalyDetectionResult com severity
+            result = _ANOMALY_ENGINE.detect(bar)
+            if hasattr(result, 'severity'):
+                scores['anomaly'] = result.severity * 100
+            else:
+                scores['anomaly'] = 50
+        else:
+            scores['anomaly'] = 50
+    except Exception:
+        scores['anomaly'] = 50
+    
+    try:
+        if _MOMENTUM_ENGINE and hasattr(_MOMENTUM_ENGINE, 'update'):
+            # momentum_physics: MomentumState com velocity
+            state = _MOMENTUM_ENGINE.update(symbol, bar)
+            if hasattr(state, 'velocity'):
+                scores['momentum'] = min(abs(state.velocity) * 50, 100)
+            else:
+                scores['momentum'] = 50
+        else:
+            scores['momentum'] = 50
+    except Exception:
+        scores['momentum'] = 50
+    
+    # Weighted confluence
+    confluence = sum(scores[k] * weights[k] for k in weights)
+    return confluence, scores
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -1094,6 +1213,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     _lot_calc = LotCalculatorV2(LotCfgV2())  # CQO 28/04/2026: 4-factor adaptive sizing
     _risk_returns: list = []       # pnl/equity por trade fechado → Sharpe rolling
     _fractal_cache: dict = {}      # asset → {"ts": float, "regime": str, "hurst": float}
+    _flow_state: dict = {}        # symbol → flow confluence score (0-100)
 
     # Conselho 28/04/2026: reset KS baseline com equity real do MT5 para evitar
     # falsos positivos por drawdown residual de runs anteriores.
@@ -1445,9 +1565,36 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         # === ASSET PROFILE (CQO 28/04/2026) ===
                         _prof = ASSET_PROFILES.get(asset, _PROFILE_DEFAULT)
 
+                        # === FLOW CONFLUENCE: institutional flow scoring (awakened modules) ===
+                        _flow_conf = 50.0  # default neutro
+                        _flow_details = {}
+                        try:
+                            # Obter última barra OHLCV para flow scoring
+                            _rates_flow = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M1, 0, 1)
+                            if _rates_flow is not None and len(_rates_flow) > 0:
+                                _bar_flow = {
+                                    "close": float(_rates_flow[0]["close"]),
+                                    "high": float(_rates_flow[0]["high"]),
+                                    "low": float(_rates_flow[0]["low"]),
+                                    "volume": float(_rates_flow[0]["tick_volume"])
+                                }
+                                _flow_conf, _flow_details = compute_flow_confluence(_bar_flow, asset, signal_dir)
+                                _flow_state[asset] = _flow_conf
+                                log.info("[%s %s] [FLOW] confluence=%.1f v_flow=%.0f vol_physics=%.0f vol_profile=%.0f anomaly=%.0f momentum=%.0f",
+                                         asset, tf, _flow_conf,
+                                         _flow_details.get("v_flow", 50),
+                                         _flow_details.get("vol_physics", 50),
+                                         _flow_details.get("vol_profile", 50),
+                                         _flow_details.get("anomaly", 50),
+                                         _flow_details.get("momentum", 50))
+                        except Exception as _flow_err:
+                            log.debug("[%s %s] [FLOW] erro: %s", asset, tf, _flow_err)
+
                         # === LotCalculator V2 — CQO 28/04/2026 ===
                         # 4 fatores: volatilidade ATR + confiança IA + desempenho + kelly(off)
                         _conf_score = float(ia_signal.get('confidence', 0.70) if ia_signal else 0.70)
+                        # BONUS: flow_confidence aumenta confiança para lot sizing
+                        _conf_score = min(_conf_score + (_flow_conf - 50) * 0.005, 1.0)  # até +0.25 bonus
                         # Gate de confiança mínima por ativo (crypto > forex)
                         if _conf_score < _prof["min_conf"]:
                             log.info("[%s %s] [PROFILE] SKIP conf=%.2f < min_conf=%.2f regime=%s",
