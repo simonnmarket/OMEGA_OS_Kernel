@@ -1,0 +1,20 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-27T20:05:13.086361+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 0,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 0,
+    "executed": 0,
+    "skipped": 0,
+    "avg_hit_rate_134": 0,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 0.0,
+    "max_latency_ms": 0
+  },
+  "results": [],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260427_200513.log",
+  "checksum": "77c9f9791337f3943a2bd94700f7ec0bbb7d1c3fc0db72dcb1eafbd341be7641"
+}

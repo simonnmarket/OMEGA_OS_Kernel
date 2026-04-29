@@ -1,0 +1,87 @@
+{
+  "mission_id": "PAPER-ETHUSD-H4-20260428T191438",
+  "asset": "ETHUSD",
+  "timeframe": "H4",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-04-28T19:14:38.411026+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "ETHUSD",
+    "timeframe": "H4",
+    "tier": "T1",
+    "hit_rate_134": 93.78,
+    "mach": 1.0,
+    "margin_used": 150.0,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 2667,
+    "total": 2844,
+    "p_hat": 0.937764,
+    "lower_bound": 0.928281,
+    "upper_bound": 0.946066,
+    "interval": "[92.8281%, 94.6066%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 4316,
+          "hits": 3969,
+          "breaks": 347,
+          "hit_rate": 91.96,
+          "break_rate": 8.04
+        },
+        "134_stats": {
+          "total_touches": 2844,
+          "hits": 2667,
+          "breaks": 177,
+          "hit_rate": 93.78,
+          "break_rate": 6.22
+        }
+      }
+    },
+    "price": {
+      "price": 0.0,
+      "base_price": 0.0,
+      "flash_crash_adjustment": null,
+      "metadata": {}
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 150.0,
+    "tier": "T1"
+  },
+  "execution": {
+    "retcode": 10014,
+    "retcode_str": "TOO_MANY_REQ",
+    "success": false,
+    "deal": 0,
+    "order": 0,
+    "fill_price": 0.0,
+    "ask_at_send": 2292.077,
+    "sl_price": 2293.007,
+    "tp_price": 2291.147,
+    "volume_confirmed": 0.0,
+    "slippage_pts": 0.0,
+    "comment": "Invalid volume",
+    "request_id": 0,
+    "latency_ms": 0.2,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.1,
+    "risk_usd": 10.0,
+    "stop_pts": 300.0,
+    "pip_value_lot": 0.001,
+    "contract_size": 1.0,
+    "price_at_calc": 2292.517
+  },
+  "latency_motor_s": 2.526,
+  "checksum": "2c80a4ccfc5dbfde928747bf1fe22910e25188a79de46f29d30032fee37e3555"
+}

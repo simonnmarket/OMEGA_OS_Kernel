@@ -1,0 +1,71 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-29T11:31:41.009868+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 0,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 0,
+    "executed": 0,
+    "skipped": 0,
+    "avg_hit_rate_134": 0,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 0.0,
+    "max_latency_ms": 0
+  },
+  "results": [],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260429_113140.log",
+  "positions_ledger": {
+    "n": 4,
+    "total_pnl": -4.5,
+    "realized_pnl": 0.0,
+    "realized_n": 0,
+    "positions": {
+      "181028188": {
+        "symbol": "GBPJPY",
+        "direction": "BUY",
+        "lot": 0.05,
+        "entry_price": 215.959,
+        "entry_time": "2026-04-29T14:28:18+00:00",
+        "last_profit": -1.44,
+        "status": "open"
+      },
+      "181028189": {
+        "symbol": "GBPJPY",
+        "direction": "BUY",
+        "lot": 0.05,
+        "entry_price": 215.959,
+        "entry_time": "2026-04-29T14:28:18+00:00",
+        "last_profit": -1.44,
+        "status": "open"
+      },
+      "181028194": {
+        "symbol": "GBPJPY",
+        "direction": "BUY",
+        "lot": 0.03,
+        "entry_price": 215.956,
+        "entry_time": "2026-04-29T14:28:20+00:00",
+        "last_profit": -0.81,
+        "status": "open"
+      },
+      "181028195": {
+        "symbol": "GBPJPY",
+        "direction": "BUY",
+        "lot": 0.03,
+        "entry_price": 215.956,
+        "entry_time": "2026-04-29T14:28:20+00:00",
+        "last_profit": -0.81,
+        "status": "open"
+      }
+    }
+  },
+  "lot_calc_v2": {
+    "perf_n": 0,
+    "perf_f": 1.0,
+    "perf_trend": "flat",
+    "lot_range": "0.05–0.25",
+    "kelly_on": false
+  },
+  "checksum": "245ce31c319729067d570c56f31fc0fc194807fde011b70201843258e7d2c571"
+}

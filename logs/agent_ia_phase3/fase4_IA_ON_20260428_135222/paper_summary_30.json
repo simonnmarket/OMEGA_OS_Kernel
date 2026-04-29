@@ -1,0 +1,102 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-28T14:14:58.090769+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 2,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 2,
+    "executed": 2,
+    "skipped": 0,
+    "avg_hit_rate_134": 96.255,
+    "avg_slippage_pts": 46.0,
+    "avg_latency_ms": 43.9,
+    "max_latency_ms": 47.6
+  },
+  "results": [
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 98.73,
+      "ic_95": "[98.3233%, 99.0316%]",
+      "margin_used": 150.0,
+      "lot": 0.1,
+      "retcode": 10009,
+      "slippage_pts": 92.0,
+      "checksum": "310d3b03f2e1320881248b94"
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 93.78,
+      "ic_95": "[92.8281%, 94.6066%]",
+      "margin_used": 150.0,
+      "lot": 0.1,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "0b6a05fe4c4291d85ebaa35b"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260428_141452.log",
+  "positions_ledger": {
+    "n": 5,
+    "total_pnl": 1.22,
+    "positions": {
+      "180611278": {
+        "symbol": "ETHUSD",
+        "direction": "BUY",
+        "lot": 0.1,
+        "entry_price": 2273.028,
+        "sl": 2272.11,
+        "tp": 2274.13,
+        "entry_deal": 183782578,
+        "entry_time": "2026-04-28T14:14:55.228310+00:00",
+        "last_profit": -0.06,
+        "status": "open"
+      },
+      "180611302": {
+        "symbol": "ETHUSD",
+        "direction": "BUY",
+        "lot": 0.1,
+        "entry_price": 2273.047,
+        "sl": 2271.837,
+        "tp": 2274.257,
+        "entry_deal": 183782623,
+        "entry_time": "2026-04-28T14:14:58.068782+00:00",
+        "last_profit": -0.06,
+        "status": "open"
+      },
+      "180610581": {
+        "symbol": "XAUUSD",
+        "direction": "SELL",
+        "lot": 0.01,
+        "entry_price": 4569.75,
+        "entry_time": "2026-04-28T17:13:45+00:00",
+        "last_profit": 1.37,
+        "status": "open"
+      },
+      "180610864": {
+        "symbol": "GER40",
+        "direction": "SELL",
+        "lot": 0.01,
+        "entry_price": 24008.4,
+        "entry_time": "2026-04-28T17:14:05+00:00",
+        "last_profit": -0.02,
+        "status": "open"
+      },
+      "180610923": {
+        "symbol": "GER40",
+        "direction": "SELL",
+        "lot": 0.01,
+        "entry_price": 24009.4,
+        "entry_time": "2026-04-28T17:14:08+00:00",
+        "last_profit": -0.01,
+        "status": "open"
+      }
+    }
+  },
+  "checksum": "f5b59ce4d67fc9acea65c51f9c950ad0bb562be40ad290c9ce6d5956c999851b"
+}

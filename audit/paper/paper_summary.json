@@ -1,57 +1,53 @@
 {
   "mode": "paper",
-  "generated": "2026-04-24T20:12:16.864221+00:00",
+  "generated": "2026-04-29T14:36:02.427602+00:00",
   "equity_demo": 10000.0,
-  "total_cycles": 3,
+  "total_cycles": 0,
   "kill_switch": false,
   "ks_reason": "",
   "online_stats": {
-    "total_signals": 3,
-    "executed": 3,
+    "total_signals": 0,
+    "executed": 0,
     "skipped": 0,
-    "avg_hit_rate_134": 99.98,
+    "avg_hit_rate_134": 0,
     "avg_slippage_pts": 0.0,
-    "avg_latency_ms": 37.0,
-    "max_latency_ms": 44.5
+    "avg_latency_ms": 0.0,
+    "max_latency_ms": 0
   },
-  "results": [
-    {
-      "asset": "XAUUSD",
-      "timeframe": "H1",
-      "status": "MT5_PAPER_EXECUTE",
-      "hit_rate_134": 99.98,
-      "ic_95": "[99.9607%, 99.9917%]",
-      "margin_used": 150.0,
-      "lot": 0.01,
-      "retcode": 10009,
-      "slippage_pts": 0.0,
-      "checksum": "8f6a4e9cccaf9fdfdf4f2363"
-    },
-    {
-      "asset": "XAUUSD",
-      "timeframe": "H4",
-      "status": "MT5_PAPER_EXECUTE",
-      "hit_rate_134": 99.96,
-      "ic_95": "[99.8946%, 99.9840%]",
-      "margin_used": 203.9,
-      "lot": 0.01,
-      "retcode": 10009,
-      "slippage_pts": 0.0,
-      "checksum": "e6f9df39570740b5d66c34ef"
-    },
-    {
-      "asset": "EURUSD",
-      "timeframe": "H1",
-      "status": "MT5_PAPER_EXECUTE",
-      "hit_rate_134": 100.0,
-      "ic_95": "[99.9902%, 100.0000%]",
-      "margin_used": 150.0,
-      "lot": 0.01,
-      "retcode": 10009,
-      "slippage_pts": 0.0,
-      "checksum": "ce50aa8de8a0c3860b20c3d6"
+  "results": [],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260429_143602.log",
+  "positions_ledger": {
+    "n": 2,
+    "total_pnl": 14.64,
+    "realized_pnl": 0.0,
+    "realized_n": 0,
+    "positions": {
+      "181142609": {
+        "symbol": "EURJPY",
+        "direction": "BUY",
+        "lot": 0.25,
+        "entry_price": 187.096,
+        "entry_time": "2026-04-29T17:18:15+00:00",
+        "last_profit": 9.99,
+        "status": "open"
+      },
+      "181142654": {
+        "symbol": "EURJPY",
+        "direction": "BUY",
+        "lot": 0.12,
+        "entry_price": 187.098,
+        "entry_time": "2026-04-29T17:18:16+00:00",
+        "last_profit": 4.65,
+        "status": "open"
+      }
     }
-  ],
-  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260424_201131.log",
-  "checksum": "1bff3d679ed7a450d36b051c90b919b44039c149736a03f943dfe51ee7cc73c4"
+  },
+  "lot_calc_v2": {
+    "perf_n": 0,
+    "perf_f": 1.0,
+    "perf_trend": "flat",
+    "lot_range": "0.01–0.25",
+    "kelly_on": false
+  },
+  "checksum": "f3293e506eb042ad165cdc14591575785172701153d87739fc7c5655f8d6833e"
 }

@@ -1,0 +1,221 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-27T19:50:56.491159+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 10,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 0,
+    "executed": 0,
+    "skipped": 0,
+    "avg_hit_rate_134": 0,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 0.0,
+    "max_latency_ms": 0
+  },
+  "results": [
+    {
+      "asset": "DOGUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.00015,
+        "atr_pct": 0.001536,
+        "spread": 0.00034,
+        "atr_over_spread": 0.441,
+        "adx": 27.21,
+        "vol_ratio": 0.049,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr/spr<5.0|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "DOGUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.000151,
+        "atr_pct": 0.001543,
+        "spread": 0.00033,
+        "atr_over_spread": 0.457,
+        "adx": 27.21,
+        "vol_ratio": 0.079,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr/spr<5.0|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 2.31,
+        "atr_pct": 0.000494,
+        "spread": 0.38,
+        "atr_over_spread": 6.079,
+        "adx": 19.35,
+        "vol_ratio": 0.251,
+        "asset_class": "metal",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.7,
+        "ok": false,
+        "reason": "atr_pct<0.0015|adx<20.0|vol_ratio<0.7(metal)"
+      }
+    },
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 2.31,
+        "atr_pct": 0.000494,
+        "spread": 0.37,
+        "atr_over_spread": 6.243,
+        "adx": 19.35,
+        "vol_ratio": 0.286,
+        "asset_class": "metal",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.7,
+        "ok": false,
+        "reason": "atr_pct<0.0015|adx<20.0|vol_ratio<0.7(metal)"
+      }
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 106.639286,
+        "atr_pct": 0.001389,
+        "spread": 8.0,
+        "atr_over_spread": 13.33,
+        "adx": 17.23,
+        "vol_ratio": 0.184,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct<0.0015|adx<20.0|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 106.639286,
+        "atr_pct": 0.001389,
+        "spread": 8.0,
+        "atr_over_spread": 13.33,
+        "adx": 17.23,
+        "vol_ratio": 0.184,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct<0.0015|adx<20.0|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 3.3305,
+        "atr_pct": 0.001456,
+        "spread": 0.44,
+        "atr_over_spread": 7.569,
+        "adx": 15.54,
+        "vol_ratio": 0.188,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct<0.0015|adx<20.0|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 3.3305,
+        "atr_pct": 0.001456,
+        "spread": 0.44,
+        "atr_over_spread": 7.569,
+        "adx": 15.54,
+        "vol_ratio": 0.189,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct<0.0015|adx<20.0|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "SOLUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.117357,
+        "atr_pct": 0.001394,
+        "spread": 0.093,
+        "atr_over_spread": 1.262,
+        "adx": 34.56,
+        "vol_ratio": 0.181,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "SOLUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.117357,
+        "atr_pct": 0.001394,
+        "spread": 0.093,
+        "atr_over_spread": 1.262,
+        "adx": 34.56,
+        "vol_ratio": 0.181,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0|vol_ratio<0.8(crypto)"
+      }
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260427_195008.log",
+  "checksum": "0c93734f9eee652764a60ad1bd4497feee670d9199448ed96efe72ee2bc42de8"
+}

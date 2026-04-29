@@ -1,0 +1,878 @@
+{
+  "cycles": 30,
+  "total_signals": 11,
+  "total_executed": 11,
+  "total_skipped": 0,
+  "total_trades_per_asset": {
+    "ETHUSD": 6,
+    "DOGUSD": 0,
+    "SOLUSD": 0,
+    "US500": 1,
+    "EURUSD": 0,
+    "BTCUSD": 0,
+    "GER40": 1,
+    "USDJPY": 0,
+    "XAUUSD": 0,
+    "GBPUSD": 0
+  },
+  "total_trades": 8,
+  "by_action": {
+    "MT5_PAPER_EXECUTE": 11,
+    "SKIP_EDGE_GATE": 589
+  },
+  "retcodes": {
+    "10009": 8,
+    "10014": 3
+  },
+  "hit_rate_avg": 96.0995,
+  "hit_rate_min": 93.78,
+  "latency_ms_avg": 41.38,
+  "latency_ms_max": 234.1,
+  "latency_ms_p95": 234.1,
+  "slippage_avg_pts": 95517.7417,
+  "kill_switch_triggers": 0,
+  "ledger_total_pnl": -0.12,
+  "ledger_realized_pnl": 0.04,
+  "ledger_realized_n": 1,
+  "ledger_n_positions": 8,
+  "max_concentration_pct": 75.0,
+  "max_concentration_asset": "ETHUSD",
+  "corr_blocks": 0,
+  "label": "IA_ON",
+  "timestamp_utc": "20260428_180310",
+  "cycles_requested": 30,
+  "closes_per_cycle": [
+    {
+      "cycle": 1,
+      "n_success": 0
+    },
+    {
+      "cycle": 2,
+      "n_success": 0
+    },
+    {
+      "cycle": 3,
+      "n_success": 0
+    },
+    {
+      "cycle": 4,
+      "n_success": 0
+    },
+    {
+      "cycle": 5,
+      "n_success": 0
+    },
+    {
+      "cycle": 6,
+      "n_success": 0
+    },
+    {
+      "cycle": 7,
+      "n_success": 0
+    },
+    {
+      "cycle": 8,
+      "n_success": 0
+    },
+    {
+      "cycle": 9,
+      "n_success": 0
+    },
+    {
+      "cycle": 10,
+      "n_success": 0
+    },
+    {
+      "cycle": 11,
+      "n_success": 0
+    },
+    {
+      "cycle": 12,
+      "n_success": 0
+    },
+    {
+      "cycle": 13,
+      "n_success": 0
+    },
+    {
+      "cycle": 14,
+      "n_success": 0
+    },
+    {
+      "cycle": 15,
+      "n_success": 0
+    },
+    {
+      "cycle": 16,
+      "n_success": 0
+    },
+    {
+      "cycle": 17,
+      "n_success": 0
+    },
+    {
+      "cycle": 18,
+      "n_success": 0
+    },
+    {
+      "cycle": 19,
+      "n_success": 0
+    },
+    {
+      "cycle": 20,
+      "n_success": 0
+    },
+    {
+      "cycle": 21,
+      "n_success": 0
+    },
+    {
+      "cycle": 22,
+      "n_success": 0
+    },
+    {
+      "cycle": 23,
+      "n_success": 0
+    },
+    {
+      "cycle": 24,
+      "n_success": 0
+    },
+    {
+      "cycle": 25,
+      "n_success": 0
+    },
+    {
+      "cycle": 26,
+      "n_success": 0
+    },
+    {
+      "cycle": 27,
+      "n_success": 0
+    },
+    {
+      "cycle": 28,
+      "n_success": 0
+    },
+    {
+      "cycle": 29,
+      "n_success": 0
+    },
+    {
+      "cycle": 30,
+      "n_success": 0
+    }
+  ],
+  "pnl_financial": {
+    "closed_positions": 1,
+    "net_pnl": 0.04,
+    "gross_profit": 0,
+    "gross_loss": 0,
+    "win_rate_dollar": 1.0,
+    "profit_factor": "inf",
+    "expectancy": 0.04,
+    "avg_win": 0.04,
+    "avg_loss": 0.0,
+    "sharpe_per_trade": 0.0,
+    "max_drawdown_pct": 0.0,
+    "consecutive_losses": 0,
+    "per_symbol": {},
+    "_source": "LEDGER_FALLBACK"
+  },
+  "pnl_per_cycle": [
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.01,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": -0.01,
+        "symbols": {
+          "US500": {
+            "n": 1,
+            "pnl": -0.01
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.01,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": -0.01,
+        "symbols": {
+          "US500": {
+            "n": 1,
+            "pnl": -0.01
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.01,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": -0.01,
+        "symbols": {
+          "US500": {
+            "n": 1,
+            "pnl": -0.01
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.01,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": -0.01,
+        "symbols": {
+          "US500": {
+            "n": 1,
+            "pnl": -0.01
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.01,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": -0.01,
+        "symbols": {
+          "US500": {
+            "n": 1,
+            "pnl": -0.01
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.02,
+      "open_positions_snapshot": {
+        "open_positions": 3,
+        "floating_pnl": -0.02,
+        "symbols": {
+          "US500": {
+            "n": 1,
+            "pnl": 0.0
+          },
+          "ETHUSD": {
+            "n": 2,
+            "pnl": -0.02
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.01,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": -0.01,
+        "symbols": {
+          "US500": {
+            "n": 1,
+            "pnl": -0.01
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": 0.0,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": 0.0,
+        "symbols": {
+          "US500": {
+            "n": 1,
+            "pnl": 0.0
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": 0.01,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": 0.01,
+        "symbols": {
+          "US500": {
+            "n": 1,
+            "pnl": 0.01
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": 0.01,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": 0.01,
+        "symbols": {
+          "US500": {
+            "n": 1,
+            "pnl": 0.01
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": 0.02,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": 0.02,
+        "symbols": {
+          "US500": {
+            "n": 1,
+            "pnl": 0.02
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": 0.02,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": 0.02,
+        "symbols": {
+          "US500": {
+            "n": 1,
+            "pnl": 0.02
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.06,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": -0.06,
+        "symbols": {
+          "ETHUSD": {
+            "n": 1,
+            "pnl": -0.06
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.05,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": -0.05,
+        "symbols": {
+          "ETHUSD": {
+            "n": 1,
+            "pnl": -0.05
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.04,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": -0.04,
+        "symbols": {
+          "ETHUSD": {
+            "n": 1,
+            "pnl": -0.04
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.03,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": -0.03,
+        "symbols": {
+          "ETHUSD": {
+            "n": 1,
+            "pnl": -0.03
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    }
+  ],
+  "close_mode": "ttl",
+  "close_ttl_sec": 600,
+  "go_no_go": {
+    "go": false,
+    "go_full": false,
+    "mandatory": {
+      "net_pnl_ok": true,
+      "win_rate_ok": true,
+      "profit_factor_ok": true,
+      "expectancy_ok": true,
+      "sample_size_ok": false
+    },
+    "recommended": {
+      "sharpe_ok": true,
+      "max_drawdown_ok": true,
+      "consec_losses_ok": true,
+      "slip_cost_ok": false,
+      "bias_ok": true
+    },
+    "agg_checks": {
+      "ks_triggers_zero": true,
+      "concentration_ok": false,
+      "hit_rate_ok": true,
+      "p95_latency_ok": false,
+      "ia_exec_ok": false,
+      "corr_filter_ok": true
+    },
+    "thresholds": {
+      "min_net_pnl": 0.0,
+      "min_win_rate_$": 0.45,
+      "min_profit_factor": 1.3,
+      "min_expectancy": 0.02,
+      "min_trades": 15,
+      "min_sharpe": 0.0,
+      "max_drawdown_pct": 0.05,
+      "max_consecutive_losses": 5,
+      "max_concentration_pct": 0.4,
+      "min_hit_rate_pct": 60.0,
+      "max_p95_latency_ms": 200.0,
+      "min_ia_exec": 30,
+      "max_slip_pts": 3.0,
+      "max_bias_ratio": 0.8
+    },
+    "failed_mandatory": [
+      "sample_size_ok"
+    ],
+    "failed_recommended": [
+      "slip_cost_ok",
+      "concentration_ok",
+      "p95_latency_ok",
+      "ia_exec_ok"
+    ]
+  },
+  "latency_circuit_breaker": {
+    "triggered": false,
+    "reason": "",
+    "current_p95_ms": 56.5,
+    "samples": 30
+  },
+  "performance_monitor": {
+    "samples": 0,
+    "alerts": [],
+    "alerts_count": 0
+  }
+}

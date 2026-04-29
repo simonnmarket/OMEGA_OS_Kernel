@@ -1,0 +1,71 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-28T13:54:56.152667+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 0,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 0,
+    "executed": 0,
+    "skipped": 0,
+    "avg_hit_rate_134": 0,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 0.0,
+    "max_latency_ms": 0
+  },
+  "results": [],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260428_135456.log",
+  "positions_ledger": {
+    "n": 5,
+    "total_pnl": -0.89,
+    "positions": {
+      "180595761": {
+        "symbol": "GER40",
+        "direction": "SELL",
+        "lot": 0.01,
+        "entry_price": 24028.4,
+        "entry_time": "2026-04-28T16:53:37+00:00",
+        "last_profit": -0.01,
+        "status": "open"
+      },
+      "180595810": {
+        "symbol": "GER40",
+        "direction": "SELL",
+        "lot": 0.01,
+        "entry_price": 24025.9,
+        "entry_time": "2026-04-28T16:53:40+00:00",
+        "last_profit": -0.05,
+        "status": "open"
+      },
+      "180595846": {
+        "symbol": "BTCUSD",
+        "direction": "SELL",
+        "lot": 0.01,
+        "entry_price": 76123.65,
+        "entry_time": "2026-04-28T16:53:43+00:00",
+        "last_profit": -0.05,
+        "status": "open"
+      },
+      "180595866": {
+        "symbol": "BTCUSD",
+        "direction": "SELL",
+        "lot": 0.01,
+        "entry_price": 76120.51,
+        "entry_time": "2026-04-28T16:53:45+00:00",
+        "last_profit": -0.08,
+        "status": "open"
+      },
+      "180596600": {
+        "symbol": "XAUUSD",
+        "direction": "SELL",
+        "lot": 0.01,
+        "entry_price": 4580.32,
+        "entry_time": "2026-04-28T16:54:29+00:00",
+        "last_profit": -0.7,
+        "status": "open"
+      }
+    }
+  },
+  "checksum": "5e6fa00a2556de6aac4e240a7af1c59f5ccde7d21de08630d02142c9a4f750b5"
+}

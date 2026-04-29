@@ -11,11 +11,15 @@ if not mt5.initialize():
     print(f"[FATAL] MT5 init failed: {mt5.last_error()}")
     raise SystemExit(1)
 
-positions = mt5.positions_get()
-n = len(positions) if positions else 0
-print(f"[EMERGENCY] Posicoes abertas: {n}")
+OMEGA_MAGIC = 234001
+all_pos = mt5.positions_get()
+positions = [p for p in (all_pos or []) if p.magic == OMEGA_MAGIC]
+n_total = len(all_pos) if all_pos else 0
+n = len(positions)
+print(f"[EMERGENCY] Posicoes abertas (total conta): {n_total}")
+print(f"[EMERGENCY] Posicoes OMEGA (magic={OMEGA_MAGIC}): {n}")
 
-for p in positions or []:
+for p in positions:
     tick = mt5.symbol_info_tick(p.symbol)
     if not tick:
         msg = f"Sem tick para {p.symbol} #{p.ticket}"
@@ -43,8 +47,9 @@ for p in positions or []:
     print(f"[CLOSE] {p.symbol} #{p.ticket} vol={p.volume} retcode={rc}")
 
 # Verificacao pos
-remaining = mt5.positions_get()
-result["remaining_count"] = len(remaining) if remaining else 0
+all_remaining = mt5.positions_get()
+remaining = [p for p in (all_remaining or []) if p.magic == OMEGA_MAGIC]
+result["remaining_count"] = len(remaining)
 print(f"[VERIFY] Posicoes remanescentes: {result['remaining_count']}")
 
 mt5.shutdown()

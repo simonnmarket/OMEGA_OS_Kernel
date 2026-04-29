@@ -38,6 +38,7 @@ import traceback
 from core_engines.integration_gate import OmegaIntegrationGate
 from modules.risk.scale_manager import OmegaScaleManager
 from modules.validation.mfa_engine import OmegaMFAEngine
+from core_engines.lot_calculator_v2 import LotCalculatorV2, LotCfgV2
 
 from datetime import datetime, timezone
 from math import sqrt
@@ -108,14 +109,94 @@ AUDIT_PAPER.mkdir(parents=True, exist_ok=True)
 # ─── Configuração de Risco ───────────────────────────────────────────────────
 DEMO_EQUITY_USD    = 10_000.0
 RISK_PER_TRADE_PCT = float(os.getenv("OMEGA_RISK_PER_TRADE", "0.0025"))  # COO Fase1: 0.001 (0.1%)
+MIN_LOT_OVERRIDE   = float(os.getenv("OMEGA_MIN_LOT", "0.0"))            # CEO: lote mínimo (0=auto)
 MAX_POSITIONS      = int(os.getenv("OMEGA_MAX_POSITIONS", "6"))          # CIO fase conservadora: 2
 DD_DAILY_MAX       = float(os.getenv("OMEGA_DD_DAILY_MAX", "0.05"))       # CIO fase conservadora: 0.01
 CONCENTRATION_MAX  = float(os.getenv("OMEGA_CONCENTRATION_MAX", "0.40"))   # CQO/COO: max por ativo
 MAX_CONSEC_FAIL    = 3
+
+# ─── Perfis por Ativo (CQO 28/04/2026) ──────────────────────────────────────
+# cost_pts    : spread+slippage+comissão mínimo para entrar (cost barrier)
+# sl_atr_mult : SL = ATR × mult  (stop tighter em forex, wider em crypto)
+# tp_atr_mult : TP = ATR × mult  (R/R: tp/sl)
+# min_conf    : confiança mínima adicional por ativo (crypto exige mais)
+# lot_cap     : lote máximo por ativo (independente do guardrail global)
+# regime      : forex | commodity | index | crypto | crypto_alt
+ASSET_PROFILES: dict = {
+    # ── FOREX: spreads mínimos, session-bound, mean-reverting ──────────────
+    "EURUSD": {"cost_pts":   3, "sl_atr_mult": 1.2, "tp_atr_mult": 4.0, "min_conf": 0.62, "lot_cap": 0.25, "regime": "forex"},
+    "GBPUSD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.63, "lot_cap": 0.25, "regime": "forex"},
+    "AUDUSD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.63, "lot_cap": 0.20, "regime": "forex"},
+    "USDCAD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.63, "lot_cap": 0.20, "regime": "forex"},
+    "USDCHF": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.63, "lot_cap": 0.20, "regime": "forex"},
+    "NZDUSD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.63, "lot_cap": 0.20, "regime": "forex"},
+    # ── COMMODITIES: spreads médios, safe-haven/fluxos ──────────────────────
+    "XAUUSD": {"cost_pts":  30, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.68, "lot_cap": 0.15, "regime": "commodity"},
+    "XAGUSD": {"cost_pts":  20, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.68, "lot_cap": 0.15, "regime": "commodity"},
+    # ── INDICES: gap risk, fluxos institucionais ─────────────────────────────
+    "US500":  {"cost_pts":  10, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.68, "lot_cap": 0.20, "regime": "index"},
+    "NAS100": {"cost_pts":  15, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.70, "lot_cap": 0.15, "regime": "index"},
+    "GER40":  {"cost_pts":  10, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.68, "lot_cap": 0.20, "regime": "index"},
+    # ── CRYPTO MAJOR: momentum, spread wide, 24/7 ───────────────────────────
+    "BTCUSD": {"cost_pts": 100, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.75, "lot_cap": 0.25, "regime": "crypto"},
+    "ETHUSD": {"cost_pts":  50, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.75, "lot_cap": 0.25, "regime": "crypto"},
+    "SOLUSD": {"cost_pts":  30, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.75, "lot_cap": 0.25, "regime": "crypto"},
+    # ── CRYPTO ALT: alta volatilidade, spreads extremos ─────────────────────
+    "DOGUSD": {"cost_pts": 200, "sl_atr_mult": 2.5, "tp_atr_mult": 8.0, "min_conf": 0.80, "lot_cap": 0.05, "regime": "crypto_alt"},
+    # ── JPY MAJOR: carry-trade flow, direcional sem ruído ─────────────────────
+    # Estratégia: USDJPY lidera → todas as crosses seguem a mesma direção JPY.
+    # 500+ pips em movimento sustentado são comuns em eventos macro (BOJ/Fed).
+    "USDJPY": {"cost_pts":  3, "sl_atr_mult": 1.2, "tp_atr_mult": 4.2, "min_conf": 0.63, "lot_cap": 0.25, "regime": "jpy_major"},
+    # ── JPY CROSS: amplificam o movimento do USDJPY ────────────────────────────
+    "EURJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.65, "lot_cap": 0.25, "regime": "jpy_cross"},
+    "GBPJPY": {"cost_pts":  8, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.67, "lot_cap": 0.25, "regime": "jpy_cross"},
+    "AUDJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.65, "lot_cap": 0.25, "regime": "jpy_cross"},
+    "CADJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.65, "lot_cap": 0.25, "regime": "jpy_cross"},
+    "CHFJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.65, "lot_cap": 0.25, "regime": "jpy_cross"},
+}
+_PROFILE_DEFAULT = {"cost_pts": 19, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.65, "lot_cap": 0.25, "regime": "generic"}
+
+# ─── EDGE GATE por Classe de Ativo (COO 28/04/2026) ─────────────────────────
+# Thresholds mínimos por regime: ATR% e ADX mínimo
+# Referências: FIA automated trading risk controls; ESMA automation controls
+_EDGE_GATE: dict = {
+    "forex":      {"atr_pct_min": 0.0008, "adx_min": 20.0},
+    "commodity":  {"atr_pct_min": 0.0012, "adx_min": 18.0},
+    "metal":      {"atr_pct_min": 0.0012, "adx_min": 18.0},
+    "index":      {"atr_pct_min": 0.0010, "adx_min": 18.0},
+    "crypto":     {"atr_pct_min": 0.0040, "adx_min": 16.0},
+    "crypto_alt": {"atr_pct_min": 0.0060, "adx_min": 16.0},
+    "jpy_major":  {"atr_pct_min": 0.0006, "adx_min": 18.0},
+    "jpy_cross":  {"atr_pct_min": 0.0008, "adx_min": 18.0},
+    "generic":    {"atr_pct_min": 0.0008, "adx_min": 18.0},
+}
+
+# ─── SL MÁXIMO POR CLASSE (hard cap) ────────────────────────────────────────
+# Garantia de que o SL nunca excede o limite de risco por operação.
+# Calibrado com base em ATR M3 real observado 29/04/2026.
+# Env vars permitem ajuste sem deploy: OMEGA_SL_MAX_FOREX=150, etc.
+_MAX_SL_PTS: dict = {
+    "forex":     int(os.getenv("OMEGA_SL_MAX_FOREX",      "150")),  # 15 pips JPY
+    "jpy_major": int(os.getenv("OMEGA_SL_MAX_FOREX",      "150")),
+    "jpy_cross": int(os.getenv("OMEGA_SL_MAX_FOREX",      "150")),
+    "metal":     int(os.getenv("OMEGA_SL_MAX_METAL",      "250")),
+    "commodity": int(os.getenv("OMEGA_SL_MAX_METAL",      "250")),  # XAUUSD usa regime=commodity
+    "index":     int(os.getenv("OMEGA_SL_MAX_INDEX",      "600")),
+    "crypto":    int(os.getenv("OMEGA_SL_MAX_CRYPTO",    "1500")),
+    "crypto_alt":int(os.getenv("OMEGA_SL_MAX_CRYPTO",    "1500")),
+    "generic":   int(os.getenv("OMEGA_SL_MAX_GENERIC",    "300")),
+}
+
+# ─── JPY Correlation Cluster ──────────────────────────────────────────────────
+# Quando USDJPY confirma direção com força, todas as crosses JPY seguem.
+JPY_CROSSES = ["EURJPY", "GBPJPY", "AUDJPY", "CADJPY", "CHFJPY"]
 OMEGA_MAGIC        = 234001     # ID do EA OMEGA
 
 # ─── Guardrails ─────────────────────────────────────────────────────────────
-TIER1_ASSETS = {"EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF", "XAUUSD", "XAGUSD", "US500", "NAS100", "GER40", "BTCUSD", "ETHUSD"} # Whitelist restrita para DEMO
+TIER1_ASSETS = {"EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF",
+                "XAUUSD", "XAGUSD", "US500", "NAS100", "GER40",
+                "BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD",
+                "EURJPY", "GBPJPY", "AUDJPY", "CADJPY", "CHFJPY"}  # Whitelist OMEGA
 HIT_RATE_MIN = 80.0
 MACH_MAX     = 1.5
 DEMO_WINDOW  = (0, 24) # V9: 24/5 intencional (CQO/CTO liberaram). NIGHT_PASS ou HUNTER override em run_loop.
@@ -178,15 +259,53 @@ def load_dynamic_margins() -> dict:
 # Aprovado por CEO+CKO+COO+CTO+CQO+CIO+TECH-LEAD em 2026-04-27.
 # Fundamento: trade só tem edge se ATR ≫ spread E há tendência (ADX ≥ thr).
 
-EDGE_MIN_ATR_PCT      = float(os.getenv("OMEGA_EDGE_MIN_ATR_PCT", "0.0015"))   # 0.15% do preço
-EDGE_MIN_ATR_OVER_SPR = float(os.getenv("OMEGA_EDGE_MIN_ATR_OVER_SPR", "5.0")) # ATR ≥ 5× spread
-EDGE_MIN_ADX          = float(os.getenv("OMEGA_EDGE_MIN_ADX", "20.0"))         # ADX ≥ 20
+EDGE_MIN_ATR_PCT      = float(os.getenv("OMEGA_EDGE_MIN_ATR_PCT", "0.0015"))   # fallback global (0.15%)
+EDGE_MIN_ATR_OVER_SPR = float(os.getenv("OMEGA_EDGE_MIN_ATR_OVER_SPR", "5.0")) # ATR ≥ 5× spread (global)
+EDGE_MIN_ADX          = float(os.getenv("OMEGA_EDGE_MIN_ADX", "20.0"))         # ADX ≥ 20 (global)
 
 # CTO-spec: classificação por classe de ativo (thresholds de volume_ratio)
 _CRYPTO_ASSETS = {"BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD"}
 _METAL_ASSETS  = {"XAUUSD", "XAGUSD"}
 _INDEX_ASSETS  = {"US500", "NAS100", "GER40", "UK100", "US30"}
-_VOL_MIN_BY_CLASS = {"forex": 0.70, "crypto": 0.80, "metal": 0.70, "index": 0.70}
+# Calibrado 29/04/2026: dados reais mostram vol_ratio=0.19-0.28 na maior parte do tempo.
+# Threshold de 0.70-0.80 bloqueava 95%+ das oportunidades. Reduzido para 0.30/0.35.
+_VOL_MIN_BY_CLASS = {
+    "forex":  float(os.getenv("OMEGA_VOL_MIN_FOREX",  "0.30")),
+    "crypto": float(os.getenv("OMEGA_VOL_MIN_CRYPTO", "0.35")),
+    "metal":  float(os.getenv("OMEGA_VOL_MIN_METAL",  "0.30")),
+    "index":  float(os.getenv("OMEGA_VOL_MIN_INDEX",  "0.30")),
+}
+
+# Conselho Executivo 28/04/2026 — thresholds por classe (CONSENSO UNANIME)
+# CTO/CQO/CFO/COO/CIO/TechLead aprovaram calibracao individual por classe.
+# Crypto: manter 0.15% (ATR% tipico BTC 0.30-1.00% — threshold correto)
+# Forex:  reduzir 0.08% (EURUSD London Open tipico 0.05-0.10%)
+# Metais: reduzir 0.12% (XAUUSD volatilidade moderada 0.08-0.25%)
+# Indices: reduzir 0.10% (US500/GER40 volatilidade intraday 0.10-0.60%)
+# Calibrado 29/04/2026: atr_pct medido em M5 — tipico USDJPY M5=0.015-0.023%, nao 0.08%
+# Threshold de 0.08% era calibrado para H1. Corrigido para M5 realista.
+_EDGE_THRESHOLDS_BY_CLASS = {
+    "crypto": {
+        "min_atr_pct":       float(os.getenv("OMEGA_EDGE_CRYPTO_ATR",   "0.0010")),  # 0.10% (era 0.15%)
+        "min_atr_over_spr":  float(os.getenv("OMEGA_EDGE_CRYPTO_SPR",   "4.0")),     # era 5.0
+        "min_adx":           float(os.getenv("OMEGA_EDGE_CRYPTO_ADX",   "18.0")),    # era 20.0
+    },
+    "forex": {
+        "min_atr_pct":       float(os.getenv("OMEGA_EDGE_FOREX_ATR",    "0.0001")),  # 0.01% (calibrado M5 JPY 29/04)
+        "min_atr_over_spr":  float(os.getenv("OMEGA_EDGE_FOREX_SPR",    "1.5")),     # era 2.0
+        "min_adx":           float(os.getenv("OMEGA_EDGE_FOREX_ADX",    "13.0")),
+    },
+    "metal": {
+        "min_atr_pct":       float(os.getenv("OMEGA_EDGE_METAL_ATR",    "0.0007")),  # 0.07% (era 0.12%)
+        "min_atr_over_spr":  float(os.getenv("OMEGA_EDGE_METAL_SPR",    "3.0")),     # era 4.0
+        "min_adx":           float(os.getenv("OMEGA_EDGE_METAL_ADX",    "15.0")),    # era 18.0
+    },
+    "index": {
+        "min_atr_pct":       float(os.getenv("OMEGA_EDGE_INDEX_ATR",    "0.0008")),  # 0.08% (era 0.10%)
+        "min_atr_over_spr":  float(os.getenv("OMEGA_EDGE_INDEX_SPR",    "3.0")),     # era 4.0
+        "min_adx":           float(os.getenv("OMEGA_EDGE_INDEX_ADX",    "15.0")),    # era 18.0
+    },
+}
 
 def classify_asset(symbol: str) -> str:
     """Classifica ativo em forex/crypto/metal/index (CTO spec)."""
@@ -260,6 +379,11 @@ def has_edge_for_momentum(symbol: str) -> Tuple[bool, dict]:
     asset_class   = classify_asset(symbol)
     min_vol_ratio = _VOL_MIN_BY_CLASS.get(asset_class, 0.70)
 
+    cls_thr       = _EDGE_THRESHOLDS_BY_CLASS.get(asset_class, _EDGE_THRESHOLDS_BY_CLASS["crypto"])
+    thr_atr_pct   = cls_thr["min_atr_pct"]
+    thr_atr_spr   = cls_thr["min_atr_over_spr"]
+    thr_adx       = cls_thr["min_adx"]
+
     metrics = {
         "atr": round(atr, 6),
         "atr_pct": round(atr_pct, 6),
@@ -268,21 +392,21 @@ def has_edge_for_momentum(symbol: str) -> Tuple[bool, dict]:
         "adx": round(adx, 2),
         "vol_ratio": round(vol_ratio, 3),
         "asset_class": asset_class,
-        "thr_atr_pct": EDGE_MIN_ATR_PCT,
-        "thr_atr_over_spr": EDGE_MIN_ATR_OVER_SPR,
-        "thr_adx": EDGE_MIN_ADX,
+        "thr_atr_pct": thr_atr_pct,
+        "thr_atr_over_spr": thr_atr_spr,
+        "thr_adx": thr_adx,
         "thr_vol_ratio": min_vol_ratio,
     }
-    ok = (atr_pct >= EDGE_MIN_ATR_PCT
-          and atr_over_spr >= EDGE_MIN_ATR_OVER_SPR
-          and adx >= EDGE_MIN_ADX
+    ok = (atr_pct >= thr_atr_pct
+          and atr_over_spr >= thr_atr_spr
+          and adx >= thr_adx
           and vol_ratio >= min_vol_ratio)
     metrics["ok"] = ok
     if not ok:
         reasons = []
-        if atr_pct < EDGE_MIN_ATR_PCT: reasons.append(f"atr_pct<{EDGE_MIN_ATR_PCT}")
-        if atr_over_spr < EDGE_MIN_ATR_OVER_SPR: reasons.append(f"atr/spr<{EDGE_MIN_ATR_OVER_SPR}")
-        if adx < EDGE_MIN_ADX: reasons.append(f"adx<{EDGE_MIN_ADX}")
+        if atr_pct < thr_atr_pct: reasons.append(f"atr_pct={atr_pct*100:.3f}%<{thr_atr_pct*100:.3f}%[{asset_class}]")
+        if atr_over_spr < thr_atr_spr: reasons.append(f"atr/spr={atr_over_spr:.2f}<{thr_atr_spr}")
+        if adx < thr_adx: reasons.append(f"adx={adx:.1f}<{thr_adx}[{asset_class}]")
         if vol_ratio < min_vol_ratio: reasons.append(f"vol_ratio<{min_vol_ratio}({asset_class})")
         metrics["reason"] = "|".join(reasons)
     return ok, metrics
@@ -296,10 +420,14 @@ def mt5_init() -> bool:
             log.error("MT5 initialize() falhou: %s", mt5.last_error())
             return False
         info = mt5.terminal_info()
+        acct = mt5.account_info()
         log.info("MT5 conectado | build=%s | trade_allowed=%s | connected=%s",
                  info.build if info else "?",
                  info.trade_allowed if info else "?",
                  info.connected if info else "?")
+        if acct:
+            log.info("MT5 conta: login=%d servidor=%s balance=%.2f currency=%s",
+                     acct.login, acct.server, acct.balance, acct.currency)
         return True
     except ImportError:
         log.error("MetaTrader5 package não instalado. Execute: pip install MetaTrader5")
@@ -367,8 +495,9 @@ def mt5_send_order(asset: str, tf: str, lot: float,
     point    = sym.point
     digits   = sym.digits
     min_dist = max(getattr(sym, 'trade_stops_level', 0), getattr(sym, 'spread', 0) * 2)
-    final_sl_pts = max(sl_pts, min_dist + 50)  # Safe buffer
-    final_tp_pts = max(tp_pts, min_dist + 50)
+    final_sl_pts = max(sl_pts, min_dist + 50)          # Safe buffer para SL
+    final_tp_pts = max(tp_pts, min_dist + 50)          # Distância mínima para TP
+    final_tp_pts = max(final_tp_pts, final_sl_pts * 3.0)  # R:R mínimo 1:3.0
     
     if direction == "BUY":
         sl_price = round(price - final_sl_pts * point, digits)
@@ -422,7 +551,8 @@ def mt5_send_order(asset: str, tf: str, lot: float,
     r = result._asdict()
     retcode     = r.get("retcode", -1)
     retcode_str = RETCODE_DESC.get(retcode, f"UNKNOWN_{retcode}")
-    slippage    = round(abs(r.get("price", price) - price) / point, 2)
+    _fill = r.get("price", price) if retcode in RETCODE_OK else price  # sem slippage em falhas
+    slippage    = round(abs(_fill - price) / point, 2) if retcode in RETCODE_OK else 0.0
 
     out = {
         "retcode":          retcode,
@@ -538,12 +668,19 @@ def calc_lot(equity: float, margin_pts: float, asset: str) -> Dict:
     # Valor de 1 pip = point × contract_size × price_in_USD_per_unit
     # Para forex simples: pip_value = point × contract_size
     # Para XAUUSD: pip_value = point × contract_size (em USD já)
-    pip_value_per_lot = point * contract_size
+    # FIX 29/04/2026: point*contract_size retorna em moeda-cotacao (JPY para pares JPY),
+    # nao em USD. Usar trade_tick_value do MT5 que ja esta em moeda da conta (USD).
+    tick_size = sym.trade_tick_size if sym.trade_tick_size > 0 else point
+    pip_value_per_lot = sym.trade_tick_value * (point / tick_size)
+    if pip_value_per_lot <= 0:  # fallback de seguranca
+        pip_value_per_lot = point * contract_size
 
     risk_usd = equity * RISK_PER_TRADE_PCT
     stop_pts = 2.0 * margin_pts
     lot_raw  = risk_usd / max(stop_pts * pip_value_per_lot, 0.0001)
     min_lot  = sym.volume_min if hasattr(sym, 'volume_min') else 0.01
+    if MIN_LOT_OVERRIDE > 0.0:  # CEO: lote mínimo forçado para cobertura de fee
+        min_lot = max(min_lot, MIN_LOT_OVERRIDE)
     lot      = max(min_lot, round(lot_raw, 2))
     guardrail_max = max(get_max_lot(), min_lot)
     lot      = min(lot, guardrail_max) # Guardrail Demo / Hunter Dinâmico Centralizado
@@ -555,11 +692,241 @@ def calc_lot(equity: float, margin_pts: float, asset: str) -> Dict:
         "pip_value_lot":  round(pip_value_per_lot, 6),
         "contract_size":  contract_size,
         "price_at_calc":  price,
+        "sym_vol_min":    sym.volume_min if hasattr(sym, 'volume_min') else 0.01,
     }
 
 
 
-# ─── Build AnalysisReport ───────────────────────────────────────────────────
+# ─── A1+: MULTI-TF TREND BIAS (D1→H4→H1→M15) ─────────────────────────────────────
+MTF_ALIGN_THR = float(os.getenv("OMEGA_MTF_ALIGN_THR", "0.75"))  # 75%=3/4 TFs alinhados
+
+def get_multi_tf_bias(symbol: str) -> dict:
+    """
+    Calcula viés direcional alinhando D1 + H4 + H1 + M15.
+    EMA8 vs EMA21 em cada TF. Score: BUY=+1, SELL=-1.
+    CQO Spec 28/04/2026: confluência multi-TF para tomada de decisão.
+    Alinhamento >= 75% (3/4 TFs) é requerido para bloquear sinal oposto.
+    """
+    import MetaTrader5 as mt5
+    import numpy as np
+    TFS = [
+        (mt5.TIMEFRAME_D1,  "D1",  50),
+        (mt5.TIMEFRAME_H4,  "H4",  50),
+        (mt5.TIMEFRAME_H1,  "H1",  50),
+        (mt5.TIMEFRAME_M15, "M15", 50),
+    ]
+    scores = []
+    detail = {}
+    for tf_const, tf_name, n in TFS:
+        try:
+            rates = mt5.copy_rates_from_pos(symbol, tf_const, 0, n)
+            if rates is None or len(rates) < 22:
+                detail[tf_name] = "no_data"
+                continue
+            closes = np.array([r['close'] for r in rates], dtype=float)
+            ema8   = float(np.mean(closes[-8:]))
+            ema21  = float(np.mean(closes[-21:]))
+            s = 1 if ema8 > ema21 else -1
+            scores.append(s)
+            detail[tf_name] = "BUY" if s > 0 else "SELL"
+        except Exception as _e:
+            detail[tf_name] = f"err:{_e}"
+    if not scores:
+        return {"bias": "NEUTRAL", "score": 0, "alignment": 0.0, "detail": detail}
+    net       = sum(scores)
+    alignment = abs(net) / len(scores)
+    bias      = "BUY" if net > 0 else ("SELL" if net < 0 else "NEUTRAL")
+    return {"bias": bias, "score": net, "alignment": round(alignment, 2),
+            "n_tfs": len(scores), "detail": detail}
+
+
+def get_execution_tf_atr(symbol: str, confidence: float = 0.70) -> dict:
+    """
+    Seleciona TF de execução (M3 padrão, M1 se confidence >= 0.80).
+    Calcula ATR para SL/TP tight no TF de execução.
+    CQO Spec: M3 reduz ruído 67% vs M1, mantém antecipação de spikes.
+    M1 reservado para sinais de alta confiança (>= 0.80).
+    """
+    import MetaTrader5 as mt5
+    import numpy as np
+    tf_const = mt5.TIMEFRAME_M1 if confidence >= 0.80 else mt5.TIMEFRAME_M3
+    tf_name  = "M1"              if confidence >= 0.80 else "M3"
+    try:
+        rates = mt5.copy_rates_from_pos(symbol, tf_const, 0, 40)
+        if rates is None or len(rates) < 15:
+            return {"tf": tf_name, "atr_pts": 0.0, "atr_pct": 0.0015, "error": "no_rates"}
+        highs  = np.array([r['high']  for r in rates], dtype=float)
+        lows   = np.array([r['low']   for r in rates], dtype=float)
+        closes = np.array([r['close'] for r in rates], dtype=float)
+        sym    = mt5.symbol_info(symbol)
+        atr    = _atr_simple(highs, lows, closes, 14)
+        pt     = sym.point if sym else 1e-5
+        price  = float(closes[-1]) or 1.0
+        return {"tf": tf_name, "atr_pts": round(atr / pt, 1),
+                "atr_pct": round(atr / price, 6), "atr_abs": round(atr, 6)}
+    except Exception as _e:
+        return {"tf": tf_name, "atr_pts": 0.0, "atr_pct": 0.0015, "error": str(_e)}
+
+
+# ─── JPY CLUSTER SIGNAL ──────────────────────────────────────────────────────
+# USDJPY é o líder. Quando ele confirma direção com força (EMA alignment ≥75%),
+# todas as crosses JPY entram na mesma direção do fluxo carry-trade.
+# 500+ pips em tendência sustentada (BOJ intervenção, Fed pivot, risk-off).
+
+def get_jpy_cluster_signal(min_alignment: float = 0.75) -> dict:
+    """
+    Lê USDJPY em D1+H4+H1+M15 e propaga sinal de cluster para todas as crosses.
+    Retorna direção do JPY e se o cluster está ativo.
+    Nota: direção=BUY significa USD fortalece (USDJPY sobe) →
+          crosses JPY como EURJPY/GBPJPY também sobem (EUR/GBP vs JPY).
+    """
+    import MetaTrader5 as mt5
+    import numpy as np
+    usdjpy_bias = get_multi_tf_bias("USDJPY")
+    if usdjpy_bias["alignment"] < min_alignment or usdjpy_bias["bias"] == "NEUTRAL":
+        return {
+            "active": False,
+            "direction": "NEUTRAL",
+            "alignment": usdjpy_bias["alignment"],
+            "reason": f"usdjpy_align={usdjpy_bias['alignment']:.0%}<{min_alignment:.0%}",
+            "crosses": []
+        }
+    # Estimar amplitude do movimento (ATR H4 × 24h)
+    try:
+        rates_h4 = mt5.copy_rates_from_pos("USDJPY", mt5.TIMEFRAME_H4, 0, 30)
+        if rates_h4 and len(rates_h4) >= 14:
+            highs  = np.array([r['high']  for r in rates_h4], dtype=float)
+            lows   = np.array([r['low']   for r in rates_h4], dtype=float)
+            closes = np.array([r['close'] for r in rates_h4], dtype=float)
+            sym_u  = mt5.symbol_info("USDJPY")
+            pt     = sym_u.point if sym_u else 0.001
+            atr_h4 = _atr_simple(highs, lows, closes, 14)
+            atr_pts = round(atr_h4 / pt, 0)
+        else:
+            atr_pts = 50.0
+    except Exception:
+        atr_pts = 50.0
+    return {
+        "active":      True,
+        "direction":   usdjpy_bias["bias"],
+        "alignment":   usdjpy_bias["alignment"],
+        "atr_pts":     atr_pts,
+        "estimated_move_pts": atr_pts * 3,  # 3×ATR H4 em tendência diária
+        "crosses":     JPY_CROSSES,
+        "reason":      f"usdjpy_bias={usdjpy_bias['bias']} align={usdjpy_bias['alignment']:.0%} atr={atr_pts:.0f}pts",
+    }
+
+
+# ─── TREND STRENGTH SCORE ────────────────────────────────────────────────────
+# Score composto: EMA momentum + ATR expansão + volume + MTF alinhamento
+# Escala: 0.0 (sem tendência) → 1.0 (tendência máxima confirmada em todos TFs)
+TREND_MIN_SCORE  = float(os.getenv("OMEGA_TREND_MIN", "0.45"))   # min para operar
+PYRAMID_MAX_LAYERS = int(os.getenv("OMEGA_PYRAMID_LAYERS", "3"))  # camadas máx
+PYRAMID_TRIGGER_ATR = float(os.getenv("OMEGA_PYRAMID_ATR", "0.5"))  # ATR×0.5 de lucro p/ adicionar
+
+def get_trend_strength(symbol: str, direction: str) -> dict:
+    """
+    Score de força de tendência para sizing institucional.
+    Combina: velocidade EMA + ATR expansão + alinhamento multi-TF.
+    CQO 28/04/2026: score >= 0.65 = tendência forte → pyramid permitido.
+    """
+    import MetaTrader5 as mt5
+    import numpy as np
+    score_parts = {}
+    try:
+        # 1. EMA velocity (M15): quanto EMA8 se afastou de EMA21 em %)
+        rates_m15 = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_M15, 0, 50)
+        if rates_m15 is not None and len(rates_m15) >= 22:
+            closes = np.array([r['close'] for r in rates_m15], dtype=float)
+            ema8   = float(np.mean(closes[-8:]))
+            ema21  = float(np.mean(closes[-21:]))
+            ema_sep = abs(ema8 - ema21) / (ema21 or 1)  # % separação
+            ema_dir_ok = (ema8 > ema21 and direction == "BUY") or (ema8 < ema21 and direction == "SELL")
+            score_parts["ema_sep"]    = min(ema_sep * 200, 1.0)   # 0.5% sep = score 1.0
+            score_parts["ema_dir"]    = 1.0 if ema_dir_ok else 0.0
+        # 2. ATR expansion (H1): ATR atual vs ATR médio — expansão = tendência
+        rates_h1 = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_H1, 0, 40)
+        if rates_h1 is not None and len(rates_h1) >= 20:
+            highs  = np.array([r['high']  for r in rates_h1], dtype=float)
+            lows   = np.array([r['low']   for r in rates_h1], dtype=float)
+            closes = np.array([r['close'] for r in rates_h1], dtype=float)
+            atr_now = _atr_simple(highs[-14:], lows[-14:], closes[-14:], 14)
+            atr_avg = _atr_simple(highs,       lows,       closes,       28)
+            atr_ratio = (atr_now / atr_avg) if atr_avg > 0 else 1.0
+            score_parts["atr_expansion"] = min((atr_ratio - 1.0) * 2, 1.0)  # 50% acima da média = 1.0
+        # 3. Multi-TF bias alignment (reutiliza get_multi_tf_bias)
+        bias = get_multi_tf_bias(symbol)
+        mtf_aligned = (bias["bias"] == direction)
+        score_parts["mtf_alignment"] = bias["alignment"] if mtf_aligned else (1.0 - bias["alignment"])
+        # Composite score (ponderado)
+        w = {"ema_sep": 0.25, "ema_dir": 0.30, "atr_expansion": 0.20, "mtf_alignment": 0.25}
+        total = sum(score_parts.get(k, 0.5) * v for k, v in w.items())
+    except Exception as _e:
+        return {"score": 0.5, "parts": {}, "error": str(_e), "pyramid_ok": False}
+    return {
+        "score":      round(total, 3),
+        "parts":      {k: round(v, 3) for k, v in score_parts.items()},
+        "pyramid_ok": total >= float(os.getenv("OMEGA_PYRAMID_MIN_SCORE", "0.60")),
+        "strong":     total >= 0.75,
+    }
+
+
+def check_pyramid_add(symbol: str, direction: str, open_positions: list,
+                      pos_ledger: dict, prof: dict, exec_atr: dict,
+                      equity: float) -> dict:
+    """
+    Motor de Pyramiding Institucional (CQO 28/04/2026).
+    Regras para adicionar camada a uma posição lucrativa:
+      1. Posição existente na mesma direção e lucro >= ATR×PYRAMID_TRIGGER_ATR
+      2. Trend strength score >= OMEGA_PYRAMID_MIN_SCORE (default 0.60)
+      3. Layers existentes < PYRAMID_MAX_LAYERS
+      4. Lot da nova camada = base × 0.75^layer (progressivo regressivo)
+    Retorna: {add: bool, lot: float, reason: str, layer: int}
+    """
+    if not open_positions:
+        return {"add": False, "reason": "no_open_positions"}
+    same_dir = [p for p in open_positions
+                if p.get("symbol") == symbol and p.get("direction") == direction]
+    if not same_dir:
+        return {"add": False, "reason": "no_same_dir_position"}
+    # Contar layers atuais para este símbolo+direção
+    current_layers = len(same_dir)
+    if current_layers >= PYRAMID_MAX_LAYERS:
+        return {"add": False, "reason": f"max_layers={PYRAMID_MAX_LAYERS}", "layer": current_layers}
+    # Verificar lucro acumulado da posição mais antiga
+    best_pos = max(same_dir, key=lambda p: p.get("last_profit", 0))
+    atr_pts   = exec_atr.get("atr_pts", 0)
+    trigger   = atr_pts * PYRAMID_TRIGGER_ATR
+    if best_pos.get("last_profit", 0) < trigger:
+        return {"add": False, "reason": f"profit={best_pos.get('last_profit',0):.2f}<trigger={trigger:.1f}pts",
+                "layer": current_layers}
+    # Verificar tendência forte antes de pyramidar
+    ts = get_trend_strength(symbol, direction)
+    if not ts.get("pyramid_ok"):
+        return {"add": False, "reason": f"trend_score={ts['score']:.2f}<min", "layer": current_layers}
+    # Lote regressivo: cada camada é 75% da anterior (preserva capital)
+    base_lot = prof.get("lot_cap", 0.10)
+    layer_lot = round(base_lot * (0.75 ** current_layers), 2)
+    sym_info  = None
+    try:
+        import MetaTrader5 as mt5
+        sym_info = mt5.symbol_info(symbol)
+    except Exception:
+        pass
+    min_lot = sym_info.volume_min if sym_info else 0.01
+    layer_lot = max(layer_lot, min_lot)
+    return {
+        "add":           True,
+        "lot":           layer_lot,
+        "layer":         current_layers + 1,
+        "trend_score":   ts["score"],
+        "trigger_pts":   trigger,
+        "profit_pts":    best_pos.get("last_profit", 0),
+        "reason":        f"pyramid_layer{current_layers+1} score={ts['score']:.2f}",
+    }
+
+
+# ─── Build AnalysisReport ────────────────────────────────────────────────────────────
 def build_report(asset, tf, mode, harmonic, price_data, guard, exec_result, lot_info) -> dict:
     now  = datetime.now(timezone.utc).isoformat()
     m    = harmonic.get("engines", {}).get("harmonic", {}).get("metrics", {})
@@ -607,6 +974,13 @@ class KillSwitch:
     def __init__(self, equity: float):
         self.equity = equity; self.daily_pnl = 0.0
         self.consec_fail = 0; self.triggered = False; self.reason = ""
+    def reset_session(self, equity: float) -> None:
+        """Conselho 28/04/2026: reseta baseline por sessao para evitar
+        falsos positivos por drawdown residual de runs anteriores.
+        Ref: Two Sigma Model Risk Mgmt (2020) — session-scoped risk limits."""
+        self.equity = equity; self.daily_pnl = 0.0
+        self.consec_fail = 0; self.triggered = False; self.reason = ""
+        log.info("KILL SWITCH reset: nova baseline equity=USD %.2f", equity)
     def update(self, success: bool, pnl_usd: float = 0.0) -> bool:
         if self.triggered: return True
         self.daily_pnl += pnl_usd
@@ -669,7 +1043,18 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     dm       = load_dynamic_margins()
     ks       = KillSwitch(equity)
     stats    = OnlineStats()
-    
+    _pos_ledger: dict = {}  # ticket -> {entry details + last_known_profit}
+    _realized_pnl: float = 0.0
+    _realized_n:   int   = 0
+    _lot_calc = LotCalculatorV2(LotCfgV2())  # CQO 28/04/2026: 4-factor adaptive sizing
+
+    # Conselho 28/04/2026: reset KS baseline com equity real do MT5 para evitar
+    # falsos positivos por drawdown residual de runs anteriores.
+    if mode == "paper" and mt5_connected:
+        _acct = mt5.account_info()
+        if _acct and _acct.equity > 0:
+            ks.reset_session(_acct.equity)
+
     # Sincronização de Estado Real com o MT5 (PSA FIX - State Awareness)
     if mode == "paper" and mt5_connected:
         real_pos = mt5.positions_get(magic=OMEGA_MAGIC)
@@ -793,6 +1178,8 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
 
                 # Execução e Preços (PSA FIX - Zero Initialization)
                 lot_info = exec_result = None
+                eff_lot  = None           # LotCalcV2: lote adaptativo final
+                _lot_v2_factors: dict = {}
                 a_price = b_price = 0.0
 
                 if not guard["skip"] and mode == "paper" and mt5_connected:
@@ -889,6 +1276,30 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                             results.append({"asset": asset, "timeframe": tf, "status": "SKIP_NO_RATES"})
                             continue
 
+                    # === MULTI-TF BIAS CHECK (CQO 28/04/2026: D1+H4+H1+M15 confluência) ===
+                    # Bloquear sinal oposto à direção macro quando alinhamento >= MTF_ALIGN_THR.
+                    # Permite entrar apenas com o vento — maior probabilidade de movimento sustentado.
+                    if signal_dir:
+                        try:
+                            _tf_bias = get_multi_tf_bias(asset)
+                            if (_tf_bias["alignment"] >= MTF_ALIGN_THR
+                                    and _tf_bias["bias"] != "NEUTRAL"
+                                    and _tf_bias["bias"] != signal_dir):
+                                log.info("[%s %s] [MTF_BIAS] BLOCK macro=%s≠signal=%s align=%.0f%% | %s",
+                                         asset, tf, _tf_bias["bias"], signal_dir,
+                                         _tf_bias["alignment"] * 100, _tf_bias["detail"])
+                                results.append({"asset": asset, "timeframe": tf,
+                                               "status": "SKIP_MTF_BIAS",
+                                               "macro_bias": _tf_bias["bias"],
+                                               "signal_dir": signal_dir,
+                                               "alignment": _tf_bias["alignment"]})
+                                continue
+                            log.info("[%s %s] [MTF_BIAS] ok bias=%s align=%.0f%% %s",
+                                     asset, tf, _tf_bias["bias"],
+                                     _tf_bias["alignment"] * 100, _tf_bias["detail"])
+                        except Exception as _mte:
+                            log.warning("[%s %s] [MTF_BIAS] erro (não bloqueia): %s", asset, tf, _mte)
+
                     current_positions = []
                     all_open_positions = []
                     if mt5_connected:
@@ -897,19 +1308,96 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                             current_positions = [p._asdict() for p in pos_list]
                         _omega_all = mt5.positions_get(magic=OMEGA_MAGIC) or []
                         all_open_positions = [p._asdict() for p in _omega_all]
+                        # Ledger: detectar fechamentos por SL/TP em tempo real
+                        _live_tickets = {p.ticket for p in _omega_all}
+                        for _lp_profit in _omega_all:  # atualiza last_profit
+                            if _lp_profit.ticket in _pos_ledger:
+                                _pos_ledger[_lp_profit.ticket]["last_profit"] = _lp_profit.profit
+                        for _tk, _entry in list(_pos_ledger.items()):
+                            if _entry["status"] == "open" and _tk not in _live_tickets:
+                                _entry["status"] = "closed"
+                                _entry["exit_time"] = datetime.now(timezone.utc).isoformat()
+                                _realized_pnl += _entry.get("last_profit", 0.0)
+                                _realized_n   += 1
+                                _lot_calc.update_performance(_entry.get("last_profit", 0.0))
+                                log.info("[LEDGER] FECHADA %s #%d pnl=%.4f | total_realiz=%.4f n=%d",
+                                         _entry["symbol"], _tk, _entry.get("last_profit", 0),
+                                         _realized_pnl, _realized_n)
 
-                    _corr_ok = correlation_filter.should_trade(asset, all_open_positions, direction=signal_dir)
+                    _jpy_cluster_active = asset.upper() in JPY_CROSSES or asset.upper() == "USDJPY"
+                    _corr_ok = correlation_filter.should_trade(
+                        asset, all_open_positions,
+                        direction=signal_dir,
+                        cluster_allowed=_jpy_cluster_active,
+                    )
                     if not _corr_ok:
                         log.info("[%s %s] [CORR] SKIP_CORRELATION dir=%s", asset, tf, signal_dir)
                         results.append({"asset": asset, "timeframe": tf, "status": "SKIP_CORRELATION",
                                         "direction": signal_dir})
                         continue
                     if _corr_ok:
-                        # Lote: clamp(min(lot_info, ia_lot_override or lot_info), 0.01, MAX_LOT)
-                        eff_lot = lot_info["lot"]
+                        # === ASSET PROFILE (CQO 28/04/2026) ===
+                        _prof = ASSET_PROFILES.get(asset, _PROFILE_DEFAULT)
+
+                        # === LotCalculator V2 — CQO 28/04/2026 ===
+                        # 4 fatores: volatilidade ATR + confiança IA + desempenho + kelly(off)
+                        _conf_score = float(ia_signal.get('confidence', 0.70) if ia_signal else 0.70)
+                        # Gate de confiança mínima por ativo (crypto > forex)
+                        if _conf_score < _prof["min_conf"]:
+                            log.info("[%s %s] [PROFILE] SKIP conf=%.2f < min_conf=%.2f regime=%s",
+                                     asset, tf, _conf_score, _prof["min_conf"], _prof["regime"])
+                            results.append({"asset": asset, "timeframe": tf,
+                                           "status": "SKIP_MIN_CONF_PROFILE",
+                                           "conf": _conf_score, "min_conf": _prof["min_conf"]})
+                            continue
+                        _exec_atr   = get_execution_tf_atr(asset, _conf_score)
+                        _atr_avg    = _lot_calc.update_atr(asset, _exec_atr.get("atr_pct", 0.0015))
+
+                        # ── SL/TP calculado ANTES do lote (FIX 29/04/2026) ──────────────
+                        # SL deve ser passado ao LotCalcV2 para que o risco em USD
+                        # reflita o stop REAL (ATR × mult), não o ATR bruto.
+                        _exec_atr_pts_pre = _exec_atr.get("atr_pts", 0.0)
+                        _sl_mult_pre = _prof["sl_atr_mult"]
+                        _tp_mult_pre = _prof["tp_atr_mult"]
+                        _min_pts_pre = max(float(_prof["cost_pts"]) * 2.0, 8.0)
+                        _max_sl_pre  = _MAX_SL_PTS.get(_prof["regime"], _MAX_SL_PTS["generic"])
+                        if _exec_atr_pts_pre > 0:
+                            _pre_sl = _exec_atr_pts_pre * _sl_mult_pre
+                            _pre_tp = _exec_atr_pts_pre * _tp_mult_pre
+                        else:
+                            _pre_sl = float(_prof["cost_pts"]) * 3.0
+                            _pre_tp = float(_prof["cost_pts"]) * 6.5
+                        # Aplicar CAP máximo de SL por classe — impede stop demasiado largo
+                        _pre_sl = min(max(_pre_sl, _min_pts_pre), _max_sl_pre)
+                        _pre_tp = max(_pre_tp, _pre_sl * (_tp_mult_pre / _sl_mult_pre))
+                        # ─────────────────────────────────────────────────────────────────
+
+                        _lot_v2     = _lot_calc.calculate(
+                            equity            = equity,
+                            atr_pct           = _exec_atr.get("atr_pct", 0.0015),
+                            atr_avg_pct       = _atr_avg,
+                            confidence        = _conf_score,
+                            expected_pts      = _pre_sl,   # SL real (com mult+cap)
+                            pip_value_per_lot = lot_info.get("pip_value_lot", 0.01),
+                            sym_min_lot       = lot_info.get("sym_vol_min", 0.01),
+                        )
+                        if _lot_v2.get("skip"):
+                            log.info("[%s %s] [COST_BARRIER] %s", asset, tf, _lot_v2.get("skip_reason"))
+                            results.append({"asset": asset, "timeframe": tf,
+                                           "status": "SKIP_COST_BARRIER",
+                                           "reason": _lot_v2.get("skip_reason")})
+                            continue
+                        eff_lot = _lot_v2["lot"]
+                        _lot_v2_factors = {k: _lot_v2[k] for k in
+                                           ("vol_f","conf_f","perf_f","kelly_f","base_lot","risk_usd")
+                                           if k in _lot_v2}
+                        # Per-asset lot cap (crypto menor, forex maior)
+                        eff_lot = min(eff_lot, _prof["lot_cap"])
+                        # IA override: respeita sugestão IA se for menor (conservador)
                         if ia_lot_override is not None:
                             try:
-                                eff_lot = max(0.01, min(eff_lot, float(ia_lot_override)))
+                                eff_lot = min(eff_lot, float(ia_lot_override))
+                                eff_lot = max(lot_info.get("sym_vol_min", 0.01), eff_lot)
                             except Exception:
                                 pass
                         # Concentração por ativo (Fix 5): >CONCENTRATION_MAX → reduz 50%
@@ -917,12 +1405,26 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                             same_asset = sum(1 for p in (mt5.positions_get(magic=OMEGA_MAGIC) or []) if p.symbol == asset)
                             total_omega = len(mt5.positions_get(magic=OMEGA_MAGIC) or [])
                             if total_omega > 0 and (same_asset / total_omega) > CONCENTRATION_MAX:
-                                eff_lot = max(0.01, round(eff_lot * 0.5, 2))
+                                eff_lot = max(lot_info.get("sym_vol_min", 0.01), round(eff_lot * 0.5, 2))
                                 log.info("[%s %s] FASE4 concentration>40%% → lot reduzido a %.2f", asset, tf, eff_lot)
                         except Exception:
                             pass
-                        eff_sl = float(ia_sl_pts) if ia_sl_pts is not None else guard["margin_used"] * 2
-                        eff_tp = float(ia_tp_pts) if ia_tp_pts is not None else guard["margin_used"] * 2
+                        # SL/TP: valores já calculados acima (com cap + mult)
+                        # SL: IA pode fornecer valor mais apertado, respeitamos
+                        # TP: IA pode sugerir alvo, mas NUNCA abaixo do R:R mínimo do perfil
+                        eff_sl = float(ia_sl_pts) if ia_sl_pts is not None else _pre_sl
+                        _tp_rr_floor = eff_sl * (_tp_mult_pre / max(_sl_mult_pre, 0.01))
+                        if ia_tp_pts is not None:
+                            eff_tp = max(float(ia_tp_pts), _tp_rr_floor)
+                        else:
+                            eff_tp = max(_pre_tp, _tp_rr_floor)
+                        # Risco efetivo em USD para log
+                        _risk_usd_eff = eff_sl * lot_info.get("pip_value_lot", 0.01) * (eff_lot or 0.01)
+                        log.info("[%s %s] [%s] lot=%.2f execTF=%s atr=%.1f SL=%.0fpts($%.2f) TP=%.0fpts RR=1:%.2f conf=%.2f",
+                                 asset, tf, _prof["regime"].upper(), eff_lot,
+                                 _exec_atr["tf"], _exec_atr.get("atr_pts", 0),
+                                 eff_sl, _risk_usd_eff, eff_tp,
+                                 eff_tp / max(eff_sl, 1), _conf_score)
                         exec_result = mt5_send_order(
                             asset, tf, eff_lot,
                             sl_pts=eff_sl,
@@ -933,6 +1435,38 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         deal_id = exec_result.get("deal")
                         if success and deal_id is not None and deal_id not in _processed_tickets:
                             _processed_tickets.add(deal_id)
+                            # Ledger: registra posicao aberta para rastrear P&L
+                            try:
+                                _new_pos = mt5.positions_get(symbol=asset) or []
+                                for _np in _new_pos:
+                                    if _np.magic == OMEGA_MAGIC and _np.ticket not in _pos_ledger:
+                                        # Custo de entrada: spread × contrato × lote (estimativa fee round-trip)
+                                        try:
+                                            _sym_i = mt5.symbol_info(asset)
+                                            _tick_i = mt5.symbol_info_tick(asset)
+                                            _spr = (_tick_i.ask - _tick_i.bid) if _tick_i else 0
+                                            _cs  = _sym_i.trade_contract_size if _sym_i else 1
+                                            _spread_cost = round(_spr * _cs * eff_lot, 4)
+                                        except Exception:
+                                            _spread_cost = 0.0
+                                        _pos_ledger[_np.ticket] = {
+                                            "symbol": asset, "direction": signal_dir,
+                                            "lot": eff_lot, "entry_price": exec_result.get("fill_price", 0),
+                                            "sl": exec_result.get("sl_price", 0),
+                                            "tp": exec_result.get("tp_price", 0),
+                                            "entry_deal": deal_id,
+                                            "entry_time": datetime.now(timezone.utc).isoformat(),
+                                            "last_profit": _np.profit, "status": "open",
+                                            "spread_cost_usd": _spread_cost,
+                                            "slippage_pts": exec_result.get("slippage_pts", 0),
+                                        }
+                                        log.info("[LEDGER] entry=%s #%d lot=%.2f spread_cost=$%.4f slip_pts=%.1f",
+                                                 asset, _np.ticket, eff_lot, _spread_cost,
+                                                 exec_result.get("slippage_pts", 0))
+                                        log.info("[LEDGER] Posicao aberta: %s #%d entry=%.5f",
+                                                 asset, _np.ticket, _np.price_open)
+                            except Exception as _le:
+                                log.warning("[LEDGER] Erro ao registrar posicao: %s", _le)
                             if agent_ia is not None and signal_source == "AGENT_IA":
                                 try:
                                     agent_ia.record_trade_open(
@@ -961,10 +1495,11 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                 stats.record(report)
                 action = report["signal"]["action"]
                 if exec_result:
-                    log.info("[%s %s] %s | hr134=%.2f%% IC=%s lot=%.2f slip=%.2f lat=%dms | SHA3=%s...",
+                    _lot_disp = eff_lot if eff_lot is not None else (lot_info["lot"] if lot_info else 0)
+                    log.info("[%s %s] %s | hr134=%.2f%% IC=%s lotV2=%.2f slip=%.2f lat=%dms | SHA3=%s...",
                              asset, tf, action, hr_real,
                              report["binomial_ic_95"]["interval"],
-                             lot_info["lot"],
+                             _lot_disp,
                              exec_result.get("slippage_pts", 0),
                              exec_result.get("latency_ms", 0),
                              report["checksum"][:16])
@@ -979,13 +1514,42 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                     "hit_rate_134": hr_real,
                     "ic_95": report["binomial_ic_95"]["interval"],
                     "margin_used": guard["margin_used"],
-                    "lot": lot_info["lot"] if lot_info else None,
+                    "lot": eff_lot if eff_lot is not None else (lot_info["lot"] if lot_info else None),
+                    "lot_v2": _lot_v2_factors if _lot_v2_factors else None,
                     "retcode": exec_result.get("retcode") if exec_result else None,
                     "slippage_pts": exec_result.get("slippage_pts") if exec_result else None,
                     "checksum": report["checksum"][:24],
                 })
     finally:
         if mt5_connected:
+            # Ledger: snapshot P&L final de todas as posicoes OMEGA antes de desconectar
+            try:
+                _all_open = mt5.positions_get(magic=OMEGA_MAGIC) or []
+                for _p in _all_open:
+                    if _p.ticket in _pos_ledger:
+                        _pos_ledger[_p.ticket]["last_profit"] = _p.profit
+                    else:
+                        _pos_ledger[_p.ticket] = {
+                            "symbol": _p.symbol, "direction": "BUY" if _p.type == 0 else "SELL",
+                            "lot": _p.volume, "entry_price": _p.price_open,
+                            "entry_time": datetime.fromtimestamp(_p.time, tz=timezone.utc).isoformat(),
+                            "last_profit": _p.profit, "status": "open",
+                        }
+                _ledger_pnl = sum(v.get("last_profit", 0) for v in _pos_ledger.values())
+                _ledger_n   = len(_pos_ledger)
+                log.info("[LEDGER] %d posicoes | realized=%d pnl_realizd=%.4f | float=%.4f",
+                         _ledger_n, _realized_n, _realized_pnl, _ledger_pnl)
+                _ledger_path = AUDIT_PAPER / "positions_ledger.json"
+                _ledger_data = {"generated": datetime.now(timezone.utc).isoformat(),
+                                "positions": _pos_ledger,
+                                "total_pnl_snapshot": round(_ledger_pnl, 4),
+                                "realized_pnl": round(_realized_pnl, 4),
+                                "realized_n": _realized_n,
+                                "n_positions": _ledger_n}
+                with open(_ledger_path, "w", encoding="utf-8") as _lf:
+                    json.dump(_ledger_data, _lf, indent=2)
+            except Exception as _le:
+                log.warning("[LEDGER] Erro no snapshot final: %s", _le)
             mt5_shutdown()
             log.info("MT5 desconectado.")
 
@@ -1003,12 +1567,19 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
 
     # Summary
     now = datetime.now(timezone.utc).isoformat()
+    _ledger_sum = {"n": len(_pos_ledger),
+                   "total_pnl": round(sum(v.get("last_profit", 0) for v in _pos_ledger.values()), 4),
+                   "realized_pnl": round(_realized_pnl, 4),
+                   "realized_n": _realized_n,
+                   "positions": {str(k): v for k, v in _pos_ledger.items()}}
     summary = {
         "mode": mode, "generated": now, "equity_demo": equity,
         "total_cycles": len(results),
         "kill_switch": ks.triggered, "ks_reason": ks.reason,
         "online_stats": stat_sum, "results": results,
         "log_file": str(log_file),
+        "positions_ledger": _ledger_sum,
+        "lot_calc_v2": _lot_calc.diagnostics(),
     }
     sb = json.dumps(summary, indent=2).encode("utf-8")
     summary["checksum"] = sha3(sb)

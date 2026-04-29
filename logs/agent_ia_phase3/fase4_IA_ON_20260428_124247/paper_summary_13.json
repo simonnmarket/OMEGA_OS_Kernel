@@ -1,0 +1,33 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-28T12:54:38.285549+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 1,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 1,
+    "executed": 1,
+    "skipped": 0,
+    "avg_hit_rate_134": 99.53,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 71.9,
+    "max_latency_ms": 71.9
+  },
+  "results": [
+    {
+      "asset": "GER40",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 99.53,
+      "ic_95": "[99.2852%, 99.6935%]",
+      "margin_used": 412.3,
+      "lot": 0.01,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "b47b464c3ff293225be8fb95"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260428_125434.log",
+  "checksum": "257f07333e2deb7475e4940f5d6bed804ae19d370a254721c73d03688a10f6e2"
+}

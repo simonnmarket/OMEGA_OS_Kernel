@@ -1,0 +1,73 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-28T13:38:27.657420+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 3,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 1,
+    "executed": 1,
+    "skipped": 0,
+    "avg_hit_rate_134": 94.52,
+    "avg_slippage_pts": 195.0,
+    "avg_latency_ms": 71.2,
+    "max_latency_ms": 71.2
+  },
+  "results": [
+    {
+      "asset": "DOGUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.000237,
+        "atr_pct": 0.002403,
+        "spread": 0.00034,
+        "atr_over_spread": 0.697,
+        "adx": 21.94,
+        "vol_ratio": 0.417,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr/spr=0.70<5.0|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "DOGUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.000237,
+        "atr_pct": 0.002402,
+        "spread": 0.00035,
+        "atr_over_spread": 0.678,
+        "adx": 21.94,
+        "vol_ratio": 0.424,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr/spr=0.68<5.0|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 94.52,
+      "ic_95": "[93.6602%, 95.2654%]",
+      "margin_used": 1757.2,
+      "lot": 0.01,
+      "retcode": 10009,
+      "slippage_pts": 195.0,
+      "checksum": "0a79b61b9dd8fae68686e09c"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260428_133819.log",
+  "checksum": "6c0b8426cfb7d1faabed5d9fa37cf3ab1bb5bae2d674c1b5fc348e8ab7586495"
+}

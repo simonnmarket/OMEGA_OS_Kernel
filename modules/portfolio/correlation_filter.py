@@ -19,8 +19,16 @@ CORR_PAIRS: Dict[str, List[str]] = {
     "GBPUSD": ["EURUSD", "AUDUSD"],
     "AUDUSD": ["EURUSD", "GBPUSD"],
     # FOREX: pares positivamente correlacionados com USD
-    "USDJPY": ["USDCAD"],
+    "USDJPY": ["USDCAD", "EURJPY", "GBPJPY", "AUDJPY", "CADJPY", "CHFJPY"],
     "USDCAD": ["USDJPY"],
+    # JPY CROSSES: correlacionadas entre si (carry-trade theme)
+    # Nota: fora do cluster mode, bloqueia dupla exposição em crosses JPY.
+    # No cluster mode (cluster_allowed=True), o bloqueio é suprimido.
+    "EURJPY": ["GBPJPY", "AUDJPY", "CADJPY", "CHFJPY"],
+    "GBPJPY": ["EURJPY", "AUDJPY", "CADJPY", "CHFJPY"],
+    "AUDJPY": ["EURJPY", "GBPJPY", "CADJPY", "CHFJPY"],
+    "CADJPY": ["EURJPY", "GBPJPY", "AUDJPY", "CHFJPY"],
+    "CHFJPY": ["EURJPY", "GBPJPY", "AUDJPY", "CADJPY"],
     # CRYPTO: alta correlação interna (BTC/ETH/SOL movem em conjunto)
     "BTCUSD": ["ETHUSD", "SOLUSD", "DOGUSD"],
     "ETHUSD": ["BTCUSD", "SOLUSD", "DOGUSD"],
@@ -33,6 +41,10 @@ CORR_PAIRS: Dict[str, List[str]] = {
     "XAUUSD": ["XAGUSD"],
     "XAGUSD": ["XAUUSD"],
 }
+
+# Grupo JPY Cluster — quando cluster_allowed=True, os membros deste grupo
+# podem operar simultaneamente na mesma direção (intencionalmente correlacionados).
+JPY_CLUSTER_GROUP: set = {"USDJPY", "EURJPY", "GBPJPY", "AUDJPY", "CADJPY", "CHFJPY"}
 
 # MT5 position type constants (importação defensiva)
 _MT5_BUY  = 0
@@ -84,6 +96,7 @@ class CorrelationFilter:
         asset: str,
         open_positions: Optional[List[Dict]] = None,
         direction: Optional[str] = None,
+        cluster_allowed: bool = False,
     ) -> bool:
         """
         Retorna True se o trade proposto NAO cria risco de correlacao excessiva.
@@ -115,12 +128,22 @@ class CorrelationFilter:
                     )
                     return False
 
-        # --- Camada 2: Direction-aware correlation map (todos 11 ativos) ---
+        # --- Camada 2: Direction-aware correlation map ---
         if not direction or not open_positions:
             return True
 
         corr_assets = CORR_PAIRS.get(asset_up, [])
         if not corr_assets:
+            return True
+
+        # JPY CLUSTER EXEMPTION: se cluster_allowed=True e o ativo pertence ao
+        # cluster JPY, supprime o bloqueio entre membros do cluster (intencionalmente
+        # correlacionados — carry-trade simultâneo aprovado pelo Conselho 28/04/2026).
+        if cluster_allowed and asset_up in JPY_CLUSTER_GROUP:
+            log.info(
+                "[CORR][CLUSTER] ALLOWED %s %s — JPY cluster mode ativo (correlação intencional).",
+                asset, direction,
+            )
             return True
 
         # Monta mapa simbolo -> direcao das posicoes abertas
@@ -135,6 +158,9 @@ class CorrelationFilter:
 
         proposed_dir = direction.upper()
         for corr in corr_assets:
+            # No cluster mode, não bloqueamos cruzamentos intra-cluster JPY
+            if cluster_allowed and corr.upper() in JPY_CLUSTER_GROUP and asset_up in JPY_CLUSTER_GROUP:
+                continue
             existing_dir = open_dirs.get(corr.upper())
             if existing_dir and existing_dir == proposed_dir:
                 log.warning(

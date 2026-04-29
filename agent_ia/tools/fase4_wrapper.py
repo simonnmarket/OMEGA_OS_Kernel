@@ -24,6 +24,7 @@ import json
 import math
 import os
 import shutil
+import signal
 import subprocess
 import sys
 import time
@@ -39,6 +40,45 @@ SHADOW_LOOP = ROOT / "core_engines" / "shadow_loop.py"
 AUDIT_PAPER = ROOT / "audit" / "paper"
 LOGS_DIR = ROOT / "logs" / "agent_ia_phase3"
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
+LOCKFILE = ROOT / "OMEGA_FASE4.lock"
+
+
+def _acquire_lock() -> None:
+    """Garante exclusao mutua: apenas UMA instancia do wrapper pode rodar."""
+    if LOCKFILE.exists():
+        try:
+            old_pid = int(LOCKFILE.read_text().strip())
+        except (ValueError, OSError):
+            old_pid = None
+        if old_pid:
+            # Verifica se o processo ainda esta vivo
+            try:
+                os.kill(old_pid, 0)  # signal 0 = apenas verifica existencia
+                alive = True
+            except (OSError, ProcessLookupError):
+                alive = False
+            if alive:
+                print(f"[FASE4] ERRO: outra instancia ja esta rodando (PID={old_pid}).")
+                print(f"[FASE4] Para encerrar: Stop-Process -Id {old_pid} -Force")
+                print(f"[FASE4] Ou delete o lockfile: {LOCKFILE}")
+                sys.exit(1)
+            else:
+                print(f"[FASE4] Lockfile orfao detectado (PID={old_pid} morto). Removendo.")
+    LOCKFILE.write_text(str(os.getpid()))
+    print(f"[FASE4] Lock adquirido (PID={os.getpid()}) → {LOCKFILE}")
+
+
+def _release_lock() -> None:
+    """Remove o lockfile ao encerrar."""
+    try:
+        if LOCKFILE.exists():
+            stored = LOCKFILE.read_text().strip()
+            if stored == str(os.getpid()):
+                LOCKFILE.unlink()
+                print(f"[FASE4] Lock liberado (PID={os.getpid()})")
+    except OSError:
+        pass
 
 OMEGA_MAGIC = 234001
 CRYPTO_SYMBOLS = ["BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD"]
@@ -175,6 +215,32 @@ CLOSE_TTL_SEC = int(os.getenv("OMEGA_CLOSE_TTL_SEC", "600"))
 CLOSE_MODE    = os.getenv("OMEGA_CLOSE_MODE", "ttl").lower()
 
 
+def validate_symbols(symbols: List[str]) -> List[str]:
+    """Conselho 28/04/2026: valida disponibilidade de feed de preco para cada
+    simbolo antes do run. Remove simbolos sem tick ativo para evitar FAILs de
+    ordem e falsos positivos no Kill Switch. (CQO/CTO/COO/CIO/TechLead)"""
+    if not mt5.initialize():
+        print("[VALIDATE_SYMBOLS] MT5 init failed — usando lista original.")
+        return symbols
+    try:
+        valid, removed = [], []
+        for sym in symbols:
+            info = mt5.symbol_info(sym)
+            tick = mt5.symbol_info_tick(sym) if info else None
+            if info and info.visible and tick and tick.ask > 0:
+                valid.append(sym)
+            else:
+                removed.append(sym)
+                print(f"[VALIDATE_SYMBOLS] REMOVIDO {sym}: sem feed ativo "
+                      f"(visible={getattr(info,'visible',None)}, ask={getattr(tick,'ask',None)})")
+        if removed:
+            print(f"[VALIDATE_SYMBOLS] {len(removed)} simbolo(s) removido(s): {removed}")
+        print(f"[VALIDATE_SYMBOLS] {len(valid)} simbolo(s) validos: {valid}")
+        return valid if valid else symbols
+    finally:
+        mt5.shutdown()
+
+
 def close_crypto_omega(label: str, symbols: List[str] = None) -> List[Dict[str, Any]]:
     """A5: respeita TTL. Em modo 'ttl' só fecha posições mais antigas que TTL.
     Em modo 'never' nunca fecha. Em 'force' fecha tudo (legado)."""
@@ -227,6 +293,32 @@ def close_crypto_omega(label: str, symbols: List[str] = None) -> List[Dict[str, 
                 "age_s": age,
             })
         return results
+    finally:
+        mt5.shutdown()
+
+
+def collect_pnl_from_positions() -> Dict[str, Any]:
+    """Coleta P&L atual das posicoes OMEGA abertas via positions_get().
+    Usado como fallback quando history_deals_get nao registra ordens Python API
+    (comportamento de alguns brokers demo com camada de simulacao)."""
+    if not mt5.initialize():
+        return {"error": "mt5_init_failed"}
+    try:
+        pos = mt5.positions_get() or []
+        omega = [p for p in pos if p.magic == OMEGA_MAGIC and p.symbol in set(ALL_SYMBOLS)]
+        if not omega:
+            return {"open_positions": 0, "floating_pnl": 0.0, "symbols": {}}
+        symbols: Dict[str, Dict] = {}
+        total_pnl = 0.0
+        for p in omega:
+            total_pnl += p.profit
+            s = symbols.setdefault(p.symbol, {"n": 0, "pnl": 0.0})
+            s["n"] += 1; s["pnl"] = round(s["pnl"] + p.profit, 4)
+        return {
+            "open_positions": len(omega),
+            "floating_pnl": round(total_pnl, 4),
+            "symbols": {k: v for k, v in symbols.items()},
+        }
     finally:
         mt5.shutdown()
 
@@ -439,6 +531,11 @@ def aggregate(summaries: List[Dict[str, Any]]) -> Dict[str, Any]:
     by_asset: Dict[str, int] = {}
     by_action: Dict[str, int] = {}
     retcodes: Dict[str, int] = {}
+    ledger_positions: Dict[str, Any] = {}
+    ledger_total_pnl    = 0.0
+    ledger_realized     = 0.0
+    ledger_realized_n   = 0
+    ledger_spread_cost  = 0.0
     for s in summaries:
         if not s:
             continue
@@ -464,6 +561,23 @@ def aggregate(summaries: List[Dict[str, Any]]) -> Dict[str, Any]:
             rc = r.get("retcode")
             if rc is not None:
                 retcodes[str(rc)] = retcodes.get(str(rc), 0) + 1
+        # Acumular ledger de posicoes de todos os ciclos
+        ledger = s.get("positions_ledger", {})
+        if ledger and ledger.get("positions"):
+            ledger_positions.update(ledger["positions"])
+            ledger_total_pnl = sum(
+                v.get("last_profit", 0)
+                for v in ledger_positions.values()
+                if isinstance(v, dict)
+            )
+        if ledger:
+            ledger_realized     += float(ledger.get("realized_pnl", 0) or 0)
+            ledger_realized_n   += int(ledger.get("realized_n", 0) or 0)
+            ledger_spread_cost  += sum(
+                float(v.get("spread_cost_usd", 0) or 0)
+                for v in (ledger.get("positions") or {}).values()
+                if isinstance(v, dict)
+            )
 
     def _percentile(vals: List[float], pct: float) -> float:
         if not vals:
@@ -491,6 +605,11 @@ def aggregate(summaries: List[Dict[str, Any]]) -> Dict[str, Any]:
         "latency_ms_p95": round(_percentile(max_lats, 95), 2) if max_lats else 0.0,
         "slippage_avg_pts": round(sum(slippages) / len(slippages), 4) if slippages else 0.0,
         "kill_switch_triggers": ks_triggered,
+        "ledger_total_pnl": round(ledger_total_pnl, 4),
+        "ledger_realized_pnl": round(ledger_realized, 4),
+        "ledger_realized_n": ledger_realized_n,
+        "ledger_spread_cost_usd": round(ledger_spread_cost, 4),
+        "ledger_n_positions": len(ledger_positions),
         "max_concentration_pct": round(max_concentration * 100, 2),
         "max_concentration_asset": max(by_asset, key=by_asset.get) if by_asset else None,
         "corr_blocks": corr_blocks,
@@ -507,10 +626,26 @@ def main() -> int:
                     help="Lista de símbolos (default: todos 11 ativos)")
     args = ap.parse_args()
 
+    _acquire_lock()
+
+    def _shutdown(signum, frame):
+        print(f"\n[FASE4] Sinal {signum} recebido — encerrando.")
+        _release_lock()
+        sys.exit(0)
+
+    signal.signal(signal.SIGTERM, _shutdown)
+    try:
+        signal.signal(signal.SIGBREAK, _shutdown)
+    except AttributeError:
+        pass
+
     ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     out_dir = LOGS_DIR / f"fase4_{args.label}_{ts}"
     out_dir.mkdir(parents=True, exist_ok=True)
     print(f"[FASE4] label={args.label} cycles={args.cycles} out_dir={out_dir}")
+
+    # Conselho 28/04/2026: validar feeds antes de qualquer ciclo
+    active_symbols = validate_symbols(args.symbols)
 
     summaries: List[Dict[str, Any]] = []
     closes: List[List[Dict[str, Any]]] = []
@@ -523,7 +658,7 @@ def main() -> int:
     for i in range(1, args.cycles + 1):
         t_cycle_start = int(time.time())
         cycle_log = out_dir / f"cycle_{i:02d}.log"
-        rc = run_shadow_loop(cycle_log, label=args.label, symbols=args.symbols)
+        rc = run_shadow_loop(cycle_log, label=args.label, symbols=active_symbols)
         time.sleep(args.sleep_after_run)
         ps_src = AUDIT_PAPER / "paper_summary.json"
         ps_dst = out_dir / f"paper_summary_{i:02d}.json"
@@ -532,11 +667,17 @@ def main() -> int:
             summaries.append(parse_paper_summary(ps_dst))
         else:
             summaries.append({})
-        closed = close_crypto_omega(args.label, symbols=args.symbols)
+        # P&L flutuante ANTES do close (posicoes ainda abertas)
+        pnl_float = collect_pnl_from_positions()
+        closed = close_crypto_omega(args.label, symbols=active_symbols)
         closes.append(closed)
         time.sleep(args.sleep_after_close)
         # A3: P&L do ciclo (janela t_cycle_start..now)
         pnl_cycle = collect_pnl_window(t_cycle_start - 5, int(time.time()) + 5)
+        # Merge floating P&L into cycle metrics for brokers without deal history
+        if pnl_cycle.get("closed_positions", 0) == 0 and pnl_float.get("open_positions", 0) > 0:
+            pnl_cycle["floating_pnl"] = pnl_float.get("floating_pnl", 0.0)
+            pnl_cycle["open_positions_snapshot"] = pnl_float
         pnl_per_cycle.append(pnl_cycle)
         n_closed = sum(1 for c in closed if c.get("retcode") == 10009)
         n_skipped = sum(1 for c in closed if "ttl_skip" in (c.get("reason") or ""))
@@ -544,9 +685,11 @@ def main() -> int:
         # CQO: alimentar circuit breaker e performance monitor
         lcb.record(float(last.get("max_latency_ms", 0) or 0))
         pm.record_cycle(pnl_cycle)
+        float_pnl = pnl_float.get("floating_pnl", 0.0)
+        open_pos  = pnl_float.get("open_positions", 0)
         print(f"[CYCLE {i:02d}/{args.cycles}] rc={rc} executed={last.get('executed', 0)} "
               f"hit={last.get('avg_hit_rate_134', 0)} lat_max={last.get('max_latency_ms', 0)} "
-              f"closed={n_closed} ttl_kept={n_skipped} "
+              f"closed={n_closed} ttl_kept={n_skipped} open={open_pos} float=${float_pnl:+.2f} "
               f"net=${pnl_cycle.get('net_pnl', 0):+.2f} wr$={pnl_cycle.get('win_rate_dollar', 0)*100:.1f}% "
               f"pf={pnl_cycle.get('profit_factor', 0)} n_pos={pnl_cycle.get('closed_positions', 0)}")
 
@@ -561,6 +704,32 @@ def main() -> int:
 
     # A3: P&L AGREGADO REAL via history_deals (janela do run inteiro)
     pnl_run = collect_pnl_window(run_t0 - 5, int(time.time()) + 5)
+
+    # FALLBACK: broker sem deal history para Python API → usar ledger realizado
+    if pnl_run.get("closed_positions", 0) == 0 and agg.get("ledger_realized_n", 0) > 0:
+        _l_pos    = agg.get("ledger_n_positions", 0)
+        _l_rpnl   = agg.get("ledger_realized_pnl", 0.0)
+        _l_rn     = agg.get("ledger_realized_n", 0)
+        _ledger_all = {}
+        for s_ in summaries:
+            _ledger_all.update((s_.get("positions_ledger") or {}).get("positions", {}))
+        _closed_p = [v for v in _ledger_all.values() if isinstance(v, dict) and v.get("status") == "closed"]
+        _wins   = [v["last_profit"] for v in _closed_p if v.get("last_profit", 0) > 0]
+        _losses = [v["last_profit"] for v in _closed_p if v.get("last_profit", 0) <= 0]
+        _wr     = len(_wins) / _l_rn if _l_rn > 0 else 0.0
+        _gross_p = sum(_wins)
+        _gross_l = abs(sum(_losses)) if _losses else 0.0
+        _pf     = round(_gross_p / _gross_l, 4) if _gross_l > 0 else ("inf" if _gross_p > 0 else 0.0)
+        _exp    = round(_l_rpnl / _l_rn, 6) if _l_rn > 0 else 0.0
+        pnl_run["net_pnl"]          = round(_l_rpnl, 4)
+        pnl_run["closed_positions"] = _l_rn
+        pnl_run["win_rate_dollar"]  = round(_wr, 4)
+        pnl_run["profit_factor"]    = _pf
+        pnl_run["expectancy"]       = _exp
+        pnl_run["avg_win"]          = round(sum(_wins) / len(_wins), 4) if _wins else 0.0
+        pnl_run["avg_loss"]         = round(sum(_losses) / len(_losses), 4) if _losses else 0.0
+        pnl_run["_source"]          = "LEDGER_FALLBACK"
+
     agg["pnl_financial"] = pnl_run
     agg["pnl_per_cycle"] = pnl_per_cycle
     agg["close_mode"] = CLOSE_MODE
@@ -582,9 +751,14 @@ def main() -> int:
     print(f"  cycles={agg['cycles']} total_trades={agg['total_trades']} executed={agg['total_executed']}")
     print(f"  hit_rate_avg={agg['hit_rate_avg']} latency_p95={agg['latency_ms_p95']}ms latency_max={agg['latency_ms_max']}ms")
     print(f"  ks_triggers={agg['kill_switch_triggers']} max_concentration={agg['max_concentration_pct']}% on {agg['max_concentration_asset']}")
+    print(f"  --- LEDGER P&L (posicoes rastreadas em tempo real) ---")
+    print(f"  ledger_all={agg['ledger_n_positions']} realized={agg['ledger_realized_n']} realized_pnl=${agg['ledger_realized_pnl']:+.4f} snapshot=${agg['ledger_total_pnl']:+.4f}")
+    print(f"  spread_cost_total=${agg['ledger_spread_cost_usd']:+.4f} | net_after_cost=${agg['ledger_realized_pnl']-agg['ledger_spread_cost_usd']:+.4f}")
+    _pnl_src = pnl_run.get('_source', 'HISTORY_DEALS')
+    print(f"  [P&L SOURCE: {_pnl_src}]")
     print(f"  retcodes={agg['retcodes']}")
     print("  --- A3 KPIs FINANCEIROS ---")
-    print(f"  net_pnl=${pnl_run.get('net_pnl', 0):+.2f} win_rate_$={pnl_run.get('win_rate_dollar', 0)*100:.2f}% "
+    print(f"  net_pnl=${pnl_run.get('net_pnl', 0):+.4f} win_rate_$={pnl_run.get('win_rate_dollar', 0)*100:.1f}% "
           f"profit_factor={pnl_run.get('profit_factor')} expectancy=${pnl_run.get('expectancy', 0):+.4f} "
           f"closed_positions={pnl_run.get('closed_positions', 0)}")
     _by_act    = agg.get("by_action", {})
@@ -620,4 +794,11 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        rc = main()
+    except KeyboardInterrupt:
+        print("\n[FASE4] Interrompido pelo usuario.")
+        rc = 0
+    finally:
+        _release_lock()
+    sys.exit(rc)

@@ -1,0 +1,87 @@
+{
+  "mission_id": "PAPER-DOGUSD-H1-20260426T225957",
+  "asset": "DOGUSD",
+  "timeframe": "H1",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-04-26T22:59:57.865844+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "DOGUSD",
+    "timeframe": "H1",
+    "tier": "T2",
+    "hit_rate_134": 100.0,
+    "mach": 1.0,
+    "margin_used": 150.0,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 2059,
+    "total": 2059,
+    "p_hat": 1.0,
+    "lower_bound": 0.998138,
+    "upper_bound": 1.0,
+    "interval": "[99.8138%, 100.0000%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 2059,
+          "hits": 2059,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        },
+        "134_stats": {
+          "total_touches": 2059,
+          "hits": 2059,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        }
+      }
+    },
+    "price": {
+      "price": 0.0,
+      "base_price": 0.0,
+      "flash_crash_adjustment": null,
+      "metadata": {}
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 150.0,
+    "tier": "T2"
+  },
+  "execution": {
+    "retcode": 10009,
+    "retcode_str": "DONE",
+    "success": true,
+    "deal": 182394372,
+    "order": 179579047,
+    "fill_price": 0.09932,
+    "ask_at_send": 0.09932,
+    "sl_price": 0.09632,
+    "tp_price": 0.10232,
+    "volume_confirmed": 0.1,
+    "slippage_pts": 0.0,
+    "comment": "Request executed",
+    "request_id": 2189354560,
+    "latency_ms": 37.5,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.1,
+    "risk_usd": 25.0,
+    "stop_pts": 300.0,
+    "pip_value_lot": 0.01,
+    "contract_size": 1000.0,
+    "price_at_calc": 0.09933
+  },
+  "latency_motor_s": 3.344,
+  "checksum": "4cba009af2854da20faf62515b96340e1c1111a4f2f22b68bc06a205f856cb59"
+}

@@ -1,0 +1,27 @@
+{
+  "generated": "2026-04-29T14:36:02.424055+00:00",
+  "positions": {
+    "181142609": {
+      "symbol": "EURJPY",
+      "direction": "BUY",
+      "lot": 0.25,
+      "entry_price": 187.096,
+      "entry_time": "2026-04-29T17:18:15+00:00",
+      "last_profit": 9.99,
+      "status": "open"
+    },
+    "181142654": {
+      "symbol": "EURJPY",
+      "direction": "BUY",
+      "lot": 0.12,
+      "entry_price": 187.098,
+      "entry_time": "2026-04-29T17:18:16+00:00",
+      "last_profit": 4.65,
+      "status": "open"
+    }
+  },
+  "total_pnl_snapshot": 14.64,
+  "realized_pnl": 0.0,
+  "realized_n": 0,
+  "n_positions": 2
+}

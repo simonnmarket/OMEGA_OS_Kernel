@@ -1,0 +1,88 @@
+{
+  "mission_id": "PAPER-USDJPY-H4-20260429T124753",
+  "asset": "USDJPY",
+  "timeframe": "H4",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-04-29T12:47:53.799339+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "USDJPY",
+    "timeframe": "H4",
+    "tier": "T1",
+    "hit_rate_134": 100.0,
+    "mach": 1.0,
+    "margin_used": 150.0,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 5094,
+    "total": 5094,
+    "p_hat": 1.0,
+    "lower_bound": 0.999246,
+    "upper_bound": 1.0,
+    "interval": "[99.9246%, 100.0000%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 5094,
+          "hits": 5094,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        },
+        "134_stats": {
+          "total_touches": 5094,
+          "hits": 5094,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        }
+      }
+    },
+    "price": {
+      "price": 0.0,
+      "base_price": 0.0,
+      "flash_crash_adjustment": null,
+      "metadata": {}
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 150.0,
+    "tier": "T1"
+  },
+  "execution": {
+    "retcode": 10009,
+    "retcode_str": "DONE",
+    "success": true,
+    "deal": 184419324,
+    "order": 181064090,
+    "fill_price": 159.936,
+    "ask_at_send": 159.936,
+    "sl_price": 159.864,
+    "tp_price": 160.152,
+    "volume_confirmed": 0.12,
+    "slippage_pts": 0.0,
+    "comment": "Request executed",
+    "request_id": 3784671744,
+    "latency_ms": 35.4,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.01,
+    "risk_usd": 10.0,
+    "stop_pts": 300.0,
+    "pip_value_lot": 0.62525,
+    "contract_size": 100000.0,
+    "price_at_calc": 159.936,
+    "sym_vol_min": 0.01
+  },
+  "latency_motor_s": 2.712,
+  "checksum": "25d19b426c4f55fd45a28c35b35c369d8363e486e4e3b47b909dd1c5976c0134"
+}

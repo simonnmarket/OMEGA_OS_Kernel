@@ -42,6 +42,69 @@
       "sha3_256": "3c9c49c6f4eb3fd0905d09b7764f3661f7fb286f6b0928f83df158debe3a4d2c",
       "alerts_count": 1,
       "significant_bias_count": 0
+    },
+    {
+      "audit_id": "BIAS_20260426_204003",
+      "timestamp": "2026-04-26T20:40:03.294350",
+      "sha3_256": "c11e8f5ad44873d37a994f7a3a50650a452d6b822bc37c9a59bf3c3b025f0cfd",
+      "alerts_count": 1,
+      "significant_bias_count": 0
+    },
+    {
+      "audit_id": "BIAS_20260426_205411",
+      "timestamp": "2026-04-26T20:54:11.438480",
+      "sha3_256": "e85c24911ef5b840a5e02f862955347400e1e71f58ba299d026201c70e420a25",
+      "alerts_count": 1,
+      "significant_bias_count": 0
+    },
+    {
+      "audit_id": "BIAS_20260426_212219",
+      "timestamp": "2026-04-26T21:22:19.235820",
+      "sha3_256": "1844f6626768cc4bec03620828f243a10ddc981b328c762d4e5961ca0cbf20e7",
+      "alerts_count": 1,
+      "significant_bias_count": 0
+    },
+    {
+      "audit_id": "BIAS_20260426_212246",
+      "timestamp": "2026-04-26T21:22:46.256563",
+      "sha3_256": "00042b068a2cab80c472a2c7a656a52dd5b99707921a7287287c1c92a56337c8",
+      "alerts_count": 1,
+      "significant_bias_count": 0
+    },
+    {
+      "audit_id": "BIAS_20260426_212726",
+      "timestamp": "2026-04-26T21:27:26.896101",
+      "sha3_256": "48e049b64a11f5d0e90bbfecfb196293c3fea7ab6f226f21fc3b52923141fb40",
+      "alerts_count": 1,
+      "significant_bias_count": 0
+    },
+    {
+      "audit_id": "BIAS_20260426_215506",
+      "timestamp": "2026-04-26T21:55:06.258206",
+      "sha3_256": "c9050bd7f97d43d9b93cdc3cfd567293c505c635b34036ba2ccf077ea3822912",
+      "alerts_count": 1,
+      "significant_bias_count": 0
+    },
+    {
+      "audit_id": "BIAS_20260426_221202",
+      "timestamp": "2026-04-26T22:12:02.747949",
+      "sha3_256": "20f908ced64e8e6664b495c9c2b0f7d777a996e43873cc5ca2c1deea36842de1",
+      "alerts_count": 2,
+      "significant_bias_count": 0
+    },
+    {
+      "audit_id": "BIAS_20260426_230118",
+      "timestamp": "2026-04-26T23:01:18.169965",
+      "sha3_256": "6ccaa8c5475337d23c4a43d763df84da56f7f5832c5aade05a7734b0b882e925",
+      "alerts_count": 2,
+      "significant_bias_count": 0
+    },
+    {
+      "audit_id": "BIAS_20260427_105505",
+      "timestamp": "2026-04-27T10:55:05.902867",
+      "sha3_256": "3f63976dc99469ee12f61a46209c9f0671bd043cc4f11166c5ed88d4f317a544",
+      "alerts_count": 0,
+      "significant_bias_count": 0
     }
   ],
   "created_at": "2026-04-26T14:09:00Z"

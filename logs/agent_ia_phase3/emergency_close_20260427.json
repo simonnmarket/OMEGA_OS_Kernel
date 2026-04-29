@@ -1,6 +1,112 @@
 {
-  "timestamp": "2026-04-27T10:54:56.544210",
-  "closed": [],
+  "timestamp": "2026-04-28T11:22:14.314085",
+  "closed": [
+    {
+      "symbol": "EURUSD",
+      "ticket": 180423680,
+      "volume": 0.01,
+      "type": "SELL",
+      "retcode": 10009
+    },
+    {
+      "symbol": "EURUSD",
+      "ticket": 180424387,
+      "volume": 0.01,
+      "type": "SELL",
+      "retcode": 10009
+    },
+    {
+      "symbol": "EURUSD",
+      "ticket": 180424882,
+      "volume": 0.01,
+      "type": "SELL",
+      "retcode": 10009
+    },
+    {
+      "symbol": "EURUSD",
+      "ticket": 180425423,
+      "volume": 0.01,
+      "type": "SELL",
+      "retcode": 10009
+    },
+    {
+      "symbol": "EURUSD",
+      "ticket": 180425932,
+      "volume": 0.01,
+      "type": "SELL",
+      "retcode": 10009
+    },
+    {
+      "symbol": "EURUSD",
+      "ticket": 180426308,
+      "volume": 0.01,
+      "type": "SELL",
+      "retcode": 10009
+    },
+    {
+      "symbol": "EURUSD",
+      "ticket": 180426925,
+      "volume": 0.01,
+      "type": "SELL",
+      "retcode": 10009
+    },
+    {
+      "symbol": "EURUSD",
+      "ticket": 180427226,
+      "volume": 0.01,
+      "type": "SELL",
+      "retcode": 10009
+    },
+    {
+      "symbol": "EURUSD",
+      "ticket": 180427478,
+      "volume": 0.01,
+      "type": "SELL",
+      "retcode": 10009
+    },
+    {
+      "symbol": "EURUSD",
+      "ticket": 180427711,
+      "volume": 0.01,
+      "type": "SELL",
+      "retcode": 10009
+    },
+    {
+      "symbol": "EURUSD",
+      "ticket": 180428098,
+      "volume": 0.01,
+      "type": "SELL",
+      "retcode": 10009
+    },
+    {
+      "symbol": "EURUSD",
+      "ticket": 180428501,
+      "volume": 0.01,
+      "type": "SELL",
+      "retcode": 10009
+    },
+    {
+      "symbol": "EURUSD",
+      "ticket": 180428814,
+      "volume": 0.01,
+      "type": "SELL",
+      "retcode": 10009
+    },
+    {
+      "symbol": "EURUSD",
+      "ticket": 180429130,
+      "volume": 0.01,
+      "type": "SELL",
+      "retcode": 10009
+    },
+    {
+      "symbol": "EURUSD",
+      "ticket": 180429328,
+      "volume": 0.01,
+      "type": "SELL",
+      "retcode": 10009
+    }
+  ],
   "errors": [],
   "remaining_count": 0
 }

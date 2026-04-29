@@ -1,0 +1,8 @@
+{
+  "asset": "BTCUSD",
+  "timeframe": "H1",
+  "status": "FAILED",
+  "created_at": "2026-04-26T17:07:16.345993+00:00",
+  "reason": "[Errno 2] No such file or directory: './data/ohlcv\\\\grafico_linha\\\\BTCUSD_H1.csv'",
+  "checksum": "2cf79cdd6f9aaedff9e7a08a1c1d00429e3d08ac83c98fe02ad753279a92e11f"
+}

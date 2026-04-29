@@ -1,0 +1,224 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-29T01:23:00.580365+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 11,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 1,
+    "executed": 1,
+    "skipped": 0,
+    "avg_hit_rate_134": 99.92,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 33.6,
+    "max_latency_ms": 33.6
+  },
+  "results": [
+    {
+      "asset": "USDJPY",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.034071,
+        "atr_pct": 0.000213,
+        "spread": 0.009,
+        "atr_over_spread": 3.786,
+        "adx": 32.11,
+        "vol_ratio": 0.654,
+        "asset_class": "forex",
+        "thr_atr_pct": 0.0008,
+        "thr_atr_over_spr": 3.0,
+        "thr_adx": 15.0,
+        "thr_vol_ratio": 0.7,
+        "ok": false,
+        "reason": "atr_pct=0.021%<0.080%[forex]|vol_ratio<0.7(forex)"
+      }
+    },
+    {
+      "asset": "USDJPY",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.034071,
+        "atr_pct": 0.000213,
+        "spread": 0.009,
+        "atr_over_spread": 3.786,
+        "adx": 32.11,
+        "vol_ratio": 0.654,
+        "asset_class": "forex",
+        "thr_atr_pct": 0.0008,
+        "thr_atr_over_spr": 3.0,
+        "thr_adx": 15.0,
+        "thr_vol_ratio": 0.7,
+        "ok": false,
+        "reason": "atr_pct=0.021%<0.080%[forex]|vol_ratio<0.7(forex)"
+      }
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 3.381786,
+        "atr_pct": 0.001482,
+        "spread": 0.522,
+        "atr_over_spread": 6.479,
+        "adx": 23.35,
+        "vol_ratio": 0.802,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct=0.148%<0.150%[crypto]"
+      }
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 3.381786,
+        "atr_pct": 0.001482,
+        "spread": 0.471,
+        "atr_over_spread": 7.18,
+        "adx": 23.35,
+        "vol_ratio": 0.813,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct=0.148%<0.150%[crypto]"
+      }
+    },
+    {
+      "asset": "EURJPY",
+      "timeframe": "H1",
+      "status": "SKIP_HARMONIC"
+    },
+    {
+      "asset": "EURJPY",
+      "timeframe": "H4",
+      "status": "SKIP_HARMONIC"
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 87.885714,
+        "atr_pct": 0.001153,
+        "spread": 8.0,
+        "atr_over_spread": 10.986,
+        "adx": 20.11,
+        "vol_ratio": 0.699,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct=0.115%<0.150%[crypto]|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 87.885714,
+        "atr_pct": 0.001153,
+        "spread": 8.0,
+        "atr_over_spread": 10.986,
+        "adx": 20.11,
+        "vol_ratio": 0.705,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct=0.115%<0.150%[crypto]|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "GBPJPY",
+      "timeframe": "H1",
+      "status": "SKIP_HARMONIC"
+    },
+    {
+      "asset": "GBPJPY",
+      "timeframe": "H4",
+      "status": "SKIP_HARMONIC"
+    },
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 99.92,
+      "ic_95": "[99.7864%, 99.9677%]",
+      "margin_used": 150.0,
+      "lot": 0.03,
+      "lot_v2": {
+        "vol_f": 1.0,
+        "conf_f": 0.786,
+        "perf_f": 1.0,
+        "kelly_f": 1.0,
+        "base_lot": 0.0179,
+        "risk_usd": 10.0
+      },
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "0c3f7eff387a898f87ac4ab1"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260429_012240.log",
+  "positions_ledger": {
+    "n": 2,
+    "total_pnl": -16.61,
+    "realized_pnl": 0.0,
+    "realized_n": 0,
+    "positions": {
+      "180821354": {
+        "symbol": "XAUUSD",
+        "direction": "SELL",
+        "lot": 0.03,
+        "entry_price": 4582.84,
+        "sl": 4591.22,
+        "tp": 4568.88,
+        "entry_deal": 184077853,
+        "entry_time": "2026-04-29T01:23:00.574116+00:00",
+        "last_profit": -15.5,
+        "status": "open",
+        "spread_cost_usd": 1.11,
+        "slippage_pts": 0.0
+      },
+      "180822500": {
+        "symbol": "XAUUSD",
+        "direction": "SELL",
+        "lot": 0.03,
+        "entry_price": 4582.84,
+        "sl": 4591.22,
+        "tp": 4568.88,
+        "entry_deal": 184077853,
+        "entry_time": "2026-04-29T01:23:00.575168+00:00",
+        "last_profit": -1.11,
+        "status": "open",
+        "spread_cost_usd": 1.11,
+        "slippage_pts": 0.0
+      }
+    }
+  },
+  "lot_calc_v2": {
+    "perf_n": 0,
+    "perf_f": 1.0,
+    "perf_trend": "flat",
+    "lot_range": "0.05–0.25",
+    "kelly_on": false
+  },
+  "checksum": "eebfe3bae78e4a860fb4bff48d444a196ab044c5b3a2dcc4207f9420b26ce2ad"
+}

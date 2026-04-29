@@ -1,0 +1,104 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-29T11:42:09.150428+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 2,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 2,
+    "executed": 2,
+    "skipped": 0,
+    "avg_hit_rate_134": 99.94,
+    "avg_slippage_pts": 0.5,
+    "avg_latency_ms": 53.5,
+    "max_latency_ms": 53.7
+  },
+  "results": [
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 99.92,
+      "ic_95": "[99.7864%, 99.9677%]",
+      "margin_used": 150.0,
+      "lot": 0.05,
+      "lot_v2": {
+        "vol_f": 1.0,
+        "conf_f": 0.786,
+        "perf_f": 1.0,
+        "kelly_f": 1.0,
+        "base_lot": 0.0276,
+        "risk_usd": 10.0
+      },
+      "retcode": 10009,
+      "slippage_pts": 1.0,
+      "checksum": "d60ccb6f9c503eb14b802346"
+    },
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 99.96,
+      "ic_95": "[99.8494%, 99.9887%]",
+      "margin_used": 203.9,
+      "lot": 0.03,
+      "lot_v2": {
+        "vol_f": 1.0,
+        "conf_f": 0.786,
+        "perf_f": 1.0,
+        "kelly_f": 1.0,
+        "base_lot": 0.0276,
+        "risk_usd": 10.0
+      },
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "daa890b16817ba18d2d8785f"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260429_114203.log",
+  "positions_ledger": {
+    "n": 2,
+    "total_pnl": -2.95,
+    "realized_pnl": 0.0,
+    "realized_n": 0,
+    "positions": {
+      "181033068": {
+        "symbol": "XAUUSD",
+        "direction": "SELL",
+        "lot": 0.05,
+        "entry_price": 4564.8,
+        "sl": 4570.25,
+        "tp": 4555.75,
+        "entry_deal": 184376085,
+        "entry_time": "2026-04-29T11:42:06.389549+00:00",
+        "last_profit": -1.75,
+        "status": "open",
+        "spread_cost_usd": 2.0,
+        "slippage_pts": 1.0
+      },
+      "181033095": {
+        "symbol": "XAUUSD",
+        "direction": "SELL",
+        "lot": 0.03,
+        "entry_price": 4564.75,
+        "sl": 4570.19,
+        "tp": 4555.69,
+        "entry_deal": 184376123,
+        "entry_time": "2026-04-29T11:42:09.112957+00:00",
+        "last_profit": -1.2,
+        "status": "open",
+        "spread_cost_usd": 1.2,
+        "slippage_pts": 0.0
+      }
+    }
+  },
+  "lot_calc_v2": {
+    "perf_n": 0,
+    "perf_f": 1.0,
+    "perf_trend": "flat",
+    "lot_range": "0.05–0.25",
+    "kelly_on": false
+  },
+  "checksum": "693c89b4264a6e67bfb03ad1b52753b9b6b8fb9b0e4b42a6f07c964fa96cab66"
+}

@@ -1,0 +1,156 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-27T18:43:55.925281+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 9,
+  "kill_switch": true,
+  "ks_reason": "3 falhas consecutivas",
+  "online_stats": {
+    "total_signals": 0,
+    "executed": 0,
+    "skipped": 0,
+    "avg_hit_rate_134": 0,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 0.0,
+    "max_latency_ms": 0
+  },
+  "results": [
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 3.3785,
+        "atr_pct": 0.001476,
+        "spread": 0.792,
+        "atr_over_spread": 4.266,
+        "adx": 30.69,
+        "vol_ratio": 0.729,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 3.3785,
+        "atr_pct": 0.001476,
+        "spread": 0.793,
+        "atr_over_spread": 4.26,
+        "adx": 30.69,
+        "vol_ratio": 0.733,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "US500",
+      "timeframe": "H1",
+      "status": "FAIL"
+    },
+    {
+      "asset": "US500",
+      "timeframe": "H4",
+      "status": "FAIL"
+    },
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 2.554286,
+        "atr_pct": 0.000545,
+        "spread": 0.37,
+        "atr_over_spread": 6.903,
+        "adx": 30.67,
+        "vol_ratio": 0.533,
+        "asset_class": "metal",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.7,
+        "ok": false,
+        "reason": "atr_pct<0.0015|vol_ratio<0.7(metal)"
+      }
+    },
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 2.554286,
+        "atr_pct": 0.000545,
+        "spread": 0.35,
+        "atr_over_spread": 7.298,
+        "adx": 30.67,
+        "vol_ratio": 0.539,
+        "asset_class": "metal",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.7,
+        "ok": false,
+        "reason": "atr_pct<0.0015|vol_ratio<0.7(metal)"
+      }
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 97.267857,
+        "atr_pct": 0.001268,
+        "spread": 8.0,
+        "atr_over_spread": 12.158,
+        "adx": 17.66,
+        "vol_ratio": 0.419,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct<0.0015|adx<20.0|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 97.267857,
+        "atr_pct": 0.001268,
+        "spread": 8.0,
+        "atr_over_spread": 12.158,
+        "adx": 17.66,
+        "vol_ratio": 0.424,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct<0.0015|adx<20.0|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "NAS100",
+      "timeframe": "H1",
+      "status": "FAIL"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260427_184322.log",
+  "checksum": "4344da429e7f2f163e337c56996f0e1e6eba629c59c73a43499c3e79c3d15647"
+}

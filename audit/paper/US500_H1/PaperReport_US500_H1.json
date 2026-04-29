@@ -1,0 +1,87 @@
+{
+  "mission_id": "PAPER-US500-H1-20260428T180341",
+  "asset": "US500",
+  "timeframe": "H1",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-04-28T18:03:41.030353+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "US500",
+    "timeframe": "H1",
+    "tier": "T1",
+    "hit_rate_134": 99.77,
+    "mach": 1.0,
+    "margin_used": 150.0,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 4819,
+    "total": 4830,
+    "p_hat": 0.997723,
+    "lower_bound": 0.995926,
+    "upper_bound": 0.998728,
+    "interval": "[99.5926%, 99.8728%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 4970,
+          "hits": 4953,
+          "breaks": 17,
+          "hit_rate": 99.66,
+          "break_rate": 0.34
+        },
+        "134_stats": {
+          "total_touches": 4830,
+          "hits": 4819,
+          "breaks": 11,
+          "hit_rate": 99.77,
+          "break_rate": 0.23
+        }
+      }
+    },
+    "price": {
+      "price": 0.0,
+      "base_price": 0.0,
+      "flash_crash_adjustment": null,
+      "metadata": {}
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 150.0,
+    "tier": "T1"
+  },
+  "execution": {
+    "retcode": 10009,
+    "retcode_str": "DONE",
+    "success": true,
+    "deal": 183925556,
+    "order": 180718864,
+    "fill_price": 7133.05,
+    "ask_at_send": 7133.05,
+    "sl_price": 7130.05,
+    "tp_price": 7136.05,
+    "volume_confirmed": 0.01,
+    "slippage_pts": 0.0,
+    "comment": "Request executed",
+    "request_id": 3446639255,
+    "latency_ms": 64.9,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.01,
+    "risk_usd": 10.0,
+    "stop_pts": 300.0,
+    "pip_value_lot": 0.01,
+    "contract_size": 1.0,
+    "price_at_calc": 7133.05
+  },
+  "latency_motor_s": 2.871,
+  "checksum": "57ab7e84b6c527bebca09c84878f2f5febef48c6d500a05f8f794c6b6c223c0d"
+}
