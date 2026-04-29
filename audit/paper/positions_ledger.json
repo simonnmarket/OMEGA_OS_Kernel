@@ -1,26 +1,26 @@
 {
-  "generated": "2026-04-29T15:22:48.548385+00:00",
+  "generated": "2026-04-29T19:06:10.776750+00:00",
   "positions": {
-    "181142609": {
-      "symbol": "EURJPY",
+    "181268377": {
+      "symbol": "AUDJPY",
       "direction": "BUY",
-      "lot": 0.25,
-      "entry_price": 187.096,
-      "entry_time": "2026-04-29T17:18:15+00:00",
-      "last_profit": 29.03,
+      "lot": 0.17,
+      "entry_price": 114.019,
+      "entry_time": "2026-04-29T21:51:40+00:00",
+      "last_profit": -0.64,
       "status": "open"
     },
-    "181142654": {
-      "symbol": "EURJPY",
+    "181268382": {
+      "symbol": "AUDJPY",
       "direction": "BUY",
-      "lot": 0.12,
-      "entry_price": 187.098,
-      "entry_time": "2026-04-29T17:18:16+00:00",
-      "last_profit": 13.78,
+      "lot": 0.09,
+      "entry_price": 114.014,
+      "entry_time": "2026-04-29T21:51:41+00:00",
+      "last_profit": -0.06,
       "status": "open"
     }
   },
-  "total_pnl_snapshot": 42.81,
+  "total_pnl_snapshot": -0.7,
   "realized_pnl": 0.0,
   "realized_n": 0,
   "n_positions": 2

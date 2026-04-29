@@ -155,8 +155,8 @@ AUDIT_PAPER.mkdir(parents=True, exist_ok=True)
 DEMO_EQUITY_USD    = 10_000.0
 RISK_PER_TRADE_PCT = float(os.getenv("OMEGA_RISK_PER_TRADE", "0.0025"))  # COO Fase1: 0.001 (0.1%)
 MIN_LOT_OVERRIDE   = float(os.getenv("OMEGA_MIN_LOT", "0.0"))            # CEO: lote mínimo (0=auto)
-MAX_POSITIONS      = int(os.getenv("OMEGA_MAX_POSITIONS", "6"))          # CIO fase conservadora: 2
-DD_DAILY_MAX       = float(os.getenv("OMEGA_DD_DAILY_MAX", "0.05"))       # CIO fase conservadora: 0.01
+MAX_POSITIONS      = int(os.getenv("OMEGA_MAX_POSITIONS", "2"))          # CONSELHO 29/04/2026: default=2 (unanimidade)
+DD_DAILY_MAX       = float(os.getenv("OMEGA_DD_DAILY_MAX", "0.01"))       # CONSELHO 29/04/2026: default=1% (unanimidade)
 CONCENTRATION_MAX  = float(os.getenv("OMEGA_CONCENTRATION_MAX", "0.40"))   # CQO/COO: max por ativo
 MAX_CONSEC_FAIL    = 3
 
