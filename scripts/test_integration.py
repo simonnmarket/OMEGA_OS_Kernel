@@ -65,6 +65,25 @@ for r in block_regimes:
 print(f"\n  [T10] REGIME_GATE bloqueia STRONG_MEAN_REVERTING: OK")
 print(f"  [T11] REGIME_GATE permite TRENDING/WEAK_TRENDING/RANDOM_WALK: OK")
 
+# Test 6: Kalman engine loaded
+kalman_ok = sl._KALMAN_ENGINE is not None
+print(f"\n  [T12] _KALMAN_ENGINE loaded: {'OK' if kalman_ok else 'FAILED'}")
+assert kalman_ok, "KALMAN_ENGINE nao carregou"
+
+# Test 7: Kalman execute retorna campos esperados
+kalman_engine = sl._KALMAN_ENGINE
+prices_kal = np.cumsum(np.random.randn(50) * 0.3)
+window_kal = np.column_stack([
+    prices_kal, prices_kal+0.1, prices_kal-0.1, prices_kal,
+    np.ones(50) * 200.0
+])
+kal_result = kalman_engine.execute(window_kal)
+assert "pullback_confidence" in kal_result
+assert "is_kalman_pullback" in kal_result
+assert "velocity" in kal_result
+print(f"  [T13] Kalman execute output keys: OK")
+print(f"  [T14] Kalman score={kal_result['pullback_confidence']:.4f} pullback={kal_result['is_kalman_pullback']}")
+
 print("\n" + "=" * 60)
-print("  ALL 11 UNIT TESTS PASSED")
+print("  ALL 14 UNIT TESTS PASSED")
 print("=" * 60)

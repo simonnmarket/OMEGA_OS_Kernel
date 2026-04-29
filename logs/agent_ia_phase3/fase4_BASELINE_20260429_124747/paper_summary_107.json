@@ -1,6 +1,6 @@
 {
   "mode": "paper",
-  "generated": "2026-04-29T15:06:06.571332+00:00",
+  "generated": "2026-04-29T14:46:05.208870+00:00",
   "equity_demo": 10000.0,
   "total_cycles": 0,
   "kill_switch": false,
@@ -15,10 +15,10 @@
     "max_latency_ms": 0
   },
   "results": [],
-  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260429_150606.log",
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260429_144605.log",
   "positions_ledger": {
     "n": 2,
-    "total_pnl": 40.98,
+    "total_pnl": 12.79,
     "realized_pnl": 0.0,
     "realized_n": 0,
     "positions": {
@@ -28,7 +28,7 @@
         "lot": 0.25,
         "entry_price": 187.096,
         "entry_time": "2026-04-29T17:18:15+00:00",
-        "last_profit": 27.79,
+        "last_profit": 8.74,
         "status": "open"
       },
       "181142654": {
@@ -37,7 +37,7 @@
         "lot": 0.12,
         "entry_price": 187.098,
         "entry_time": "2026-04-29T17:18:16+00:00",
-        "last_profit": 13.19,
+        "last_profit": 4.05,
         "status": "open"
       }
     }
@@ -49,5 +49,5 @@
     "lot_range": "0.01–0.25",
     "kelly_on": false
   },
-  "checksum": "ca4bb90b70dccfa6f3fb597fb4d98e8b2edc5e8b16d1d882f21ee63fb19a273b"
+  "checksum": "c052006499602e24ed66e2d495b2f09b4afe8aee49e027e58bff78a1aa153ca7"
 }

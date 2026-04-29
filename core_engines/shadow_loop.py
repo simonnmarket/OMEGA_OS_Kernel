@@ -58,6 +58,13 @@ try:
 except Exception:
     _FRACTAL_ENGINE = None
 
+# ── KALMAN PULLBACK: entry timing scorer (nebular integration phase-1) ──────
+try:
+    from modules.kalman_pullback_engine import OmegaKalmanPullbackEngine as _KalmanPullbackCls
+    _KALMAN_ENGINE = _KalmanPullbackCls()
+except Exception:
+    _KALMAN_ENGINE = None
+
 from datetime import datetime, timezone
 from math import sqrt
 from pathlib import Path
@@ -1490,6 +1497,26 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                 continue
                             log.info("[%s %s] [RISK_GATE] OK sharpe=%.3f n=%d",
                                      asset, tf, _rg_sharpe, len(_risk_returns))
+
+                        # === KALMAN PULLBACK: entry timing scorer (nebular phase-1, log-only) ===
+                        if _KALMAN_ENGINE is not None:
+                            try:
+                                _kal_rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M5, 0, 60)
+                                if _kal_rates is not None and len(_kal_rates) >= 20:
+                                    import numpy as _np_kal
+                                    _kal_arr = _np_kal.array(
+                                        [[r["open"], r["high"], r["low"], r["close"], float(r.get("tick_volume", 100))]
+                                         for r in _kal_rates], dtype=_np_kal.float64
+                                    )
+                                    _kal_res = _KALMAN_ENGINE.execute(_kal_arr)
+                                    _kal_score = round(float(_kal_res.get("pullback_confidence", 0)), 4)
+                                    _kal_is_pb  = bool(_kal_res.get("is_kalman_pullback", False))
+                                    _kal_break  = bool(_kal_res.get("is_structural_break", False))
+                                    log.info("[%s %s] [KALMAN] pullback=%s score=%.4f vel=%.4f break=%s",
+                                             asset, tf, _kal_is_pb, _kal_score,
+                                             float(_kal_res.get("velocity", 0)), _kal_break)
+                            except Exception as _ke:
+                                log.debug("[%s %s] [KALMAN] scorer falhou: %s", asset, tf, _ke)
 
                         exec_result = mt5_send_order(
                             asset, tf, eff_lot,
