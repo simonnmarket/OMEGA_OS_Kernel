@@ -40,6 +40,24 @@ from modules.risk.scale_manager import OmegaScaleManager
 from modules.validation.mfa_engine import OmegaMFAEngine
 from core_engines.lot_calculator_v2 import LotCalculatorV2, LotCfgV2
 
+# ── RISK_GATE: métricas institucionais de risco (nebular integration phase-1) ──
+try:
+    import pandas as _pd_risk
+    from modules.risk_metrics import RiskMetricsEngine as _RiskMetricsEngine
+    _RISK_ENGINE = _RiskMetricsEngine()
+except Exception:
+    _RISK_ENGINE = None
+    _pd_risk = None
+
+# ── REGIME_GATE: Hurst exponent + regime de mercado (nebular integration phase-1) ─
+try:
+    from modules.fractal_hurst import FractalEngineV2 as _FractalEngineV2, FractalConfig as _FractalConfig
+    _FRACTAL_ENGINE = _FractalEngineV2(
+        _FractalConfig(min_samples=50, cache_ttl_ms=60_000, use_caching=True)
+    )
+except Exception:
+    _FRACTAL_ENGINE = None
+
 from datetime import datetime, timezone
 from math import sqrt
 from pathlib import Path
@@ -1047,6 +1065,8 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     _realized_pnl: float = 0.0
     _realized_n:   int   = 0
     _lot_calc = LotCalculatorV2(LotCfgV2())  # CQO 28/04/2026: 4-factor adaptive sizing
+    _risk_returns: list = []       # pnl/equity por trade fechado → Sharpe rolling
+    _fractal_cache: dict = {}      # asset → {"ts": float, "regime": str, "hurst": float}
 
     # Conselho 28/04/2026: reset KS baseline com equity real do MT5 para evitar
     # falsos positivos por drawdown residual de runs anteriores.
@@ -1261,6 +1281,37 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                 "edge_metrics": edge_m,
                             })
                             continue
+                        # === REGIME_GATE: Hurst exponent (fractal_hurst — nebular phase-1) ===
+                        if _FRACTAL_ENGINE is not None:
+                            _now_ts = time.time()
+                            _fc = _fractal_cache.get(asset)
+                            if _fc is None or (_now_ts - _fc["ts"]) > 60.0:
+                                try:
+                                    _rg_rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M15, 0, 150)
+                                    if _rg_rates is not None and len(_rg_rates) >= 50:
+                                        import numpy as _np_rg
+                                        _rg_cls = _np_rg.array([r["close"] for r in _rg_rates], dtype=_np_rg.float64)
+                                        _rg_st = _FRACTAL_ENGINE.analyze_series(_rg_cls)
+                                        _fractal_cache[asset] = {
+                                            "ts": _now_ts,
+                                            "regime": _rg_st.regime.name,
+                                            "hurst": round(_rg_st.hurst_exponent, 4),
+                                        }
+                                except Exception as _rge:
+                                    log.debug("[%s %s] [REGIME_GATE] erro: %s", asset, tf, _rge)
+                            _fc = _fractal_cache.get(asset)
+                            if _fc:
+                                if _fc["regime"] == "STRONG_MEAN_REVERTING":
+                                    log.info("[%s %s] [REGIME_GATE] BLOCKED H=%.3f regime=%s",
+                                             asset, tf, _fc["hurst"], _fc["regime"])
+                                    results.append({"asset": asset, "timeframe": tf,
+                                                    "status": "SKIP_REGIME_GATE",
+                                                    "hurst": _fc["hurst"],
+                                                    "regime": _fc["regime"]})
+                                    continue
+                                log.info("[%s %s] [REGIME_GATE] OK H=%.3f regime=%s",
+                                         asset, tf, _fc["hurst"], _fc["regime"])
+
                         # Fallback momentum MT5 (lógica original) — só após edge OK
                         rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M1, 0, 5)
                         if rates is not None and len(rates) >= 3:
@@ -1320,6 +1371,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                 _realized_pnl += _entry.get("last_profit", 0.0)
                                 _realized_n   += 1
                                 _lot_calc.update_performance(_entry.get("last_profit", 0.0))
+                                _risk_returns.append(_entry.get("last_profit", 0.0) / max(equity, 1.0))
                                 log.info("[LEDGER] FECHADA %s #%d pnl=%.4f | total_realiz=%.4f n=%d",
                                          _entry["symbol"], _tk, _entry.get("last_profit", 0),
                                          _realized_pnl, _realized_n)
@@ -1425,6 +1477,20 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                  _exec_atr["tf"], _exec_atr.get("atr_pts", 0),
                                  eff_sl, _risk_usd_eff, eff_tp,
                                  eff_tp / max(eff_sl, 1), _conf_score)
+
+                        # === RISK_GATE: Sharpe rolling institucional (risk_metrics — nebular phase-1) ===
+                        if _RISK_ENGINE is not None and _pd_risk is not None and len(_risk_returns) >= 30:
+                            _rg_sharpe = _RISK_ENGINE.sharpe_ratio(_pd_risk.Series(_risk_returns[-60:]))
+                            if _rg_sharpe < 0.3:
+                                log.warning("[%s %s] [RISK_GATE] BLOCKED sharpe=%.3f < 0.3 (n=%d)",
+                                            asset, tf, _rg_sharpe, len(_risk_returns))
+                                results.append({"asset": asset, "timeframe": tf,
+                                               "status": "SKIP_RISK_GATE",
+                                               "sharpe": round(_rg_sharpe, 4)})
+                                continue
+                            log.info("[%s %s] [RISK_GATE] OK sharpe=%.3f n=%d",
+                                     asset, tf, _rg_sharpe, len(_risk_returns))
+
                         exec_result = mt5_send_order(
                             asset, tf, eff_lot,
                             sl_pts=eff_sl,
