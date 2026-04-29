@@ -1550,6 +1550,31 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                          _entry["symbol"], _tk, _entry.get("last_profit", 0),
                                          _realized_pnl, _realized_n)
 
+                    # === FLOW CONFLUENCE: institutional flow scoring (awakened modules) ===
+                    # MOVIDO antes de correlation_filter para sempre logar estado do fluxo
+                    _flow_conf = 50.0  # default neutro
+                    _flow_details = {}
+                    try:
+                        _rates_flow = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M1, 0, 1)
+                        if _rates_flow is not None and len(_rates_flow) > 0:
+                            _bar_flow = {
+                                "close": float(_rates_flow[0]["close"]),
+                                "high": float(_rates_flow[0]["high"]),
+                                "low": float(_rates_flow[0]["low"]),
+                                "volume": float(_rates_flow[0]["tick_volume"])
+                            }
+                            _flow_conf, _flow_details = compute_flow_confluence(_bar_flow, asset, signal_dir)
+                            _flow_state[asset] = _flow_conf
+                            log.info("[%s %s] [FLOW] confluence=%.1f v_flow=%.0f vol_physics=%.0f vol_profile=%.0f anomaly=%.0f momentum=%.0f",
+                                     asset, tf, _flow_conf,
+                                     _flow_details.get("v_flow", 50),
+                                     _flow_details.get("vol_physics", 50),
+                                     _flow_details.get("vol_profile", 50),
+                                     _flow_details.get("anomaly", 50),
+                                     _flow_details.get("momentum", 50))
+                    except Exception as _flow_err:
+                        log.debug("[%s %s] [FLOW] erro: %s", asset, tf, _flow_err)
+
                     _jpy_cluster_active = asset.upper() in JPY_CROSSES or asset.upper() == "USDJPY"
                     _corr_ok = correlation_filter.should_trade(
                         asset, all_open_positions,
@@ -1564,31 +1589,6 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                     if _corr_ok:
                         # === ASSET PROFILE (CQO 28/04/2026) ===
                         _prof = ASSET_PROFILES.get(asset, _PROFILE_DEFAULT)
-
-                        # === FLOW CONFLUENCE: institutional flow scoring (awakened modules) ===
-                        _flow_conf = 50.0  # default neutro
-                        _flow_details = {}
-                        try:
-                            # Obter última barra OHLCV para flow scoring
-                            _rates_flow = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M1, 0, 1)
-                            if _rates_flow is not None and len(_rates_flow) > 0:
-                                _bar_flow = {
-                                    "close": float(_rates_flow[0]["close"]),
-                                    "high": float(_rates_flow[0]["high"]),
-                                    "low": float(_rates_flow[0]["low"]),
-                                    "volume": float(_rates_flow[0]["tick_volume"])
-                                }
-                                _flow_conf, _flow_details = compute_flow_confluence(_bar_flow, asset, signal_dir)
-                                _flow_state[asset] = _flow_conf
-                                log.info("[%s %s] [FLOW] confluence=%.1f v_flow=%.0f vol_physics=%.0f vol_profile=%.0f anomaly=%.0f momentum=%.0f",
-                                         asset, tf, _flow_conf,
-                                         _flow_details.get("v_flow", 50),
-                                         _flow_details.get("vol_physics", 50),
-                                         _flow_details.get("vol_profile", 50),
-                                         _flow_details.get("anomaly", 50),
-                                         _flow_details.get("momentum", 50))
-                        except Exception as _flow_err:
-                            log.debug("[%s %s] [FLOW] erro: %s", asset, tf, _flow_err)
 
                         # === LotCalculator V2 — CQO 28/04/2026 ===
                         # 4 fatores: volatilidade ATR + confiança IA + desempenho + kelly(off)

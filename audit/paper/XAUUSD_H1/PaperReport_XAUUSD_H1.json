@@ -1,10 +1,10 @@
 {
-  "mission_id": "PAPER-XAUUSD-H1-20260429T181902",
+  "mission_id": "PAPER-XAUUSD-H1-20260429T213030",
   "asset": "XAUUSD",
   "timeframe": "H1",
   "status": "COMPLETED",
   "mode": "paper",
-  "created_at": "2026-04-29T18:19:02.359523+00:00",
+  "created_at": "2026-04-29T21:30:30.060662+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
@@ -58,20 +58,20 @@
     "tier": "T1"
   },
   "execution": {
-    "retcode": 10009,
-    "retcode_str": "DONE",
-    "success": true,
-    "deal": 184679847,
-    "order": 181251315,
-    "fill_price": 4535.44,
-    "ask_at_send": 4535.51,
-    "sl_price": 4538.01,
-    "tp_price": 4505.43,
-    "volume_confirmed": 0.03,
-    "slippage_pts": 7.0,
-    "comment": "Request executed",
-    "request_id": 3784671763,
-    "latency_ms": 41.8,
+    "retcode": 10018,
+    "retcode_str": "NO_MONEY",
+    "success": false,
+    "deal": 0,
+    "order": 0,
+    "fill_price": 0.0,
+    "ask_at_send": 4546.45,
+    "sl_price": 4543.95,
+    "tp_price": 4558.64,
+    "volume_confirmed": 0.0,
+    "slippage_pts": 0.0,
+    "comment": "Market closed",
+    "request_id": 3784671779,
+    "latency_ms": 27.6,
     "mode": "MT5_DEMO_REAL"
   },
   "lot_info": {
@@ -80,9 +80,9 @@
     "stop_pts": 300.0,
     "pip_value_lot": 1.0,
     "contract_size": 100.0,
-    "price_at_calc": 4535.86,
+    "price_at_calc": 4546.45,
     "sym_vol_min": 0.01
   },
-  "latency_motor_s": 2.641,
-  "checksum": "6a98813a701671f0e9be47fb8ca1d9391f35abc178b39fbc9f77125279579a7c"
+  "latency_motor_s": 2.858,
+  "checksum": "85132ed39b8bbb050521bed25127b6674b26823b1553aafcefdd1cdef7dc4697"
 }
