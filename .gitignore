@@ -19,6 +19,10 @@ __pycache__/
 # Logs de execução pesados
 *.log
 
+# Logs de ciclo (gerados automaticamente — não versionar)
+logs/agent_ia_phase3/fase4_*/*.json
+logs/agent_ia_phase3/fase4_*/
+
 # Allowlist (Fix 6 PSA) — preservar audit trail no repo:
 !logs/agent_ia_phase3/*.log
 !logs/bias_audit/*.json

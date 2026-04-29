@@ -65,6 +65,26 @@ try:
 except Exception:
     _KALMAN_ENGINE = None
 
+# ── CIRCUIT_BREAKER: daily loss gate P1 (nebular integration phase-1) ────────
+_CB_DD_LIMIT = float(os.getenv("OMEGA_DD_CIRCUIT_BREAK", "3.5"))
+try:
+    from modules.risk_circuit_breaker import (
+        RiskCircuitBreaker as _RiskCircuitBreakerCls,
+        CircuitBreakerConfig as _CircuitBreakerConfig,
+    )
+    _CIRCUIT_BREAKER = _RiskCircuitBreakerCls(
+        _CircuitBreakerConfig(daily_loss_threshold_pct=-_CB_DD_LIMIT)
+    )
+except Exception:
+    _CIRCUIT_BREAKER = None
+
+# ── TAIL_RISK_HALT: intraday tail-risk stop P1 (nebular integration phase-1) ─
+try:
+    from modules.risk_valves_v31 import EmergencyTailRiskHalt as _EmergencyTailRiskHaltCls
+    _TAIL_RISK_HALT = _EmergencyTailRiskHaltCls(max_drawdown_per_event=0.03)
+except Exception:
+    _TAIL_RISK_HALT = None
+
 from datetime import datetime, timezone
 from math import sqrt
 from pathlib import Path
@@ -1081,6 +1101,13 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
         _acct = mt5.account_info()
         if _acct and _acct.equity > 0:
             ks.reset_session(_acct.equity)
+            if _CIRCUIT_BREAKER is not None:
+                _CIRCUIT_BREAKER.initialize_day(_acct.equity)
+                log.info("[CIRCUIT_BREAKER] Inicializado: anchor=$%.2f DD_limit=%.1f%%",
+                         _acct.equity, _CB_DD_LIMIT)
+            if _TAIL_RISK_HALT is not None:
+                _TAIL_RISK_HALT.set_starting_equity(_acct.equity)
+                log.info("[TAIL_RISK_HALT] Inicializado: anchor=$%.2f limit=3.0%%", _acct.equity)
 
     # Sincronização de Estado Real com o MT5 (PSA FIX - State Awareness)
     if mode == "paper" and mt5_connected:
@@ -1153,6 +1180,26 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
 
                 if has_night_pass:
                     log.info("[%s %s] 🛡️ NIGHT_PASS ATIVO — operação 24/5 autorizada pelo CEO", asset, tf)
+
+                # === CIRCUIT_BREAKER + TAIL_RISK_HALT: P1 intraday gates ===
+                if mode == "paper" and mt5_connected and (
+                    _CIRCUIT_BREAKER is not None or _TAIL_RISK_HALT is not None
+                ):
+                    _live_acct = mt5.account_info()
+                    if _live_acct:
+                        if _CIRCUIT_BREAKER is not None:
+                            _cb_ok, _cb_msg, _cb_st = _CIRCUIT_BREAKER.update_equity(_live_acct.equity)
+                            if not _cb_ok:
+                                log.critical("[%s %s] [CIRCUIT_BREAKER] TRIP %s | DD=%.2f%%",
+                                             asset, tf, _cb_msg,
+                                             _cb_st.get("gross_loss_intraday_pct", 0))
+                                ks.triggered = True; ks.reason = f"CB:{_cb_msg}"; break
+                        if _TAIL_RISK_HALT is not None:
+                            _tr_halt, _tr_info = _TAIL_RISK_HALT.check_tail_risk(_live_acct.equity)
+                            if _tr_halt:
+                                log.critical("[%s %s] [TAIL_RISK] HALT DD=%.2f%%",
+                                             asset, tf, _tr_info.get("drawdown", 0))
+                                ks.triggered = True; ks.reason = "TAIL_RISK_HALT"; break
 
                 if ks.triggered:
                     log.critical("[%s %s] KS ativo — abortando.", asset, tf); break

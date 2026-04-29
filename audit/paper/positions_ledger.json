@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-29T15:06:06.568781+00:00",
+  "generated": "2026-04-29T15:22:48.548385+00:00",
   "positions": {
     "181142609": {
       "symbol": "EURJPY",
@@ -7,7 +7,7 @@
       "lot": 0.25,
       "entry_price": 187.096,
       "entry_time": "2026-04-29T17:18:15+00:00",
-      "last_profit": 27.79,
+      "last_profit": 29.03,
       "status": "open"
     },
     "181142654": {
@@ -16,11 +16,11 @@
       "lot": 0.12,
       "entry_price": 187.098,
       "entry_time": "2026-04-29T17:18:16+00:00",
-      "last_profit": 13.19,
+      "last_profit": 13.78,
       "status": "open"
     }
   },
-  "total_pnl_snapshot": 40.98,
+  "total_pnl_snapshot": 42.81,
   "realized_pnl": 0.0,
   "realized_n": 0,
   "n_positions": 2

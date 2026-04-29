@@ -84,6 +84,41 @@ assert "velocity" in kal_result
 print(f"  [T13] Kalman execute output keys: OK")
 print(f"  [T14] Kalman score={kal_result['pullback_confidence']:.4f} pullback={kal_result['is_kalman_pullback']}")
 
+# Test 8: Circuit Breaker loaded
+cb_ok = sl._CIRCUIT_BREAKER is not None
+print(f"\n  [T15] _CIRCUIT_BREAKER loaded: {'OK' if cb_ok else 'FAILED'}")
+assert cb_ok, "CIRCUIT_BREAKER nao carregou"
+
+# Test 9: Circuit Breaker — trip abaixo do threshold
+cb = sl._CIRCUIT_BREAKER
+cb.initialize_day(100_000.0)
+# Equity normal (sem perda)
+ok1, msg1, _ = cb.update_equity(99_500.0)   # -0.5% — deve permitir
+assert ok1, f"CB nao deveria bloquear a -0.5%: {msg1}"
+print(f"  [T16] CB permite -0.5%: OK ({msg1})")
+# Equity com perda critica (-3.6%)
+ok2, msg2, st = cb.update_equity(96_400.0)  # -3.6% — deve bloquear
+assert not ok2, f"CB deveria bloquear a -3.6%: {msg2}"
+assert st["state"] == "OPEN"
+print(f"  [T17] CB bloqueia -3.6% (state=OPEN): OK")
+
+# Test 10: Tail Risk Halt loaded
+tr_ok = sl._TAIL_RISK_HALT is not None
+print(f"\n  [T18] _TAIL_RISK_HALT loaded: {'OK' if tr_ok else 'FAILED'}")
+assert tr_ok, "TAIL_RISK_HALT nao carregou"
+
+# Test 11: Tail Risk Halt — disparar a 3%
+from modules.risk_valves_v31 import EmergencyTailRiskHalt
+tr = EmergencyTailRiskHalt(max_drawdown_per_event=0.03)
+tr.set_starting_equity(10_000.0)
+halt1, info1 = tr.check_tail_risk(9_800.0)   # -2% — nao deve haltar
+assert not halt1, f"TailRisk nao deve haltar a -2%: {info1}"
+print(f"  [T19] TailRisk permite -2%: OK")
+halt2, info2 = tr.check_tail_risk(9_650.0)   # -3.5% — deve haltar
+assert halt2, f"TailRisk deve haltar a -3.5%: {info2}"
+assert info2["status"] == "HALT_TRIGGERED"
+print(f"  [T20] TailRisk dispara a -3.5% (HALT_TRIGGERED): OK")
+
 print("\n" + "=" * 60)
-print("  ALL 14 UNIT TESTS PASSED")
+print("  ALL 20 UNIT TESTS PASSED")
 print("=" * 60)
