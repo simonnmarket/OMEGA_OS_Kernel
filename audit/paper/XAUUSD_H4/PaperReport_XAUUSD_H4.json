@@ -1,10 +1,10 @@
 {
-  "mission_id": "PAPER-XAUUSD-H4-20260429T213032",
+  "mission_id": "PAPER-XAUUSD-H4-20260429T215301",
   "asset": "XAUUSD",
   "timeframe": "H4",
   "status": "COMPLETED",
   "mode": "paper",
-  "created_at": "2026-04-29T21:30:32.728598+00:00",
+  "created_at": "2026-04-29T21:53:01.617713+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
@@ -70,8 +70,8 @@
     "volume_confirmed": 0.0,
     "slippage_pts": 0.0,
     "comment": "Market closed",
-    "request_id": 3784671780,
-    "latency_ms": 31.4,
+    "request_id": 3784671788,
+    "latency_ms": 33.0,
     "mode": "MT5_DEMO_REAL"
   },
   "lot_info": {
@@ -83,6 +83,6 @@
     "price_at_calc": 4546.45,
     "sym_vol_min": 0.01
   },
-  "latency_motor_s": 2.585,
-  "checksum": "e99d42ddb4a5dab78c90bb44e5b58a9c7bbdd962da3817e588dbc99920608782"
+  "latency_motor_s": 3.746,
+  "checksum": "4d3917086229c58e93dddce6ac4bb4d00b7a6097c4b4c724a95ecc3112311869"
 }
