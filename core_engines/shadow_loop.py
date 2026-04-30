@@ -397,6 +397,22 @@ _MAX_SL_PTS: dict = {
 JPY_CROSSES = ["EURJPY", "GBPJPY", "AUDJPY", "CADJPY", "CHFJPY"]
 OMEGA_MAGIC        = 234001     # ID do EA OMEGA
 
+# ─── CODE VERSION TRACKING (Forensic) ───────────────────────────────────────
+# Cada ordem registra o SHA3 do código que a gerou para rastrear versão
+import hashlib
+import subprocess
+def _get_code_sha3() -> str:
+    """Calcula SHA3 do código atual para forensic tracking"""
+    try:
+        # SHA3 do shadow_loop.py (arquivo crítico)
+        with open(__file__, "rb") as f:
+            sha3 = hashlib.sha3_256(f.read()).hexdigest()
+        return sha3[:12]  # Primeiros 12 caracteres
+    except Exception:
+        return "UNKNOWN"
+CODE_SHA3 = _get_code_sha3()
+print(f"[FORENSIC] CODE_SHA3={CODE_SHA3} — rastreamento de versão ativado")
+
 # ─── Guardrails ─────────────────────────────────────────────────────────────
 TIER1_ASSETS = {"EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF",
                 "XAUUSD", "XAGUSD", "US500", "NAS100", "GER40",
@@ -729,7 +745,7 @@ def mt5_send_order(asset: str, tf: str, lot: float,
         "tp":           tp_price,
         "deviation":    20,
         "magic":        OMEGA_MAGIC,
-        "comment":      f"OMEGA-AMI-{tf}-{direction}",
+        "comment":      f"OMEGA-AMI-{tf}-{direction}-SHA3-{CODE_SHA3}",
         "type_time":    mt5.ORDER_TIME_GTC,
         "type_filling": filling,
     }
