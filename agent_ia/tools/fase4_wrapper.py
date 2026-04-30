@@ -37,11 +37,29 @@ import MetaTrader5 as mt5
 
 ROOT = Path(__file__).resolve().parents[2]
 SHADOW_LOOP = ROOT / "core_engines" / "shadow_loop.py"
+SHADOW_LOOP_V2 = ROOT / "core_engines" / "shadow_loop_v2.py"
 AUDIT_PAPER = ROOT / "audit" / "paper"
 LOGS_DIR = ROOT / "logs" / "agent_ia_phase3"
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 LOCKFILE = ROOT / "OMEGA_FASE4.lock"
+
+# =============================================================================
+# CONFIGURAÇÕES
+# =============================================================================
+# PSA-WIND: Flag para usar shadow_loop_v2 (refatoração segura)
+# Se OMEGA_USE_V2="true", usa shadow_loop_v2 (1 execução por ativo, M5 único)
+# Se não definido ou "false", usa shadow_loop.py original
+USE_V2 = os.environ.get("OMEGA_USE_V2", "").lower() == "true"
+
+OMEGA_MAGIC = 234001
+CRYPTO_SYMBOLS = ["BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD"]
+FOREX_SYMBOLS  = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD"]
+INDEX_SYMBOLS  = ["US500", "NAS100"]
+XAU_SYMBOLS    = ["XAUUSD"]
+ALL_SYMBOLS    = FOREX_SYMBOLS + XAU_SYMBOLS + INDEX_SYMBOLS + CRYPTO_SYMBOLS
+TIMEFRAMES = ["H1", "H4"]  # Motor harmonic treinado/testado para H1/H4. M5 requer treinamento do motor.
+EQUITY = 10000.0
 
 
 def _acquire_lock() -> None:
@@ -52,9 +70,8 @@ def _acquire_lock() -> None:
         except (ValueError, OSError):
             old_pid = None
         if old_pid:
-            # Verifica se o processo ainda esta vivo
             try:
-                os.kill(old_pid, 0)  # signal 0 = apenas verifica existencia
+                os.kill(old_pid, 0)
                 alive = True
             except (OSError, ProcessLookupError):
                 alive = False
@@ -79,15 +96,6 @@ def _release_lock() -> None:
                 print(f"[FASE4] Lock liberado (PID={os.getpid()})")
     except OSError:
         pass
-
-OMEGA_MAGIC = 234001
-CRYPTO_SYMBOLS = ["BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD"]
-FOREX_SYMBOLS  = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD"]
-INDEX_SYMBOLS  = ["US500", "NAS100"]
-XAU_SYMBOLS    = ["XAUUSD"]
-ALL_SYMBOLS    = FOREX_SYMBOLS + XAU_SYMBOLS + INDEX_SYMBOLS + CRYPTO_SYMBOLS
-TIMEFRAMES = ["H1", "H4"]  # Motor harmonic treinado/testado para H1/H4. M5 requer treinamento do motor.
-EQUITY = 10000.0
 
 # =============================================================================
 # CQO Opcao C (27/04/2026): LatencyCircuitBreaker + PerformanceMonitor
@@ -502,8 +510,13 @@ def run_shadow_loop(cycle_log: Path, label: str = "BASELINE",
         # CQO Mudanca #4: Trade lifecycle — SL/TP atuam naturalmente (Goldman standard)
         # IA_ON nao deve fechar posicoes pelo wrapper; respeitar o TTL e SL/TP
         env.setdefault("OMEGA_CLOSE_MODE", "never")
+    
+    # PSA-WIND: Escolher entre v1 e v2
+    shadow_loop_path = SHADOW_LOOP_V2 if USE_V2 else SHADOW_LOOP
+    print(f"[FASE4] Usando {'V2' if USE_V2 else 'V1'}: {shadow_loop_path.name}")
+    
     cmd = [
-        sys.executable, str(SHADOW_LOOP),
+        sys.executable, str(shadow_loop_path),
         "--mode", "paper",
         "--ativos", *active_syms,
         "--timeframes", *TIMEFRAMES,
