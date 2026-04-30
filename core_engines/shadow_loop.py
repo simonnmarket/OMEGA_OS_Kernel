@@ -142,12 +142,13 @@ def compute_flow_confluence(bar: Dict, symbol: str, direction: int) -> Tuple[flo
             vflow = _V_FLOW_ENGINE.process_candle(bar.get('close', 0), bar.get('high', 0), 
                                                  bar.get('low', 0), bar.get('volume', 0))
             if hasattr(vflow, 'score'):
-                scores['v_flow'] = vflow.score if vflow.direction == direction else 0
+                _score = float(vflow.score) if isinstance(vflow.score, (int, float)) else 50
+                scores['v_flow'] = _score if vflow.direction == direction else 0
             else:
                 scores['v_flow'] = 50
         else:
             scores['v_flow'] = 50
-    except Exception:
+    except Exception as e:
         scores['v_flow'] = 50
     
     try:
@@ -156,14 +157,16 @@ def compute_flow_confluence(bar: Dict, symbol: str, direction: int) -> Tuple[flo
             state = _VOL_PHYSICS_ENGINE.update(bar.get('close', 0), bar.get('high', 0),
                                                bar.get('low', 0), bar.get('volume', 0))
             if hasattr(state, 'trap_score'):
-                scores['vol_physics'] = state.trap_score * 100
+                _trap = float(state.trap_score) if isinstance(state.trap_score, (int, float)) else 0.5
+                scores['vol_physics'] = _trap * 100
             elif hasattr(state, 'urgency'):
-                scores['vol_physics'] = state.urgency.value * 33
+                _urg = float(state.urgency.value) if isinstance(state.urgency.value, (int, float)) else 1.5
+                scores['vol_physics'] = _urg * 33
             else:
                 scores['vol_physics'] = 50
         else:
             scores['vol_physics'] = 50
-    except Exception:
+    except Exception as e:
         scores['vol_physics'] = 50
     
     try:
@@ -171,12 +174,13 @@ def compute_flow_confluence(bar: Dict, symbol: str, direction: int) -> Tuple[flo
             # volume_profile: VolumeState com volume_ratio
             state = _VOL_PROFILE_ENGINE.update(symbol, bar)
             if hasattr(state, 'volume_ratio'):
-                scores['vol_profile'] = min(state.volume_ratio * 50, 100)
+                _ratio = float(state.volume_ratio) if isinstance(state.volume_ratio, (int, float)) else 1.0
+                scores['vol_profile'] = min(_ratio * 50, 100)
             else:
                 scores['vol_profile'] = 50
         else:
             scores['vol_profile'] = 50
-    except Exception:
+    except Exception as e:
         scores['vol_profile'] = 50
     
     try:
@@ -184,12 +188,13 @@ def compute_flow_confluence(bar: Dict, symbol: str, direction: int) -> Tuple[flo
             # anomaly_detector: AnomalyDetectionResult com severity
             result = _ANOMALY_ENGINE.detect(bar)
             if hasattr(result, 'severity'):
-                scores['anomaly'] = result.severity * 100
+                _sev = float(result.severity) if isinstance(result.severity, (int, float)) else 0.5
+                scores['anomaly'] = _sev * 100
             else:
                 scores['anomaly'] = 50
         else:
             scores['anomaly'] = 50
-    except Exception:
+    except Exception as e:
         scores['anomaly'] = 50
     
     try:
@@ -197,16 +202,17 @@ def compute_flow_confluence(bar: Dict, symbol: str, direction: int) -> Tuple[flo
             # momentum_physics: MomentumState com velocity
             state = _MOMENTUM_ENGINE.update(symbol, bar)
             if hasattr(state, 'velocity'):
-                scores['momentum'] = min(abs(state.velocity) * 50, 100)
+                _vel = float(state.velocity) if isinstance(state.velocity, (int, float)) else 1.0
+                scores['momentum'] = min(abs(_vel) * 50, 100)
             else:
                 scores['momentum'] = 50
         else:
             scores['momentum'] = 50
-    except Exception:
+    except Exception as e:
         scores['momentum'] = 50
     
     # Weighted confluence
-    confluence = sum(scores[k] * weights[k] for k in weights)
+    confluence = sum(float(scores[k]) * weights[k] for k in weights)
     return confluence, scores
 
 sys.path.insert(0, str(Path(__file__).parent.parent))

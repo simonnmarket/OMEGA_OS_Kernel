@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-30T05:59:40.696749+00:00",
+  "generated": "2026-04-30T06:05:31.235474+00:00",
   "positions": {
     "181437790": {
       "symbol": "GBPJPY",
@@ -7,7 +7,7 @@
       "lot": 0.18,
       "entry_price": 216.12,
       "entry_time": "2026-04-30T08:04:33+00:00",
-      "last_profit": 9.64,
+      "last_profit": 15.24,
       "status": "open"
     },
     "181437794": {
@@ -16,11 +16,11 @@
       "lot": 0.09,
       "entry_price": 216.12,
       "entry_time": "2026-04-30T08:04:35+00:00",
-      "last_profit": 4.82,
+      "last_profit": 7.62,
       "status": "open"
     }
   },
-  "total_pnl_snapshot": 14.46,
+  "total_pnl_snapshot": 22.86,
   "realized_pnl": 0.0,
   "realized_n": 0,
   "n_positions": 2
