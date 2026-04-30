@@ -85,6 +85,13 @@ try:
 except Exception:
     _TAIL_RISK_HALT = None
 
+# ── PARTIAL_CLOSE: trava de lucro progressiva (nebular integration phase-1) ─
+try:
+    from modules.risk_valves_v31 import ProgressivePartialCloseComplete as _ProgressivePartialCloseCompleteCls
+    _PARTIAL_CLOSE_ENGINE = _ProgressivePartialCloseCompleteCls()
+except Exception:
+    _PARTIAL_CLOSE_ENGINE = None
+
 # ── FLOW DETECTORS: institutional flow modules (awakened for directional trading) ─
 try:
     from modules.v_flow_microstructure import VFlowReversalEngine as _VFlowReversalEngineCls
@@ -1775,6 +1782,41 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                                  exec_result.get("slippage_pts", 0))
                                         log.info("[LEDGER] Posicao aberta: %s #%d entry=%.5f",
                                                  asset, _np.ticket, _np.price_open)
+                                        # === PYRAMIDING: verificar se deve adicionar camadas após posição aberta ===
+                                        try:
+                                            _open_pos_list = list(mt5.positions_get(symbol=asset, magic=OMEGA_MAGIC)) if mt5.positions_get else []
+                                            _prof_dict = {"profit": _np.profit}
+                                            _atr_info = get_execution_tf_atr(asset, 0.70)
+                                            _exec_atr_dict = {"atr_pts": _atr_info.get("atr_pts", 0)}
+                                            _pyramid_decision = check_pyramid_add(
+                                                symbol=asset,
+                                                direction=signal_dir,
+                                                open_positions=_open_pos_list,
+                                                pos_ledger=_pos_ledger,
+                                                prof=_prof_dict,
+                                                exec_atr=_exec_atr_dict,
+                                                equity=equity
+                                            )
+                                            if _pyramid_decision.get("add"):
+                                                log.info("[PYRAMID] %s %s: ADD LAYER %d | lot=%.2f | reason=%s",
+                                                         asset, tf, _pyramid_decision.get("layer"),
+                                                         _pyramid_decision.get("lot"), _pyramid_decision.get("reason"))
+                                        except Exception as _py_err:
+                                            log.warning("[PYRAMID] Erro ao verificar pyramiding: %s", _py_err)
+                                        # === PARTIAL_CLOSE: inicializar trava de lucro progressiva ===
+                                        try:
+                                            if _PARTIAL_CLOSE_ENGINE is not None:
+                                                _entry_price = exec_result.get("fill_price", _np.price_open)
+                                                _PARTIAL_CLOSE_ENGINE.initialize_position(
+                                                    entry_price=_entry_price,
+                                                    lots=eff_lot,
+                                                    direction=signal_dir
+                                                )
+                                                _pos_ledger[_np.ticket]["partial_close"] = True
+                                                log.info("[PARTIAL_CLOSE] %s #%d inicializado | entry=%.5f lot=%.2f",
+                                                         asset, _np.ticket, _entry_price, eff_lot)
+                                        except Exception as _pc_err:
+                                            log.warning("[PARTIAL_CLOSE] Erro ao inicializar: %s", _pc_err)
                             except Exception as _le:
                                 log.warning("[LEDGER] Erro ao registrar posicao: %s", _le)
                             if agent_ia is not None and signal_source == "AGENT_IA":
@@ -1838,6 +1880,26 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                 for _p in _all_open:
                     if _p.ticket in _pos_ledger:
                         _pos_ledger[_p.ticket]["last_profit"] = _p.profit
+                        # === PARTIAL_CLOSE: verificar se deve fechar parcialmente ===
+                        try:
+                            if _PARTIAL_CLOSE_ENGINE is not None and _pos_ledger[_p.ticket].get("partial_close"):
+                                _entry_price = _pos_ledger[_p.ticket].get("entry_price", _p.price_open)
+                                _atr_info = get_execution_tf_atr(_p.symbol, 0.70)
+                                _current_price = _p.price_current if hasattr(_p, 'price_current') else (_p.bid if _p.type == 1 else _p.ask)
+                                _partial_orders = _PARTIAL_CLOSE_ENGINE.check_partials(
+                                    current_price=_current_price,
+                                    atr_value=_atr_info.get("atr_pts", 0)
+                                )
+                                for _order in _partial_orders:
+                                    if _order["action"] == "CLOSE_PARTIAL":
+                                        log.info("[PARTIAL_CLOSE] %s #%d: %.2f lotes | %s | move_atr=%.2f",
+                                                 _p.symbol, _p.ticket, _order["lots"],
+                                                 _order["reason"], _order.get("move_atr", 0))
+                                    elif _order["action"] == "MOVE_SL_TO_ENTRY":
+                                        log.info("[PARTIAL_CLOSE] %s #%d: SL moved to breakeven | %s",
+                                                 _p.symbol, _p.ticket, _order["reason"])
+                        except Exception as _pc_check_err:
+                            log.warning("[PARTIAL_CLOSE] Erro ao verificar: %s", _pc_check_err)
                     else:
                         _pos_ledger[_p.ticket] = {
                             "symbol": _p.symbol, "direction": "BUY" if _p.type == 0 else "SELL",

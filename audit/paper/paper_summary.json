@@ -1,59 +1,85 @@
 {
   "mode": "paper",
-  "generated": "2026-04-30T07:53:32.604091+00:00",
+  "generated": "2026-04-30T07:59:57.310007+00:00",
   "equity_demo": 10000.0,
-  "total_cycles": 26,
+  "total_cycles": 32,
   "kill_switch": false,
   "ks_reason": "",
   "online_stats": {
-    "total_signals": 14,
-    "executed": 14,
+    "total_signals": 10,
+    "executed": 10,
     "skipped": 0,
-    "avg_hit_rate_134": 99.4564,
-    "avg_slippage_pts": 0.0,
-    "avg_latency_ms": 59.1,
-    "max_latency_ms": 241.0
+    "avg_hit_rate_134": 99.09,
+    "avg_slippage_pts": 0.1,
+    "avg_latency_ms": 47.2,
+    "max_latency_ms": 75.7
   },
   "results": [
     {
-      "asset": "EURUSD",
+      "asset": "CADJPY",
       "timeframe": "H1",
-      "status": "SKIP_EDGE_GATE",
-      "edge_metrics": {
-        "atr": 0.000324,
-        "atr_pct": 0.000278,
-        "spread": 9e-05,
-        "atr_over_spread": 3.603,
-        "adx": 44.88,
-        "vol_ratio": 0.25,
-        "asset_class": "forex",
-        "thr_atr_pct": 0.0001,
-        "thr_atr_over_spr": 1.5,
-        "thr_adx": 13.0,
-        "thr_vol_ratio": 0.3,
-        "ok": false,
-        "reason": "vol_ratio<0.3(forex)"
-      }
+      "status": "SKIP_MTF_BIAS",
+      "macro_bias": "BUY",
+      "signal_dir": "SELL",
+      "alignment": 1.0
     },
     {
-      "asset": "EURUSD",
+      "asset": "CADJPY",
       "timeframe": "H4",
-      "status": "SKIP_EDGE_GATE",
-      "edge_metrics": {
-        "atr": 0.000324,
-        "atr_pct": 0.000278,
-        "spread": 8e-05,
-        "atr_over_spread": 4.054,
-        "adx": 44.88,
-        "vol_ratio": 0.262,
-        "asset_class": "forex",
-        "thr_atr_pct": 0.0001,
-        "thr_atr_over_spr": 1.5,
-        "thr_adx": 13.0,
-        "thr_vol_ratio": 0.3,
-        "ok": false,
-        "reason": "vol_ratio<0.3(forex)"
-      }
+      "status": "SKIP_MTF_BIAS",
+      "macro_bias": "BUY",
+      "signal_dir": "SELL",
+      "alignment": 1.0
+    },
+    {
+      "asset": "EURAUD",
+      "timeframe": "H1",
+      "status": "SKIP_HARMONIC"
+    },
+    {
+      "asset": "EURAUD",
+      "timeframe": "H4",
+      "status": "SKIP_HARMONIC"
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 94.52,
+      "ic_95": "[93.6602%, 95.2654%]",
+      "margin_used": 1757.2,
+      "lot": 0.25,
+      "lot_v2": {
+        "vol_f": 1.0,
+        "conf_f": 0.5,
+        "perf_f": 1.0,
+        "kelly_f": 1.0,
+        "base_lot": 0.6667,
+        "risk_usd": 10.0
+      },
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "2fd29c977c8662e2e79a30fe"
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 96.5,
+      "ic_95": "[95.8181%, 97.0690%]",
+      "margin_used": 3210.5,
+      "lot": 0.25,
+      "lot_v2": {
+        "vol_f": 1.0,
+        "conf_f": 0.5,
+        "perf_f": 1.0,
+        "kelly_f": 1.0,
+        "base_lot": 0.6667,
+        "risk_usd": 10.0
+      },
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "76464d6caf1221f55fcb2a22"
     },
     {
       "asset": "USDCAD",
@@ -66,26 +92,46 @@
       "status": "SKIP_HARMONIC"
     },
     {
-      "asset": "XAGUSD",
+      "asset": "USDJPY",
       "timeframe": "H1",
-      "status": "SKIP_CORRELATION",
-      "direction": "BUY"
+      "status": "SKIP_MTF_BIAS",
+      "macro_bias": "BUY",
+      "signal_dir": "SELL",
+      "alignment": 1.0
     },
     {
-      "asset": "XAGUSD",
+      "asset": "USDJPY",
+      "timeframe": "H4",
+      "status": "SKIP_MTF_BIAS",
+      "macro_bias": "BUY",
+      "signal_dir": "SELL",
+      "alignment": 1.0
+    },
+    {
+      "asset": "EURUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 100.0,
+      "ic_95": "[99.9004%, 100.0000%]",
+      "margin_used": 150.0,
+      "lot": 0.16,
+      "lot_v2": {
+        "vol_f": 1.0,
+        "conf_f": 0.5,
+        "perf_f": 1.0,
+        "kelly_f": 1.0,
+        "base_lot": 0.3205,
+        "risk_usd": 10.0
+      },
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "cda8500aad0b9ec7b8eed274"
+    },
+    {
+      "asset": "EURUSD",
       "timeframe": "H4",
       "status": "SKIP_CORRELATION",
       "direction": "BUY"
-    },
-    {
-      "asset": "NZDUSD",
-      "timeframe": "H1",
-      "status": "SKIP_HARMONIC"
-    },
-    {
-      "asset": "NZDUSD",
-      "timeframe": "H4",
-      "status": "SKIP_HARMONIC"
     },
     {
       "asset": "EURJPY",
@@ -94,18 +140,18 @@
       "hit_rate_134": 100.0,
       "ic_95": "[99.8436%, 100.0000%]",
       "margin_used": 150.0,
-      "lot": 0.16,
+      "lot": 0.07,
       "lot_v2": {
         "vol_f": 1.0,
         "conf_f": 0.5,
         "perf_f": 1.0,
         "kelly_f": 1.0,
-        "base_lot": 0.3259,
+        "base_lot": 0.1326,
         "risk_usd": 10.0
       },
       "retcode": 10009,
       "slippage_pts": 0.0,
-      "checksum": "bbc95a9a6461eba302a310e4"
+      "checksum": "872b9077ae550669707c6386"
     },
     {
       "asset": "EURJPY",
@@ -114,18 +160,18 @@
       "hit_rate_134": 100.0,
       "ic_95": "[99.8500%, 100.0000%]",
       "margin_used": 150.0,
-      "lot": 0.16,
+      "lot": 0.07,
       "lot_v2": {
         "vol_f": 1.0,
         "conf_f": 0.5,
         "perf_f": 1.0,
         "kelly_f": 1.0,
-        "base_lot": 0.3259,
+        "base_lot": 0.1327,
         "risk_usd": 10.0
       },
       "retcode": 10009,
       "slippage_pts": 0.0,
-      "checksum": "fbf101c396f8512d2f305bec"
+      "checksum": "a14a9bf5bf87a9478344580f"
     },
     {
       "asset": "AUDJPY",
@@ -134,18 +180,18 @@
       "hit_rate_134": 100.0,
       "ic_95": "[99.8414%, 100.0000%]",
       "margin_used": 150.0,
-      "lot": 0.19,
+      "lot": 0.1,
       "lot_v2": {
         "vol_f": 1.0,
         "conf_f": 0.5,
         "perf_f": 1.0,
         "kelly_f": 1.0,
-        "base_lot": 0.371,
+        "base_lot": 0.2047,
         "risk_usd": 10.0
       },
       "retcode": 10009,
       "slippage_pts": 0.0,
-      "checksum": "ec8cc3fa239b628901ec1f0f"
+      "checksum": "32ff6c8607623253d6c444bc"
     },
     {
       "asset": "AUDJPY",
@@ -154,148 +200,94 @@
       "hit_rate_134": 100.0,
       "ic_95": "[99.8475%, 100.0000%]",
       "margin_used": 150.0,
-      "lot": 0.19,
+      "lot": 0.1,
       "lot_v2": {
         "vol_f": 1.0,
         "conf_f": 0.5,
         "perf_f": 1.0,
         "kelly_f": 1.0,
-        "base_lot": 0.371,
+        "base_lot": 0.2047,
         "risk_usd": 10.0
       },
       "retcode": 10009,
       "slippage_pts": 0.0,
-      "checksum": "1c503ea3f38c9077587b3606"
-    },
-    {
-      "asset": "GBPJPY",
-      "timeframe": "H1",
-      "status": "MT5_PAPER_EXECUTE",
-      "hit_rate_134": 100.0,
-      "ic_95": "[99.8411%, 100.0000%]",
-      "margin_used": 150.0,
-      "lot": 0.12,
-      "lot_v2": {
-        "vol_f": 1.0,
-        "conf_f": 0.5,
-        "perf_f": 1.0,
-        "kelly_f": 1.0,
-        "base_lot": 0.2307,
-        "risk_usd": 10.0
-      },
-      "retcode": 10009,
-      "slippage_pts": 0.0,
-      "checksum": "1c1c3a7eeb1930c879bf06ac"
-    },
-    {
-      "asset": "GBPJPY",
-      "timeframe": "H4",
-      "status": "MT5_PAPER_EXECUTE",
-      "hit_rate_134": 100.0,
-      "ic_95": "[99.8467%, 100.0000%]",
-      "margin_used": 150.0,
-      "lot": 0.12,
-      "lot_v2": {
-        "vol_f": 1.0,
-        "conf_f": 0.5,
-        "perf_f": 1.0,
-        "kelly_f": 1.0,
-        "base_lot": 0.2307,
-        "risk_usd": 10.0
-      },
-      "retcode": 10009,
-      "slippage_pts": 0.0,
-      "checksum": "18e35c7c4a1d8ec9e4cb92ca"
-    },
-    {
-      "asset": "CADJPY",
-      "timeframe": "H1",
-      "status": "MT5_PAPER_EXECUTE",
-      "hit_rate_134": 100.0,
-      "ic_95": "[99.8424%, 100.0000%]",
-      "margin_used": 150.0,
-      "lot": 0.22,
-      "lot_v2": {
-        "vol_f": 1.0,
-        "conf_f": 0.5,
-        "perf_f": 1.0,
-        "kelly_f": 1.0,
-        "base_lot": 0.4304,
-        "risk_usd": 10.0
-      },
-      "retcode": 10009,
-      "slippage_pts": 0.0,
-      "checksum": "f8af947958302c91972e663b"
-    },
-    {
-      "asset": "CADJPY",
-      "timeframe": "H4",
-      "status": "MT5_PAPER_EXECUTE",
-      "hit_rate_134": 100.0,
-      "ic_95": "[99.8477%, 100.0000%]",
-      "margin_used": 150.0,
-      "lot": 0.22,
-      "lot_v2": {
-        "vol_f": 1.0,
-        "conf_f": 0.5,
-        "perf_f": 1.0,
-        "kelly_f": 1.0,
-        "base_lot": 0.4304,
-        "risk_usd": 10.0
-      },
-      "retcode": 10009,
-      "slippage_pts": 0.0,
-      "checksum": "980bdc646be595077064a7fc"
+      "checksum": "1f7ac56f9f2c2c408a5acab5"
     },
     {
       "asset": "ETHUSD",
       "timeframe": "H1",
-      "status": "MT5_PAPER_EXECUTE",
-      "hit_rate_134": 98.73,
-      "ic_95": "[98.3233%, 99.0316%]",
-      "margin_used": 150.0,
-      "lot": 0.25,
-      "lot_v2": {
-        "vol_f": 1.0,
-        "conf_f": 0.5,
-        "perf_f": 1.0,
-        "kelly_f": 1.0,
-        "base_lot": 6.6667,
-        "risk_usd": 10.0
-      },
-      "retcode": 10014,
-      "slippage_pts": 0.0,
-      "checksum": "3cf353a7ef9940411529d3df"
+      "status": "SKIP_CORRELATION",
+      "direction": "BUY"
     },
     {
       "asset": "ETHUSD",
       "timeframe": "H4",
-      "status": "MT5_PAPER_EXECUTE",
-      "hit_rate_134": 93.78,
-      "ic_95": "[92.8281%, 94.6066%]",
-      "margin_used": 150.0,
-      "lot": 0.25,
-      "lot_v2": {
-        "vol_f": 1.0,
-        "conf_f": 0.5,
-        "perf_f": 1.0,
-        "kelly_f": 1.0,
-        "base_lot": 6.6667,
-        "risk_usd": 10.0
-      },
-      "retcode": 10014,
-      "slippage_pts": 0.0,
-      "checksum": "e00419f4888673f019c3f028"
+      "status": "SKIP_CORRELATION",
+      "direction": "BUY"
     },
     {
-      "asset": "EURAUD",
+      "asset": "GBPJPY",
+      "timeframe": "H1",
+      "status": "SKIP_MTF_BIAS",
+      "macro_bias": "BUY",
+      "signal_dir": "SELL",
+      "alignment": 1.0
+    },
+    {
+      "asset": "GBPJPY",
+      "timeframe": "H4",
+      "status": "SKIP_MTF_BIAS",
+      "macro_bias": "BUY",
+      "signal_dir": "SELL",
+      "alignment": 1.0
+    },
+    {
+      "asset": "NZDUSD",
       "timeframe": "H1",
       "status": "SKIP_HARMONIC"
     },
     {
-      "asset": "EURAUD",
+      "asset": "NZDUSD",
       "timeframe": "H4",
       "status": "SKIP_HARMONIC"
+    },
+    {
+      "asset": "AUDUSD",
+      "timeframe": "H1",
+      "status": "SKIP_CORRELATION",
+      "direction": "BUY"
+    },
+    {
+      "asset": "AUDUSD",
+      "timeframe": "H4",
+      "status": "SKIP_CORRELATION",
+      "direction": "BUY"
+    },
+    {
+      "asset": "GBPUSD",
+      "timeframe": "H1",
+      "status": "SKIP_CORRELATION",
+      "direction": "SELL"
+    },
+    {
+      "asset": "GBPUSD",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 100.0,
+      "ic_95": "[99.9165%, 100.0000%]",
+      "margin_used": 150.0,
+      "lot": 0.09,
+      "lot_v2": {
+        "vol_f": 1.0,
+        "conf_f": 0.5,
+        "perf_f": 0.85,
+        "kelly_f": 1.0,
+        "base_lot": 0.2046,
+        "risk_usd": 10.0
+      },
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "dcd1acaeeb1e9a716386eeb8"
     },
     {
       "asset": "XAUUSD",
@@ -308,14 +300,14 @@
       "lot_v2": {
         "vol_f": 1.0,
         "conf_f": 0.5,
-        "perf_f": 1.0,
+        "perf_f": 0.85,
         "kelly_f": 1.0,
         "base_lot": 0.04,
         "risk_usd": 10.0
       },
       "retcode": 10009,
       "slippage_pts": 0.0,
-      "checksum": "b658dcb8bb5619165f0a4453"
+      "checksum": "55baa1a51948935e30e2612d"
     },
     {
       "asset": "XAUUSD",
@@ -326,16 +318,56 @@
       "margin_used": 203.9,
       "lot": 0.05,
       "lot_v2": {
-        "vol_f": 0.998,
+        "vol_f": 1.0,
         "conf_f": 0.5,
-        "perf_f": 1.0,
+        "perf_f": 0.85,
         "kelly_f": 1.0,
         "base_lot": 0.04,
         "risk_usd": 10.0
       },
       "retcode": 10009,
-      "slippage_pts": 0.0,
-      "checksum": "e80108bf609bc2b848f5eebf"
+      "slippage_pts": 1.0,
+      "checksum": "772d9493b50557027aad07a6"
+    },
+    {
+      "asset": "XAGUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.172643,
+        "atr_pct": 0.002362,
+        "spread": 0.06,
+        "atr_over_spread": 2.877,
+        "adx": 52.82,
+        "vol_ratio": 0.921,
+        "asset_class": "metal",
+        "thr_atr_pct": 0.0007,
+        "thr_atr_over_spr": 3.0,
+        "thr_adx": 15.0,
+        "thr_vol_ratio": 0.3,
+        "ok": false,
+        "reason": "atr/spr=2.88<3.0"
+      }
+    },
+    {
+      "asset": "XAGUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.172643,
+        "atr_pct": 0.002362,
+        "spread": 0.06,
+        "atr_over_spread": 2.877,
+        "adx": 52.82,
+        "vol_ratio": 0.931,
+        "asset_class": "metal",
+        "thr_atr_pct": 0.0007,
+        "thr_atr_over_spr": 3.0,
+        "thr_adx": 15.0,
+        "thr_vol_ratio": 0.3,
+        "ok": false,
+        "reason": "atr/spr=2.88<3.0"
+      }
     },
     {
       "asset": "USDCHF",
@@ -346,343 +378,222 @@
       "asset": "USDCHF",
       "timeframe": "H4",
       "status": "SKIP_HARMONIC"
-    },
-    {
-      "asset": "GBPUSD",
-      "timeframe": "H1",
-      "status": "MT5_PAPER_EXECUTE",
-      "hit_rate_134": 100.0,
-      "ic_95": "[99.9056%, 100.0000%]",
-      "margin_used": 150.0,
-      "lot": 0.11,
-      "lot_v2": {
-        "vol_f": 1.0,
-        "conf_f": 0.5,
-        "perf_f": 1.0,
-        "kelly_f": 1.0,
-        "base_lot": 0.2256,
-        "risk_usd": 10.0
-      },
-      "retcode": 10009,
-      "slippage_pts": 0.0,
-      "checksum": "07e24c0f61c064d127b0d9ae"
-    },
-    {
-      "asset": "GBPUSD",
-      "timeframe": "H4",
-      "status": "MT5_PAPER_EXECUTE",
-      "hit_rate_134": 100.0,
-      "ic_95": "[99.9165%, 100.0000%]",
-      "margin_used": 150.0,
-      "lot": 0.11,
-      "lot_v2": {
-        "vol_f": 1.0,
-        "conf_f": 0.5,
-        "perf_f": 1.0,
-        "kelly_f": 1.0,
-        "base_lot": 0.2256,
-        "risk_usd": 10.0
-      },
-      "retcode": 10009,
-      "slippage_pts": 0.0,
-      "checksum": "56246cda08fe0355b01de116"
     }
   ],
-  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260430_075215.log",
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260430_075836.log",
   "positions_ledger": {
-    "n": 20,
-    "total_pnl": 76.78,
-    "realized_pnl": 0.0,
-    "realized_n": 0,
+    "n": 14,
+    "total_pnl": 54.26,
+    "realized_pnl": -12.77,
+    "realized_n": 3,
     "positions": {
-      "181497426": {
+      "181501234": {
+        "symbol": "BTCUSD",
+        "direction": "BUY",
+        "lot": 0.25,
+        "entry_price": 76101.14,
+        "sl": 76082.64,
+        "tp": 76553.82,
+        "entry_deal": 185032650,
+        "entry_time": "2026-04-30T07:58:46.775268+00:00",
+        "last_profit": 5.48,
+        "status": "open",
+        "spread_cost_usd": 2.25,
+        "slippage_pts": 0.0
+      },
+      "181501262": {
+        "symbol": "BTCUSD",
+        "direction": "BUY",
+        "lot": 0.25,
+        "entry_price": 76099.23,
+        "sl": 76082.73,
+        "tp": 76551.91,
+        "entry_deal": 185032683,
+        "entry_time": "2026-04-30T07:58:49.930173+00:00",
+        "last_profit": 5.96,
+        "status": "open",
+        "spread_cost_usd": 2.0,
+        "slippage_pts": 0.0
+      },
+      "181501421": {
+        "symbol": "EURUSD",
+        "direction": "SELL",
+        "lot": 0.16,
+        "entry_price": 1.16774,
+        "sl": 1.1684,
+        "tp": 1.16576,
+        "entry_deal": 185032905,
+        "entry_time": "2026-04-30T07:59:02.391888+00:00",
+        "last_profit": -4.0,
+        "status": "open",
+        "spread_cost_usd": 1.28,
+        "slippage_pts": 0.0
+      },
+      "181501475": {
         "symbol": "EURJPY",
         "direction": "BUY",
-        "lot": 0.16,
-        "entry_price": 187.533,
-        "sl": 187.463,
-        "tp": 187.743,
-        "entry_deal": 185027006,
-        "entry_time": "2026-04-30T07:52:43.361586+00:00",
-        "last_profit": -0.9,
-        "status": "open",
-        "spread_cost_usd": 160.0,
-        "slippage_pts": 0.0
+        "lot": 0.07,
+        "entry_price": 187.09,
+        "sl": 186.969,
+        "tp": 187.508,
+        "entry_deal": 185032971,
+        "entry_time": "2026-04-30T07:59:07.966590+00:00",
+        "last_profit": -3.94,
+        "status": "closed",
+        "spread_cost_usd": 70.0,
+        "slippage_pts": 0.0,
+        "exit_time": "2026-04-30T07:59:48.393656+00:00"
       },
-      "181497438": {
+      "181501506": {
         "symbol": "EURJPY",
         "direction": "BUY",
-        "lot": 0.16,
-        "entry_price": 187.534,
-        "sl": 187.464,
-        "tp": 187.744,
-        "entry_deal": 185027017,
-        "entry_time": "2026-04-30T07:52:45.726743+00:00",
-        "last_profit": -1.0,
-        "status": "open",
-        "spread_cost_usd": 160.0,
-        "slippage_pts": 0.0
+        "lot": 0.07,
+        "entry_price": 187.109,
+        "sl": 186.988,
+        "tp": 187.527,
+        "entry_deal": 185033008,
+        "entry_time": "2026-04-30T07:59:10.498534+00:00",
+        "last_profit": -4.77,
+        "status": "closed",
+        "spread_cost_usd": 84.0,
+        "slippage_pts": 0.0,
+        "exit_time": "2026-04-30T07:59:48.393656+00:00"
       },
-      "181497443": {
+      "181501516": {
         "symbol": "AUDJPY",
         "direction": "BUY",
-        "lot": 0.19,
-        "entry_price": 114.407,
-        "sl": 114.325,
-        "tp": 114.653,
-        "entry_deal": 185027022,
-        "entry_time": "2026-04-30T07:52:48.593148+00:00",
-        "last_profit": -1.54,
+        "lot": 0.1,
+        "entry_price": 114.17,
+        "sl": 114.086,
+        "tp": 114.441,
+        "entry_deal": 185033031,
+        "entry_time": "2026-04-30T07:59:12.622454+00:00",
+        "last_profit": -3.19,
         "status": "open",
-        "spread_cost_usd": 304.0,
+        "spread_cost_usd": 170.0,
         "slippage_pts": 0.0
       },
-      "181497458": {
+      "181501522": {
         "symbol": "AUDJPY",
         "direction": "BUY",
-        "lot": 0.19,
-        "entry_price": 114.406,
-        "sl": 114.328,
-        "tp": 114.64,
-        "entry_deal": 185027036,
-        "entry_time": "2026-04-30T07:52:51.469192+00:00",
-        "last_profit": -1.42,
-        "status": "open",
-        "spread_cost_usd": 266.0,
-        "slippage_pts": 0.0
-      },
-      "181491535": {
-        "symbol": "GBPJPY",
-        "direction": "BUY",
-        "lot": 0.12,
-        "entry_price": 216.572,
-        "sl": 216.486,
-        "tp": 216.83,
-        "entry_deal": 185027051,
-        "entry_time": "2026-04-30T07:52:54.534560+00:00",
-        "last_profit": 1.37,
-        "status": "open",
-        "spread_cost_usd": 216.0,
-        "slippage_pts": 0.0
-      },
-      "181491540": {
-        "symbol": "GBPJPY",
-        "direction": "BUY",
-        "lot": 0.12,
-        "entry_price": 216.572,
-        "sl": 216.486,
-        "tp": 216.83,
-        "entry_deal": 185027051,
-        "entry_time": "2026-04-30T07:52:54.534560+00:00",
-        "last_profit": 1.25,
-        "status": "open",
-        "spread_cost_usd": 216.0,
-        "slippage_pts": 0.0
-      },
-      "181493470": {
-        "symbol": "GBPJPY",
-        "direction": "BUY",
-        "lot": 0.12,
-        "entry_price": 216.572,
-        "sl": 216.486,
-        "tp": 216.83,
-        "entry_deal": 185027051,
-        "entry_time": "2026-04-30T07:52:54.536074+00:00",
-        "last_profit": -0.55,
-        "status": "open",
-        "spread_cost_usd": 216.0,
-        "slippage_pts": 0.0
-      },
-      "181493485": {
-        "symbol": "GBPJPY",
-        "direction": "BUY",
-        "lot": 0.12,
-        "entry_price": 216.572,
-        "sl": 216.486,
-        "tp": 216.83,
-        "entry_deal": 185027051,
-        "entry_time": "2026-04-30T07:52:54.537088+00:00",
-        "last_profit": -0.49,
-        "status": "open",
-        "spread_cost_usd": 216.0,
-        "slippage_pts": 0.0
-      },
-      "181497469": {
-        "symbol": "GBPJPY",
-        "direction": "BUY",
-        "lot": 0.12,
-        "entry_price": 216.572,
-        "sl": 216.486,
-        "tp": 216.83,
-        "entry_deal": 185027051,
-        "entry_time": "2026-04-30T07:52:54.538095+00:00",
-        "last_profit": -1.35,
-        "status": "open",
-        "spread_cost_usd": 216.0,
-        "slippage_pts": 0.0
-      },
-      "181497474": {
-        "symbol": "GBPJPY",
-        "direction": "BUY",
-        "lot": 0.12,
-        "entry_price": 216.572,
-        "sl": 216.486,
-        "tp": 216.83,
-        "entry_deal": 185027058,
-        "entry_time": "2026-04-30T07:52:57.489646+00:00",
-        "last_profit": -1.35,
-        "status": "open",
-        "spread_cost_usd": 216.0,
-        "slippage_pts": 0.0
-      },
-      "181490899": {
-        "symbol": "CADJPY",
-        "direction": "BUY",
-        "lot": 0.22,
-        "entry_price": 117.492,
-        "sl": 117.408,
-        "tp": 117.744,
-        "entry_deal": 185027068,
-        "entry_time": "2026-04-30T07:52:59.863919+00:00",
-        "last_profit": -0.62,
-        "status": "open",
-        "spread_cost_usd": 374.0,
-        "slippage_pts": 0.0
-      },
-      "181490926": {
-        "symbol": "CADJPY",
-        "direction": "BUY",
-        "lot": 0.22,
-        "entry_price": 117.492,
-        "sl": 117.408,
-        "tp": 117.744,
-        "entry_deal": 185027068,
-        "entry_time": "2026-04-30T07:52:59.863919+00:00",
-        "last_profit": -0.31,
-        "status": "open",
-        "spread_cost_usd": 374.0,
-        "slippage_pts": 0.0
-      },
-      "181497483": {
-        "symbol": "CADJPY",
-        "direction": "BUY",
-        "lot": 0.22,
-        "entry_price": 117.492,
-        "sl": 117.408,
-        "tp": 117.744,
-        "entry_deal": 185027068,
-        "entry_time": "2026-04-30T07:52:59.864520+00:00",
-        "last_profit": -1.78,
-        "status": "open",
-        "spread_cost_usd": 374.0,
-        "slippage_pts": 0.0
-      },
-      "181497495": {
-        "symbol": "CADJPY",
-        "direction": "BUY",
-        "lot": 0.22,
-        "entry_price": 117.492,
-        "sl": 117.406,
-        "tp": 117.75,
-        "entry_deal": 185027087,
-        "entry_time": "2026-04-30T07:53:02.422956+00:00",
-        "last_profit": -1.78,
-        "status": "open",
-        "spread_cost_usd": 396.0,
-        "slippage_pts": 0.0
-      },
-      "181491548": {
-        "symbol": "XAUUSD",
-        "direction": "BUY",
-        "lot": 0.05,
-        "entry_price": 4599.97,
-        "sl": 4597.47,
-        "tp": 4619.79,
-        "entry_deal": 185027278,
-        "entry_time": "2026-04-30T07:53:16.864470+00:00",
-        "last_profit": 48.6,
-        "status": "open",
-        "spread_cost_usd": 1.65,
-        "slippage_pts": 0.0
-      },
-      "181491680": {
-        "symbol": "XAUUSD",
-        "direction": "BUY",
-        "lot": 0.05,
-        "entry_price": 4599.97,
-        "sl": 4597.47,
-        "tp": 4619.79,
-        "entry_deal": 185027278,
-        "entry_time": "2026-04-30T07:53:16.865980+00:00",
-        "last_profit": 40.8,
-        "status": "open",
-        "spread_cost_usd": 1.65,
-        "slippage_pts": 0.0
-      },
-      "181497651": {
-        "symbol": "XAUUSD",
-        "direction": "BUY",
-        "lot": 0.05,
-        "entry_price": 4599.97,
-        "sl": 4597.47,
-        "tp": 4619.79,
-        "entry_deal": 185027278,
-        "entry_time": "2026-04-30T07:53:16.865980+00:00",
-        "last_profit": -0.25,
-        "status": "open",
-        "spread_cost_usd": 1.65,
-        "slippage_pts": 0.0
-      },
-      "181497720": {
-        "symbol": "XAUUSD",
-        "direction": "BUY",
-        "lot": 0.05,
-        "entry_price": 4599.86,
-        "sl": 4597.36,
-        "tp": 4619.86,
-        "entry_deal": 185027365,
-        "entry_time": "2026-04-30T07:53:22.150086+00:00",
-        "last_profit": 0.3,
-        "status": "open",
-        "spread_cost_usd": 1.65,
-        "slippage_pts": 0.0
+        "lot": 0.1,
+        "entry_price": 114.182,
+        "sl": 114.098,
+        "tp": 114.453,
+        "entry_deal": 185033036,
+        "entry_time": "2026-04-30T07:59:14.851521+00:00",
+        "last_profit": -4.06,
+        "status": "closed",
+        "spread_cost_usd": 170.0,
+        "slippage_pts": 0.0,
+        "exit_time": "2026-04-30T07:59:41.570205+00:00"
       },
       "181497753": {
         "symbol": "GBPUSD",
         "direction": "BUY",
-        "lot": 0.11,
-        "entry_price": 1.34866,
-        "sl": 1.34796,
-        "tp": 1.35076,
-        "entry_deal": 185027404,
-        "entry_time": "2026-04-30T07:53:28.010610+00:00",
-        "last_profit": -1.1,
+        "lot": 0.09,
+        "entry_price": 1.34878,
+        "sl": 1.3481,
+        "tp": 1.35082,
+        "entry_deal": 185033248,
+        "entry_time": "2026-04-30T07:59:41.611989+00:00",
+        "last_profit": -0.44,
         "status": "open",
-        "spread_cost_usd": 1.1,
+        "spread_cost_usd": 0.81,
         "slippage_pts": 0.0
       },
       "181497770": {
         "symbol": "GBPUSD",
         "direction": "BUY",
-        "lot": 0.11,
-        "entry_price": 1.34866,
-        "sl": 1.34796,
-        "tp": 1.35076,
-        "entry_deal": 185027427,
-        "entry_time": "2026-04-30T07:53:32.561444+00:00",
-        "last_profit": -1.1,
+        "lot": 0.09,
+        "entry_price": 1.34878,
+        "sl": 1.3481,
+        "tp": 1.35082,
+        "entry_deal": 185033248,
+        "entry_time": "2026-04-30T07:59:41.613578+00:00",
+        "last_profit": -0.44,
         "status": "open",
-        "spread_cost_usd": 1.1,
+        "spread_cost_usd": 0.81,
         "slippage_pts": 0.0
+      },
+      "181501680": {
+        "symbol": "GBPUSD",
+        "direction": "BUY",
+        "lot": 0.09,
+        "entry_price": 1.34878,
+        "sl": 1.3481,
+        "tp": 1.35082,
+        "entry_deal": 185033248,
+        "entry_time": "2026-04-30T07:59:41.615110+00:00",
+        "last_profit": -1.44,
+        "status": "open",
+        "spread_cost_usd": 0.81,
+        "slippage_pts": 0.0
+      },
+      "181491548": {
+        "symbol": "XAUUSD",
+        "direction": "SELL",
+        "lot": 0.05,
+        "entry_price": 4597.68,
+        "sl": 4600.18,
+        "tp": 4576.7,
+        "entry_deal": 185033259,
+        "entry_time": "2026-04-30T07:59:45.042071+00:00",
+        "last_profit": 41.05,
+        "status": "open",
+        "spread_cost_usd": 1.95,
+        "slippage_pts": 0.0
+      },
+      "181491680": {
+        "symbol": "XAUUSD",
+        "direction": "SELL",
+        "lot": 0.05,
+        "entry_price": 4597.68,
+        "sl": 4600.18,
+        "tp": 4576.7,
+        "entry_deal": 185033259,
+        "entry_time": "2026-04-30T07:59:45.042071+00:00",
+        "last_profit": 33.25,
+        "status": "open",
+        "spread_cost_usd": 1.95,
+        "slippage_pts": 0.0
+      },
+      "181501686": {
+        "symbol": "XAUUSD",
+        "direction": "SELL",
+        "lot": 0.05,
+        "entry_price": 4597.68,
+        "sl": 4600.18,
+        "tp": 4576.7,
+        "entry_deal": 185033259,
+        "entry_time": "2026-04-30T07:59:45.043177+00:00",
+        "last_profit": -5.6,
+        "status": "open",
+        "spread_cost_usd": 1.95,
+        "slippage_pts": 0.0
+      },
+      "181501725": {
+        "symbol": "XAUUSD",
+        "direction": "BUY",
+        "lot": 0.05,
+        "entry_price": 4599.13,
+        "sl": 4596.62,
+        "tp": 4620.1,
+        "entry_deal": 185033318,
+        "entry_time": "2026-04-30T07:59:48.452033+00:00",
+        "last_profit": -3.6,
+        "status": "open",
+        "spread_cost_usd": 2.0,
+        "slippage_pts": 1.0
       }
     }
   },
   "lot_calc_v2": {
-    "perf_n": 0,
-    "perf_f": 1.0,
-    "perf_trend": "flat",
+    "perf_n": 3,
+    "perf_f": 0.85,
+    "perf_trend": "neg",
     "lot_range": "0.05–0.25",
     "kelly_on": false
   },
-  "checksum": "3a21f02968091c103f9ab31aa3cbd09a01913e8bf4a7b77976b3777329d9dd2e"
+  "checksum": "0f3683279b408681b605cc084399f4d75b824542355779c722822de0d4c30bff"
 }

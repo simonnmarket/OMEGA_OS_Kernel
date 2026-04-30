@@ -1,10 +1,10 @@
 {
-  "mission_id": "PAPER-BTCUSD-H4-20260430T073741",
+  "mission_id": "PAPER-BTCUSD-H4-20260430T075849",
   "asset": "BTCUSD",
   "timeframe": "H4",
   "status": "COMPLETED",
   "mode": "paper",
-  "created_at": "2026-04-30T07:37:41.532007+00:00",
+  "created_at": "2026-04-30T07:58:49.930173+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
@@ -61,17 +61,17 @@
     "retcode": 10009,
     "retcode_str": "DONE",
     "success": true,
-    "deal": 185018734,
-    "order": 181491525,
-    "fill_price": 75960.73,
-    "ask_at_send": 75960.73,
-    "sl_price": 75944.23,
-    "tp_price": 76362.47,
+    "deal": 185032683,
+    "order": 181501262,
+    "fill_price": 76099.23,
+    "ask_at_send": 76099.23,
+    "sl_price": 76082.73,
+    "tp_price": 76551.91,
     "volume_confirmed": 0.25,
     "slippage_pts": 0.0,
     "comment": "Request executed",
-    "request_id": 1899992527,
-    "latency_ms": 76.8,
+    "request_id": 1899992547,
+    "latency_ms": 36.9,
     "mode": "MT5_DEMO_REAL"
   },
   "lot_info": {
@@ -80,9 +80,9 @@
     "stop_pts": 6421.0,
     "pip_value_lot": 0.01,
     "contract_size": 1.0,
-    "price_at_calc": 75960.73,
+    "price_at_calc": 76099.23,
     "sym_vol_min": 0.01
   },
-  "latency_motor_s": 3.482,
-  "checksum": "5c5eb84693ec720a2f2cf9a9e79beaa1f5310bd7d4451c7a3113203cb865adc8"
+  "latency_motor_s": 3.08,
+  "checksum": "76464d6caf1221f55fcb2a22adb048caef254061e971bf356f53021972b2f9ab"
 }
