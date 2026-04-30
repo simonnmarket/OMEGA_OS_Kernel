@@ -2034,12 +2034,18 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         _atr_info = get_execution_tf_atr(_p.symbol, 0.70)
                         _current_price = _p.price_current if hasattr(_p, 'price_current') else (_p.bid if _p.type == 1 else _p.ask)
                         _atr_pts_val = _atr_info.get("atr_pts", 0)
+                        # Converter ATR de pontos para unidades de preço (trailing stop opera em preço)
+                        try:
+                            _sym_point = mt5.symbol_info(_p.symbol).point if mt5.symbol_info(_p.symbol) else 0.0001
+                        except Exception:
+                            _sym_point = 0.0001
+                        _atr_price = _atr_pts_val * _sym_point
                         # === PSA-WIND: TRAILING STOP — atualizar e logar ===
                         try:
                             _ts_eng = _trailing_stop_engines.get(_p.ticket)
-                            if _ts_eng is not None and _atr_pts_val > 0:
+                            if _ts_eng is not None and _atr_price > 0:
                                 _dir_int_ts = 1 if _p.type == 0 else -1
-                                _new_sl_val, _exit_trigger = _ts_eng.update(_current_price, _atr_pts_val, _dir_int_ts)
+                                _new_sl_val, _exit_trigger = _ts_eng.update(_current_price, _atr_price, _dir_int_ts)
                                 if _new_sl_val is not None:
                                     _old_sl = _pos_ledger[_p.ticket].get("trailing_sl")
                                     if _old_sl is None or abs(_new_sl_val - _old_sl) > _atr_pts_val * 0.01:
@@ -2055,10 +2061,10 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         # === PARTIAL_CLOSE: verificar se deve fechar parcialmente (engine por ticket, PSA-WIND) ===
                         try:
                             _pc_eng = _partial_close_engines.get(_p.ticket)
-                            if _pc_eng is not None and _atr_pts_val > 0:
+                            if _pc_eng is not None and _atr_price > 0:
                                 _partial_orders = _pc_eng.check_partials(
                                     current_price=_current_price,
-                                    atr_value=_atr_pts_val
+                                    atr_value=_atr_price
                                 )
                                 for _order in _partial_orders:
                                     if _order["action"] == "CLOSE_PARTIAL":
