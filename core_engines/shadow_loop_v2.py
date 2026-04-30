@@ -415,13 +415,10 @@ def execute_asset_once(asset: str, mode: str, equity: float,
     signal_dir = m5_signal.get("signal_dir")
     log.info("[%s %s] [M5_SIGNAL] signal=%s slope=%.2f vol_imb=%.2f",
              asset, tf, signal_dir, m5_signal.get("slope"), m5_signal.get("vol_imb"))
-    
-    # === 4. Edge Gate ===
-    edge_ok, edge_m = has_edge_for_momentum(asset)
-    if not edge_ok:
-        result["reason_for_skip"] = f"edge_gate_{edge_m.get('reason', 'unknown')}"
-        log.info("[%s %s] [SKIP] edge_gate - %s", asset, tf, edge_m.get("reason"))
-        return result
+
+    # === 4. Edge Gate (apenas para fallback momentum, não para sinal M5 principal) ===
+    # v1 parity: edge gate aplicado apenas no fallback momentum
+    # sinal M5 principal não aplica edge gate
     
     # === 5. Dedup (1 ordem por ativo por ciclo) ===
     if asset in cycle_opened_assets:
