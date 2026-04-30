@@ -1,10 +1,10 @@
 {
-  "mission_id": "PAPER-ETHUSD-H1-20260428T191435",
+  "mission_id": "PAPER-ETHUSD-H1-20260430T075306",
   "asset": "ETHUSD",
   "timeframe": "H1",
   "status": "COMPLETED",
   "mode": "paper",
-  "created_at": "2026-04-28T19:14:35.840623+00:00",
+  "created_at": "2026-04-30T07:53:06.526334+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
@@ -58,20 +58,20 @@
     "tier": "T1"
   },
   "execution": {
-    "retcode": 10009,
-    "retcode_str": "DONE",
-    "success": true,
-    "deal": 183941337,
-    "order": 180730602,
-    "fill_price": 2291.838,
-    "ask_at_send": 2291.838,
-    "sl_price": 2292.768,
-    "tp_price": 2290.908,
-    "volume_confirmed": 0.1,
+    "retcode": 10014,
+    "retcode_str": "TOO_MANY_REQ",
+    "success": false,
+    "deal": 0,
+    "order": 0,
+    "fill_price": 0.0,
+    "ask_at_send": 2256.935,
+    "sl_price": 2255.435,
+    "tp_price": 2276.645,
+    "volume_confirmed": 0.0,
     "slippage_pts": 0.0,
-    "comment": "Request executed",
-    "request_id": 3446639262,
-    "latency_ms": 37.3,
+    "comment": "Invalid volume",
+    "request_id": 0,
+    "latency_ms": 0.5,
     "mode": "MT5_DEMO_REAL"
   },
   "lot_info": {
@@ -80,8 +80,9 @@
     "stop_pts": 300.0,
     "pip_value_lot": 0.001,
     "contract_size": 1.0,
-    "price_at_calc": 2292.278
+    "price_at_calc": 2256.935,
+    "sym_vol_min": 0.1
   },
-  "latency_motor_s": 2.551,
-  "checksum": "50900eaad213729a105ddd1e8d035f4739f7581806ce83dbb858b0fe49e21d3f"
+  "latency_motor_s": 3.969,
+  "checksum": "3cf353a7ef9940411529d3dfa441178f1cdfdbf1d0e50db7cc8b7219a2d77b60"
 }
