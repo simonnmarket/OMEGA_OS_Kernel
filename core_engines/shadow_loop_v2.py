@@ -26,16 +26,98 @@ from collections import defaultdict
 log = logging.getLogger(__name__)
 
 # =============================================================================
-# CONSTANTES
+# CONSTANTES (mesmas configs do v1 via env vars)
 # =============================================================================
 OMEGA_MAGIC = 234001
-MAX_POSITIONS = 20
+MAX_POSITIONS = int(os.getenv("OMEGA_MAX_POSITIONS", "2"))  # CONSELHO 29/04/2026: default=2
+DD_DAILY_MAX = float(os.getenv("OMEGA_DD_DAILY_MAX", "0.01"))  # CONSELHO 29/04/2026: default=1%
+RISK_PER_TRADE_PCT = float(os.getenv("OMEGA_RISK_PER_TRADE", "0.0025"))
 DEMO_WINDOW = (0, 24)  # 24/5 sem restrição
 ROOT = Path(__file__).parent.parent
+
+# Classificação de ativos (CTO spec)
+_CRYPTO_ASSETS = ["BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD"]
+_METAL_ASSETS = ["XAUUSD", "XAGUSD"]
+_INDEX_ASSETS = ["US500", "NAS100", "US30"]
+
+# Edge gate thresholds por classe de ativo (CTO spec)
+_EDGE_THRESHOLDS_BY_CLASS = {
+    "crypto": {
+        "min_atr_pct":       float(os.getenv("OMEGA_EDGE_CRYPTO_ATR",   "0.0010")),
+        "min_atr_over_spr":  float(os.getenv("OMEGA_EDGE_CRYPTO_SPR",   "4.0")),
+        "min_adx":           float(os.getenv("OMEGA_EDGE_CRYPTO_ADX",   "18.0")),
+    },
+    "forex": {
+        "min_atr_pct":       float(os.getenv("OMEGA_EDGE_FOREX_ATR",    "0.0001")),
+        "min_atr_over_spr":  float(os.getenv("OMEGA_EDGE_FOREX_SPR",    "1.5")),
+        "min_adx":           float(os.getenv("OMEGA_EDGE_FOREX_ADX",    "13.0")),
+    },
+    "metal": {
+        "min_atr_pct":       float(os.getenv("OMEGA_EDGE_METAL_ATR",    "0.0007")),
+        "min_atr_over_spr":  float(os.getenv("OMEGA_EDGE_METAL_SPR",    "3.0")),
+        "min_adx":           float(os.getenv("OMEGA_EDGE_METAL_ADX",    "15.0")),
+    },
+    "index": {
+        "min_atr_pct":       float(os.getenv("OMEGA_EDGE_INDEX_ATR",    "0.0008")),
+        "min_atr_over_spr":  float(os.getenv("OMEGA_EDGE_INDEX_SPR",    "3.0")),
+        "min_adx":           float(os.getenv("OMEGA_EDGE_INDEX_ADX",    "15.0")),
+    },
+}
+
+_VOL_MIN_BY_CLASS = {
+    "crypto": 0.70,
+    "forex": 0.60,
+    "metal": 0.65,
+    "index": 0.65,
+}
 
 # =============================================================================
 # FUNÇÕES HELPER (copiadas de shadow_loop.py)
 # =============================================================================
+def _atr_simple(highs, lows, closes, n: int = 14) -> float:
+    """Calcula ATR simples."""
+    import numpy as np
+    if len(closes) < n + 1:
+        return 0.0
+    tr = np.maximum.reduce([
+        highs[1:] - lows[1:],
+        np.abs(highs[1:] - closes[:-1]),
+        np.abs(lows[1:]  - closes[:-1]),
+    ])
+    return float(np.mean(tr[-n:]))
+
+def _adx_simple(highs, lows, closes, n: int = 14) -> float:
+    """Calcula ADX simplificado."""
+    import numpy as np
+    if len(closes) < n + 2:
+        return 0.0
+    up   = highs[1:] - highs[:-1]
+    down = lows[:-1] - lows[1:]
+    plus_dm = np.where((up > down) & (up > 0), up, 0.0)
+    minus_dm = np.where((down > up) & (down > 0), down, 0.0)
+    tr = np.maximum.reduce([
+        highs[1:] - lows[1:],
+        np.abs(highs[1:] - closes[:-1]),
+        np.abs(lows[1:]  - closes[:-1]),
+    ])
+    atr = _atr_simple(highs, lows, closes, n)
+    if atr == 0:
+        return 0.0
+    plus_di = 100 * (plus_dm / atr)
+    minus_di = 100 * (minus_dm / atr)
+    dx = 100 * np.abs(plus_di - minus_di) / np.maximum(plus_di + minus_di, 1e-9)
+    if len(dx) < n:
+        return float(np.mean(dx)) if len(dx) > 0 else 0.0
+    return float(np.mean(dx[-n:]))
+
+def classify_asset(symbol: str) -> str:
+    """Classifica ativo em forex/crypto/metal/index (CTO spec)."""
+    s = symbol.upper()
+    if s in _CRYPTO_ASSETS: return "crypto"
+    if s in _METAL_ASSETS:  return "metal"
+    if s in _INDEX_ASSETS:  return "index"
+    return "forex"
+
 def get_multi_tf_bias(symbol: str) -> dict:
     """
     Calcula viés direcional alinhando D1 + H4 + H1 + M15.
@@ -153,12 +235,70 @@ def get_m5_flow_signal(symbol: str) -> dict:
 def has_edge_for_momentum(symbol: str) -> Tuple[bool, dict]:
     """A2: Edge gate para fallback momentum. Retorna (ok, metrics)."""
     import MetaTrader5 as mt5
+    import numpy as np
+    
     rates = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_M5, 0, 60)
     if rates is None or len(rates) < 30:
         return False, {"reason": "no_rates"}
-    import numpy as np
-    # TODO: Implementar lógica completa de edge gate
-    return True, {"reason": "ok"}
+    
+    highs  = np.array([r['high']  for r in rates], dtype=float)
+    lows   = np.array([r['low']   for r in rates], dtype=float)
+    closes = np.array([r['close'] for r in rates], dtype=float)
+
+    tick = mt5.symbol_info_tick(symbol)
+    sym  = mt5.symbol_info(symbol)
+    if not tick or not sym:
+        return False, {"reason": "no_tick"}
+    
+    spread_abs = (tick.ask - tick.bid)
+    price = float(closes[-1]) or 1.0
+    atr   = _atr_simple(highs, lows, closes, 14)
+    adx   = _adx_simple(highs, lows, closes, 14)
+    atr_pct       = atr / price if price > 0 else 0.0
+    atr_over_spr  = (atr / spread_abs) if spread_abs > 0 else 0.0
+
+    # Volume ratio (CTO spec: liquidez relativa = vol_atual / media_20c)
+    volumes = np.array([r['tick_volume'] for r in rates], dtype=float)
+    avg_vol_20    = float(np.mean(volumes[-20:])) if len(volumes) >= 20 else 0.0
+    cur_vol       = float(volumes[-1])            if len(volumes) > 0  else 0.0
+    vol_ratio     = (cur_vol / avg_vol_20) if avg_vol_20 > 0 else 1.0
+    asset_class   = classify_asset(symbol)
+    min_vol_ratio = _VOL_MIN_BY_CLASS.get(asset_class, 0.70)
+
+    cls_thr       = _EDGE_THRESHOLDS_BY_CLASS.get(asset_class, _EDGE_THRESHOLDS_BY_CLASS["crypto"])
+    thr_atr_pct   = cls_thr["min_atr_pct"]
+    thr_atr_spr   = cls_thr["min_atr_over_spr"]
+    thr_adx       = cls_thr["min_adx"]
+
+    metrics = {
+        "atr": round(atr, 6),
+        "atr_pct": round(atr_pct, 6),
+        "spread": round(spread_abs, 6),
+        "atr_over_spread": round(atr_over_spr, 3),
+        "adx": round(adx, 2),
+        "vol_ratio": round(vol_ratio, 3),
+        "asset_class": asset_class,
+        "thr_atr_pct": thr_atr_pct,
+        "thr_atr_over_spr": thr_atr_spr,
+        "thr_adx": thr_adx,
+        "thr_vol_ratio": min_vol_ratio,
+    }
+    
+    ok = (atr_pct >= thr_atr_pct
+          and atr_over_spr >= thr_atr_spr
+          and adx >= thr_adx
+          and vol_ratio >= min_vol_ratio)
+    
+    metrics["ok"] = ok
+    if not ok:
+        reasons = []
+        if atr_pct < thr_atr_pct: reasons.append(f"atr_pct={atr_pct*100:.3f}%<{thr_atr_pct*100:.3f}%[{asset_class}]")
+        if atr_over_spr < thr_atr_spr: reasons.append(f"atr/spr={atr_over_spr:.2f}<{thr_atr_spr}")
+        if adx < thr_adx: reasons.append(f"adx={adx:.1f}<{thr_adx}[{asset_class}]")
+        if vol_ratio < min_vol_ratio: reasons.append(f"vol_ratio<{min_vol_ratio}({asset_class})")
+        metrics["reason"] = "|".join(reasons)
+    
+    return ok, metrics
 
 
 def is_market_open(symbol: str) -> bool:
