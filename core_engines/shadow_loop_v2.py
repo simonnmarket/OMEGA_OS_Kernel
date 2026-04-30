@@ -119,8 +119,10 @@ def get_m5_flow_signal(symbol: str) -> dict:
 
         # Volume imbalance
         vol_arr = np.array([r['tick_volume'] for r in rates[-10:]], dtype=np.float64)
-        vol_up = np.sum(vol_arr[np.diff(flow_arr[-10:]) > 0])
-        vol_down = np.sum(vol_arr[np.diff(flow_arr[-10:]) < 0])
+        flow_arr_10 = flow_arr[-10:]
+        diff_arr = np.diff(flow_arr_10)
+        vol_up = np.sum(vol_arr[:-1][diff_arr > 0])
+        vol_down = np.sum(vol_arr[:-1][diff_arr < 0])
         vol_imb = (vol_up - vol_down) / (vol_up + vol_down + 1e-6)
 
         # Confirmação de slope mínimo
