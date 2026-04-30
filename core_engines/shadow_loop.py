@@ -1348,30 +1348,34 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     ativos_scheduled = list(ativos)
     _rnd_fix5.shuffle(ativos_scheduled)
     log.info("[FIX5] Scheduler de-bias aplicado | ordem=%s", ativos_scheduled)
-    _cycle_opened_assets: set = set()  # PSA-WIND Q1: dedup — 1 ordem por ativo por ciclo
+    # REMOVIDO: _cycle_opened_assets (não é necessário sem loop por H1/H4)
 
     try:
         for asset in ativos_scheduled:
-            for tf in timeframes:
-                # Guardrail de Janela — V9: 24/5 liberado (CQO/CTO)
-                import os
-                h_now = datetime.now().hour
-                has_night_pass = os.environ.get("OMEGA_NIGHT_PASS", "").upper() == "AUTHORISED_BY_CEO"
+            # REMOVIDO: loop por timeframes H1/H4
+            # H1+H4+M15 são usados APENAS para MTF Bias (análise de confluência)
+            # Execução baseada em sinal M5 (flow signal) — não itera por TFs
+            tf = "M5"  # Flow signal timeframe (único para execução)
 
-                regime_cfg = get_regime_config()
-                is_within = False
+            # Guardrail de Janela — V9: 24/5 liberado (CQO/CTO)
+            import os
+            h_now = datetime.now().hour
+            has_night_pass = os.environ.get("OMEGA_NIGHT_PASS", "").upper() == "AUTHORISED_BY_CEO"
 
-                if has_night_pass:
-                    is_within = True  # V9: override total — 24/5
-                elif regime_cfg['regime'] == ExecutionRegime.HUNTER and regime_cfg['REGIME_CONFIG']:
-                    j_asia = regime_cfg['REGIME_CONFIG']['janelas_operacao']['asia']
-                    j_ny = regime_cfg['REGIME_CONFIG']['janelas_operacao']['pos_ny']
-                    asia_start = int(j_asia['inicio'].split(':')[0]); asia_end = int(j_asia['fim'].split(':')[0])
-                    ny_start = int(j_ny['inicio'].split(':')[0]); ny_end = int(j_ny['fim'].split(':')[0])
-                    is_within = (asia_start <= h_now < asia_end) or (ny_start <= h_now < ny_end)
-                else:
-                    w_start, w_end = DEMO_WINDOW  # V9: (0,24) — sem restrição
-                    is_within = (w_start <= h_now < w_end)
+            regime_cfg = get_regime_config()
+            is_within = False
+
+            if has_night_pass:
+                is_within = True  # V9: override total — 24/5
+            elif regime_cfg['regime'] == ExecutionRegime.HUNTER and regime_cfg['REGIME_CONFIG']:
+                j_asia = regime_cfg['REGIME_CONFIG']['janelas_operacao']['asia']
+                j_ny = regime_cfg['REGIME_CONFIG']['janelas_operacao']['pos_ny']
+                asia_start = int(j_asia['inicio'].split(':')[0]); asia_end = int(j_asia['fim'].split(':')[0])
+                ny_start = int(j_ny['inicio'].split(':')[0]); ny_end = int(j_ny['fim'].split(':')[0])
+                is_within = (asia_start <= h_now < asia_end) or (ny_start <= h_now < ny_end)
+            else:
+                w_start, w_end = DEMO_WINDOW  # V9: (0,24) — sem restrição
+                is_within = (w_start <= h_now < w_end)
 
                 if not is_within:
                     log.warning("[%s %s] FORA DA JANELA DO REGIME %s. Agora: %02d:00", 
@@ -1728,15 +1732,6 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                         "direction": signal_dir})
                         continue
 
-                    # === PSA-WIND Q1: DEDUP — apenas 1 ordem por ativo por ciclo ===
-                    # H1 e H4 geram sinais idênticos (mesmo M5 EMA) → duplicata
-                    if asset in _cycle_opened_assets:
-                        log.info("[%s %s] [DEDUP] SKIP — já abriu ordem para %s neste ciclo",
-                                 asset, tf, asset)
-                        results.append({"asset": asset, "timeframe": tf,
-                                        "status": "SKIP_DEDUP_CYCLE"})
-                        continue
-
                     # === PSA-WIND Q2: 1 POSIÇÃO POR ATIVO (anti-acumulação de centavos) ===
                     # Se já existe posição OMEGA aberta neste ativo → não abrir outra
                     # Escalonamento só via pyramiding (exige profit > 2×ATR, lot crescente)
@@ -1971,7 +1966,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         deal_id = exec_result.get("deal")
                         if success and deal_id is not None and deal_id not in _processed_tickets:
                             _processed_tickets.add(deal_id)
-                            _cycle_opened_assets.add(asset)  # PSA-WIND Q1: marcar asset como executado neste ciclo
+                            # REMOVIDO: _cycle_opened_assets.add(asset) (não é necessário sem loop por H1/H4)
                             # Ledger: registra APENAS a nova posição (1 ticket por deal)
                             try:
                                 _new_pos = mt5.positions_get(symbol=asset) or []
