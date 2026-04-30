@@ -86,7 +86,7 @@ FOREX_SYMBOLS  = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD"]
 INDEX_SYMBOLS  = ["US500", "NAS100"]
 XAU_SYMBOLS    = ["XAUUSD"]
 ALL_SYMBOLS    = FOREX_SYMBOLS + XAU_SYMBOLS + INDEX_SYMBOLS + CRYPTO_SYMBOLS
-TIMEFRAMES = ["H1", "H4"]
+TIMEFRAMES = ["M5"]  # Execução baseada em M5 flow signal (EMA8/EMA21). MTF Bias usa D1+H4+H1+M15 para análise de confluência.
 EQUITY = 10000.0
 
 # =============================================================================
