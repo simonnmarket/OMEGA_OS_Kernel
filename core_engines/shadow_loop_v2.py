@@ -180,6 +180,7 @@ def get_multi_tf_bias(symbol: str) -> dict:
 def get_m5_flow_signal(symbol: str) -> dict:
     """
     Gera sinal de fluxo baseado em M5 EMA8/EMA21 + slope + volume.
+    Usa mesma fórmula do v1: slope normalizado por preço * 10000.
     Retorna dict com signal_dir (BUY/SELL/None), slope, vol_imb, etc.
     """
     import MetaTrader5 as mt5
@@ -194,31 +195,56 @@ def get_m5_flow_signal(symbol: str) -> dict:
         if tick_now is None:
             return {"valid": False, "reason": "no_tick_data"}
 
-        flow_arr = np.array([r['close'] for r in rates], dtype=np.float64)
-        ema8 = np.mean(flow_arr[-8:])
-        ema21 = np.mean(flow_arr[-21:])
-        slope = ema8 - ema21
+        closes = np.array([r['close'] for r in rates], dtype=np.float64)
+        volumes = np.array([r['tick_volume'] for r in rates], dtype=np.float64)
 
-        # Volume imbalance
-        vol_arr = np.array([r['tick_volume'] for r in rates[-10:]], dtype=np.float64)
-        flow_arr_10 = flow_arr[-10:]
-        diff_arr = np.diff(flow_arr_10)
-        vol_up = np.sum(vol_arr[:-1][diff_arr > 0])
-        vol_down = np.sum(vol_arr[:-1][diff_arr < 0])
-        vol_imb = (vol_up - vol_down) / (vol_up + vol_down + 1e-6)
+        # EMA-8 e EMA-21 (mesma fórmula do v1)
+        def _ema(arr, span):
+            a = 2.0 / (span + 1)
+            out = np.empty_like(arr)
+            out[0] = arr[0]
+            for i in range(1, len(arr)):
+                out[i] = a * arr[i] + (1 - a) * out[i - 1]
+            return out
 
-        # Confirmação de slope mínimo
-        slope_ok = abs(slope) >= 1.0
+        ema8 = _ema(closes, 8)
+        ema21 = _ema(closes, 21)
+
+        # Slope normalizado por preço * 10000 (mesma fórmula do v1)
+        slope = (ema8[-1] - ema8[-5]) / max(abs(ema8[-5]), 1e-10) * 10000
+
+        # Volume imbalance (mesma fórmula do v1)
+        vol_recent = np.mean(volumes[-5:])
+        vol_avg = np.mean(volumes)
+        vol_ratio = vol_recent / max(vol_avg, 1.0)
+
+        # Confirmação de slope mínimo (mesmo threshold do v1: > 1.0)
+        slope_ok = abs(slope) > 1.0
+
+        # EMA cross
+        ema_cross = ema8[-1] > ema21[-1]
 
         if slope_ok:
-            signal_dir = "BUY" if slope > 0 else "SELL"
+            if ema_cross and slope > 1.0:
+                signal_dir = "BUY"
+            elif not ema_cross and slope < -1.0:
+                signal_dir = "SELL"
+            else:
+                return {
+                    "valid": False,
+                    "reason": "no_trend",
+                    "slope": slope,
+                    "ema_cross": ema_cross
+                }
+
             return {
                 "valid": True,
                 "signal_dir": signal_dir,
                 "slope": slope,
-                "vol_imb": vol_imb,
-                "ema8": ema8,
-                "ema21": ema21
+                "vol_imb": vol_ratio,
+                "ema8": ema8[-1],
+                "ema21": ema21[-1],
+                "ema_cross": ema_cross
             }
         else:
             return {
