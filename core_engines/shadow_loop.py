@@ -86,11 +86,13 @@ except Exception:
     _TAIL_RISK_HALT = None
 
 # ── PARTIAL_CLOSE: trava de lucro progressiva (nebular integration phase-1) ─
+# NOTA: uma instância POR posição (dict ticket → engine) para rastrear cada ordem independentemente
 try:
     from modules.risk_valves_v31 import ProgressivePartialCloseComplete as _ProgressivePartialCloseCompleteCls
-    _PARTIAL_CLOSE_ENGINE = _ProgressivePartialCloseCompleteCls()
+    _PARTIAL_CLOSE_AVAILABLE = True
 except Exception:
-    _PARTIAL_CLOSE_ENGINE = None
+    _PARTIAL_CLOSE_AVAILABLE = False
+    _ProgressivePartialCloseCompleteCls = None
 
 # ── FLOW DETECTORS: institutional flow modules (awakened for directional trading) ─
 try:
@@ -1068,8 +1070,22 @@ def check_pyramid_add(symbol: str, direction: str, open_positions: list,
     """
     if not open_positions:
         return {"add": False, "reason": "no_open_positions"}
+    # Suporte a MT5 TradePosition (atributo) e dict (.get)
+    def _attr(obj, key, default=None):
+        if isinstance(obj, dict):
+            return obj.get(key, default)
+        return getattr(obj, key, default)
+    # Mapear direction MT5: type=0 → BUY, type=1 → SELL
+    def _dir(obj):
+        d = _attr(obj, "direction")
+        if d is not None:
+            return d
+        t = _attr(obj, "type")
+        if t is not None:
+            return "BUY" if t == 0 else "SELL"
+        return None
     same_dir = [p for p in open_positions
-                if p.get("symbol") == symbol and p.get("direction") == direction]
+                if _attr(p, "symbol") == symbol and _dir(p) == direction]
     if not same_dir:
         return {"add": False, "reason": "no_same_dir_position"}
     # Contar layers atuais para este símbolo+direção
@@ -1077,11 +1093,12 @@ def check_pyramid_add(symbol: str, direction: str, open_positions: list,
     if current_layers >= PYRAMID_MAX_LAYERS:
         return {"add": False, "reason": f"max_layers={PYRAMID_MAX_LAYERS}", "layer": current_layers}
     # Verificar lucro acumulado da posição mais antiga
-    best_pos = max(same_dir, key=lambda p: p.get("last_profit", 0))
+    best_pos = max(same_dir, key=lambda p: _attr(p, "profit", _attr(p, "last_profit", 0)))
     atr_pts   = exec_atr.get("atr_pts", 0)
     trigger   = atr_pts * PYRAMID_TRIGGER_ATR
-    if best_pos.get("last_profit", 0) < trigger:
-        return {"add": False, "reason": f"profit={best_pos.get('last_profit',0):.2f}<trigger={trigger:.1f}pts",
+    _best_profit = _attr(best_pos, "profit", _attr(best_pos, "last_profit", 0))
+    if _best_profit < trigger:
+        return {"add": False, "reason": f"profit={_best_profit:.2f}<trigger={trigger:.1f}pts",
                 "layer": current_layers}
     # Verificar tendência forte antes de pyramidar
     ts = get_trend_strength(symbol, direction)
@@ -1104,7 +1121,7 @@ def check_pyramid_add(symbol: str, direction: str, open_positions: list,
         "layer":         current_layers + 1,
         "trend_score":   ts["score"],
         "trigger_pts":   trigger,
-        "profit_pts":    best_pos.get("last_profit", 0),
+        "profit_pts":    _best_profit,
         "reason":        f"pyramid_layer{current_layers+1} score={ts['score']:.2f}",
     }
 
@@ -1233,6 +1250,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     _risk_returns: list = []       # pnl/equity por trade fechado → Sharpe rolling
     _fractal_cache: dict = {}      # asset → {"ts": float, "regime": str, "hurst": float}
     _flow_state: dict = {}        # symbol → flow confluence score (0-100)
+    _partial_close_engines: dict = {}  # ticket → ProgressivePartialCloseComplete (1 engine por posição)
 
     # Conselho 28/04/2026: reset KS baseline com equity real do MT5 para evitar
     # falsos positivos por drawdown residual de runs anteriores.
@@ -1803,18 +1821,21 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                                          _pyramid_decision.get("lot"), _pyramid_decision.get("reason"))
                                         except Exception as _py_err:
                                             log.warning("[PYRAMID] Erro ao verificar pyramiding: %s", _py_err)
-                                        # === PARTIAL_CLOSE: inicializar trava de lucro progressiva ===
+                                        # === PARTIAL_CLOSE: inicializar trava de lucro POR POSIÇÃO ===
                                         try:
-                                            if _PARTIAL_CLOSE_ENGINE is not None:
+                                            if _PARTIAL_CLOSE_AVAILABLE:
                                                 _entry_price = exec_result.get("fill_price", _np.price_open)
-                                                _PARTIAL_CLOSE_ENGINE.initialize_position(
+                                                _pc_engine = _ProgressivePartialCloseCompleteCls()
+                                                _dir_int = 1 if signal_dir == "BUY" else -1
+                                                _pc_engine.initialize_position(
                                                     entry_price=_entry_price,
                                                     lots=eff_lot,
-                                                    direction=signal_dir
+                                                    direction=_dir_int
                                                 )
+                                                _partial_close_engines[_np.ticket] = _pc_engine
                                                 _pos_ledger[_np.ticket]["partial_close"] = True
-                                                log.info("[PARTIAL_CLOSE] %s #%d inicializado | entry=%.5f lot=%.2f",
-                                                         asset, _np.ticket, _entry_price, eff_lot)
+                                                log.info("[PARTIAL_CLOSE] %s #%d inicializado | entry=%.5f lot=%.2f dir=%s",
+                                                         asset, _np.ticket, _entry_price, eff_lot, signal_dir)
                                         except Exception as _pc_err:
                                             log.warning("[PARTIAL_CLOSE] Erro ao inicializar: %s", _pc_err)
                             except Exception as _le:
@@ -1880,13 +1901,13 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                 for _p in _all_open:
                     if _p.ticket in _pos_ledger:
                         _pos_ledger[_p.ticket]["last_profit"] = _p.profit
-                        # === PARTIAL_CLOSE: verificar se deve fechar parcialmente ===
+                        # === PARTIAL_CLOSE: verificar se deve fechar parcialmente (engine por ticket) ===
                         try:
-                            if _PARTIAL_CLOSE_ENGINE is not None and _pos_ledger[_p.ticket].get("partial_close"):
-                                _entry_price = _pos_ledger[_p.ticket].get("entry_price", _p.price_open)
+                            _pc_eng = _partial_close_engines.get(_p.ticket)
+                            if _pc_eng is not None:
                                 _atr_info = get_execution_tf_atr(_p.symbol, 0.70)
                                 _current_price = _p.price_current if hasattr(_p, 'price_current') else (_p.bid if _p.type == 1 else _p.ask)
-                                _partial_orders = _PARTIAL_CLOSE_ENGINE.check_partials(
+                                _partial_orders = _pc_eng.check_partials(
                                     current_price=_current_price,
                                     atr_value=_atr_info.get("atr_pts", 0)
                                 )
