@@ -1349,8 +1349,10 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                  _flow_details.get("vol_profile", 50),
                                  _flow_details.get("anomaly", 50),
                                  _flow_details.get("momentum", 50))
+                    else:
+                        log.warning("[%s %s] [FLOW] sem dados M1", asset, tf)
                 except Exception as _flow_err:
-                    log.debug("[%s %s] [FLOW] erro: %s", asset, tf, _flow_err)
+                    log.error("[%s %s] [FLOW] erro: %s", asset, tf, _flow_err)
 
                 # Guardrail pré-motor
                 prev_hr = 100.0
