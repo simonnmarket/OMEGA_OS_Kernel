@@ -294,37 +294,37 @@ MAX_CONSEC_FAIL    = 3
 # regime      : forex | commodity | index | crypto | crypto_alt
 ASSET_PROFILES: dict = {
     # ── FOREX: spreads mínimos, session-bound, mean-reverting ──────────────
-    "EURUSD": {"cost_pts":   3, "sl_atr_mult": 1.2, "tp_atr_mult": 4.0, "min_conf": 0.62, "lot_cap": 0.25, "regime": "forex"},
-    "GBPUSD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.63, "lot_cap": 0.25, "regime": "forex"},
-    "AUDUSD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.63, "lot_cap": 0.20, "regime": "forex"},
-    "USDCAD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.63, "lot_cap": 0.20, "regime": "forex"},
-    "USDCHF": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.63, "lot_cap": 0.20, "regime": "forex"},
-    "NZDUSD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.63, "lot_cap": 0.20, "regime": "forex"},
+    "EURUSD": {"cost_pts":   3, "sl_atr_mult": 1.2, "tp_atr_mult": 4.0, "min_conf": 0.55, "lot_cap": 0.25, "regime": "forex"},
+    "GBPUSD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.55, "lot_cap": 0.25, "regime": "forex"},
+    "AUDUSD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.55, "lot_cap": 0.20, "regime": "forex"},
+    "USDCAD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.55, "lot_cap": 0.20, "regime": "forex"},
+    "USDCHF": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.55, "lot_cap": 0.20, "regime": "forex"},
+    "NZDUSD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.55, "lot_cap": 0.20, "regime": "forex"},
     # ── COMMODITIES: spreads médios, safe-haven/fluxos ──────────────────────
-    "XAUUSD": {"cost_pts":  30, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.68, "lot_cap": 0.15, "regime": "commodity"},
-    "XAGUSD": {"cost_pts":  20, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.68, "lot_cap": 0.15, "regime": "commodity"},
+    "XAUUSD": {"cost_pts":  30, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.15, "regime": "commodity"},
+    "XAGUSD": {"cost_pts":  20, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.15, "regime": "commodity"},
     # ── INDICES: gap risk, fluxos institucionais ─────────────────────────────
-    "US500":  {"cost_pts":  10, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.68, "lot_cap": 0.20, "regime": "index"},
-    "NAS100": {"cost_pts":  15, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.70, "lot_cap": 0.15, "regime": "index"},
-    "GER40":  {"cost_pts":  10, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.68, "lot_cap": 0.20, "regime": "index"},
+    "US500":  {"cost_pts":  10, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.20, "regime": "index"},
+    "NAS100": {"cost_pts":  15, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.60, "lot_cap": 0.15, "regime": "index"},
+    "GER40":  {"cost_pts":  10, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.20, "regime": "index"},
     # ── CRYPTO MAJOR: momentum, spread wide, 24/7 ───────────────────────────
-    "BTCUSD": {"cost_pts": 100, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.75, "lot_cap": 0.25, "regime": "crypto"},
-    "ETHUSD": {"cost_pts":  50, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.75, "lot_cap": 0.25, "regime": "crypto"},
-    "SOLUSD": {"cost_pts":  30, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.75, "lot_cap": 0.25, "regime": "crypto"},
+    "BTCUSD": {"cost_pts": 100, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.25, "regime": "crypto"},
+    "ETHUSD": {"cost_pts":  50, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.25, "regime": "crypto"},
+    "SOLUSD": {"cost_pts":  30, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.25, "regime": "crypto"},
     # ── CRYPTO ALT: alta volatilidade, spreads extremos ─────────────────────
-    "DOGUSD": {"cost_pts": 200, "sl_atr_mult": 2.5, "tp_atr_mult": 8.0, "min_conf": 0.80, "lot_cap": 0.05, "regime": "crypto_alt"},
+    "DOGUSD": {"cost_pts": 200, "sl_atr_mult": 2.5, "tp_atr_mult": 8.0, "min_conf": 0.65, "lot_cap": 0.05, "regime": "crypto_alt"},
     # ── JPY MAJOR: carry-trade flow, direcional sem ruído ─────────────────────
     # Estratégia: USDJPY lidera → todas as crosses seguem a mesma direção JPY.
     # 500+ pips em movimento sustentado são comuns em eventos macro (BOJ/Fed).
-    "USDJPY": {"cost_pts":  3, "sl_atr_mult": 1.2, "tp_atr_mult": 4.2, "min_conf": 0.63, "lot_cap": 0.25, "regime": "jpy_major"},
+    "USDJPY": {"cost_pts":  3, "sl_atr_mult": 1.2, "tp_atr_mult": 4.2, "min_conf": 0.55, "lot_cap": 0.25, "regime": "jpy_major"},
     # ── JPY CROSS: amplificam o movimento do USDJPY ────────────────────────────
-    "EURJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.65, "lot_cap": 0.25, "regime": "jpy_cross"},
-    "GBPJPY": {"cost_pts":  8, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.67, "lot_cap": 0.25, "regime": "jpy_cross"},
-    "AUDJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.65, "lot_cap": 0.25, "regime": "jpy_cross"},
-    "CADJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.65, "lot_cap": 0.25, "regime": "jpy_cross"},
-    "CHFJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.65, "lot_cap": 0.25, "regime": "jpy_cross"},
+    "EURJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.58, "lot_cap": 0.25, "regime": "jpy_cross"},
+    "GBPJPY": {"cost_pts":  8, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.25, "regime": "jpy_cross"},
+    "AUDJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.58, "lot_cap": 0.25, "regime": "jpy_cross"},
+    "CADJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.58, "lot_cap": 0.25, "regime": "jpy_cross"},
+    "CHFJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.58, "lot_cap": 0.25, "regime": "jpy_cross"},
 }
-_PROFILE_DEFAULT = {"cost_pts": 19, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.65, "lot_cap": 0.25, "regime": "generic"}
+_PROFILE_DEFAULT = {"cost_pts": 19, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.55, "lot_cap": 0.25, "regime": "generic"}
 
 # ─── EDGE GATE por Classe de Ativo (COO 28/04/2026) ─────────────────────────
 # Thresholds mínimos por regime: ATR% e ADX mínimo
