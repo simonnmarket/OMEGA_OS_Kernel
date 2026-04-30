@@ -519,9 +519,12 @@ def run_shadow_loop(cycle_log: Path, label: str = "BASELINE",
         sys.executable, str(shadow_loop_path),
         "--mode", "paper",
         "--ativos", *active_syms,
-        "--timeframes", *TIMEFRAMES,
         "--equity", str(EQUITY),
     ]
+    # v1 usa timeframes, v2 usa apenas M5 (não precisa --timeframes)
+    if not USE_V2:
+        cmd.extend(["--timeframes", *TIMEFRAMES])
+    
     with open(cycle_log, "w", encoding="utf-8") as f:
         proc = subprocess.run(cmd, stdout=f, stderr=subprocess.STDOUT, env=env, cwd=str(ROOT))
     return proc.returncode
