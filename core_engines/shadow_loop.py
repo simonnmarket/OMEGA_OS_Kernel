@@ -1785,7 +1785,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                         # === PYRAMIDING: verificar se deve adicionar camadas após posição aberta ===
                                         try:
                                             _open_pos_list = list(mt5.positions_get(symbol=asset, magic=OMEGA_MAGIC)) if mt5.positions_get else []
-                                            _prof_dict = {"profit": _np.profit}
+                                            _prof_dict = {"profit": float(_np.profit) if hasattr(_np, 'profit') else 0.0}
                                             _atr_info = get_execution_tf_atr(asset, 0.70)
                                             _exec_atr_dict = {"atr_pts": _atr_info.get("atr_pts", 0)}
                                             _pyramid_decision = check_pyramid_add(
