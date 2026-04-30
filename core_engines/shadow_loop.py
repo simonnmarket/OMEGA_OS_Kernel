@@ -745,7 +745,7 @@ def mt5_send_order(asset: str, tf: str, lot: float,
         "tp":           tp_price,
         "deviation":    20,
         "magic":        OMEGA_MAGIC,
-        "comment":      f"OMEGA-AMI-{tf}-{direction}-SHA3-{CODE_SHA3}",
+        "comment":      f"OMEGA-AMI-{tf}-{direction}",  # REMOVIDO SHA3 (comment muito longo para MT5)
         "type_time":    mt5.ORDER_TIME_GTC,
         "type_filling": filling,
     }
