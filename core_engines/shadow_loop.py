@@ -916,6 +916,8 @@ def get_execution_tf_atr(symbol: str, confidence: float = 0.70) -> dict:
     Calcula ATR para SL/TP tight no TF de execução.
     CQO Spec: M3 reduz ruído 67% vs M1, mantém antecipação de spikes.
     M1 reservado para sinais de alta confiança (>= 0.80).
+    MULTI-TIMEFRAME: D1 (macro) + H4 (estrutura) + H1 (setup) + M15 (confirmação)
+    EXECUÇÃO: M3/M1 para S/L mais barato, várias entradas, gatilhos reais
     """
     import MetaTrader5 as mt5
     import numpy as np
@@ -942,6 +944,8 @@ def get_execution_tf_atr(symbol: str, confidence: float = 0.70) -> dict:
 # USDJPY é o líder. Quando ele confirma direção com força (EMA alignment ≥75%),
 # todas as crosses JPY entram na mesma direção do fluxo carry-trade.
 # 500+ pips em tendência sustentada (BOJ intervenção, Fed pivot, risk-off).
+# MULTI-TIMEFRAME: D1 (macro) + H4 (estrutura) + H1 (setup) + M15 (confirmação)
+# EXECUÇÃO: M3/M1 para S/L mais barato, várias entradas, gatilhos reais
 
 def get_jpy_cluster_signal(min_alignment: float = 0.75) -> dict:
     """
@@ -949,6 +953,8 @@ def get_jpy_cluster_signal(min_alignment: float = 0.75) -> dict:
     Retorna direção do JPY e se o cluster está ativo.
     Nota: direção=BUY significa USD fortalece (USDJPY sobe) →
           crosses JPY como EURJPY/GBPJPY também sobem (EUR/GBP vs JPY).
+    MULTI-TIMEFRAME INTEGRADO: D1 (macro visão) → H4 (estrutura) → H1 (setup) → M15 (confirmação)
+    EXECUÇÃO: M3/M1 para entrada com S/L tight (conf >= 0.80 usa M1, senão M3)
     """
     import MetaTrader5 as mt5
     import numpy as np
