@@ -556,6 +556,66 @@ def run_loop_v2(ativos: List[str], mode: str, equity: float) -> Dict:
     
     mt5.shutdown()
     
+    # Escrever paper_summary.json no formato esperado pelo wrapper v1
+    audit_paper = ROOT / "audit" / "paper"
+    audit_paper.mkdir(parents=True, exist_ok=True)
+    
+    # Online stats para compatibilidade com wrapper
+    online_stats = {
+        "total_signals": len(ativos),
+        "executed": exec_count,
+        "skipped": skip_count,
+        "avg_hit_rate_134": 0,  # V2 não calcula hit rate 134
+        "avg_slippage_pts": 0.0,
+        "avg_latency_ms": 0.0,
+        "max_latency_ms": 0
+    }
+    
+    # Positions ledger para compatibilidade com wrapper
+    positions_ledger = {
+        "n": exec_count,
+        "total_pnl": 0.0,
+        "realized_pnl": 0.0,
+        "realized_n": 0,
+        "positions": {}
+    }
+    
+    # Lot calc v2 placeholder
+    lot_calc_v2 = {
+        "perf_n": 0,
+        "perf_f": 1.0,
+        "perf_trend": "flat",
+        "lot_range": "0.05–0.25",
+        "kelly_on": False
+    }
+    
+    # Summary no formato esperado pelo wrapper
+    now = datetime.now(timezone.utc).isoformat()
+    summary = {
+        "mode": mode,
+        "generated": now,
+        "equity_demo": equity,
+        "total_cycles": 1,  # V2 roda 1 ciclo por execução
+        "kill_switch": False,
+        "ks_reason": "",
+        "online_stats": online_stats,
+        "results": results,
+        "log_file": "",
+        "positions_ledger": positions_ledger,
+        "lot_calc_v2": lot_calc_v2
+    }
+    
+    # SHA3 checksum
+    import hashlib
+    sb = json.dumps(summary, indent=2).encode("utf-8")
+    summary["checksum"] = hashlib.sha3_256(sb).hexdigest()
+    
+    summary_file = audit_paper / "paper_summary.json"
+    with open(summary_file, "w", encoding="utf-8") as f:
+        json.dump(summary, f, indent=2, ensure_ascii=False)
+    
+    log.info("paper_summary.json escrito em: %s", summary_file)
+    
     return {
         "results": results,
         "exec_count": exec_count,
