@@ -1326,6 +1326,32 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
 
                 log.info("[%s %s] ── Ciclo ──", asset, tf)
 
+                # === FLOW CONFLUENCE: institutional flow scoring (awakened modules) ===
+                # MOVIDO antes de guardrails para sempre logar estado do fluxo
+                _flow_conf = 50.0  # default neutro
+                _flow_details = {}
+                try:
+                    _rates_flow = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M1, 0, 1)
+                    if _rates_flow is not None and len(_rates_flow) > 0:
+                        _bar_flow = {
+                            "close": float(_rates_flow[0]["close"]),
+                            "high": float(_rates_flow[0]["high"]),
+                            "low": float(_rates_flow[0]["low"]),
+                            "volume": float(_rates_flow[0]["tick_volume"])
+                        }
+                        # Usar direção neutra (0) para scoring sem viés
+                        _flow_conf, _flow_details = compute_flow_confluence(_bar_flow, asset, 0)
+                        _flow_state[asset] = _flow_conf
+                        log.info("[%s %s] [FLOW] confluence=%.1f v_flow=%.0f vol_physics=%.0f vol_profile=%.0f anomaly=%.0f momentum=%.0f",
+                                 asset, tf, _flow_conf,
+                                 _flow_details.get("v_flow", 50),
+                                 _flow_details.get("vol_physics", 50),
+                                 _flow_details.get("vol_profile", 50),
+                                 _flow_details.get("anomaly", 50),
+                                 _flow_details.get("momentum", 50))
+                except Exception as _flow_err:
+                    log.debug("[%s %s] [FLOW] erro: %s", asset, tf, _flow_err)
+
                 # Guardrail pré-motor
                 prev_hr = 100.0
                 rep_f = ROOT / "audit" / f"{asset}_{tf}" / f"AnalysisReport_{asset}_{tf}.json"
@@ -1354,31 +1380,9 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                     results.append({"asset": asset, "timeframe": tf, "status": "SKIP",
                                     "reasons": guard["skip_reasons"]}); continue
 
-                # === FLOW CONFLUENCE: institutional flow scoring (awakened modules) ===
-                # MOVIDO antes de MAX_POSITIONS check para sempre logar estado do fluxo
-                _flow_conf = 50.0  # default neutro
-                _flow_details = {}
-                try:
-                    _rates_flow = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M1, 0, 1)
-                    if _rates_flow is not None and len(_rates_flow) > 0:
-                        _bar_flow = {
-                            "close": float(_rates_flow[0]["close"]),
-                            "high": float(_rates_flow[0]["high"]),
-                            "low": float(_rates_flow[0]["low"]),
-                            "volume": float(_rates_flow[0]["tick_volume"])
-                        }
-                        # Usar direção neutra (0) para scoring sem viés
-                        _flow_conf, _flow_details = compute_flow_confluence(_bar_flow, asset, 0)
-                        _flow_state[asset] = _flow_conf
-                        log.info("[%s %s] [FLOW] confluence=%.1f v_flow=%.0f vol_physics=%.0f vol_profile=%.0f anomaly=%.0f momentum=%.0f",
-                                 asset, tf, _flow_conf,
-                                 _flow_details.get("v_flow", 50),
-                                 _flow_details.get("vol_physics", 50),
-                                 _flow_details.get("vol_profile", 50),
-                                 _flow_details.get("anomaly", 50),
-                                 _flow_details.get("momentum", 50))
-                except Exception as _flow_err:
-                    log.debug("[%s %s] [FLOW] erro: %s", asset, tf, _flow_err)
+                # Flow scorer já foi chamado antes de guardrails (linha ~1329)
+                # Aqui usamos o valor em cache se houver sinal
+                _flow_conf = _flow_state.get(asset, 50.0)
 
                 if mode == "paper" and open_pos >= MAX_POSITIONS:
                     log.warning("[%s %s] MAX_POSITIONS=%d atingido.", asset, tf, MAX_POSITIONS); continue

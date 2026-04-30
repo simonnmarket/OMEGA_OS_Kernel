@@ -1,26 +1,26 @@
 {
-  "generated": "2026-04-29T22:32:50.508816+00:00",
+  "generated": "2026-04-30T05:45:06.752067+00:00",
   "positions": {
-    "181308634": {
+    "181437790": {
       "symbol": "GBPJPY",
       "direction": "BUY",
-      "lot": 0.17,
-      "entry_price": 216.156,
-      "entry_time": "2026-04-30T01:27:40+00:00",
-      "last_profit": 2.01,
+      "lot": 0.18,
+      "entry_price": 216.12,
+      "entry_time": "2026-04-30T08:04:33+00:00",
+      "last_profit": 3.92,
       "status": "open"
     },
-    "181308636": {
+    "181437794": {
       "symbol": "GBPJPY",
       "direction": "BUY",
       "lot": 0.09,
-      "entry_price": 216.157,
-      "entry_time": "2026-04-30T01:27:42+00:00",
-      "last_profit": 1.01,
+      "entry_price": 216.12,
+      "entry_time": "2026-04-30T08:04:35+00:00",
+      "last_profit": 1.96,
       "status": "open"
     }
   },
-  "total_pnl_snapshot": 3.02,
+  "total_pnl_snapshot": 5.88,
   "realized_pnl": 0.0,
   "realized_n": 0,
   "n_positions": 2

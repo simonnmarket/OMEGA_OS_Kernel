@@ -1,10 +1,10 @@
 {
-  "mission_id": "PAPER-USDJPY-H1-20260429T215838",
+  "mission_id": "PAPER-USDJPY-H1-20260430T005536",
   "asset": "USDJPY",
   "timeframe": "H1",
   "status": "COMPLETED",
   "mode": "paper",
-  "created_at": "2026-04-29T21:58:38.822786+00:00",
+  "created_at": "2026-04-30T00:55:36.888429+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
@@ -61,28 +61,28 @@
     "retcode": 10009,
     "retcode_str": "DONE",
     "success": true,
-    "deal": 184748329,
-    "order": 181301562,
-    "fill_price": 160.43,
-    "ask_at_send": 160.43,
-    "sl_price": 160.332,
-    "tp_price": 160.724,
+    "deal": 184824568,
+    "order": 181354617,
+    "fill_price": 160.288,
+    "ask_at_send": 160.288,
+    "sl_price": 160.22,
+    "tp_price": 160.492,
     "volume_confirmed": 0.25,
     "slippage_pts": 0.0,
     "comment": "Request executed",
-    "request_id": 3784671789,
-    "latency_ms": 117.7,
+    "request_id": 3784671797,
+    "latency_ms": 35.2,
     "mode": "MT5_DEMO_REAL"
   },
   "lot_info": {
     "lot": 0.01,
     "risk_usd": 10.0,
     "stop_pts": 300.0,
-    "pip_value_lot": 0.623325,
+    "pip_value_lot": 0.623877,
     "contract_size": 100000.0,
-    "price_at_calc": 160.43,
+    "price_at_calc": 160.288,
     "sym_vol_min": 0.01
   },
-  "latency_motor_s": 3.71,
-  "checksum": "3debfdb9ff2ceab4fee61e2a834c1a9d8f6da9d5ba77b956159965ca38cfed33"
+  "latency_motor_s": 2.563,
+  "checksum": "769ef233d800fffe23c8a4c36d24274d28d816ec265bdfa01120ee4743d05fc6"
 }

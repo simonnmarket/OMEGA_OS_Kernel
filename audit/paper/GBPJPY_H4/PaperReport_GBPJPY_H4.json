@@ -1,10 +1,10 @@
 {
-  "mission_id": "PAPER-GBPJPY-H4-20260429T222743",
+  "mission_id": "PAPER-GBPJPY-H4-20260430T050435",
   "asset": "GBPJPY",
   "timeframe": "H4",
   "status": "COMPLETED",
   "mode": "paper",
-  "created_at": "2026-04-29T22:27:43.022419+00:00",
+  "created_at": "2026-04-30T05:04:35.252816+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
@@ -61,28 +61,28 @@
     "retcode": 10009,
     "retcode_str": "DONE",
     "success": true,
-    "deal": 184757702,
-    "order": 181308636,
-    "fill_price": 216.157,
-    "ask_at_send": 216.157,
-    "sl_price": 216.063,
-    "tp_price": 216.439,
+    "deal": 184942360,
+    "order": 181437794,
+    "fill_price": 216.12,
+    "ask_at_send": 216.12,
+    "sl_price": 216.04,
+    "tp_price": 216.36,
     "volume_confirmed": 0.09,
     "slippage_pts": 0.0,
     "comment": "Request executed",
-    "request_id": 3784671792,
-    "latency_ms": 28.3,
+    "request_id": 3784671806,
+    "latency_ms": 44.7,
     "mode": "MT5_DEMO_REAL"
   },
   "lot_info": {
     "lot": 0.01,
     "risk_usd": 10.0,
     "stop_pts": 300.0,
-    "pip_value_lot": 0.623686,
+    "pip_value_lot": 0.622968,
     "contract_size": 100000.0,
-    "price_at_calc": 216.157,
+    "price_at_calc": 216.12,
     "sym_vol_min": 0.01
   },
-  "latency_motor_s": 1.85,
-  "checksum": "a0b6e9e2cc168b5143a76ff1305f6568457a23cb4755b353fcfe7a48ee4e7776"
+  "latency_motor_s": 1.8,
+  "checksum": "6a33f15b657beb47e70fd69b63b1a32e3519bfe05170268a40693330d8d35c94"
 }
