@@ -1721,6 +1721,22 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                         "status": "SKIP_DEDUP_CYCLE"})
                         continue
 
+                    # === PSA-WIND Q2: 1 POSIÇÃO POR ATIVO (anti-acumulação de centavos) ===
+                    # Se já existe posição OMEGA aberta neste ativo → não abrir outra
+                    # Escalonamento só via pyramiding (exige profit > 2×ATR, lot crescente)
+                    _existing_omega_same = [p for p in current_positions
+                                            if p.get("magic") == OMEGA_MAGIC]
+                    if _existing_omega_same:
+                        _n_exist = len(_existing_omega_same)
+                        _pnl_exist = sum(p.get("profit", 0) for p in _existing_omega_same)
+                        log.info("[%s %s] [1POS_RULE] SKIP — já tem %d posição(ões) OMEGA abertas (pnl=%.2f) — não acumular",
+                                 asset, tf, _n_exist, _pnl_exist)
+                        results.append({"asset": asset, "timeframe": tf,
+                                        "status": "SKIP_ALREADY_POSITIONED",
+                                        "existing_count": _n_exist,
+                                        "existing_pnl": round(_pnl_exist, 2)})
+                        continue
+
                     # === PSA-WIND FIX 1: ANTI-HEDGE — bloquear BUY+SELL no mesmo ativo ===
                     _has_opposite = False
                     for _cp in current_positions:
@@ -1940,10 +1956,13 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         if success and deal_id is not None and deal_id not in _processed_tickets:
                             _processed_tickets.add(deal_id)
                             _cycle_opened_assets.add(asset)  # PSA-WIND Q1: marcar asset como executado neste ciclo
-                            # Ledger: registra posicao aberta para rastrear P&L
+                            # Ledger: registra APENAS a nova posição (1 ticket por deal)
                             try:
                                 _new_pos = mt5.positions_get(symbol=asset) or []
+                                _registered_this_deal = False
                                 for _np in _new_pos:
+                                    if _registered_this_deal:
+                                        break  # 1 ticket por deal — evitar duplicação
                                     if _np.magic == OMEGA_MAGIC and _np.ticket not in _pos_ledger:
                                         # Custo de entrada: spread × contrato × lote (estimativa fee round-trip)
                                         try:
@@ -1972,6 +1991,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                             "spread_cost_usd": _spread_cost,
                                             "slippage_pts": exec_result.get("slippage_pts", 0),
                                         }
+                                        _registered_this_deal = True
                                         log.info("[LEDGER] entry=%s #%d lot=%.2f spread_cost=$%.4f slip_pts=%.1f",
                                                  asset, _np.ticket, eff_lot, _spread_cost,
                                                  exec_result.get("slippage_pts", 0))
