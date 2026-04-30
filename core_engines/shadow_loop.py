@@ -1332,6 +1332,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     ativos_scheduled = list(ativos)
     _rnd_fix5.shuffle(ativos_scheduled)
     log.info("[FIX5] Scheduler de-bias aplicado | ordem=%s", ativos_scheduled)
+    _cycle_opened_assets: set = set()  # PSA-WIND Q1: dedup — 1 ordem por ativo por ciclo
 
     try:
         for asset in ativos_scheduled:
@@ -1672,12 +1673,27 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                             if _entry["status"] == "open" and _tk not in _live_tickets:
                                 _entry["status"] = "closed"
                                 _entry["exit_time"] = datetime.now(timezone.utc).isoformat()
-                                _realized_pnl += _entry.get("last_profit", 0.0)
+                                # PSA-WIND Q3: calcular métricas de saída para aprendizado ML
+                                _entry_pnl = _entry.get("last_profit", 0.0)
+                                _entry_sl = _entry.get("sl_pts", 0)
+                                _entry_tp = _entry.get("tp_pts", 0)
+                                _entry_risk = _entry.get("risk_usd", 0)
+                                if _entry_risk > 0:
+                                    _entry["r_multiple"] = round(_entry_pnl / _entry_risk, 2)
+                                if _entry_sl > 0:
+                                    _entry["result"] = "WIN" if _entry_pnl > 0 else "LOSS"
+                                _entry["duration_min"] = round(
+                                    (datetime.now(timezone.utc) -
+                                     datetime.fromisoformat(_entry.get("entry_time", datetime.now(timezone.utc).isoformat()))
+                                    ).total_seconds() / 60, 1)
+                                _realized_pnl += _entry_pnl
                                 _realized_n   += 1
-                                _lot_calc.update_performance(_entry.get("last_profit", 0.0))
-                                _risk_returns.append(_entry.get("last_profit", 0.0) / max(equity, 1.0))
-                                log.info("[LEDGER] FECHADA %s #%d pnl=%.4f | total_realiz=%.4f n=%d",
-                                         _entry["symbol"], _tk, _entry.get("last_profit", 0),
+                                _lot_calc.update_performance(_entry_pnl)
+                                _risk_returns.append(_entry_pnl / max(equity, 1.0))
+                                log.info("[LEDGER] FECHADA %s #%d pnl=%.4f R=%.2f %s dur=%.0fmin | total_realiz=%.4f n=%d",
+                                         _entry["symbol"], _tk, _entry_pnl,
+                                         _entry.get("r_multiple", 0), _entry.get("result", "?"),
+                                         _entry.get("duration_min", 0),
                                          _realized_pnl, _realized_n)
 
                     # Flow scorer já foi chamado antes do sinal generation (linha ~1489)
@@ -1694,6 +1710,15 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         log.info("[%s %s] [CORR] SKIP_CORRELATION dir=%s", asset, tf, signal_dir)
                         results.append({"asset": asset, "timeframe": tf, "status": "SKIP_CORRELATION",
                                         "direction": signal_dir})
+                        continue
+
+                    # === PSA-WIND Q1: DEDUP — apenas 1 ordem por ativo por ciclo ===
+                    # H1 e H4 geram sinais idênticos (mesmo M5 EMA) → duplicata
+                    if asset in _cycle_opened_assets:
+                        log.info("[%s %s] [DEDUP] SKIP — já abriu ordem para %s neste ciclo",
+                                 asset, tf, asset)
+                        results.append({"asset": asset, "timeframe": tf,
+                                        "status": "SKIP_DEDUP_CYCLE"})
                         continue
 
                     # === PSA-WIND FIX 1: ANTI-HEDGE — bloquear BUY+SELL no mesmo ativo ===
@@ -1836,12 +1861,40 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         else:
                             eff_tp = max(_pre_tp, _tp_rr_floor)
                         # Risco efetivo em USD para log
-                        _risk_usd_eff = eff_sl * lot_info.get("pip_value_lot", 0.01) * (eff_lot or 0.01)
+                        _pip_val = lot_info.get("pip_value_lot", 0.01)
+                        _risk_usd_eff = eff_sl * _pip_val * (eff_lot or 0.01)
                         log.info("[%s %s] [%s] lot=%.2f execTF=%s atr=%.1f SL=%.0fpts($%.2f) TP=%.0fpts RR=1:%.2f conf=%.2f",
                                  asset, tf, _prof["regime"].upper(), eff_lot,
                                  _exec_atr["tf"], _exec_atr.get("atr_pts", 0),
                                  eff_sl, _risk_usd_eff, eff_tp,
                                  eff_tp / max(eff_sl, 1), _conf_score)
+
+                        # === PSA-WIND Q4: AGGREGATE RISK CAP por ativo ===
+                        # SL de um ativo NUNCA pode colocar em risco mais de 2% do equity total
+                        # Soma risco existente (posições abertas do mesmo ativo) + proposta nova
+                        _AGG_RISK_MAX_PCT = 0.02  # 2% do equity por ativo
+                        try:
+                            _existing_risk_usd = 0.0
+                            for _el_v in _pos_ledger.values():
+                                if _el_v.get("symbol") == asset and _el_v.get("status") == "open":
+                                    _el_sl = _el_v.get("sl_pts", eff_sl)  # se não tem, assume o mesmo SL
+                                    _el_lot = _el_v.get("lot", 0)
+                                    _existing_risk_usd += _el_sl * _pip_val * _el_lot
+                            _total_agg_risk = _existing_risk_usd + _risk_usd_eff
+                            _max_agg_usd = equity * _AGG_RISK_MAX_PCT
+                            if _total_agg_risk > _max_agg_usd:
+                                log.warning("[%s %s] [AGG_RISK] BLOCKED — risco_agregado=$%.2f > max=$%.2f (%.1f%% equity) | existente=$%.2f + novo=$%.2f",
+                                            asset, tf, _total_agg_risk, _max_agg_usd,
+                                            _AGG_RISK_MAX_PCT * 100, _existing_risk_usd, _risk_usd_eff)
+                                results.append({"asset": asset, "timeframe": tf,
+                                               "status": "SKIP_AGG_RISK_CAP",
+                                               "agg_risk_usd": round(_total_agg_risk, 2),
+                                               "max_usd": round(_max_agg_usd, 2)})
+                                continue
+                            log.info("[%s %s] [AGG_RISK] OK — risco_total=$%.2f / max=$%.2f",
+                                     asset, tf, _total_agg_risk, _max_agg_usd)
+                        except Exception as _agg_err:
+                            log.debug("[%s %s] [AGG_RISK] erro (não bloqueia): %s", asset, tf, _agg_err)
 
                         # === RISK_GATE: Sharpe rolling institucional (risk_metrics — nebular phase-1) ===
                         if _RISK_ENGINE is not None and _pd_risk is not None and len(_risk_returns) >= 30:
@@ -1886,6 +1939,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         deal_id = exec_result.get("deal")
                         if success and deal_id is not None and deal_id not in _processed_tickets:
                             _processed_tickets.add(deal_id)
+                            _cycle_opened_assets.add(asset)  # PSA-WIND Q1: marcar asset como executado neste ciclo
                             # Ledger: registra posicao aberta para rastrear P&L
                             try:
                                 _new_pos = mt5.positions_get(symbol=asset) or []
@@ -1905,7 +1959,14 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                             "lot": eff_lot, "entry_price": exec_result.get("fill_price", 0),
                                             "sl": exec_result.get("sl_price", 0),
                                             "tp": exec_result.get("tp_price", 0),
+                                            "sl_pts": eff_sl, "tp_pts": eff_tp,
+                                            "entry_atr_pts": _exec_atr.get("atr_pts", 0),
+                                            "entry_atr_tf": _exec_atr.get("tf", "M3"),
                                             "entry_deal": deal_id,
+                                            "signal_source": signal_source,
+                                            "confidence": round(_conf_score, 4),
+                                            "regime": _prof["regime"],
+                                            "risk_usd": round(_risk_usd_eff, 4),
                                             "entry_time": datetime.now(timezone.utc).isoformat(),
                                             "last_profit": _np.profit, "status": "open",
                                             "spread_cost_usd": _spread_cost,
