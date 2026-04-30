@@ -87,12 +87,38 @@ except Exception:
 
 # ── PARTIAL_CLOSE: trava de lucro progressiva (nebular integration phase-1) ─
 # NOTA: uma instância POR posição (dict ticket → engine) para rastrear cada ordem independentemente
+# RECALIBRADO PSA-WIND 30/04/2026: níveis menos agressivos para não matar posição cedo
 try:
     from modules.risk_valves_v31 import ProgressivePartialCloseComplete as _ProgressivePartialCloseCompleteCls
     _PARTIAL_CLOSE_AVAILABLE = True
 except Exception:
     _PARTIAL_CLOSE_AVAILABLE = False
     _ProgressivePartialCloseCompleteCls = None
+# Níveis recalibrados: preservam 50% da posição até 5×ATR (vs anterior 5% residual)
+_PARTIAL_CLOSE_LEVELS_PSA = [
+    {"atr": 1.5, "fraction": 0.20, "description": "Leve-1.5ATR", "executed": False},
+    {"atr": 3.0, "fraction": 0.25, "description": "Medio-3ATR",  "executed": False},
+    {"atr": 5.0, "fraction": 0.25, "description": "Forte-5ATR",  "executed": False},
+    {"atr": 8.0, "fraction": 0.20, "description": "Extreme-8ATR","executed": False},
+    # 10% residual sobrevive até TP — segue o fluxo completo
+]
+
+# ── TRAILING STOP: geométrico por posição (PSA-WIND 30/04/2026) ──────────────
+try:
+    from modules.risk_valves_v31 import HardVolatilityTrailingStopGeometric as _TrailingStopCls
+    _TRAILING_STOP_AVAILABLE = True
+except Exception:
+    _TRAILING_STOP_AVAILABLE = False
+    _TrailingStopCls = None
+
+# ── SPIKE DETECTION: bloquear entradas em anomalias (PSA-WIND 30/04/2026) ────
+try:
+    from modules.anomaly_detector import AnomalyDetector as _AnomalyDetectorCls
+    _SPIKE_DETECTOR = _AnomalyDetectorCls()
+    _SPIKE_DETECTION_AVAILABLE = True
+except Exception:
+    _SPIKE_DETECTOR = None
+    _SPIKE_DETECTION_AVAILABLE = False
 
 # ── FLOW DETECTORS: institutional flow modules (awakened for directional trading) ─
 try:
@@ -1251,6 +1277,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     _fractal_cache: dict = {}      # asset → {"ts": float, "regime": str, "hurst": float}
     _flow_state: dict = {}        # symbol → flow confluence score (0-100)
     _partial_close_engines: dict = {}  # ticket → ProgressivePartialCloseComplete (1 engine por posição)
+    _trailing_stop_engines: dict = {}  # ticket → HardVolatilityTrailingStopGeometric (1 engine por posição)
 
     # Conselho 28/04/2026: reset KS baseline com equity real do MT5 para evitar
     # falsos positivos por drawdown residual de runs anteriores.
@@ -1555,18 +1582,52 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                 log.info("[%s %s] [REGIME_GATE] OK H=%.3f regime=%s",
                                          asset, tf, _fc["hurst"], _fc["regime"])
 
-                        # Fallback momentum MT5 (lógica original) — só após edge OK
-                        rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M1, 0, 5)
-                        if rates is not None and len(rates) >= 3:
+                        # PSA-WIND FIX 5: Sinal de fluxo ROBUSTO (substituiu 3-candle M1)
+                        # Usa M5 (20 barras = 100min) + slope EMA + confirmação volume
+                        # Para seguir o FLUXO real, não reagir a ruído de 3 minutos
+                        rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M5, 0, 25)
+                        if rates is not None and len(rates) >= 10:
+                            import numpy as _np_flow
                             tick_now = mt5.symbol_info_tick(asset)
                             c_price = tick_now.ask if tick_now else rates[-1]['close']
-                            avg_3   = (rates[-1]['close'] + rates[-2]['close'] + rates[-3]['close']) / 3
-                            signal_dir = "BUY" if c_price > avg_3 else "SELL"
-                            log.info("[%s %s] Sentiment: Current=%.5f | Avg3=%.5f | DIR: %s (src=%s) edge=ok adx=%.1f atr/spr=%.1f",
-                                     asset, tf, c_price, avg_3, signal_dir, signal_source,
-                                     edge_m.get("adx", 0), edge_m.get("atr_over_spread", 0))
+                            _closes = _np_flow.array([r['close'] for r in rates], dtype=_np_flow.float64)
+                            _volumes = _np_flow.array([r['tick_volume'] for r in rates], dtype=_np_flow.float64)
+                            # EMA-8 e EMA-21 para capturar tendência M5
+                            def _ema(arr, span):
+                                a = 2.0 / (span + 1)
+                                out = _np_flow.empty_like(arr)
+                                out[0] = arr[0]
+                                for i in range(1, len(arr)):
+                                    out[i] = a * arr[i] + (1 - a) * out[i - 1]
+                                return out
+                            _ema8 = _ema(_closes, 8)
+                            _ema21 = _ema(_closes, 21)
+                            # Slope das últimas 5 barras da EMA8 (inclinação do fluxo)
+                            _slope = (_ema8[-1] - _ema8[-5]) / max(abs(_ema8[-5]), 1e-10) * 10000
+                            # Volume imbalance: volume recente vs média (confirma participação)
+                            _vol_recent = _np_flow.mean(_volumes[-5:])
+                            _vol_avg = _np_flow.mean(_volumes)
+                            _vol_ratio = _vol_recent / max(_vol_avg, 1.0)
+                            # DECISÃO: EMA8 > EMA21 + slope positivo + volume ok = BUY
+                            _ema_cross = _ema8[-1] > _ema21[-1]
+                            _slope_ok = abs(_slope) > 1.0  # slope mínimo de 1 ponto/1000
+                            if _ema_cross and _slope > 1.0:
+                                signal_dir = "BUY"
+                            elif not _ema_cross and _slope < -1.0:
+                                signal_dir = "SELL"
+                            else:
+                                log.info("[%s %s] [FLOW_SIGNAL] NO_TREND — ema_cross=%s slope=%.2f vol_ratio=%.2f — SKIP",
+                                         asset, tf, _ema_cross, _slope, _vol_ratio)
+                                results.append({"asset": asset, "timeframe": tf,
+                                                "status": "SKIP_NO_FLOW_TREND",
+                                                "slope": round(_slope, 2), "vol_ratio": round(_vol_ratio, 2)})
+                                continue
+                            log.info("[%s %s] FlowSignal: price=%.5f EMA8=%.5f EMA21=%.5f slope=%.2f vol_ratio=%.2f DIR=%s (src=%s) adx=%.1f",
+                                     asset, tf, c_price, _ema8[-1], _ema21[-1], _slope, _vol_ratio,
+                                     signal_dir, signal_source,
+                                     edge_m.get("adx", 0))
                         else:
-                            log.warning("[%s %s] Falha ao ler candles MT5 para direcao — SKIP", asset, tf)
+                            log.warning("[%s %s] Falha ao ler candles M5 para fluxo — SKIP", asset, tf)
                             results.append({"asset": asset, "timeframe": tf, "status": "SKIP_NO_RATES"})
                             continue
 
@@ -1634,6 +1695,61 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         results.append({"asset": asset, "timeframe": tf, "status": "SKIP_CORRELATION",
                                         "direction": signal_dir})
                         continue
+
+                    # === PSA-WIND FIX 1: ANTI-HEDGE — bloquear BUY+SELL no mesmo ativo ===
+                    _has_opposite = False
+                    for _cp in current_positions:
+                        _cp_dir = "BUY" if _cp.get("type") == 0 else "SELL"
+                        if _cp_dir != signal_dir:
+                            _has_opposite = True
+                            break
+                    if _has_opposite:
+                        log.warning("[%s %s] [ANTI_HEDGE] BLOCKED — já existe posição %s, sinal=%s (hedge não intencional)",
+                                    asset, tf, _cp_dir, signal_dir)
+                        results.append({"asset": asset, "timeframe": tf,
+                                        "status": "SKIP_ANTI_HEDGE",
+                                        "existing_dir": _cp_dir, "signal_dir": signal_dir})
+                        continue
+
+                    # === PSA-WIND FIX 2: SPIKE DETECTION — bloquear entrada em anomalia ===
+                    if _SPIKE_DETECTION_AVAILABLE and _SPIKE_DETECTOR is not None:
+                        try:
+                            _spike_rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M1, 0, 30)
+                            if _spike_rates is not None and len(_spike_rates) >= 5:
+                                import numpy as _np_spike
+                                _last_bar = {
+                                    "open": float(_spike_rates[-1]["open"]),
+                                    "high": float(_spike_rates[-1]["high"]),
+                                    "low": float(_spike_rates[-1]["low"]),
+                                    "close": float(_spike_rates[-1]["close"]),
+                                    "volume": float(_spike_rates[-1]["tick_volume"]),
+                                }
+                                if not _SPIKE_DETECTOR.is_fitted():
+                                    import pandas as _pd_spike
+                                    _spike_df = _pd_spike.DataFrame([{
+                                        "open": float(r["open"]), "high": float(r["high"]),
+                                        "low": float(r["low"]), "close": float(r["close"]),
+                                        "volume": float(r["tick_volume"])
+                                    } for r in _spike_rates[:-1]])
+                                    _SPIKE_DETECTOR.fit(_spike_df)
+                                _spike_result = _SPIKE_DETECTOR.detect(_last_bar)
+                                if _spike_result.has_anomaly and _spike_result.severity.value in ("HIGH", "CRITICAL"):
+                                    log.warning("[%s %s] [SPIKE] BLOCKED — %s severity=%s conf=%.2f action=%s",
+                                                asset, tf, _spike_result.anomaly_type.value,
+                                                _spike_result.severity.value, _spike_result.confidence,
+                                                _spike_result.recommended_action)
+                                    results.append({"asset": asset, "timeframe": tf,
+                                                    "status": "SKIP_SPIKE_ANOMALY",
+                                                    "anomaly_type": _spike_result.anomaly_type.value,
+                                                    "severity": _spike_result.severity.value})
+                                    continue
+                                elif _spike_result.has_anomaly:
+                                    log.info("[%s %s] [SPIKE] MONITOR — %s severity=%s conf=%.2f (não bloqueia)",
+                                             asset, tf, _spike_result.anomaly_type.value,
+                                             _spike_result.severity.value, _spike_result.confidence)
+                        except Exception as _spike_err:
+                            log.debug("[%s %s] [SPIKE] Erro (não bloqueia): %s", asset, tf, _spike_err)
+
                     if _corr_ok:
                         # === ASSET PROFILE (CQO 28/04/2026) ===
                         _prof = ASSET_PROFILES.get(asset, _PROFILE_DEFAULT)
@@ -1821,12 +1937,15 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                                          _pyramid_decision.get("lot"), _pyramid_decision.get("reason"))
                                         except Exception as _py_err:
                                             log.warning("[PYRAMID] Erro ao verificar pyramiding: %s", _py_err)
-                                        # === PARTIAL_CLOSE: inicializar trava de lucro POR POSIÇÃO ===
+                                        # === PARTIAL_CLOSE: inicializar trava de lucro POR POSIÇÃO (PSA-WIND recalibrado) ===
                                         try:
                                             if _PARTIAL_CLOSE_AVAILABLE:
                                                 _entry_price = exec_result.get("fill_price", _np.price_open)
                                                 _pc_engine = _ProgressivePartialCloseCompleteCls()
                                                 _dir_int = 1 if signal_dir == "BUY" else -1
+                                                # PSA-WIND FIX 4: sobrescrever níveis agressivos por conservadores
+                                                import copy as _copy_mod
+                                                _pc_engine.levels = _copy_mod.deepcopy(_PARTIAL_CLOSE_LEVELS_PSA)
                                                 _pc_engine.initialize_position(
                                                     entry_price=_entry_price,
                                                     lots=eff_lot,
@@ -1834,10 +1953,21 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                                 )
                                                 _partial_close_engines[_np.ticket] = _pc_engine
                                                 _pos_ledger[_np.ticket]["partial_close"] = True
-                                                log.info("[PARTIAL_CLOSE] %s #%d inicializado | entry=%.5f lot=%.2f dir=%s",
+                                                log.info("[PARTIAL_CLOSE] %s #%d inicializado PSA-WIND | entry=%.5f lot=%.2f dir=%s levels=[1.5/3/5/8]ATR",
                                                          asset, _np.ticket, _entry_price, eff_lot, signal_dir)
                                         except Exception as _pc_err:
                                             log.warning("[PARTIAL_CLOSE] Erro ao inicializar: %s", _pc_err)
+                                        # === PSA-WIND FIX 3: TRAILING STOP geométrico POR POSIÇÃO ===
+                                        try:
+                                            if _TRAILING_STOP_AVAILABLE:
+                                                _ts_engine = _TrailingStopCls(atr_multiplier=2.5, min_multiplier=1.0)
+                                                _ts_engine.entry_price = exec_result.get("fill_price", _np.price_open)
+                                                _ts_engine._peak_price = _ts_engine.entry_price
+                                                _trailing_stop_engines[_np.ticket] = _ts_engine
+                                                log.info("[TRAILING] %s #%d inicializado | entry=%.5f atr_mult=2.5",
+                                                         asset, _np.ticket, _ts_engine.entry_price)
+                                        except Exception as _ts_err:
+                                            log.warning("[TRAILING] Erro ao inicializar: %s", _ts_err)
                             except Exception as _le:
                                 log.warning("[LEDGER] Erro ao registrar posicao: %s", _le)
                             if agent_ia is not None and signal_source == "AGENT_IA":
@@ -1901,15 +2031,34 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                 for _p in _all_open:
                     if _p.ticket in _pos_ledger:
                         _pos_ledger[_p.ticket]["last_profit"] = _p.profit
-                        # === PARTIAL_CLOSE: verificar se deve fechar parcialmente (engine por ticket) ===
+                        _atr_info = get_execution_tf_atr(_p.symbol, 0.70)
+                        _current_price = _p.price_current if hasattr(_p, 'price_current') else (_p.bid if _p.type == 1 else _p.ask)
+                        _atr_pts_val = _atr_info.get("atr_pts", 0)
+                        # === PSA-WIND: TRAILING STOP — atualizar e logar ===
+                        try:
+                            _ts_eng = _trailing_stop_engines.get(_p.ticket)
+                            if _ts_eng is not None and _atr_pts_val > 0:
+                                _dir_int_ts = 1 if _p.type == 0 else -1
+                                _new_sl_val, _exit_trigger = _ts_eng.update(_current_price, _atr_pts_val, _dir_int_ts)
+                                if _new_sl_val is not None:
+                                    _old_sl = _pos_ledger[_p.ticket].get("trailing_sl")
+                                    if _old_sl is None or abs(_new_sl_val - _old_sl) > _atr_pts_val * 0.01:
+                                        _pos_ledger[_p.ticket]["trailing_sl"] = _new_sl_val
+                                        log.info("[TRAILING] %s #%d | price=%.5f peak=%.5f trail_SL=%.5f exit=%s",
+                                                 _p.symbol, _p.ticket, _current_price,
+                                                 _ts_eng._peak_price, _new_sl_val, _exit_trigger)
+                                if _exit_trigger:
+                                    log.warning("[TRAILING] %s #%d EXIT TRIGGER — trailing stop atingido price=%.5f SL=%.5f",
+                                                _p.symbol, _p.ticket, _current_price, _new_sl_val)
+                        except Exception as _ts_check_err:
+                            log.debug("[TRAILING] Erro ao verificar: %s", _ts_check_err)
+                        # === PARTIAL_CLOSE: verificar se deve fechar parcialmente (engine por ticket, PSA-WIND) ===
                         try:
                             _pc_eng = _partial_close_engines.get(_p.ticket)
-                            if _pc_eng is not None:
-                                _atr_info = get_execution_tf_atr(_p.symbol, 0.70)
-                                _current_price = _p.price_current if hasattr(_p, 'price_current') else (_p.bid if _p.type == 1 else _p.ask)
+                            if _pc_eng is not None and _atr_pts_val > 0:
                                 _partial_orders = _pc_eng.check_partials(
                                     current_price=_current_price,
-                                    atr_value=_atr_info.get("atr_pts", 0)
+                                    atr_value=_atr_pts_val
                                 )
                                 for _order in _partial_orders:
                                     if _order["action"] == "CLOSE_PARTIAL":
