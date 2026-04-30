@@ -155,6 +155,12 @@ def main():
         Path("audit").mkdir(exist_ok=True)
         with open(results_file, 'w') as f:
             import json
+            # Convert numpy types to native Python types for JSON serialization
+            def convert_types(obj):
+                if hasattr(obj, 'item'):  # numpy scalar
+                    return obj.item()
+                return obj
+            
             json.dump({
                 "label": args.label,
                 "symbols": args.symbols,
@@ -164,7 +170,7 @@ def main():
                 "results": all_results,
                 "total_exec": total_exec,
                 "total_skip": total_skip
-            }, f, indent=2)
+            }, f, indent=2, default=convert_types)
         log.info(f"Resultados salvos em: {results_file}")
         
         log.info("V2 concluído com sucesso")
