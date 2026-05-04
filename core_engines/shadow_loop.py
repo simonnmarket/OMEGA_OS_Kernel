@@ -297,6 +297,12 @@ def compute_flow_confluence(bar: Dict, symbol: str, direction: int, df=None) -> 
 
     # ── MÓDULOS v2.4.8 — compute_from_bars(df) ──────────────────────────────
     if df is not None and not df.empty and len(df) >= 30:
+        # Normalise MT5 OHLCV columns for microstructure_tracker compatibility
+        _df_bars = df.copy()
+        if "tick_volume" in _df_bars.columns and "volume" not in _df_bars.columns:
+            _df_bars["volume"] = _df_bars["tick_volume"]
+        if "is_buyer_maker" not in _df_bars.columns:
+            _df_bars["is_buyer_maker"] = _df_bars["close"] >= _df_bars["open"]  # buyer bar = close >= open
         regime = _asset_regime(symbol)
         engines = _get_analysis_engines(regime)
         _new_weights = {
@@ -310,7 +316,7 @@ def compute_flow_confluence(bar: Dict, symbol: str, direction: int, df=None) -> 
                 scores[key] = 50.0
                 continue
             try:
-                st = eng.compute_from_bars(df)
+                st = eng.compute_from_bars(_df_bars)
                 if not st.is_valid:
                     scores[key] = 50.0
                 else:
