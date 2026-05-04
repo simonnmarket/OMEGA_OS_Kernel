@@ -47,6 +47,83 @@ MÓDULOS DISPONÍVEIS
                         Padrão de Absorção (preço↑ + volume↓)
                         → Integração: Pullback Engine (critério Volume Exhaustion)
 
+[VWAP ENGINE]
+  vwap_engine.py        VWAP = Σ(typical_price × volume) / Σ(volume)  [Bloomberg standard]
+                        σ volume-ponderada (volume-weighted std dev)
+                        Z-score: (close - VWAP) / σ_vw  (adimensional)
+                        band_position ∈ [-1,+1] + vwap_pct_dist (%)
+                        Fallback: typical_price → close, tick_volume → volume
+                        → Integração: filtro de tendência e gate de entrada (shadow_loop)
+
+[PVSRA — PRICE VOLUME SUPPORT RESISTANCE ANALYSIS]
+  pvsra_analyzer.py     Local extremum order-2 em High/Low com volume
+                        Touch counting vectorizado numpy (O(n) broadcasting)
+                        Level dataclass: price, volume_norm, strength, touch_count, recency
+                        Score = f(volume_ratio, touches, recency) ∈ [0,1]
+                        nearest_sup_dist / nearest_res_dist normalizados por ATR
+                        → Integração: compute_flow_confluence (shadow_loop)
+
+[VOLUME ORDER FLOW]
+  volume_order_flow.py  Delta imbalance por barra (close>=open=buy aggressor)
+                        Z-score Welford (Bessel) + pressure_ratio + absorption_strength
+                        Kernel Numba-accelerated + fallback numpy vectorizado
+                        → Integração: compute_flow_confluence (shadow_loop)
+
+[PULLBACK RE-ENTRY — B1]
+  pullback_reentry_engine.py  EMA8/21 + ATR, profundidade multi-lookback, volume score, from_config(4 regimes)
+                        Self-test 4 regimes + benchmark 10k (hot path numpy) ≤500 µs; sem MT5/execução
+                        → Integração: gate de re-entry pós-pullback (shadow_loop / regime engine)
+
+[VOLUME FOOTPRINT — A4]
+  volume_footprint_engine.py  VA/POC via histograma NumPy; delta_ratio OHLCV
+                        Z-score vs distribuição volume-ponderada; telemetria adimensional
+                        tick_volume → volume; self-test 4 regimes + benchmark 10k
+                        → Integração: compute_flow_confluence (shadow_loop) [pendente wiring]
+
+[STO INSTITUTIONAL — A5]
+  sto_institutional_detector.py  Microstructure: rolling delta z + volume z (edition 2 base)
+                        Welford Bessel alinhado ao Pandas; from_config(regime); fail-operational
+                        → Integração: compute_flow_confluence (shadow_loop) [pendente wiring]
+
+[STO FORCE HISTOGRAM — swings + volume]
+  sto_force_histogram_engine.py  Swings ATR + histograma de força por perna (edition 2)
+                        Filtros MA + percentil; z-scores vs histórico de swings; fail-operational
+                        → Integração: compute_flow_confluence (shadow_loop) [pendente wiring]
+
+[STO FUSED — bar + swing + logística]
+  sto_fused_microstructure_engine.py  Fusão volume-z + delta proxy + swing volumes + score logístico
+                        from_config(regime); fail-operational; benchmark self-test threshold 2000 µs
+                        → Integração: compute_flow_confluence (shadow_loop) [pendente wiring]
+
+[WEIS WAVE + MICROSTRUCTURE]
+  weis_wave_engine.py   Weis Wave (volume acumulado por onda direcional)
+                        Kalman 1D + Ring Buffer NumPy (zero-allocation hot path)
+                        WelfordStats (variância Bessel + merge Chan)
+                        Z-threshold adaptativo via EWMA (adimensional)
+                        SymbolConstraintsManager (TTL cache, fail-operational)
+                        → Integração: compute_flow_confluence (shadow_loop)
+
+[LIQUIDITY ABSORPTION — C1]
+  liquidity_absorption_engine.py  Volume z-score Welford (janela local) + body_ratio + close_location
+                        Regra de absorção: corpo < limiar + close na metade + volume_z >= limiar
+                        strength = sqrt(volume_z^2 + (1-body_ratio)^2); from_config(4 regimes)
+                        Hot path ~26 µs/call; sem MT5, sem pandas no núcleo
+                        → Integração: proxy absorção / pressão de candle (shadow_loop)
+
+[ELLIOTT IMPULSE TRACKER — D1]
+  elliott_impulse_tracker_engine.py  ATR Wilder + detecção de swings + varredura 6 pivots (5 ondas)
+                        Regras: W2 retracement Fib, W3 não mais curta, W4 sem overlap W1, alternância
+                        strength = 0.4·w2 + 0.3·w3 + 0.2·w4 + 0.1·alt; from_config(4 regimes)
+                        Hot path ~53 µs/call (Numba); sem MT5
+                        → Integração: gate de impulso Elliott (shadow_loop / regime engine)
+
+[WYCKOFF ANALYZER — B3]
+  wyckoff_analyzer.py   6 fases Wyckoff (Accumulation→Markdown) via SMA20/50 + ATR
+                        Spring / UTAD detection normalizado por ATR (substitui % preço MQL5)
+                        Markup/Markdown Advanced: 3 HH+volume / 3 LL+volume vectorizado
+                        ComponentState: phase, spring_score, utad_score, strength, direction
+                        → Integração: gate de fase Wyckoff (shadow_loop / regime engine)
+
 ════════════════════════════════════════════════════════
 COMO ADICIONAR NOVO MÓDULO
 ════════════════════════════════════════════════════════
@@ -55,16 +132,33 @@ COMO ADICIONAR NOVO MÓDULO
   3. Adicionar entrada aqui em __all__
   4. Nenhuma dependência de outros módulos OMEGA
 
-Versão: 2.0.0 — 2026-03-06
+Versão: 2.4.8 — 2026-05-04
 """
 
-__version__ = "2.0.0"
+__version__ = "2.5.0"
 __all__ = [
-    "risk_metrics",      # VaR institucional
-    "anomaly_detector",  # Isolation Forest + Autoencoder
-    "zone_navigator",    # NICER Core/Buffer zones
-    "momentum_physics",  # Jerk + Half-Life
-    "lot_calculator",    # Lote adaptativo
-    "volume_profile",    # Volume profile horário + absorção
-    "fractal_hurst",     # Expoente de Hurst e Estado Fractal
+    "risk_metrics",        # VaR institucional
+    "anomaly_detector",    # Isolation Forest + Autoencoder
+    "zone_navigator",      # NICER Core/Buffer zones
+    "momentum_physics",    # Jerk + Half-Life
+    "lot_calculator",      # Lote adaptativo
+    "volume_profile",      # Volume profile horário + absorção
+    "fractal_hurst",       # Expoente de Hurst e Estado Fractal
+    "weis_wave_engine",    # Weis Wave + Kalman Delta + Microstructure
+    "volume_order_flow",   # Delta imbalance + Z-score + Absorção
+    "volume_footprint_engine",  # VA/POC + delta_ratio + z vs perfil (A4)
+    "sto_institutional_detector",  # STO / microstructure delta_z + volume_z (A5)
+    "sto_force_histogram_engine",  # STO swing-force volume + delta z (histogram)
+    "sto_fused_microstructure_engine",  # STO fused bar + swing + logistic
+    "pvsra_analyzer",      # S/R por volume + touch count + force score
+    "vwap_engine",         # VWAP volume-ponderado + bandas + z-score
+    "pullback_reentry_engine",  # B1: EMA + multi-lookback pullback + re-entry hint
+    "wyckoff_analyzer",    # B3: 6 fases Wyckoff + Spring/UTAD ATR-normalizado
+    "liquidity_absorption_engine",  # C1: volume_z Welford + body_ratio + close_location
+    "elliott_impulse_tracker_engine",  # D1: 5-wave impulse ATR swings + Fib rules
+    "gap_analysis_tracker",            # GAP: Breakaway/Exhaustion/Runaway + VSA (CEO Order 04/05/2026)
+    "weis_wave_tracker",               # Weis Wave: same-dir wave z-score + trend confirmation
+    "fimathe_breakout_engine",         # FIMATHE: channel breakout + ATR risk sizing
+    "pattern_detector_engine",         # Institutional Pattern Detector: ZigZag + multi-pattern
+    "microstructure_tracker",          # Microstructure: tick delta imbalance + Welford z-score
 ]

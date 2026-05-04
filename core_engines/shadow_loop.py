@@ -152,12 +152,58 @@ except Exception:
     _MOMENTUM_ENGINE = None
 
 from datetime import datetime, timezone
-from math import sqrt
+from math import floor, sqrt
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+# ── OMEGA KERNEL v2.4.8 — ANALYSIS MODULES (compute_from_bars interface) ─────
+import importlib as _importlib
+_NEW_MODULE_ENGINES: Dict[str, Dict] = {}  # regime → {name: engine_instance}
+
+_KERNEL_MODULE_MAP = [
+    ("vof",        "modules.volume_order_flow"),
+    ("footprint",  "modules.volume_footprint_engine"),
+    ("sto_inst",   "modules.sto_institutional_detector"),
+    ("sto_fused",  "modules.sto_fused_microstructure_engine"),
+    ("pvsra",      "modules.pvsra_analyzer"),
+    ("vwap",       "modules.vwap_engine"),
+    ("pullback",   "modules.pullback_reentry_engine"),
+    ("wyckoff",    "modules.wyckoff_analyzer"),
+    ("liq_abs",    "modules.liquidity_absorption_engine"),
+    ("elliott",    "modules.elliott_impulse_tracker_engine"),
+    ("gap",        "modules.gap_analysis_tracker"),
+    ("weis_wave",  "modules.weis_wave_tracker"),
+    ("fimathe",    "modules.fimathe_breakout_engine"),
+    ("pattern",    "modules.pattern_detector_engine"),
+    ("micro",      "modules.microstructure_tracker"),
+]
+
+def _get_analysis_engines(regime: str) -> Dict:
+    """Retorna (ou cria) instâncias dos módulos de análise para um dado regime."""
+    if regime not in _NEW_MODULE_ENGINES:
+        engs: Dict = {}
+        for key, mod_path in _KERNEL_MODULE_MAP:
+            try:
+                mod = _importlib.import_module(mod_path)
+                engs[key] = mod.ComponentEngine.from_config(regime=regime)
+            except Exception:
+                engs[key] = None
+        _NEW_MODULE_ENGINES[regime] = engs
+    return _NEW_MODULE_ENGINES[regime]
+
+def _asset_regime(symbol: str) -> str:
+    """Mapeia símbolo MT5 para regime OMEGA (forex/metal/crypto/index)."""
+    s = symbol.upper()
+    if any(c in s for c in ("XAU", "XAG", "OIL", "BRENT", "WTI")):
+        return "commodity"
+    if any(c in s for c in ("BTC", "ETH", "SOL", "DOG", "ADA", "XRP", "LTC", "BNB")):
+        return "crypto"
+    if any(c in s for c in ("US500", "NAS", "GER", "UK100", "JPN", "SP5", "DOW", "DAX")):
+        return "index"
+    return "forex"
+
 # ─── Flow Confluence Scorer ───────────────────────────────────────────────────
-def compute_flow_confluence(bar: Dict, symbol: str, direction: int) -> Tuple[float, Dict]:
+def compute_flow_confluence(bar: Dict, symbol: str, direction: int, df=None) -> Tuple[float, Dict]:
     """
     Combina sinais dos 5 módulos de fluxo institucional em um score 0-100.
     Retorna (confluence_score, details_dict).
@@ -246,8 +292,39 @@ def compute_flow_confluence(bar: Dict, symbol: str, direction: int) -> Tuple[flo
     except Exception as e:
         scores['momentum'] = 50
     
-    # Weighted confluence
-    confluence = sum(float(scores[k]) * weights[k] for k in weights)
+    # Weighted confluence (legacy modules)
+    confluence_legacy = sum(float(scores[k]) * weights[k] for k in weights)
+
+    # ── MÓDULOS v2.4.8 — compute_from_bars(df) ──────────────────────────────
+    if df is not None and not df.empty and len(df) >= 30:
+        regime = _asset_regime(symbol)
+        engines = _get_analysis_engines(regime)
+        _new_weights = {
+            "vof":       0.10, "footprint": 0.09,
+            "sto_inst":  0.07, "sto_fused": 0.14, "pvsra":    0.07,
+            "vwap":      0.11, "pullback":  0.10, "wyckoff":  0.08,
+            "liq_abs":   0.09, "elliott":  0.15,
+        }  # soma = 1.00
+        for key, eng in engines.items():
+            if eng is None:
+                scores[key] = 50.0
+                continue
+            try:
+                st = eng.compute_from_bars(df)
+                if not st.is_valid:
+                    scores[key] = 50.0
+                else:
+                    _dir = float(getattr(st, "direction", 0))
+                    base = 50.0 + float(st.strength) * 50.0 * _dir
+                    scores[key] = max(0.0, min(100.0, base))
+            except Exception:
+                scores[key] = 50.0
+        new_conf = sum(scores[k] * _new_weights.get(k, 0.0) for k in _new_weights)
+        # Blend: 30% módulos legados + 70% novos módulos
+        confluence = 0.30 * confluence_legacy + 0.70 * new_conf
+    else:
+        confluence = confluence_legacy
+
     return confluence, scores
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -271,8 +348,28 @@ if USE_AGENT_IA:
 else:
     AGENT_IA_AVAILABLE = False
 
+# PSA v12 → dict para get_signal (MT5 + OHLCV; desligar: OMEGA_LOOP_PSA_V12=0)
+_PSA_LOOP_FEED_AVAILABLE = False
+compute_psa_decision_mt5 = None  # type: ignore[assignment]
+if AGENT_IA_PATH.exists():
+    try:
+        from agent_ia.integration.shadow_loop_psa_feed import (
+            compute_psa_decision_mt5 as _compute_psa_decision_mt5,
+        )
+
+        compute_psa_decision_mt5 = _compute_psa_decision_mt5
+        _PSA_LOOP_FEED_AVAILABLE = True
+    except Exception as _psa_feed_imp_err:
+        print(f"[AVISO] PSA loop feed indisponível: {_psa_feed_imp_err}")
+
 from modules.detection import SpoofIcebergDetector
 from modules.portfolio import CorrelationFilter
+from modules.mt5_position_tag import (
+    build_v2_order_comment,
+    filter_omega_tracked_positions,
+    human_tag_line,
+    is_omega_tracked_position,
+)
 from core_engines.intra_candle_executor import IntraCandleExecutor
 
 # ─── OMEGA REGIME INJECTION (CQO MOD #5 - THREAD SAFE) ──────────────
@@ -311,11 +408,46 @@ OHLCV       = Path(os.getenv("OMEGA_OHLCV_PATH", str(ROOT / "data" / "ohlcv"))).
 AUDIT_PAPER = ROOT / "audit" / "paper"
 AUDIT_PAPER.mkdir(parents=True, exist_ok=True)
 
+
+def check_harmonic_ohlcv_inputs(asset: str, tf: str, base: Path) -> tuple[bool, list[str]]:
+    """
+    Ficheiros exigidos por omega_harmonic_engine_v3 (grafico_linha + grafico_candle).
+    Evita subprocesso quando faltam CSVs; mensagens prontas para log/auditoria.
+    """
+    base = base.resolve()
+    fname = f"{asset}_{tf}.csv"
+    linha = base / "grafico_linha" / fname
+    candle = base / "grafico_candle" / fname
+    missing: list[str] = []
+    if not linha.is_file():
+        missing.append(f"Falta grafico_linha/{fname} → {linha}")
+    if not candle.is_file():
+        missing.append(f"Falta grafico_candle/{fname} → {candle}")
+    return (len(missing) == 0, missing)
+
+
+def _log_motor_v3_subprocess_failure(asset: str, tf: str, r: "subprocess.CompletedProcess[str]") -> None:
+    err = (r.stderr or "").strip()
+    out = (r.stdout or "").strip()
+    max_chars = 12_000
+    if len(err) > max_chars:
+        err = err[:max_chars] + "\n... [stderr truncado — ver omega_harmonic_v3.log no CWD do motor]"
+    if len(out) > max_chars:
+        out = out[:max_chars] + "\n... [stdout truncado]"
+    log.error("[%s %s] Motor V3 subprocess exit=%d", asset, tf, r.returncode)
+    if err:
+        log.error("[%s %s] Motor V3 stderr:\n%s", asset, tf, err)
+    else:
+        log.error("[%s %s] Motor V3 stderr: (vazio)", asset, tf)
+    if out:
+        log.warning("[%s %s] Motor V3 stdout:\n%s", asset, tf, out)
+
 # ─── Configuração de Risco ───────────────────────────────────────────────────
 DEMO_EQUITY_USD    = 10_000.0
 RISK_PER_TRADE_PCT = float(os.getenv("OMEGA_RISK_PER_TRADE", "0.0025"))  # COO Fase1: 0.001 (0.1%)
 MIN_LOT_OVERRIDE   = float(os.getenv("OMEGA_MIN_LOT", "0.0"))            # CEO: lote mínimo (0=auto)
-MAX_POSITIONS      = int(os.getenv("OMEGA_MAX_POSITIONS", "2"))          # CONSELHO 29/04/2026: default=2 (unanimidade)
+# 0 = sem limite (paper/testes). N>=1 = no máximo N posições OMEGA rastreadas (comment/mark).
+MAX_POSITIONS      = int(os.getenv("OMEGA_MAX_POSITIONS", "0"))
 DD_DAILY_MAX       = float(os.getenv("OMEGA_DD_DAILY_MAX", "0.01"))       # CONSELHO 29/04/2026: default=1% (unanimidade)
 CONCENTRATION_MAX  = float(os.getenv("OMEGA_CONCENTRATION_MAX", "0.40"))   # CQO/COO: max por ativo
 MAX_CONSEC_FAIL    = 3
@@ -338,16 +470,45 @@ ASSET_PROFILES: dict = {
     # ── COMMODITIES: spreads médios, safe-haven/fluxos ──────────────────────
     "XAUUSD": {"cost_pts":  30, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.15, "regime": "commodity"},
     "XAGUSD": {"cost_pts":  20, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.15, "regime": "commodity"},
+    "UKOIL+": {"cost_pts":  30, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.10, "regime": "commodity"},
+    "USOIL+": {"cost_pts":  30, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.10, "regime": "commodity"},
     # ── INDICES: gap risk, fluxos institucionais ─────────────────────────────
     "US500":  {"cost_pts":  10, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.20, "regime": "index"},
     "NAS100": {"cost_pts":  15, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.60, "lot_cap": 0.15, "regime": "index"},
+    "US100":  {"cost_pts":  15, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.60, "lot_cap": 0.15, "regime": "index"},  # Hantec: US Tech 100 (alias NAS100)
     "GER40":  {"cost_pts":  10, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.20, "regime": "index"},
+    "UK100":  {"cost_pts":  12, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.15, "regime": "index"},
+    "US30":   {"cost_pts":  10, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.15, "regime": "index"},
     # ── CRYPTO MAJOR: momentum, spread wide, 24/7 ───────────────────────────
-    "BTCUSD": {"cost_pts": 100, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.25, "regime": "crypto"},
-    "ETHUSD": {"cost_pts":  50, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.25, "regime": "crypto"},
-    "SOLUSD": {"cost_pts":  30, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.25, "regime": "crypto"},
+    "BTCUSD": {"cost_pts": 100, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.10, "regime": "crypto"},
+    "ETHUSD": {"cost_pts":  50, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.10, "regime": "crypto"},
+    "SOLUSD": {"cost_pts":  30, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.10, "regime": "crypto"},
     # ── CRYPTO ALT: alta volatilidade, spreads extremos ─────────────────────
     "DOGUSD": {"cost_pts": 200, "sl_atr_mult": 2.5, "tp_atr_mult": 8.0, "min_conf": 0.65, "lot_cap": 0.05, "regime": "crypto_alt"},
+    # ── CRYPTO ALTS (ampliar leque; ajustar cost_pts ao broker real) ─────────
+    "BNBUSD":   {"cost_pts":  80, "sl_atr_mult": 2.2, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.15, "regime": "crypto_alt"},
+    "LTCUSD":   {"cost_pts":  60, "sl_atr_mult": 2.2, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.15, "regime": "crypto_alt"},
+    # XRP: preço baixo → poucos USD por TP “em pontos”; TP mais longo em ATR (tp/sl) ou maior lote
+    # (dentro do volume_max) compensa migalhas. cost_pts um pouco maior reduz entradas “ruidosas”.
+    "XRPUSD":   {"cost_pts":  55, "sl_atr_mult": 2.0, "tp_atr_mult": 9.5, "min_conf": 0.60, "lot_cap": 0.20, "regime": "crypto_alt"},
+    "ADAUSD":   {"cost_pts":  45, "sl_atr_mult": 2.2, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.15, "regime": "crypto_alt"},
+    "DOTUSD":   {"cost_pts":  45, "sl_atr_mult": 2.2, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.12, "regime": "crypto_alt"},
+    "AVAXUSD":  {"cost_pts":  55, "sl_atr_mult": 2.2, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.12, "regime": "crypto_alt"},
+    "LINKUSD":  {"cost_pts":  55, "sl_atr_mult": 2.2, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.12, "regime": "crypto_alt"},
+    "UNIUSD":   {"cost_pts":  70, "sl_atr_mult": 2.3, "tp_atr_mult": 7.5, "min_conf": 0.62, "lot_cap": 0.10, "regime": "crypto_alt"},
+    "ATOMUSD":  {"cost_pts":  55, "sl_atr_mult": 2.2, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.10, "regime": "crypto_alt"},
+    "NEARUSD":  {"cost_pts":  70, "sl_atr_mult": 2.3, "tp_atr_mult": 7.5, "min_conf": 0.62, "lot_cap": 0.08, "regime": "crypto_alt"},
+    "APTUSD":   {"cost_pts":  80, "sl_atr_mult": 2.3, "tp_atr_mult": 7.5, "min_conf": 0.62, "lot_cap": 0.08, "regime": "crypto_alt"},
+    "ARBUSD":   {"cost_pts":  70, "sl_atr_mult": 2.3, "tp_atr_mult": 7.5, "min_conf": 0.62, "lot_cap": 0.08, "regime": "crypto_alt"},
+    "OPUSD":    {"cost_pts":  70, "sl_atr_mult": 2.3, "tp_atr_mult": 7.5, "min_conf": 0.62, "lot_cap": 0.08, "regime": "crypto_alt"},
+    "FILUSD":   {"cost_pts":  80, "sl_atr_mult": 2.3, "tp_atr_mult": 7.5, "min_conf": 0.62, "lot_cap": 0.08, "regime": "crypto_alt"},
+    "MATICUSD": {"cost_pts":  70, "sl_atr_mult": 2.3, "tp_atr_mult": 7.5, "min_conf": 0.62, "lot_cap": 0.08, "regime": "crypto_alt"},
+    "POLUSD":   {"cost_pts":  70, "sl_atr_mult": 2.3, "tp_atr_mult": 7.5, "min_conf": 0.62, "lot_cap": 0.08, "regime": "crypto_alt"},
+    "TRXUSD":   {"cost_pts":  40, "sl_atr_mult": 2.1, "tp_atr_mult": 6.5, "min_conf": 0.58, "lot_cap": 0.20, "regime": "crypto_alt"},
+    "XLMUSD":   {"cost_pts":  45, "sl_atr_mult": 2.2, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.15, "regime": "crypto_alt"},
+    "ETCUSD":   {"cost_pts":  60, "sl_atr_mult": 2.2, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.10, "regime": "crypto_alt"},
+    "ALGOUSD":  {"cost_pts":  65, "sl_atr_mult": 2.3, "tp_atr_mult": 7.5, "min_conf": 0.62, "lot_cap": 0.08, "regime": "crypto_alt"},
+    "VETUSD":   {"cost_pts":  90, "sl_atr_mult": 2.5, "tp_atr_mult": 8.0, "min_conf": 0.63, "lot_cap": 0.06, "regime": "crypto_alt"},
     # ── JPY MAJOR: carry-trade flow, direcional sem ruído ─────────────────────
     # Estratégia: USDJPY lidera → todas as crosses seguem a mesma direção JPY.
     # 500+ pips em movimento sustentado são comuns em eventos macro (BOJ/Fed).
@@ -359,7 +520,7 @@ ASSET_PROFILES: dict = {
     "CADJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.58, "lot_cap": 0.25, "regime": "jpy_cross"},
     "CHFJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.58, "lot_cap": 0.25, "regime": "jpy_cross"},
 }
-_PROFILE_DEFAULT = {"cost_pts": 19, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.55, "lot_cap": 0.25, "regime": "generic"}
+_PROFILE_DEFAULT = {"cost_pts": 19, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.55, "lot_cap": 0.10, "regime": "generic"}
 
 # ─── EDGE GATE por Classe de Ativo (COO 28/04/2026) ─────────────────────────
 # Thresholds mínimos por regime: ATR% e ADX mínimo
@@ -395,7 +556,6 @@ _MAX_SL_PTS: dict = {
 # ─── JPY Correlation Cluster ──────────────────────────────────────────────────
 # Quando USDJPY confirma direção com força, todas as crosses JPY seguem.
 JPY_CROSSES = ["EURJPY", "GBPJPY", "AUDJPY", "CADJPY", "CHFJPY"]
-OMEGA_MAGIC        = 234001     # ID do EA OMEGA
 
 # ─── CODE VERSION TRACKING (Forensic) ───────────────────────────────────────
 # Cada ordem registra o SHA3 do código que a gerou para rastrear versão
@@ -415,8 +575,11 @@ print(f"[FORENSIC] CODE_SHA3={CODE_SHA3} — rastreamento de versão ativado")
 
 # ─── Guardrails ─────────────────────────────────────────────────────────────
 TIER1_ASSETS = {"EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "NZDUSD", "USDCAD", "USDCHF",
-                "XAUUSD", "XAGUSD", "US500", "NAS100", "GER40",
+                "XAUUSD", "XAGUSD", "UKOIL+", "USOIL+", "US500", "NAS100", "US100", "GER40", "UK100", "US30",
                 "BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD",
+                "BNBUSD", "LTCUSD", "XRPUSD", "ADAUSD", "DOTUSD", "AVAXUSD", "LINKUSD",
+                "UNIUSD", "ATOMUSD", "NEARUSD", "APTUSD", "ARBUSD", "OPUSD", "FILUSD",
+                "MATICUSD", "POLUSD", "TRXUSD", "XLMUSD", "ETCUSD", "ALGOUSD", "VETUSD",
                 "EURJPY", "GBPJPY", "AUDJPY", "CADJPY", "CHFJPY"}  # Whitelist OMEGA
 HIT_RATE_MIN = 80.0
 MACH_MAX     = 1.5
@@ -438,17 +601,21 @@ RETCODE_DESC = {
 }
 
 # ─── Logging ─────────────────────────────────────────────────────────────────
+# A-01 / D-04: não usar basicConfig — se o processo pai já configurou o root,
+# basicConfig é no-op e o ficheiro fica 0 bytes. Handlers explícitos no logger "PAPER".
 ts_str   = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
 log_file = AUDIT_PAPER / f"paper_loop_{ts_str}.log"
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-    handlers=[
-        logging.FileHandler(log_file, mode="w", encoding="utf-8"),
-        logging.StreamHandler(),
-    ],
-)
+_log_fmt = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
 log = logging.getLogger("PAPER")
+log.setLevel(logging.INFO)
+log.handlers.clear()
+log.propagate = False
+_fh = logging.FileHandler(log_file, mode="w", encoding="utf-8")
+_fh.setFormatter(_log_fmt)
+_sh = logging.StreamHandler()
+_sh.setFormatter(_log_fmt)
+log.addHandler(_fh)
+log.addHandler(_sh)
 
 
 # ─── SHA3-256 ────────────────────────────────────────────────────────────────
@@ -485,16 +652,24 @@ EDGE_MIN_ATR_OVER_SPR = float(os.getenv("OMEGA_EDGE_MIN_ATR_OVER_SPR", "5.0")) #
 EDGE_MIN_ADX          = float(os.getenv("OMEGA_EDGE_MIN_ADX", "20.0"))         # ADX ≥ 20 (global)
 
 # CTO-spec: classificação por classe de ativo (thresholds de volume_ratio)
-_CRYPTO_ASSETS = {"BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD"}
+# Símbolos MT5 crypto — só uses os que existirem no teu broker (Market Watch).
+_CRYPTO_ASSETS = {
+    "BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD",
+    "BNBUSD", "LTCUSD", "XRPUSD", "ADAUSD", "DOTUSD", "AVAXUSD", "LINKUSD",
+    "UNIUSD", "ATOMUSD", "NEARUSD", "APTUSD", "ARBUSD", "OPUSD", "FILUSD",
+    "MATICUSD", "POLUSD", "TRXUSD", "XLMUSD", "ETCUSD", "ALGOUSD", "VETUSD",
+}
 _METAL_ASSETS  = {"XAUUSD", "XAGUSD"}
-_INDEX_ASSETS  = {"US500", "NAS100", "GER40", "UK100", "US30"}
+_INDEX_ASSETS  = {"US500", "NAS100", "US100", "GER40", "UK100", "US30"}
 # Calibrado 29/04/2026: dados reais mostram vol_ratio=0.19-0.28 na maior parte do tempo.
-# Threshold de 0.70-0.80 bloqueava 95%+ das oportunidades. Reduzido para 0.30/0.35.
+# 2026-05-03: crypto_alt em CFD (spread largo no M5) — atr/spr tipico 0.15-0.55 vs alvo antigo 2.85
+# (bloqueava fallback em todos os ciclos). Defaults mais alinhados ao broker; endurecer via OMEGA_*.
 _VOL_MIN_BY_CLASS = {
-    "forex":  float(os.getenv("OMEGA_VOL_MIN_FOREX",  "0.30")),
-    "crypto": float(os.getenv("OMEGA_VOL_MIN_CRYPTO", "0.35")),
-    "metal":  float(os.getenv("OMEGA_VOL_MIN_METAL",  "0.30")),
-    "index":  float(os.getenv("OMEGA_VOL_MIN_INDEX",  "0.30")),
+    "forex":      float(os.getenv("OMEGA_VOL_MIN_FOREX",       "0.30")),
+    "crypto":     float(os.getenv("OMEGA_VOL_MIN_CRYPTO",      "0.18")),
+    "crypto_alt": float(os.getenv("OMEGA_VOL_MIN_CRYPTO_ALT",  "0.12")),
+    "metal":      float(os.getenv("OMEGA_VOL_MIN_METAL",       "0.30")),
+    "index":      float(os.getenv("OMEGA_VOL_MIN_INDEX",       "0.30")),
 }
 
 # Conselho Executivo 28/04/2026 — thresholds por classe (CONSENSO UNANIME)
@@ -507,9 +682,14 @@ _VOL_MIN_BY_CLASS = {
 # Threshold de 0.08% era calibrado para H1. Corrigido para M5 realista.
 _EDGE_THRESHOLDS_BY_CLASS = {
     "crypto": {
-        "min_atr_pct":       float(os.getenv("OMEGA_EDGE_CRYPTO_ATR",   "0.0010")),  # 0.10% (era 0.15%)
-        "min_atr_over_spr":  float(os.getenv("OMEGA_EDGE_CRYPTO_SPR",   "4.0")),     # era 5.0
-        "min_adx":           float(os.getenv("OMEGA_EDGE_CRYPTO_ADX",   "18.0")),    # era 20.0
+        "min_atr_pct":       float(os.getenv("OMEGA_EDGE_CRYPTO_ATR",    "0.00055")),
+        "min_atr_over_spr":  float(os.getenv("OMEGA_EDGE_CRYPTO_SPR",    "2.5")),
+        "min_adx":           float(os.getenv("OMEGA_EDGE_CRYPTO_ADX",    "15.0")),
+    },
+    "crypto_alt": {
+        "min_atr_pct":       float(os.getenv("OMEGA_EDGE_CRYPTOALT_ATR", "0.00045")),
+        "min_atr_over_spr":  float(os.getenv("OMEGA_EDGE_CRYPTOALT_SPR", "0.18")),
+        "min_adx":           float(os.getenv("OMEGA_EDGE_CRYPTOALT_ADX", "14.0")),
     },
     "forex": {
         "min_atr_pct":       float(os.getenv("OMEGA_EDGE_FOREX_ATR",    "0.0001")),  # 0.01% (calibrado M5 JPY 29/04)
@@ -529,12 +709,84 @@ _EDGE_THRESHOLDS_BY_CLASS = {
 }
 
 def classify_asset(symbol: str) -> str:
-    """Classifica ativo em forex/crypto/metal/index (CTO spec)."""
+    """Classifica ativo para EDGE_GATE / volume (CTO spec + perfil ASSET_PROFILES)."""
     s = symbol.upper()
-    if s in _CRYPTO_ASSETS: return "crypto"
-    if s in _METAL_ASSETS:  return "metal"
-    if s in _INDEX_ASSETS:  return "index"
+    prof = ASSET_PROFILES.get(s)
+    if prof:
+        r = str(prof.get("regime", "") or "").lower()
+        if r in ("crypto", "crypto_alt"):
+            return r
+    if s in _CRYPTO_ASSETS:
+        return "crypto"
+    if s in _METAL_ASSETS:
+        return "metal"
+    if s in _INDEX_ASSETS:
+        return "index"
     return "forex"
+
+
+def min_expected_tp_usd_threshold(asset: str) -> float:
+    """
+    Lucro esperado mínimo (moeda da conta, tipicamente USD) se o TP for atingido,
+    estimado linearmente como: TP_pts × pip_value_per_lot × lot (igual ao uso de _risk_usd_eff).
+    0 = filtro desligado para essa camada.
+
+    Defaults (2026-05): crypto_alt = 1.25 USD — evita cenário “6000 pts = $0.58” em CFD alts.
+    Desligar: OMEGA_MIN_TP_USD_CRYPTO_ALT=0
+    """
+    g = float(os.getenv("OMEGA_MIN_TP_USD", "0") or 0)
+    cls = classify_asset(asset)
+    if cls == "crypto_alt":
+        g = max(g, float(os.getenv("OMEGA_MIN_TP_USD_CRYPTO_ALT", "1.25") or 0))
+    elif cls == "crypto":
+        g = max(g, float(os.getenv("OMEGA_MIN_TP_USD_CRYPTO", "0") or 0))
+    return float(g)
+
+
+def min_lot_floor_for_regime(regime: str) -> float:
+    """Piso de lote (0=desligado). crypto_alt típico 0.08–0.10 em CFD com TP realista mas USD baixo."""
+    r = str(regime or "").lower()
+    if r == "crypto_alt":
+        return float(os.getenv("OMEGA_MIN_LOT_CRYPTO_ALT", "0") or 0)
+    if r == "crypto":
+        return float(os.getenv("OMEGA_MIN_LOT_CRYPTO", "0") or 0)
+    return 0.0
+
+
+def decision_trace_enabled() -> bool:
+    return os.getenv("OMEGA_DECISION_TRACE", "0").strip().lower() in ("1", "true", "yes", "on")
+
+
+def decision_trace_append(row: dict) -> None:
+    """
+    Uma linha JSON por evento em audit/paper/decision_trace.jsonl.
+    Ativar: OMEGA_DECISION_TRACE=1 (PowerShell: $env:OMEGA_DECISION_TRACE='1')
+    """
+    if not decision_trace_enabled():
+        return
+    r = dict(row)
+    r.setdefault("ts", datetime.now(timezone.utc).isoformat())
+    try:
+        with open(AUDIT_PAPER / "decision_trace.jsonl", "a", encoding="utf-8") as tf:
+            tf.write(json.dumps(r, ensure_ascii=False) + "\n")
+    except OSError as e:
+        log.debug("decision_trace append failed: %s", e)
+
+
+def trade_feedback_append(row: dict) -> None:
+    """
+    Uma linha JSON por trade fechado (ledger) em audit/paper/trade_feedback.jsonl.
+    Fecho de loop mensurável: fonte do sinal, agent_id (se IA), PnL, R, duração —
+    independente de OMEGA_DECISION_TRACE; use para auditar sync opens vs closes.
+    """
+    r = dict(row)
+    r.setdefault("ts", datetime.now(timezone.utc).isoformat())
+    try:
+        with open(AUDIT_PAPER / "trade_feedback.jsonl", "a", encoding="utf-8") as tf:
+            tf.write(json.dumps(r, ensure_ascii=False) + "\n")
+    except OSError as e:
+        log.debug("trade_feedback append failed: %s", e)
+
 
 def _atr_simple(highs, lows, closes, n: int = 14) -> float:
     import numpy as np
@@ -683,17 +935,19 @@ def mt5_check_order(request: dict) -> Optional[dict]:
 # ─── Guardrail de Mercado Aberto ──────────────────────────────────────────────
 def is_market_open(symbol: str = "XAUUSD") -> bool:
     """Verifica se mercado está aberto via MT5 (trade_mode FULL + tick disponível).
-    Reutiliza sessão MT5 existente (run_loop já fez mt5.initialize())."""
+    Reutiliza sessão MT5 existente (run_loop já fez mt5.initialize()).
+    Cripto: não exige `session_deals` — vários brokers deixam o campo vazio ao fim de
+    semana mesmo com CFD crypto negociável 24/7."""
     import MetaTrader5 as mt5
     symbol_info = mt5.symbol_info(symbol)
     if not symbol_info:
         return False
     tick = mt5.symbol_info_tick(symbol)
-    return (
-        symbol_info.trade_mode == mt5.SYMBOL_TRADE_MODE_FULL
-        and symbol_info.session_deals is not None
-        and tick is not None
-    )
+    if symbol_info.trade_mode != mt5.SYMBOL_TRADE_MODE_FULL or tick is None:
+        return False
+    if symbol in _CRYPTO_ASSETS:
+        return True
+    return symbol_info.session_deals is not None
 
 
 # ─── MT5 — Enviar Ordem Real (Demo) ─────────────────────────────────────────
@@ -711,6 +965,28 @@ def mt5_send_order(asset: str, tf: str, lot: float,
     if tick is None or sym is None:
         log.error("[%s] symbol_info_tick falhou", asset)
         return {"retcode": -1, "retcode_str": "NO_TICK", "error": "symbol_info_tick returned None"}
+
+    lot_norm, vol_note = normalize_mt5_volume(lot, sym, asset)
+    if vol_note:
+        log.warning("[%s %s] [VOLUME] %s", asset, tf, vol_note)
+    if lot_norm <= 0 or lot_norm + 1e-12 < float(getattr(sym, "volume_min", 0.01) or 0.01):
+        log.error(
+            "[%s %s] volume inválido após normalização MT5: lot_in=%s lot_out=%s min=%s max=%s step=%s",
+            asset,
+            tf,
+            lot,
+            lot_norm,
+            getattr(sym, "volume_min", None),
+            getattr(sym, "volume_max", None),
+            getattr(sym, "volume_step", None),
+        )
+        return {
+            "retcode": -1,
+            "retcode_str": "INVALID_VOLUME",
+            "error": "volume fora dos limites do contrato (min/max/step)",
+            "success": False,
+        }
+    lot = lot_norm
 
     price    = tick.ask if direction == "BUY" else tick.bid
     point    = sym.point
@@ -744,8 +1020,7 @@ def mt5_send_order(asset: str, tf: str, lot: float,
         "sl":           sl_price,
         "tp":           tp_price,
         "deviation":    20,
-        "magic":        OMEGA_MAGIC,
-        "comment":      f"OMEGA-AMI-{tf}-{direction}",  # REMOVIDO SHA3 (comment muito longo para MT5)
+        "comment":      build_v2_order_comment(tf, direction),
         "type_time":    mt5.ORDER_TIME_GTC,
         "type_filling": filling,
     }
@@ -808,8 +1083,24 @@ def mt5_send_order(asset: str, tf: str, lot: float,
 
 # ─── Rodar Motor Harmônico ────────────────────────────────────────────────────
 def run_harmonic(asset: str, tf: str, margin: float, out_dir: Path) -> Optional[dict]:
-    import subprocess
     out_dir.mkdir(parents=True, exist_ok=True)
+    ok_paths, missing_msgs = check_harmonic_ohlcv_inputs(asset, tf, OHLCV)
+    if not ok_paths:
+        log.error(
+            "[%s %s] OHLCV Motor V3 — pré-checagem falhou (OMEGA_OHLCV_PATH=%s):\n  %s",
+            asset,
+            tf,
+            OHLCV,
+            "\n  ".join(missing_msgs),
+        )
+        log.error(
+            "[%s %s] Correr: python scripts/export_ohlcv_mt5.py --symbols %s --timeframes %s",
+            asset,
+            tf,
+            asset,
+            tf,
+        )
+        return None
     motor = CORE / "omega_harmonic_engine_v3.py"
     cmd   = [sys.executable, str(motor),
              "--symbol", asset, "--timeframe", tf,
@@ -822,10 +1113,16 @@ def run_harmonic(asset: str, tf: str, margin: float, out_dir: Path) -> Optional[
                             cwd=str(out_dir), timeout=300)
         lat = time.perf_counter() - t0
         if r.returncode != 0:
-            log.error("[%s %s] Motor V3 exit %d: %s", asset, tf, r.returncode, r.stderr[:200])
+            _log_motor_v3_subprocess_failure(asset, tf, r)
             return None
         jf = out_dir / f"harmonic_events_{asset}_{tf}.json"
         if not jf.exists():
+            log.error(
+                "[%s %s] Motor V3 exit=0 mas JSON ausente: %s (verificar permissões/CWD)",
+                asset,
+                tf,
+                jf,
+            )
             return None
         with open(jf, encoding="utf-8") as f:
             data = json.load(f)
@@ -914,31 +1211,112 @@ def calc_lot(equity: float, margin_pts: float, asset: str) -> Dict:
         "contract_size":  contract_size,
         "price_at_calc":  price,
         "sym_vol_min":    sym.volume_min if hasattr(sym, 'volume_min') else 0.01,
+        "sym_vol_max":    resolve_mt5_volume_max(sym, asset),
+        "sym_vol_step":   float(getattr(sym, "volume_step", 0) or 0.01),
     }
 
 
+_VOLMAX_FALLBACK_LOGGED: set[str] = set()
 
-# ─── A1+: MULTI-TF TREND BIAS (D1→H4→H1→M15) ─────────────────────────────────────
-MTF_ALIGN_THR = float(os.getenv("OMEGA_MTF_ALIGN_THR", "0.75"))  # 75%=3/4 TFs alinhados
+
+def resolve_mt5_volume_max(sym, asset: str) -> float:
+    """
+    volume_max vindo do MT5; se <=0 em CFD crypto, muitos brokers não preenchem o campo
+    mas o limite real é baixo — não usar 100.0 (isso reintroduz 0.25 → Invalid volume).
+    """
+    raw = float(getattr(sym, "volume_max", 0) or 0.0)
+    if raw > 0:
+        return raw
+    a = (asset or "").upper()
+    prof = ASSET_PROFILES.get(a) if a else None
+    regime = str(prof.get("regime", "") if prof else "").lower()
+    is_crypto = (a in _CRYPTO_ASSETS) or regime in ("crypto", "crypto_alt")
+    if is_crypto:
+        fb = float(os.getenv("OMEGA_CRYPTO_VOLUME_MAX_FALLBACK", "0.10"))
+        if a and a not in _VOLMAX_FALLBACK_LOGGED:
+            _VOLMAX_FALLBACK_LOGGED.add(a)
+            log.warning(
+                "[%s] MT5 volume_max<=0 — usar OMEGA_CRYPTO_VOLUME_MAX_FALLBACK=%.4f "
+                "(ajuste o env se o broker permitir mais)",
+                a,
+                fb,
+            )
+        return fb
+    return float(os.getenv("OMEGA_VOLUME_MAX_FALLBACK", "100.0"))
+
+
+def _mt5_volume_decimals(volume_step: float) -> int:
+    """Casas decimais coerentes com volume_step (evita 0.30000000004 no request)."""
+    try:
+        s = f"{float(volume_step):.12f}".rstrip("0").rstrip(".")
+        return len(s.split(".")[1]) if "." in s else 0
+    except Exception:
+        return 2
+
+
+def normalize_mt5_volume(lot: float, sym, asset: str = "") -> Tuple[float, str]:
+    """
+    Alinha volume a volume_min / volume_max / volume_step do símbolo MT5.
+    Evita retcode 10014 / journal \"Invalid volume\" (ex.: ETHUSD max 0.10 com pedido 0.25).
+    """
+    if sym is None or not isinstance(lot, (int, float)):
+        return 0.0, "sym_none_or_lot_invalid"
+    raw = float(lot)
+    if raw <= 0:
+        return 0.0, "lot<=0"
+    vmin = float(getattr(sym, "volume_min", 0.01) or 0.01)
+    vmax = resolve_mt5_volume_max(sym, asset)
+    vstep = float(getattr(sym, "volume_step", 0.01) or 0.01)
+    if vmin <= 0:
+        vmin = 0.01
+    if vstep <= 0:
+        vstep = 0.01
+    if vmax < vmin:
+        vmax = vmin
+
+    clamped = max(vmin, min(raw, vmax))
+    n = int(floor((clamped - vmin) / vstep + 1e-12))
+    out = vmin + n * vstep
+    if out > vmax + 1e-12:
+        nmax = int(floor((vmax - vmin) / vstep + 1e-12))
+        out = vmin + max(0, nmax) * vstep
+    nd = min(8, max(0, _mt5_volume_decimals(vstep)))
+    out = float(round(out, nd))
+    adj = ""
+    if abs(out - raw) > max(1e-9, 10 ** (-(nd + 2))):
+        adj = (
+            f"volume MT5 ajustado: pedido={raw} efetivo={out} "
+            f"(min={vmin} max={vmax} step={vstep})"
+        )
+    return out, adj
+
+
+# ─── CEO ORDER: CASCATA MACRO W1→D1→H4→H1→M15 ─────────────────────────────────
+# CEO Decision (04/05/2026): sistema DEVE usar cascata completa semanal→diária→intraday.
+# W1 = direcção macro da semana (peso 3), D1 = tendência do dia (peso 2),
+# H4 = estrutura (peso 2), H1 = setup (peso 1), M15 = confirmação de entrada (peso 1).
+# M15 confluência → executar em M3/M1.
+MTF_ALIGN_THR = float(os.getenv("OMEGA_MTF_ALIGN_THR", "0.50"))  # 50%=2/4 TFs alinhados
 
 def get_multi_tf_bias(symbol: str) -> dict:
     """
-    Calcula viés direcional alinhando D1 + H4 + H1 + M15.
-    EMA8 vs EMA21 em cada TF. Score: BUY=+1, SELL=-1.
-    CQO Spec 28/04/2026: confluência multi-TF para tomada de decisão.
-    Alinhamento >= 75% (3/4 TFs) é requerido para bloquear sinal oposto.
+    CEO Order 04/05/2026: Cascata completa W1→D1→H4→H1→M15.
+    Pesos: W1=3, D1=2, H4=2, H1=1, M15=1 (total=9).
+    W1 é o juiz supremo da direcção. D1 confirma. H4/H1 estrutura. M15 gatilho.
     """
     import MetaTrader5 as mt5
     import numpy as np
     TFS = [
-        (mt5.TIMEFRAME_D1,  "D1",  50),
-        (mt5.TIMEFRAME_H4,  "H4",  50),
-        (mt5.TIMEFRAME_H1,  "H1",  50),
-        (mt5.TIMEFRAME_M15, "M15", 50),
+        (mt5.TIMEFRAME_W1,  "W1",  30, 3),
+        (mt5.TIMEFRAME_D1,  "D1",  50, 2),
+        (mt5.TIMEFRAME_H4,  "H4",  50, 2),
+        (mt5.TIMEFRAME_H1,  "H1",  50, 1),
+        (mt5.TIMEFRAME_M15, "M15", 50, 1),
     ]
-    scores = []
+    weighted_score = 0
+    total_weight   = 0
     detail = {}
-    for tf_const, tf_name, n in TFS:
+    for tf_const, tf_name, n, weight in TFS:
         try:
             rates = mt5.copy_rates_from_pos(symbol, tf_const, 0, n)
             if rates is None or len(rates) < 22:
@@ -948,17 +1326,76 @@ def get_multi_tf_bias(symbol: str) -> dict:
             ema8   = float(np.mean(closes[-8:]))
             ema21  = float(np.mean(closes[-21:]))
             s = 1 if ema8 > ema21 else -1
-            scores.append(s)
+            weighted_score += s * weight
+            total_weight   += weight
             detail[tf_name] = "BUY" if s > 0 else "SELL"
         except Exception as _e:
             detail[tf_name] = f"err:{_e}"
-    if not scores:
+    if total_weight == 0:
         return {"bias": "NEUTRAL", "score": 0, "alignment": 0.0, "detail": detail}
-    net       = sum(scores)
-    alignment = abs(net) / len(scores)
-    bias      = "BUY" if net > 0 else ("SELL" if net < 0 else "NEUTRAL")
-    return {"bias": bias, "score": net, "alignment": round(alignment, 2),
-            "n_tfs": len(scores), "detail": detail}
+    alignment = abs(weighted_score) / total_weight
+    bias      = "BUY" if weighted_score > 0 else ("SELL" if weighted_score < 0 else "NEUTRAL")
+    return {"bias": bias, "score": weighted_score, "alignment": round(alignment, 2),
+            "n_tfs": len([v for v in detail.values() if v in ("BUY", "SELL")]), "detail": detail}
+
+
+def get_key_levels(symbol: str) -> dict:
+    """
+    CEO Order 04/05/2026: Calcula níveis-chave para preparar TP/SL no gráfico menor.
+    Retorna:
+      prev_week_high / prev_week_low   — extremos da semana anterior (W1 bars[1])
+      prev_day_high / prev_day_low     — extremos do dia anterior (D1 bars[1])
+      prev_day_close                   — fecho do dia anterior (âncora de defesa)
+      today_open                       — abertura de hoje (D1 bars[0])
+      gap_pts / gap_dir                — GAP entre abertura de hoje e fecho anterior
+      gap_fill_level                   — nível de preço a atingir para fechar o GAP
+      poc_price                        — POC da sessão actual (volume footprint)
+    """
+    import MetaTrader5 as mt5
+    import numpy as np
+    result = {
+        "prev_week_high": None, "prev_week_low": None,
+        "prev_day_high":  None, "prev_day_low":  None,
+        "prev_day_close": None, "today_open":    None,
+        "gap_pts": 0.0, "gap_dir": "NONE", "gap_fill_level": None,
+        "poc_price": None,
+    }
+    try:
+        sym_info = mt5.symbol_info(symbol)
+        pt = sym_info.point if sym_info else 1e-5
+        # W1: semana anterior (index 1 = barra anterior fechada)
+        w1 = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_W1, 1, 1)
+        if w1 is not None and len(w1) >= 1:
+            result["prev_week_high"] = float(w1[0]["high"])
+            result["prev_week_low"]  = float(w1[0]["low"])
+        # D1: dia anterior (index 1) e hoje (index 0)
+        d1 = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_D1, 0, 2)
+        if d1 is not None and len(d1) >= 2:
+            result["today_open"]    = float(d1[0]["open"])
+            result["prev_day_close"]= float(d1[1]["close"])
+            result["prev_day_high"] = float(d1[1]["high"])
+            result["prev_day_low"]  = float(d1[1]["low"])
+            # GAP: diferença entre abertura de hoje e fecho de ontem
+            gap_raw = result["today_open"] - result["prev_day_close"]
+            result["gap_pts"] = round(gap_raw / pt, 1)
+            if abs(result["gap_pts"]) > 5:  # GAP mínimo de 5 pts
+                result["gap_dir"] = "UP" if gap_raw > 0 else "DOWN"
+                result["gap_fill_level"] = result["prev_day_close"]  # preço-alvo de fecho do GAP
+        # POC: do volume footprint se disponível
+        try:
+            h1_rates = mt5.copy_rates_from_pos(symbol, mt5.TIMEFRAME_H1, 0, 30)
+            if h1_rates is not None and len(h1_rates) >= 10:
+                closes_h1  = np.array([r["close"]       for r in h1_rates], dtype=float)
+                volumes_h1 = np.array([r["tick_volume"] for r in h1_rates], dtype=float)
+                bins = np.linspace(closes_h1.min(), closes_h1.max(), 20)
+                counts, edges = np.histogram(closes_h1, bins=bins, weights=volumes_h1)
+                poc_idx = int(np.argmax(counts))
+                result["poc_price"] = round(float((edges[poc_idx] + edges[poc_idx + 1]) / 2), 5)
+        except Exception:
+            pass
+    except Exception as _e:
+        result["error"] = str(_e)
+    return result
 
 
 def get_execution_tf_atr(symbol: str, confidence: float = 0.70) -> dict:
@@ -1271,8 +1708,8 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     log.info("=" * 72)
     log.info("OMEGA %s LOOP v3.0 | %d ativos × %d TFs | equity=USD %.2f",
              mode.upper(), len(ativos), len(timeframes), equity)
-    log.info("Risk/trade=%.2f%% | MaxPos=%d | DD_max=%.0f%% | MT5_MAGIC=%d",
-             RISK_PER_TRADE_PCT * 100, MAX_POSITIONS, DD_DAILY_MAX * 100, OMEGA_MAGIC)
+    log.info("Risk/trade=%.2f%% | MaxPos=%d | DD_max=%.0f%% | %s",
+             RISK_PER_TRADE_PCT * 100, MAX_POSITIONS, DD_DAILY_MAX * 100, human_tag_line())
     log.info("=" * 72)
 
     mt5_connected = False
@@ -1288,6 +1725,10 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     _pos_ledger: dict = {}  # ticket -> {entry details + last_known_profit}
     _realized_pnl: float = 0.0
     _realized_n:   int   = 0
+    _trade_feedback_n: int = 0  # linhas append em trade_feedback.jsonl (fechos)
+    _agent_ia_open_ok: int = 0  # PN-06: record_trade_open com sucesso (AGENT_IA)
+    _agent_ia_close_ok: int = 0
+    _agent_ia_close_err: int = 0
     _lot_calc = LotCalculatorV2(LotCfgV2())  # CQO 28/04/2026: 4-factor adaptive sizing
     _risk_returns: list = []       # pnl/equity por trade fechado → Sharpe rolling
     _fractal_cache: dict = {}      # asset → {"ts": float, "regime": str, "hurst": float}
@@ -1311,9 +1752,68 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
 
     # Sincronização de Estado Real com o MT5 (PSA FIX - State Awareness)
     if mode == "paper" and mt5_connected:
-        real_pos = mt5.positions_get(magic=OMEGA_MAGIC)
-        open_pos = len(real_pos) if real_pos else 0
-        log.info("MT5 State Sync: %d posicoes ativas detectadas.", open_pos)
+        _rack = mt5.positions_get() or []
+        real_pos = filter_omega_tracked_positions(list(_rack))
+        open_pos = len(real_pos)
+        log.info("MT5 State Sync: %d posicoes OMEGA (comment/mark) detectadas.", open_pos)
+
+        # ── FIX 1: TRAILING STOP + PARTIAL CLOSE PERSISTENCE ──────────────────
+        # Problema: engines sao criados por run e destruidos no fim. Posicoes abertas
+        # em runs anteriores ficam sem gestao de saida. Solucao: re-inicializar engines
+        # para cada posicao existente usando entry_price e peak_price reais do MT5.
+        import copy as _copy_mod_boot
+        _resynced_ts = 0
+        _resynced_pc = 0
+        for _rp in real_pos:
+            _rp_ticket = _rp.ticket
+            # Restaurar pos_ledger para posicoes ja abertas
+            if _rp_ticket not in _pos_ledger:
+                _pos_ledger[_rp_ticket] = {
+                    "symbol": _rp.symbol,
+                    "direction": "BUY" if _rp.type == 0 else "SELL",
+                    "lot": _rp.volume,
+                    "entry_price": _rp.price_open,
+                    "entry_time": datetime.fromtimestamp(_rp.time, tz=timezone.utc).isoformat(),
+                    "last_profit": _rp.profit,
+                    "status": "open",
+                }
+            # Trailing stop engine
+            if _rp_ticket not in _trailing_stop_engines and _TRAILING_STOP_AVAILABLE:
+                try:
+                    _ts_eng_boot = _TrailingStopCls(atr_multiplier=2.5, min_multiplier=1.0)
+                    _ts_eng_boot.entry_price = _rp.price_open
+                    _rp_dir_ts = 1 if _rp.type == 0 else -1
+                    # Peak: price_current se em lucro, senao entry (conservador)
+                    _ts_eng_boot._peak_price = _rp.price_current if _rp.profit > 0 else _rp.price_open
+                    _trailing_stop_engines[_rp_ticket] = _ts_eng_boot
+                    _resynced_ts += 1
+                    log.info("[TRAILING] [RESYNC] %s #%d | entry=%.5f peak=%.5f profit=%.2f",
+                             _rp.symbol, _rp_ticket, _rp.price_open,
+                             _ts_eng_boot._peak_price, _rp.profit)
+                except Exception as _ts_boot_err:
+                    log.warning("[TRAILING] [RESYNC] Erro #%d: %s", _rp_ticket, _ts_boot_err)
+            # Partial close engine
+            if _rp_ticket not in _partial_close_engines and _PARTIAL_CLOSE_AVAILABLE:
+                try:
+                    _pc_eng_boot = _ProgressivePartialCloseCompleteCls()
+                    _pc_eng_boot.levels = _copy_mod_boot.deepcopy(_PARTIAL_CLOSE_LEVELS_PSA)
+                    _rp_dir_int = 1 if _rp.type == 0 else -1
+                    _pc_eng_boot.initialize_position(
+                        entry_price=_rp.price_open,
+                        lots=_rp.volume,
+                        direction=_rp_dir_int,
+                    )
+                    _partial_close_engines[_rp_ticket] = _pc_eng_boot
+                    _resynced_pc += 1
+                    log.info("[PARTIAL_CLOSE] [RESYNC] %s #%d | entry=%.5f lot=%.2f dir=%s",
+                             _rp.symbol, _rp_ticket, _rp.price_open, _rp.volume,
+                             "BUY" if _rp.type == 0 else "SELL")
+                except Exception as _pc_boot_err:
+                    log.warning("[PARTIAL_CLOSE] [RESYNC] Erro #%d: %s", _rp_ticket, _pc_boot_err)
+        if open_pos > 0:
+            log.info("[FIX1] Engines re-sincronizados | trailing=%d partial=%d | %d posicoes",
+                     _resynced_ts, _resynced_pc, open_pos)
+        # ── FIM FIX 1 ─────────────────────────────────────────────────────────
     else:
         open_pos = 0
     
@@ -1340,9 +1840,9 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
             agent_ia = None
 
     # FIX #5 — Scheduler de-bias: embaralha a ordem dos ativos a cada ciclo
-    # com seed determinística por minuto (auditável). Quando MAX_POSITIONS
-    # limita slots, a lista determinística fazia com que apenas o primeiro
-    # ativo (BTCUSD) recebesse 100% das ordens. Shuffle quebra esse viés.
+    # com seed determinística por minuto (auditável). Com MAX_POSITIONS>0 o teto
+    # de slots podia favorecer o primeiro ativo; shuffle reduz viés. MAX_POSITIONS=0
+    # desliga esse teto (testes).
     import random as _rnd_fix5
     _rnd_fix5.seed(int(time.time()) // 60)
     ativos_scheduled = list(ativos)
@@ -1406,6 +1906,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                     log.critical("[%s %s] KS ativo — abortando.", asset, tf); break
 
                 log.info("[%s %s] ── Ciclo ──", asset, tf)
+                signal_source = None  # preenchido em paper + FASE4; usado em decision_trace
 
                 # === FLOW CONFLUENCE: institutional flow scoring (awakened modules) ===
                 # MOVIDO antes de guardrails para sempre logar estado do fluxo
@@ -1413,6 +1914,16 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                 _flow_details = {}
                 try:
                     _rates_flow = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M1, 0, 1)
+                    _df_flow = None
+                    try:
+                        import pandas as _pd_flow
+                        _rates_m5 = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M5, 0, 100)
+                        if _rates_m5 is not None and len(_rates_m5) >= 30:
+                            _df_flow = _pd_flow.DataFrame(_rates_m5)[
+                                ["open", "high", "low", "close", "tick_volume"]
+                            ].copy()
+                    except Exception:
+                        _df_flow = None
                     if _rates_flow is not None and len(_rates_flow) > 0:
                         _bar_flow = {
                             "close": float(_rates_flow[0]["close"]),
@@ -1421,15 +1932,24 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                             "volume": float(_rates_flow[0]["tick_volume"])
                         }
                         # Usar direção neutra (0) para scoring sem viés
-                        _flow_conf, _flow_details = compute_flow_confluence(_bar_flow, asset, 0)
+                        _flow_conf, _flow_details = compute_flow_confluence(_bar_flow, asset, 0, df=_df_flow)
                         _flow_state[asset] = _flow_conf
-                        log.info("[%s %s] [FLOW] confluence=%.1f v_flow=%.0f vol_physics=%.0f vol_profile=%.0f anomaly=%.0f momentum=%.0f",
-                                 asset, tf, _flow_conf,
-                                 _flow_details.get("v_flow", 50),
-                                 _flow_details.get("vol_physics", 50),
-                                 _flow_details.get("vol_profile", 50),
-                                 _flow_details.get("anomaly", 50),
-                                 _flow_details.get("momentum", 50))
+                        log.info(
+                            "[%s %s] [FLOW] confluence=%.1f | legacy: v_flow=%.0f vol_phy=%.0f "
+                            "| new: sto_fused=%.0f vof=%.0f vwap=%.0f pullback=%.0f "
+                            "wyckoff=%.0f elliott=%.0f liq=%.0f weis=%.0f",
+                            asset, tf, _flow_conf,
+                            _flow_details.get("v_flow", 50),
+                            _flow_details.get("vol_physics", 50),
+                            _flow_details.get("sto_fused", 50),
+                            _flow_details.get("vof", 50),
+                            _flow_details.get("vwap", 50),
+                            _flow_details.get("pullback", 50),
+                            _flow_details.get("wyckoff", 50),
+                            _flow_details.get("elliott", 50),
+                            _flow_details.get("liq_abs", 50),
+                            _flow_details.get("weis_wave", 50),
+                        )
                     else:
                         log.warning("[%s %s] [FLOW] sem dados M1", asset, tf)
                 except Exception as _flow_err:
@@ -1461,13 +1981,25 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                              "execution": None, "lot_info": None, "binomial_ic_95": {}}
                     stats.record(dummy); ks.update(True)
                     results.append({"asset": asset, "timeframe": tf, "status": "SKIP",
-                                    "reasons": guard["skip_reasons"]}); continue
+                                    "reasons": guard["skip_reasons"]})
+                    decision_trace_append(
+                        {
+                            "asset": asset,
+                            "timeframe": tf,
+                            "phase": "pre_harmonic_guard",
+                            "class": classify_asset(asset),
+                            "status": "SKIP",
+                            "skip_reasons": guard["skip_reasons"],
+                            "hit_rate_prev": prev_hr,
+                        }
+                    )
+                    continue
 
                 # Flow scorer já foi chamado antes de guardrails (linha ~1329)
                 # Aqui usamos o valor em cache se houver sinal
                 _flow_conf = _flow_state.get(asset, 50.0)
 
-                if mode == "paper" and open_pos >= MAX_POSITIONS:
+                if mode == "paper" and MAX_POSITIONS > 0 and open_pos >= MAX_POSITIONS:
                     log.warning("[%s %s] MAX_POSITIONS=%d atingido.", asset, tf, MAX_POSITIONS); continue
 
                 # Motor Harmônico V3
@@ -1475,7 +2007,17 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                 harmonic = run_harmonic(asset, tf, guard["margin_used"], out_dir)
                 if harmonic is None:
                     # SKIP_HARMONIC: Motor V3 sem dados (ativo fechado/sem CSV) — NÃO conta como falha de execução para KS
-                    results.append({"asset": asset, "timeframe": tf, "status": "SKIP_HARMONIC"}); continue
+                    results.append({"asset": asset, "timeframe": tf, "status": "SKIP_HARMONIC"})
+                    decision_trace_append(
+                        {
+                            "asset": asset,
+                            "timeframe": tf,
+                            "phase": "harmonic",
+                            "class": classify_asset(asset),
+                            "status": "SKIP_HARMONIC",
+                        }
+                    )
+                    continue
 
                 # Guardrail final
                 s134    = (harmonic.get("engines", {}).get("harmonic", {})
@@ -1518,7 +2060,41 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                             # FIX #6 — Latency split: medimos só a decisão IA (CPU pura),
                             # excluindo o roundtrip MT5/broker (medido em latency_ms).
                             _t_dec_0 = time.perf_counter()
-                            ia_signal = agent_ia.get_signal(asset, signature_scores=sig_scores or {})
+                            psa_decision = None
+                            if (
+                                _PSA_LOOP_FEED_AVAILABLE
+                                and compute_psa_decision_mt5 is not None
+                                and mt5_connected
+                                and os.getenv("OMEGA_LOOP_PSA_V12", "1").strip().lower()
+                                not in ("0", "false", "no", "off")
+                            ):
+                                try:
+                                    import MetaTrader5 as _mt5_psa
+                                    _regime = ASSET_PROFILES.get(asset, {}).get("regime", "forex")
+                                    psa_decision = compute_psa_decision_mt5(
+                                        asset,
+                                        tf,
+                                        _regime,
+                                        float(equity),
+                                        mt5_module=_mt5_psa,
+                                    )
+                                    if isinstance(psa_decision, dict) and psa_decision.get("action"):
+                                        log.info(
+                                            "[%s %s] [PSA_FEED] action=%s conf=%.3f skill=%s",
+                                            asset,
+                                            tf,
+                                            psa_decision.get("action"),
+                                            float(psa_decision.get("confidence") or 0.0),
+                                            psa_decision.get("skill_id"),
+                                        )
+                                except Exception as _psa_loop_err:
+                                    log.warning("[%s %s] PSA_FEED: %s", asset, tf, _psa_loop_err)
+                                    psa_decision = None
+                            ia_signal = agent_ia.get_signal(
+                                asset,
+                                signature_scores=sig_scores or {},
+                                psa_decision=psa_decision,
+                            )
                             _ai_decision_ms = round((time.perf_counter() - _t_dec_0) * 1000, 2)
                             log.info("[%s %s] FIX6 ai_decision_ms=%.2f", asset, tf, _ai_decision_ms)
                             if isinstance(ia_signal, dict):
@@ -1567,6 +2143,16 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                 "status": "SKIP_EDGE_GATE",
                                 "edge_metrics": edge_m,
                             })
+                            decision_trace_append(
+                                {
+                                    "asset": asset,
+                                    "timeframe": tf,
+                                    "phase": "edge_gate",
+                                    "class": classify_asset(asset),
+                                    "status": "SKIP_EDGE_GATE",
+                                    "edge_metrics": edge_m,
+                                }
+                            )
                             continue
                         # === REGIME_GATE: Hurst exponent (fractal_hurst — nebular phase-1) ===
                         if _FRACTAL_ENGINE is not None:
@@ -1599,11 +2185,31 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                 log.info("[%s %s] [REGIME_GATE] OK H=%.3f regime=%s",
                                          asset, tf, _fc["hurst"], _fc["regime"])
 
-                        # PSA-WIND FIX 5: Sinal de fluxo ROBUSTO (substituiu 3-candle M1)
-                        # Usa M5 (20 barras = 100min) + slope EMA + confirmação volume
-                        # Para seguir o FLUXO real, não reagir a ruído de 3 minutos
-                        rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M5, 0, 25)
-                        if rates is not None and len(rates) >= 10:
+                        # CEO ORDER 04/05/2026: Confirmação em M15 (cascata W1→D1→H4→H1→M15)
+                        # M15 = último filtro de confluência antes de executar em M3/M1.
+                        # Captura movimentos de 500-5000pts sem ser enganado por ruído M5.
+                        _kl = get_key_levels(asset)
+                        if _kl.get("gap_pts") and abs(_kl["gap_pts"]) > 5:
+                            log.info("[%s %s] [KEY_LEVELS] GAP=%+.1fpts dir=%s fill=%.5f | PrevDay C=%.5f H=%.5f L=%.5f | PrevWeek H=%.5f L=%.5f | POC=%.5f",
+                                     asset, tf, _kl["gap_pts"], _kl["gap_dir"],
+                                     _kl.get("gap_fill_level") or 0,
+                                     _kl.get("prev_day_close") or 0,
+                                     _kl.get("prev_day_high") or 0,
+                                     _kl.get("prev_day_low") or 0,
+                                     _kl.get("prev_week_high") or 0,
+                                     _kl.get("prev_week_low") or 0,
+                                     _kl.get("poc_price") or 0)
+                        else:
+                            log.info("[%s %s] [KEY_LEVELS] PrevDay C=%.5f H=%.5f L=%.5f | PrevWeek H=%.5f L=%.5f | POC=%.5f | NoGAP",
+                                     asset, tf,
+                                     _kl.get("prev_day_close") or 0,
+                                     _kl.get("prev_day_high") or 0,
+                                     _kl.get("prev_day_low") or 0,
+                                     _kl.get("prev_week_high") or 0,
+                                     _kl.get("prev_week_low") or 0,
+                                     _kl.get("poc_price") or 0)
+                        rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M15, 0, 50)
+                        if rates is not None and len(rates) >= 21:
                             import numpy as _np_flow
                             tick_now = mt5.symbol_info_tick(asset)
                             c_price = tick_now.ask if tick_now else rates[-1]['close']
@@ -1627,10 +2233,11 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                             _vol_ratio = _vol_recent / max(_vol_avg, 1.0)
                             # DECISÃO: EMA8 > EMA21 + slope positivo + volume ok = BUY
                             _ema_cross = _ema8[-1] > _ema21[-1]
-                            _slope_ok = abs(_slope) > 1.0  # slope mínimo de 1 ponto/1000
-                            if _ema_cross and _slope > 1.0:
+                            _slope_min = float(os.getenv("OMEGA_FLOW_SLOPE_MIN", "0.5"))  # 0.5 = liberado, 1.0 = rigoroso
+                            _slope_ok = abs(_slope) > _slope_min
+                            if _ema_cross and _slope > _slope_min:
                                 signal_dir = "BUY"
-                            elif not _ema_cross and _slope < -1.0:
+                            elif not _ema_cross and _slope < -_slope_min:
                                 signal_dir = "SELL"
                             else:
                                 log.info("[%s %s] [FLOW_SIGNAL] NO_TREND — ema_cross=%s slope=%.2f vol_ratio=%.2f — SKIP",
@@ -1644,13 +2251,13 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                      signal_dir, signal_source,
                                      edge_m.get("adx", 0))
                         else:
-                            log.warning("[%s %s] Falha ao ler candles M5 para fluxo — SKIP", asset, tf)
+                            log.warning("[%s %s] Falha ao ler candles M15 para confirmação — SKIP", asset, tf)
                             results.append({"asset": asset, "timeframe": tf, "status": "SKIP_NO_RATES"})
                             continue
 
-                    # === MULTI-TF BIAS CHECK (CQO 28/04/2026: D1+H4+H1+M15 confluência) ===
-                    # Bloquear sinal oposto à direção macro quando alinhamento >= MTF_ALIGN_THR.
-                    # Permite entrar apenas com o vento — maior probabilidade de movimento sustentado.
+                    # === MULTI-TF BIAS CHECK (CEO 04/05/2026: W1+D1+H4+H1+M15 cascata ponderada) ===
+                    # W1 tem peso 3x — se a semana é SELL, nenhum BUY passa.
+                    # Bloquear sinal oposto à direção macro ponderada quando alinhamento >= MTF_ALIGN_THR.
                     if signal_dir:
                         try:
                             _tf_bias = get_multi_tf_bias(asset)
@@ -1678,7 +2285,8 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         pos_list = mt5.positions_get(symbol=asset)
                         if pos_list:
                             current_positions = [p._asdict() for p in pos_list]
-                        _omega_all = mt5.positions_get(magic=OMEGA_MAGIC) or []
+                        raw_all = mt5.positions_get() or []
+                        _omega_all = filter_omega_tracked_positions(list(raw_all))
                         all_open_positions = [p._asdict() for p in _omega_all]
                         # Ledger: detectar fechamentos por SL/TP em tempo real
                         _live_tickets = {p.ticket for p in _omega_all}
@@ -1711,6 +2319,58 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                          _entry.get("r_multiple", 0), _entry.get("result", "?"),
                                          _entry.get("duration_min", 0),
                                          _realized_pnl, _realized_n)
+                                # Fecho de loop: artefato por trade (todas as fontes) + feedback IA
+                                try:
+                                    trade_feedback_append(
+                                        {
+                                            "event": "position_closed",
+                                            "position_ticket": int(_tk),
+                                            "symbol": _entry.get("symbol"),
+                                            "timeframe": tf,
+                                            "signal_source": _entry.get("signal_source"),
+                                            "agent_id": _entry.get("agent_id"),
+                                            "pnl": round(float(_entry_pnl), 6),
+                                            "r_multiple": _entry.get("r_multiple"),
+                                            "result": _entry.get("result"),
+                                            "duration_min": _entry.get("duration_min"),
+                                            "regime": _entry.get("regime"),
+                                            "confidence": _entry.get("confidence"),
+                                            "entry_deal": _entry.get("entry_deal"),
+                                            "sl_pts": _entry.get("sl_pts"),
+                                            "tp_pts": _entry.get("tp_pts"),
+                                            "slippage_pts": _entry.get("slippage_pts"),
+                                            "detected_at_utc": datetime.now(timezone.utc).isoformat(),
+                                        }
+                                    )
+                                    _trade_feedback_n += 1
+                                except Exception as _fb_e:
+                                    log.debug("[LEDGER] trade_feedback_append: %s", _fb_e)
+                                if (
+                                    agent_ia is not None
+                                    and _entry.get("signal_source") == "AGENT_IA"
+                                    and _entry.get("agent_id")
+                                ):
+                                    try:
+                                        agent_ia.record_trade_close(
+                                            str(_entry["symbol"]),
+                                            str(_entry["agent_id"]),
+                                            float(_entry_pnl),
+                                            ticket=int(_tk),
+                                        )
+                                        _agent_ia_close_ok += 1
+                                        log.info(
+                                            "[AGENT_IA] record_trade_close OK #%s pnl=%.4f agent=%s",
+                                            _tk,
+                                            _entry_pnl,
+                                            _entry.get("agent_id"),
+                                        )
+                                    except Exception as _ia_ce:
+                                        _agent_ia_close_err += 1
+                                        log.warning(
+                                            "[AGENT_IA] record_trade_close falhou #%s: %s",
+                                            _tk,
+                                            _ia_ce,
+                                        )
 
                     # Flow scorer já foi chamado antes do sinal generation (linha ~1489)
                     # Aqui usamos o valor em cache se houver sinal
@@ -1735,23 +2395,22 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                  asset, tf, asset)
                         results.append({"asset": asset, "timeframe": tf,
                                         "status": "SKIP_DEDUP_CYCLE"})
-                        continue
-
                     # === PSA-WIND Q2: 1 POSIÇÃO POR ATIVO (anti-acumulação de centavos) ===
                     # Se já existe posição OMEGA aberta neste ativo → não abrir outra
                     # Escalonamento só via pyramiding (exige profit > 2×ATR, lot crescente)
-                    _existing_omega_same = [p for p in current_positions
-                                            if p.get("magic") == OMEGA_MAGIC]
+                    _MAX_POS_PER_ASSET = int(os.getenv("OMEGA_MAX_POS_PER_ASSET", "2"))  # 2=liberado, 1=conservador
+                    _existing_omega_same = [p for p in current_positions if p.get("symbol") == asset]
                     if _existing_omega_same:
                         _n_exist = len(_existing_omega_same)
-                        _pnl_exist = sum(p.get("profit", 0) for p in _existing_omega_same)
-                        log.info("[%s %s] [1POS_RULE] SKIP — já tem %d posição(ões) OMEGA abertas (pnl=%.2f) — não acumular",
-                                 asset, tf, _n_exist, _pnl_exist)
-                        results.append({"asset": asset, "timeframe": tf,
-                                        "status": "SKIP_ALREADY_POSITIONED",
-                                        "existing_count": _n_exist,
-                                        "existing_pnl": round(_pnl_exist, 2)})
-                        continue
+                        if _n_exist >= _MAX_POS_PER_ASSET:
+                            _pnl_exist = sum(p.get("profit", 0) for p in _existing_omega_same)
+                            log.info("[%s %s] [POS_RULE] SKIP — já tem %d/%d posições OMEGA (pnl=%.2f)",
+                                     asset, tf, _n_exist, _MAX_POS_PER_ASSET, _pnl_exist)
+                            results.append({"asset": asset, "timeframe": tf,
+                                            "status": "SKIP_ALREADY_POSITIONED",
+                                            "existing_count": _n_exist,
+                                            "existing_pnl": round(_pnl_exist, 2)})
+                            continue
 
                     # === PSA-WIND FIX 1: ANTI-HEDGE — bloquear BUY+SELL no mesmo ativo ===
                     _has_opposite = False
@@ -1867,6 +2526,8 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                            if k in _lot_v2}
                         # Per-asset lot cap (crypto menor, forex maior)
                         eff_lot = min(eff_lot, _prof["lot_cap"])
+                        # Limite duro do contrato MT5 (evita pedir 0.25 quando max=0.10)
+                        eff_lot = min(eff_lot, float(lot_info.get("sym_vol_max", 999.0) or 999.0))
                         # IA override: respeita sugestão IA se for menor (conservador)
                         if ia_lot_override is not None:
                             try:
@@ -1876,8 +2537,9 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                 pass
                         # Concentração por ativo (Fix 5): >CONCENTRATION_MAX → reduz 50%
                         try:
-                            same_asset = sum(1 for p in (mt5.positions_get(magic=OMEGA_MAGIC) or []) if p.symbol == asset)
-                            total_omega = len(mt5.positions_get(magic=OMEGA_MAGIC) or [])
+                            _tracked = filter_omega_tracked_positions(list(mt5.positions_get() or []))
+                            same_asset = sum(1 for p in _tracked if p.symbol == asset)
+                            total_omega = len(_tracked)
                             if total_omega > 0 and (same_asset / total_omega) > CONCENTRATION_MAX:
                                 eff_lot = max(lot_info.get("sym_vol_min", 0.01), round(eff_lot * 0.5, 2))
                                 log.info("[%s %s] FASE4 concentration>40%% → lot reduzido a %.2f", asset, tf, eff_lot)
@@ -1892,9 +2554,86 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                             eff_tp = max(float(ia_tp_pts), _tp_rr_floor)
                         else:
                             eff_tp = max(_pre_tp, _tp_rr_floor)
-                        # Risco efetivo em USD para log
-                        _pip_val = lot_info.get("pip_value_lot", 0.01)
+                        # ── Lote: piso por regime + opcional escala ao min TP USD + teto de risco/trade ──
+                        _pip_val = float(lot_info.get("pip_value_lot", 0.01) or 0.01)
+                        _reg_lot = str(_prof.get("regime", "") or "")
+                        _smax = float(lot_info.get("sym_vol_max", 999.0) or 999.0)
+                        _smin = float(lot_info.get("sym_vol_min", 0.01) or 0.01)
+                        _lcap = float(_prof.get("lot_cap", 0.1))
+                        _floor = min_lot_floor_for_regime(_reg_lot)
+                        if _floor > 0:
+                            eff_lot = max(float(eff_lot or 0), _floor)
+                        eff_lot = min(float(eff_lot or 0), _lcap, _smax)
+                        eff_lot = max(_smin, eff_lot)
+
+                        _thr_tp_usd = min_expected_tp_usd_threshold(asset)
+                        _scale_lot = os.getenv("OMEGA_SCALE_LOT_TO_MIN_TP_USD", "0").strip().lower() in (
+                            "1", "true", "yes", "on",
+                        )
+                        if _scale_lot and _thr_tp_usd > 0 and eff_tp * _pip_val > 1e-12:
+                            _need_lot = _thr_tp_usd / (float(eff_tp) * _pip_val)
+                            eff_lot = max(float(eff_lot), _need_lot)
+                            eff_lot = min(eff_lot, _lcap, _smax)
+                            eff_lot = max(_smin, eff_lot)
+
+                        _max_risk_usd = float(equity) * float(RISK_PER_TRADE_PCT)
+                        _usd_per_lot_sl = float(eff_sl) * _pip_val
+                        if _usd_per_lot_sl * eff_lot > _max_risk_usd > 0:
+                            _lot_risk_cap = _max_risk_usd / max(_usd_per_lot_sl, 1e-12)
+                            eff_lot = min(eff_lot, _lot_risk_cap)
+                            eff_lot = max(_smin, eff_lot)
+
+                        if _floor > 0 and float(eff_lot) + 1e-9 < _floor:
+                            log.info(
+                                "[%s %s] [LOT_GATE] SKIP — piso_lote=%.4f incompatível com risco máx "
+                                "(%.2f%% equity ≈ $%.2f) ao SL=%.0fpts (sym_max=%.4f)",
+                                asset,
+                                tf,
+                                _floor,
+                                RISK_PER_TRADE_PCT * 100,
+                                _max_risk_usd,
+                                eff_sl,
+                                _smax,
+                            )
+                            results.append(
+                                {
+                                    "asset": asset,
+                                    "timeframe": tf,
+                                    "status": "SKIP_LOT_FLOOR_RISK",
+                                    "min_lot_floor": _floor,
+                                    "max_risk_usd": round(_max_risk_usd, 2),
+                                }
+                            )
+                            continue
+
+                        # Risco efetivo em USD para log / agregados
                         _risk_usd_eff = eff_sl * _pip_val * (eff_lot or 0.01)
+                        if _thr_tp_usd > 0:
+                            _tp_usd_est = eff_tp * _pip_val * (eff_lot or 0.01)
+                            if _tp_usd_est < _thr_tp_usd:
+                                log.info(
+                                    "[%s %s] [ECON_GATE] SKIP — TP_estimado=$%.2f < min=$%.2f "
+                                    "(TP=%.0fpts lot=%.4f pip_val/lot=%.6f). "
+                                    "Aumente OMEGA_LOT_MAX / lot_cap do ativo, ative "
+                                    "OMEGA_SCALE_LOT_TO_MIN_TP_USD=1, ou baixe OMEGA_MIN_TP_USD_CRYPTO_ALT.",
+                                    asset,
+                                    tf,
+                                    _tp_usd_est,
+                                    _thr_tp_usd,
+                                    eff_tp,
+                                    eff_lot or 0,
+                                    _pip_val,
+                                )
+                                results.append(
+                                    {
+                                        "asset": asset,
+                                        "timeframe": tf,
+                                        "status": "SKIP_MIN_TP_USD",
+                                        "tp_usd_est": round(_tp_usd_est, 4),
+                                        "min_tp_usd": _thr_tp_usd,
+                                    }
+                                )
+                                continue
                         log.info("[%s %s] [%s] lot=%.2f execTF=%s atr=%.1f SL=%.0fpts($%.2f) TP=%.0fpts RR=1:%.2f conf=%.2f",
                                  asset, tf, _prof["regime"].upper(), eff_lot,
                                  _exec_atr["tf"], _exec_atr.get("atr_pts", 0),
@@ -1979,7 +2718,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                 for _np in _new_pos:
                                     if _registered_this_deal:
                                         break  # 1 ticket por deal — evitar duplicação
-                                    if _np.magic == OMEGA_MAGIC and _np.ticket not in _pos_ledger:
+                                    if is_omega_tracked_position(_np) and _np.ticket not in _pos_ledger:
                                         # Custo de entrada: spread × contrato × lote (estimativa fee round-trip)
                                         try:
                                             _sym_i = mt5.symbol_info(asset)
@@ -1999,6 +2738,11 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                             "entry_atr_tf": _exec_atr.get("tf", "M3"),
                                             "entry_deal": deal_id,
                                             "signal_source": signal_source,
+                                            "agent_id": (
+                                                ia_agent_id
+                                                if signal_source == "AGENT_IA"
+                                                else None
+                                            ),
                                             "confidence": round(_conf_score, 4),
                                             "regime": _prof["regime"],
                                             "risk_usd": round(_risk_usd_eff, 4),
@@ -2013,9 +2757,25 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                                  exec_result.get("slippage_pts", 0))
                                         log.info("[LEDGER] Posicao aberta: %s #%d entry=%.5f",
                                                  asset, _np.ticket, _np.price_open)
+                                        if agent_ia is not None and signal_source == "AGENT_IA":
+                                            try:
+                                                agent_ia.record_trade_open(
+                                                    asset,
+                                                    int(_np.ticket),
+                                                    float(exec_result.get("fill_price", 0) or 0),
+                                                    float(eff_lot),
+                                                    ia_agent_id,
+                                                )
+                                                _agent_ia_open_ok += 1
+                                            except Exception as _re:
+                                                log.warning("[%s %s] record_trade_open falhou: %s", asset, tf, _re)
                                         # === PYRAMIDING: verificar se deve adicionar camadas após posição aberta ===
                                         try:
-                                            _open_pos_list = list(mt5.positions_get(symbol=asset, magic=OMEGA_MAGIC)) if mt5.positions_get else []
+                                            _syms = mt5.positions_get(symbol=asset) if mt5.positions_get else []
+                                            _open_pos_list = [
+                                                p for p in (_syms or [])
+                                                if is_omega_tracked_position(p)
+                                            ]
                                             _prof_dict = {"profit": float(_np.profit) if hasattr(_np, 'profit') else 0.0}
                                             _atr_info = get_execution_tf_atr(asset, 0.70)
                                             _exec_atr_dict = {"atr_pts": _atr_info.get("atr_pts", 0)}
@@ -2067,18 +2827,13 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                             log.warning("[TRAILING] Erro ao inicializar: %s", _ts_err)
                             except Exception as _le:
                                 log.warning("[LEDGER] Erro ao registrar posicao: %s", _le)
-                            if agent_ia is not None and signal_source == "AGENT_IA":
-                                try:
-                                    agent_ia.record_trade_open(
-                                        asset, int(deal_id),
-                                        float(exec_result.get("fill_price", 0) or 0),
-                                        float(eff_lot), ia_agent_id)
-                                except Exception as _re:
-                                    log.warning("[%s %s] record_trade_open falhou: %s", asset, tf, _re)
                         # Log de auditoria do source
                         log.info("[%s %s] FASE4 EXEC source=%s success=%s deal=%s",
                                  asset, tf, signal_source, success, deal_id)
-                        open_pos = min(open_pos + (1 if success else 0), MAX_POSITIONS)
+                        if MAX_POSITIONS > 0:
+                            open_pos = min(open_pos + (1 if success else 0), MAX_POSITIONS)
+                        else:
+                            open_pos = open_pos + (1 if success else 0)
                         ks.update(success, 0.0)
                 elif not guard["skip"] and mode == "shadow":
                     log.info("[%s %s] MONITOR | hr134=%.2f%% | margin=%.1fpts | NO ORDER",
@@ -2120,11 +2875,31 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                     "slippage_pts": exec_result.get("slippage_pts") if exec_result else None,
                     "checksum": report["checksum"][:24],
                 })
+                decision_trace_append(
+                    {
+                        "asset": asset,
+                        "timeframe": tf,
+                        "phase": "cycle_end",
+                        "class": classify_asset(asset),
+                        "mode": mode,
+                        "signal_action": action,
+                        "hit_rate_134": hr_real,
+                        "guard_skip": bool(guard.get("skip")),
+                        "skip_reasons": guard.get("skip_reasons") or [],
+                        "margin_pts": guard.get("margin_used"),
+                        "harmonic_latency_s": harmonic.get("_latency_s"),
+                        "signal_source": signal_source,
+                        "flow_confluence": _flow_details if _flow_details else None,
+                        "retcode": (exec_result or {}).get("retcode"),
+                        "report_path": str(out_f),
+                    }
+                )
     finally:
         if mt5_connected:
             # Ledger: snapshot P&L final de todas as posicoes OMEGA antes de desconectar
             try:
-                _all_open = mt5.positions_get(magic=OMEGA_MAGIC) or []
+                _rack_fin = mt5.positions_get() or []
+                _all_open = filter_omega_tracked_positions(list(_rack_fin))
                 for _p in _all_open:
                     if _p.ticket in _pos_ledger:
                         _pos_ledger[_p.ticket]["last_profit"] = _p.profit
@@ -2225,6 +3000,14 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
         "log_file": str(log_file),
         "positions_ledger": _ledger_sum,
         "lot_calc_v2": _lot_calc.diagnostics(),
+        "trade_feedback_loop": {
+            "trade_feedback_jsonl": str(AUDIT_PAPER / "trade_feedback.jsonl"),
+            "closed_trades_logged": _trade_feedback_n,
+            "agent_ia_record_trade_open_ok": _agent_ia_open_ok,
+            "agent_ia_record_trade_close_ok": _agent_ia_close_ok,
+            "agent_ia_record_trade_close_err": _agent_ia_close_err,
+            "note": "Comparar closed_trades_logged com realized_n; IA: open_ok vs close_ok (posições ainda abertas no fim do run explicam diferença).",
+        },
     }
     sb = json.dumps(summary, indent=2).encode("utf-8")
     summary["checksum"] = sha3(sb)
