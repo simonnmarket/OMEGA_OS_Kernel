@@ -1779,6 +1779,8 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                     "direction": "BUY" if _rp.type == 0 else "SELL",
                     "lot": _rp.volume,
                     "entry_price": _rp.price_open,
+                    "sl": float(_rp.sl) if _rp.sl else None,
+                    "tp": float(_rp.tp) if _rp.tp else None,
                     "entry_time": datetime.fromtimestamp(_rp.time, tz=timezone.utc).isoformat(),
                     "last_profit": _rp.profit,
                     "status": "open",
@@ -2401,10 +2403,11 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                  asset, tf, asset)
                         results.append({"asset": asset, "timeframe": tf,
                                         "status": "SKIP_DEDUP_CYCLE"})
+                        continue  # FIX: sem este continue, caía no Q2 e abria posição duplicada
                     # === PSA-WIND Q2: 1 POSIÇÃO POR ATIVO (anti-acumulação de centavos) ===
                     # Se já existe posição OMEGA aberta neste ativo → não abrir outra
                     # Escalonamento só via pyramiding (exige profit > 2×ATR, lot crescente)
-                    _MAX_POS_PER_ASSET = int(os.getenv("OMEGA_MAX_POS_PER_ASSET", "2"))  # 2=liberado, 1=conservador
+                    _MAX_POS_PER_ASSET = int(os.getenv("OMEGA_MAX_POS_PER_ASSET", "1"))  # 1=conservador, 2=permite pyramiding
                     _existing_omega_same = [p for p in current_positions if p.get("symbol") == asset]
                     if _existing_omega_same:
                         _n_exist = len(_existing_omega_same)
@@ -2958,6 +2961,8 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         _pos_ledger[_p.ticket] = {
                             "symbol": _p.symbol, "direction": "BUY" if _p.type == 0 else "SELL",
                             "lot": _p.volume, "entry_price": _p.price_open,
+                            "sl": float(_p.sl) if _p.sl else None,
+                            "tp": float(_p.tp) if _p.tp else None,
                             "entry_time": datetime.fromtimestamp(_p.time, tz=timezone.utc).isoformat(),
                             "last_profit": _p.profit, "status": "open",
                         }
