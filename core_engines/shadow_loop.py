@@ -39,6 +39,71 @@ from core_engines.integration_gate import OmegaIntegrationGate
 from modules.risk.scale_manager import OmegaScaleManager
 from modules.validation.mfa_engine import OmegaMFAEngine
 from core_engines.lot_calculator_v2 import LotCalculatorV2, LotCfgV2
+from core_engines.kill_switch_persistent import PersistentKillSwitch
+
+# ── ATOMIC ORDER LOCK — previne race condition entre ciclos paralelos ──────────
+try:
+    from modules.omega_order_lock import acquire as _lock_acquire, release as _lock_release
+    _ORDER_LOCK_AVAILABLE = True
+except Exception:
+    _ORDER_LOCK_AVAILABLE = False
+    def _lock_acquire(timeout: float = 3.0) -> bool:   # noqa
+        return True
+    def _lock_release() -> None:   # noqa
+        pass
+
+# ── MICRO ENTRY FILTER — M1 MANDATORY EXECUTION GATE (CEO 2026-05-12) ─────────
+try:
+    from modules.micro_entry_filter import MicroEntryFilter as _MicroEntryFilterCls
+    _MICRO_FILTER       = _MicroEntryFilterCls()
+    _MICRO_FILTER_AVAIL = True
+except Exception as _mef_import_err:
+    _MICRO_FILTER       = None
+    _MICRO_FILTER_AVAIL = False
+
+# ── ZONE NAVIGATOR — REGIME FILTER NICER v3.1 (CEO 2026-05-14) ──────────────────
+# Primeira camada macro: CORE_STRONG/CORE_NORMAL = operar | BUFFER = bloquear
+try:
+    from modules.omega_zone_navigator import ZoneNavigatorV3 as _ZoneNavCls
+    from modules.omega_zone_navigator import build_zone_df_from_mt5 as _zone_df_from_mt5
+    _ZONE_NAV       = _ZoneNavCls()
+    _ZONE_NAV_AVAIL = True
+except Exception as _znav_import_err:
+    _ZONE_NAV       = None
+    _ZONE_NAV_AVAIL = False
+
+# ── ZAK MIR GUARDRAIL — MACRO GEOMETRY FILTER (CEO 2026-05-13) ─────────────────
+# Filtro de pré-gate: RSI50 + SMA50 + Trap Detection (antes do M1-GATE)
+try:
+    from modules.zak_guardrail import ZakMirGuardrailV1 as _ZakGuardrailCls
+    _ZAK_GUARDRAIL       = _ZakGuardrailCls()
+    _ZAK_GUARDRAIL_AVAIL = True
+except Exception as _zak_import_err:
+    _ZAK_GUARDRAIL       = None
+    _ZAK_GUARDRAIL_AVAIL = False
+
+# ── TESSERACT SNIPER — XAUUSD SPECIALIST ENGINE (CEO 2026-05-14) ─────────────
+# Motor de tiro limpo: 3D confluência (Macro + Keltner/VWAP + Volume Surge)
+# Actua APENAS em XAUUSD. Sem confluência = sem entrada.
+try:
+    from modules.tesseract_sniper import TesseractSniperV1 as _TesseractCls
+    from modules.tesseract_sniper import build_sniper_df as _build_sniper_df
+    _TESSERACT       = _TesseractCls()
+    _TESSERACT_AVAIL = True
+except Exception as _tess_import_err:
+    _TESSERACT       = None
+    _TESSERACT_AVAIL = False
+
+# ── OMEGA MARKET PROFILE ENGINE — STRUCTURAL INTELLIGENCE (CEO 2026-05-14) ──────
+# Motor = Black Market v4.0 (trilogia: OMEGA_BLACK_MARKET_PROFILE_FINAL_V4.py); deploy = modules.omega_market_profile_engine (CANON_SYNC).
+# Camada 5: POC + Shark Absorption + rPOC + Gann — se o trade passar MTF (ex.: W1=2), o MP-GATE filtra Shark / boost TP.
+try:
+    from modules.omega_market_profile_engine import ComponentEngine as _MPEngineCls
+    _MP_AVAIL = True
+except Exception as _mp_import_err:
+    _MPEngineCls = None  # type: ignore
+    _MP_AVAIL    = False
+_MP_ENGINES: dict = {}  # {asset: ComponentEngine} — lazy init por activo
 
 # ── RISK_GATE: métricas institucionais de risco (nebular integration phase-1) ──
 try:
@@ -94,13 +159,14 @@ try:
 except Exception:
     _PARTIAL_CLOSE_AVAILABLE = False
     _ProgressivePartialCloseCompleteCls = None
-# Níveis recalibrados: preservam 50% da posição até 5×ATR (vs anterior 5% residual)
+# CEO 2026-05-14: TP1 reduzido de 1.5× para 1.0× ATR para capturar parciais antes do polling gap
+# XAUUSD atingiu 1.67× ATR mas sistema só verificou a 1.03× ATR (gap de 30s) — TP1 nunca disparou
 _PARTIAL_CLOSE_LEVELS_PSA = [
-    {"atr": 1.5, "fraction": 0.20, "description": "Leve-1.5ATR", "executed": False},
-    {"atr": 3.0, "fraction": 0.25, "description": "Medio-3ATR",  "executed": False},
-    {"atr": 5.0, "fraction": 0.25, "description": "Forte-5ATR",  "executed": False},
-    {"atr": 8.0, "fraction": 0.20, "description": "Extreme-8ATR","executed": False},
-    # 10% residual sobrevive até TP — segue o fluxo completo
+    {"atr": 1.0, "fraction": 0.25, "description": "TP1-1ATR",    "executed": False},  # era 1.5×
+    {"atr": 2.5, "fraction": 0.25, "description": "TP2-2.5ATR",  "executed": False},  # era 3.0×
+    {"atr": 4.0, "fraction": 0.25, "description": "TP3-4ATR",    "executed": False},  # era 5.0×
+    {"atr": 6.0, "fraction": 0.15, "description": "TP4-6ATR",    "executed": False},  # era 8.0×
+    # 10% residual sobrevive até TP final
 ]
 
 # ── TRAILING STOP: geométrico por posição (PSA-WIND 30/04/2026) ──────────────
@@ -151,7 +217,7 @@ try:
 except Exception:
     _MOMENTUM_ENGINE = None
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from math import floor, sqrt
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -239,7 +305,11 @@ def compute_flow_confluence(bar: Dict, symbol: str, direction: int, df=None) -> 
                                                bar.get('low', 0), bar.get('volume', 0))
             if hasattr(state, 'trap_score'):
                 _trap = float(state.trap_score) if isinstance(state.trap_score, (int, float)) else 0.5
-                scores['vol_physics'] = _trap * 100
+                # vol_phy semântica neutra (Auditoria IA 2026-05-09)
+                # trap_score=0.0 → vol_phy=50 → neutro (sem pullback = sem opinião)
+                # trap_score=0.5 → vol_phy=75 → sinal positivo moderado
+                # trap_score=1.0 → vol_phy=100 → sinal máximo
+                scores['vol_physics'] = 50.0 if _trap == 0.0 else min(50.0 + _trap * 50.0, 100.0)
             elif hasattr(state, 'urgency'):
                 _urg = float(state.urgency.value) if isinstance(state.urgency.value, (int, float)) else 1.5
                 scores['vol_physics'] = _urg * 33
@@ -450,13 +520,16 @@ def _log_motor_v3_subprocess_failure(asset: str, tf: str, r: "subprocess.Complet
 
 # ─── Configuração de Risco ───────────────────────────────────────────────────
 DEMO_EQUITY_USD    = 10_000.0
-RISK_PER_TRADE_PCT = float(os.getenv("OMEGA_RISK_PER_TRADE", "0.0025"))  # COO Fase1: 0.001 (0.1%)
+RISK_PER_TRADE_PCT = float(os.getenv("OMEGA_RISK_PER_TRADE", "0.0100"))  # CEO 2026-05-14: 0.0025→0.0100 (0.25%→1.0% DEMO AGRESSIVO)
 MIN_LOT_OVERRIDE   = float(os.getenv("OMEGA_MIN_LOT", "0.0"))            # CEO: lote mínimo (0=auto)
 # 0 = sem limite (paper/testes). N>=1 = no máximo N posições OMEGA rastreadas (comment/mark).
 MAX_POSITIONS      = int(os.getenv("OMEGA_MAX_POSITIONS", "0"))
-DD_DAILY_MAX       = float(os.getenv("OMEGA_DD_DAILY_MAX", "0.01"))       # CONSELHO 29/04/2026: default=1% (unanimidade)
+MAX_POS_PER_ASSET  = int(os.getenv("OMEGA_MAX_POS_PER_ASSET", "0"))  # 0=ilimitado; 1=bloqueia duplicação por ativo
+DD_DAILY_MAX       = float(os.getenv("OMEGA_DD_DAILY_MAX", "0.10"))       # CEO 2026-05-14: 0.01→0.10 (1%→10% DEMO AGRESSIVO)
 CONCENTRATION_MAX  = float(os.getenv("OMEGA_CONCENTRATION_MAX", "0.40"))   # CQO/COO: max por ativo
 MAX_CONSEC_FAIL    = 3
+MAX_TP_SL_RATIO    = float(os.getenv("OMEGA_MAX_TP_SL_RATIO", "3.0"))  # C3 FIX: cap R:R máximo (era 59:1) | CEO 2026-05-14: 8.0→3.0 (US30 TP irrealista corrigido)
+MIN_SL_ATR_MULT    = float(os.getenv("OMEGA_MIN_SL_ATR_MULT",  "1.0"))  # C3 FIX: SL mínimo em ATR
 
 # ─── Perfis por Ativo (CQO 28/04/2026) ──────────────────────────────────────
 # cost_pts    : spread+slippage+comissão mínimo para entrar (cost barrier)
@@ -467,27 +540,27 @@ MAX_CONSEC_FAIL    = 3
 # regime      : forex | commodity | index | crypto | crypto_alt
 ASSET_PROFILES: dict = {
     # ── FOREX: spreads mínimos, session-bound, mean-reverting ──────────────
-    "EURUSD": {"cost_pts":   3, "sl_atr_mult": 1.2, "tp_atr_mult": 4.0, "min_conf": 0.55, "lot_cap": 0.25, "regime": "forex"},
-    "GBPUSD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.55, "lot_cap": 0.25, "regime": "forex"},
+    "EURUSD": {"cost_pts":   3, "sl_atr_mult": 1.2, "tp_atr_mult": 2.5, "min_conf": 0.55, "lot_cap": 0.25, "sl_pts_min": 100, "regime": "forex"},
+    "GBPUSD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 2.5, "min_conf": 0.55, "lot_cap": 0.25, "sl_pts_min": 150, "regime": "forex"},
     "AUDUSD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.55, "lot_cap": 0.20, "regime": "forex"},
     "USDCAD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.55, "lot_cap": 0.20, "regime": "forex"},
     "USDCHF": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.55, "lot_cap": 0.20, "regime": "forex"},
     "NZDUSD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.55, "lot_cap": 0.20, "regime": "forex"},
     # ── COMMODITIES: spreads médios, safe-haven/fluxos ──────────────────────
-    "XAUUSD": {"cost_pts":  30, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.15, "regime": "commodity"},
+    "XAUUSD": {"cost_pts":  30, "sl_atr_mult": 0.7, "tp_atr_mult": 3.0, "min_conf": 0.58, "lot_cap": 0.30, "sl_pts_min": 150, "regime": "commodity"},  # CEO 2026-05-14: sl_atr_mult 1.2→0.7 (SL mais justo)
     "XAGUSD": {"cost_pts":  20, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.15, "regime": "commodity"},
     "UKOIL+": {"cost_pts":  30, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.10, "regime": "commodity"},
     "USOIL+": {"cost_pts":  30, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.10, "regime": "commodity"},
     # ── INDICES: gap risk, fluxos institucionais ─────────────────────────────
-    "US500":  {"cost_pts":  10, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.20, "regime": "index"},
-    "NAS100": {"cost_pts":  15, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.60, "lot_cap": 0.15, "regime": "index"},
-    "US100":  {"cost_pts":  15, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.60, "lot_cap": 0.15, "regime": "index"},  # Hantec: US Tech 100 (alias NAS100)
-    "GER40":  {"cost_pts":  10, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.20, "regime": "index"},
-    "UK100":  {"cost_pts":  12, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.15, "regime": "index"},
-    "US30":   {"cost_pts":  10, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.15, "regime": "index"},
+    "US500":  {"cost_pts":  10, "sl_atr_mult": 1.5, "tp_atr_mult": 3.0, "min_conf": 0.58, "lot_cap": 0.50, "regime": "index"},   # CEO 2026-05-14: tp_mult 5→3, lot_cap 0.20→0.50
+    "NAS100": {"cost_pts":  15, "sl_atr_mult": 1.5, "tp_atr_mult": 3.0, "min_conf": 0.60, "lot_cap": 0.50, "regime": "index"},   # CEO 2026-05-14: tp_mult 5→3, lot_cap 0.15→0.50
+    "US100":  {"cost_pts":  15, "sl_atr_mult": 1.5, "tp_atr_mult": 3.0, "min_conf": 0.60, "lot_cap": 0.50, "regime": "index"},   # CEO 2026-05-14: tp_mult 5→3, lot_cap 0.15→0.50; Hantec alias NAS100
+    "GER40":  {"cost_pts":  10, "sl_atr_mult": 1.5, "tp_atr_mult": 3.0, "min_conf": 0.58, "lot_cap": 0.50, "regime": "index"},   # CEO 2026-05-14: tp_mult 5→3, lot_cap 0.20→0.50
+    "UK100":  {"cost_pts":  12, "sl_atr_mult": 1.5, "tp_atr_mult": 3.0, "min_conf": 0.58, "lot_cap": 0.50, "regime": "index"},   # CEO 2026-05-14: tp_mult 5→3, lot_cap 0.15→0.50
+    "US30":   {"cost_pts":  10, "sl_atr_mult": 1.5, "tp_atr_mult": 3.0, "min_conf": 0.58, "lot_cap": 0.50, "regime": "index"},   # CEO 2026-05-14: tp_mult 5→3, lot_cap 0.15→0.50
     # ── CRYPTO MAJOR: momentum, spread wide, 24/7 ───────────────────────────
-    "BTCUSD": {"cost_pts": 100, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.10, "regime": "crypto"},
-    "ETHUSD": {"cost_pts":  50, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.10, "regime": "crypto"},
+    "BTCUSD": {"cost_pts": 100, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.10, "sl_pts_min": 5000, "regime": "crypto"},  # BUG-3+C3 FIX 2026-05-11
+    "ETHUSD": {"cost_pts":  50, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.10, "sl_pts_min": 3000, "regime": "crypto"},  # BUG-3+C3 FIX 2026-05-11
     "SOLUSD": {"cost_pts":  30, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.10, "regime": "crypto"},
     # ── CRYPTO ALT: alta volatilidade, spreads extremos ─────────────────────
     "DOGUSD": {"cost_pts": 200, "sl_atr_mult": 2.5, "tp_atr_mult": 8.0, "min_conf": 0.65, "lot_cap": 0.05, "regime": "crypto_alt"},
@@ -496,7 +569,7 @@ ASSET_PROFILES: dict = {
     "LTCUSD":   {"cost_pts":  60, "sl_atr_mult": 2.2, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.15, "regime": "crypto_alt"},
     # XRP: preço baixo → poucos USD por TP “em pontos”; TP mais longo em ATR (tp/sl) ou maior lote
     # (dentro do volume_max) compensa migalhas. cost_pts um pouco maior reduz entradas “ruidosas”.
-    "XRPUSD":   {"cost_pts":  55, "sl_atr_mult": 2.0, "tp_atr_mult": 9.5, "min_conf": 0.60, "lot_cap": 0.20, "regime": "crypto_alt"},
+    "XRPUSD":   {"cost_pts":  35, "sl_atr_mult": 2.0, "tp_atr_mult": 7.0, "min_conf": 0.65, "lot_cap": 0.10, "sl_pts_min": 200, "regime": "crypto_alt"},  # BUG-3+C3 FIX 2026-05-11 | CQO CAL 2026-05-12
     "ADAUSD":   {"cost_pts":  45, "sl_atr_mult": 2.2, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.15, "regime": "crypto_alt"},
     "DOTUSD":   {"cost_pts":  45, "sl_atr_mult": 2.2, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.12, "regime": "crypto_alt"},
     "AVAXUSD":  {"cost_pts":  55, "sl_atr_mult": 2.2, "tp_atr_mult": 7.0, "min_conf": 0.60, "lot_cap": 0.12, "regime": "crypto_alt"},
@@ -520,13 +593,32 @@ ASSET_PROFILES: dict = {
     # 500+ pips em movimento sustentado são comuns em eventos macro (BOJ/Fed).
     "USDJPY": {"cost_pts":  3, "sl_atr_mult": 1.2, "tp_atr_mult": 4.2, "min_conf": 0.55, "lot_cap": 0.25, "regime": "jpy_major"},
     # ── JPY CROSS: amplificam o movimento do USDJPY ────────────────────────────
-    "EURJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.58, "lot_cap": 0.25, "regime": "jpy_cross"},
+    "EURJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.58, "lot_cap": 0.20, "sl_pts_min": 50, "regime": "forex"},
     "GBPJPY": {"cost_pts":  8, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.25, "regime": "jpy_cross"},
-    "AUDJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.58, "lot_cap": 0.25, "regime": "jpy_cross"},
+    "AUDJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.58, "lot_cap": 0.20, "sl_pts_min": 50, "regime": "forex"},
     "CADJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.58, "lot_cap": 0.25, "regime": "jpy_cross"},
     "CHFJPY": {"cost_pts":  5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.5, "min_conf": 0.58, "lot_cap": 0.25, "regime": "jpy_cross"},
 }
 _PROFILE_DEFAULT = {"cost_pts": 19, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.55, "lot_cap": 0.10, "regime": "generic"}
+
+
+def sanitize_sl_tp(sl_pts: float, tp_pts: float, atr_pts: float, asset: str) -> tuple:
+    """
+    C3 FIX: Garante SL/TP compatíveis com horizonte intraday.
+    Previne R:R de 59:1 (harmonic swing vs intraday entry).
+    """
+    _sl_pts_min_atr = atr_pts * MIN_SL_ATR_MULT if atr_pts > 0 else sl_pts
+    eff_sl = max(sl_pts, _sl_pts_min_atr)
+    max_tp = eff_sl * MAX_TP_SL_RATIO
+    eff_tp = min(tp_pts, max_tp)
+    if tp_pts > max_tp:
+        log.warning("[%s] TP CAP: harmónico %.0f → limitado a %.0f (R:R %.1f:1)",
+                    asset, tp_pts, eff_tp, MAX_TP_SL_RATIO)
+    if sl_pts < eff_sl and atr_pts > 0:
+        log.warning("[%s] SL FLOOR: original %.0f → elevado a %.0f (min %.1fx ATR)",
+                    asset, sl_pts, eff_sl, MIN_SL_ATR_MULT)
+    return eff_sl, eff_tp
+
 
 # ─── EDGE GATE por Classe de Ativo (COO 28/04/2026) ─────────────────────────
 # Thresholds mínimos por regime: ATR% e ADX mínimo
@@ -542,6 +634,27 @@ _EDGE_GATE: dict = {
     "jpy_cross":  {"atr_pct_min": 0.0008, "adx_min": 18.0},
     "generic":    {"atr_pct_min": 0.0008, "adx_min": 18.0},
 }
+
+# ─── MARKET PROFILE: mapeamento shadow_regime → MP regime ───────────────────
+# shadow_loop usa "commodity" para XAUUSD e Oil. MP usa "metal" para metais.
+_MP_REGIME_MAP: dict = {
+    "forex":      "forex",
+    "jpy_major":  "jpy_major",
+    "jpy_cross":  "jpy_cross",
+    "commodity":  "commodity",   # XAUUSD/XAGUSD sobrescritos por função abaixo
+    "metal":      "metal",
+    "index":      "index",
+    "crypto":     "crypto",
+    "crypto_alt": "crypto_alt",
+    "generic":    "forex",
+}
+_MP_METAL_ASSETS = {"XAUUSD", "XAGUSD"}
+
+def _get_mp_regime(asset: str, shadow_regime: str) -> str:
+    """Traduz regime shadow_loop → regime do Market Profile Engine."""
+    if shadow_regime == "commodity" and asset in _MP_METAL_ASSETS:
+        return "metal"
+    return _MP_REGIME_MAP.get(shadow_regime, "forex")
 
 # ─── SL MÁXIMO POR CLASSE (hard cap) ────────────────────────────────────────
 # Garantia de que o SL nunca excede o limite de risco por operação.
@@ -598,12 +711,19 @@ RETCODE_WARN = {10004}          # REQUOTE — logar mas não falhar
 RETCODE_FAIL = {10006, 10007, 10013, 10016, 10018, 10019, 10030}
 
 RETCODE_DESC = {
-    10004: "REQUOTE",       10006: "REJECT",
-    10007: "CANCEL",        10009: "DONE",
-    10010: "PLACED",        10013: "INVALID_REQUEST",
-    10016: "INVALID_STOPS", 10018: "NO_MONEY",
-    10019: "NO_CHANGES",    10030: "LIMIT_ORDERS",
-    10014: "TOO_MANY_REQ",
+    10004: "REQUOTE",
+    10006: "REJECT",
+    10007: "CANCEL",
+    10009: "DONE",
+    10010: "PLACED",
+    10013: "INVALID_REQUEST",
+    10014: "INVALID_VOLUME",
+    10016: "INVALID_STOPS",
+    10018: "MARKET_CLOSED",
+    10019: "NO_MONEY",
+    10024: "TOO_MANY_REQUESTS",
+    10025: "NO_CHANGES",
+    10030: "LIMIT_ORDERS",
 }
 
 # ─── Logging ─────────────────────────────────────────────────────────────────
@@ -622,6 +742,12 @@ _sh = logging.StreamHandler()
 _sh.setFormatter(_log_fmt)
 log.addHandler(_fh)
 log.addHandler(_sh)
+
+# ── Startup: confirmar módulos carregados ao nível do módulo ────────────────
+if _TESSERACT_AVAIL:
+    log.info("[TESSERACT] Sniper v1.0 carregado — %s", _TESSERACT.version)
+else:
+    log.warning("[TESSERACT] Import falhou — módulo indisponível")
 
 
 # ─── SHA3-256 ────────────────────────────────────────────────────────────────
@@ -671,11 +797,11 @@ _INDEX_ASSETS  = {"US500", "NAS100", "US100", "GER40", "UK100", "US30"}
 # 2026-05-03: crypto_alt em CFD (spread largo no M5) — atr/spr tipico 0.15-0.55 vs alvo antigo 2.85
 # (bloqueava fallback em todos os ciclos). Defaults mais alinhados ao broker; endurecer via OMEGA_*.
 _VOL_MIN_BY_CLASS = {
-    "forex":      float(os.getenv("OMEGA_VOL_MIN_FOREX",       "0.30")),
-    "crypto":     float(os.getenv("OMEGA_VOL_MIN_CRYPTO",      "0.18")),
-    "crypto_alt": float(os.getenv("OMEGA_VOL_MIN_CRYPTO_ALT",  "0.12")),
-    "metal":      float(os.getenv("OMEGA_VOL_MIN_METAL",       "0.30")),
-    "index":      float(os.getenv("OMEGA_VOL_MIN_INDEX",       "0.30")),
+    "forex":      float(os.getenv("OMEGA_VOL_MIN_FOREX",       "0.10")),   # CEO 2026-05-14: 0.30→0.10 (dados reais: 0.19-0.28)
+    "crypto":     float(os.getenv("OMEGA_VOL_MIN_CRYPTO",      "0.12")),   # CEO 2026-05-14: 0.18→0.12
+    "crypto_alt": float(os.getenv("OMEGA_VOL_MIN_CRYPTO_ALT",  "0.08")),   # CEO 2026-05-14: 0.12→0.08
+    "metal":      float(os.getenv("OMEGA_VOL_MIN_METAL",       "0.10")),   # CEO 2026-05-14: 0.30→0.10
+    "index":      float(os.getenv("OMEGA_VOL_MIN_INDEX",       "0.10")),   # CEO 2026-05-14: 0.30→0.10
 }
 
 # Conselho Executivo 28/04/2026 — thresholds por classe (CONSENSO UNANIME)
@@ -708,9 +834,9 @@ _EDGE_THRESHOLDS_BY_CLASS = {
         "min_adx":           float(os.getenv("OMEGA_EDGE_METAL_ADX",    "15.0")),    # era 18.0
     },
     "index": {
-        "min_atr_pct":       float(os.getenv("OMEGA_EDGE_INDEX_ATR",    "0.0008")),  # 0.08% (era 0.10%)
-        "min_atr_over_spr":  float(os.getenv("OMEGA_EDGE_INDEX_SPR",    "3.0")),     # era 4.0
-        "min_adx":           float(os.getenv("OMEGA_EDGE_INDEX_ADX",    "15.0")),    # era 18.0
+        "min_atr_pct":       float(os.getenv("OMEGA_EDGE_INDEX_ATR",    "0.0005")),  # CEO 2026-05-14: 0.0008→0.0005 (GER40 bloqueado 0.076%<0.080%)
+        "min_atr_over_spr":  float(os.getenv("OMEGA_EDGE_INDEX_SPR",    "2.0")),     # CEO 2026-05-14: 3.0→2.0
+        "min_adx":           float(os.getenv("OMEGA_EDGE_INDEX_ADX",    "13.0")),    # CEO 2026-05-14: 15.0→13.0
     },
 }
 
@@ -1087,6 +1213,141 @@ def mt5_send_order(asset: str, tf: str, lot: float,
     return out
 
 
+# ─── MT5 — Modificar SL/TP de Posição Aberta ────────────────────────────────
+def mt5_modify_position_sl(ticket: int, symbol: str, new_sl: float, new_tp: float = 0.0) -> dict:
+    """
+    Modifica SL (e opcionalmente TP) de uma posição aberta via TRADE_ACTION_SLTP.
+    Chamado pelo trailing stop a cada actualização do peak price.
+    Retorna dict com success, retcode, latency_ms.
+    """
+    import MetaTrader5 as mt5
+    sym = mt5.symbol_info(symbol)
+    if sym is None:
+        log.error("[MT5_MODIFY_SL] %s symbol_info None", symbol)
+        return {"success": False, "error": "symbol_info None"}
+
+    digits = sym.digits
+    new_sl_r = round(new_sl, digits)
+    new_tp_r = round(new_tp, digits) if new_tp > 0 else 0.0
+
+    # PSA Conselho 2026-05-15: evitar 620× TRADE_RETCODE_NO_CHANGES (10025) —
+    # servidor rejeita SLTP idêntico ao já gravado; não é perda, é ruído/carga.
+    _pos_list = mt5.positions_get(ticket=ticket)
+    if _pos_list:
+        _p0 = _pos_list[0]
+        _cur_sl = round(float(_p0.sl), digits) if _p0.sl else 0.0
+        _cur_tp = round(float(_p0.tp), digits) if _p0.tp else 0.0
+        if new_sl_r == _cur_sl and new_tp_r == _cur_tp:
+            return {
+                "success": True,
+                "retcode": 0,
+                "new_sl": new_sl_r,
+                "latency_ms": 0.0,
+                "skipped_noop": True,
+                "note": "SL/TP já iguais no servidor — order_send omitido",
+            }
+
+    request = {
+        "action":   mt5.TRADE_ACTION_SLTP,
+        "symbol":   symbol,
+        "position": ticket,
+        "sl":       new_sl_r,
+        "tp":       new_tp_r,
+    }
+
+    t0     = time.perf_counter()
+    result = mt5.order_send(request)
+    lat_ms = round((time.perf_counter() - t0) * 1000, 1)
+
+    if result is None:
+        err = mt5.last_error()
+        log.error("[MT5_MODIFY_SL] %s #%d order_send None: %s", symbol, ticket, err)
+        return {"success": False, "error": str(err), "latency_ms": lat_ms}
+
+    r       = result._asdict()
+    retcode = r.get("retcode", -1)
+    success = retcode in RETCODE_OK
+    if success:
+        log.info("[MT5_MODIFY_SL] %s #%d ✅ SL=%.5f (%.1fms)", symbol, ticket, new_sl_r, lat_ms)
+    else:
+        # 10025 = NO_CHANGES: não alarmar em INFO (CEO 2026-05-15); noop acima já filtra a maioria.
+        if retcode == 10025:
+            log.debug("[MT5_MODIFY_SL] %s #%d retcode=10025 NO_CHANGES (servidor) — %s",
+                      symbol, ticket, RETCODE_DESC.get(retcode, ""))
+        else:
+            log.warning("[MT5_MODIFY_SL] %s #%d ❌ retcode=%d (%s)",
+                        symbol, ticket, retcode, RETCODE_DESC.get(retcode, f"UNKNOWN_{retcode}"))
+    return {"success": success, "retcode": retcode, "new_sl": new_sl_r, "latency_ms": lat_ms}
+
+
+# ─── MT5 — Fechar Posição Parcial ou Total ───────────────────────────────────
+def mt5_close_partial(ticket: int, symbol: str, lots: float, direction: str) -> dict:
+    """
+    Fecha parcialmente (ou totalmente) uma posição aberta via TRADE_ACTION_DEAL oposto.
+    direction = "BUY" ou "SELL" (direcção da posição existente — a ordem de fecho é oposta).
+    Retorna dict com success, retcode, fill_price, latency_ms.
+    """
+    import MetaTrader5 as mt5
+    tick = mt5.symbol_info_tick(symbol)
+    sym  = mt5.symbol_info(symbol)
+    if tick is None or sym is None:
+        log.error("[MT5_CLOSE_PARTIAL] %s symbol_info/tick None", symbol)
+        return {"success": False, "error": "symbol_info None"}
+
+    lot_norm, vol_note = normalize_mt5_volume(lots, sym, symbol)
+    if vol_note:
+        log.warning("[MT5_CLOSE_PARTIAL] %s #%d volume note: %s", symbol, ticket, vol_note)
+    if lot_norm <= 0 or lot_norm + 1e-12 < float(getattr(sym, "volume_min", 0.01) or 0.01):
+        log.error("[MT5_CLOSE_PARTIAL] %s #%d volume inválido após normalize: %.4f", symbol, ticket, lot_norm)
+        return {"success": False, "error": "invalid volume after normalize"}
+
+    if direction == "BUY":
+        close_type = mt5.ORDER_TYPE_SELL
+        price      = tick.bid
+    else:
+        close_type = mt5.ORDER_TYPE_BUY
+        price      = tick.ask
+
+    fm = sym.filling_mode if sym else 3
+    if fm & 2:    filling = mt5.ORDER_FILLING_IOC
+    elif fm & 1:  filling = mt5.ORDER_FILLING_FOK
+    else:         filling = mt5.ORDER_FILLING_RETURN
+
+    request = {
+        "action":       mt5.TRADE_ACTION_DEAL,
+        "symbol":       symbol,
+        "volume":       lot_norm,
+        "type":         close_type,
+        "position":     ticket,
+        "price":        price,
+        "deviation":    20,
+        "comment":      "OMEGA_PARTIAL_CLOSE",
+        "type_time":    mt5.ORDER_TIME_GTC,
+        "type_filling": filling,
+    }
+
+    t0     = time.perf_counter()
+    result = mt5.order_send(request)
+    lat_ms = round((time.perf_counter() - t0) * 1000, 1)
+
+    if result is None:
+        err = mt5.last_error()
+        log.error("[MT5_CLOSE_PARTIAL] %s #%d order_send None: %s", symbol, ticket, err)
+        return {"success": False, "error": str(err), "latency_ms": lat_ms}
+
+    r       = result._asdict()
+    retcode = r.get("retcode", -1)
+    success = retcode in RETCODE_OK
+    if success:
+        log.info("[MT5_CLOSE_PARTIAL] %s #%d ✅ %.2f lotes @ %.5f (%.1fms)",
+                 symbol, ticket, lot_norm, r.get("price", price), lat_ms)
+    else:
+        log.warning("[MT5_CLOSE_PARTIAL] %s #%d ❌ retcode=%d (%s)",
+                    symbol, ticket, retcode, RETCODE_DESC.get(retcode, f"UNKNOWN_{retcode}"))
+    return {"success": success, "retcode": retcode,
+            "fill_price": r.get("price", price), "volume": lot_norm, "latency_ms": lat_ms}
+
+
 # ─── Rodar Motor Harmônico ────────────────────────────────────────────────────
 def run_harmonic(asset: str, tf: str, margin: float, out_dir: Path) -> Optional[dict]:
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -1302,22 +1563,59 @@ def normalize_mt5_volume(lot: float, sym, asset: str = "") -> Tuple[float, str]:
 # W1 = direcção macro da semana (peso 3), D1 = tendência do dia (peso 2),
 # H4 = estrutura (peso 2), H1 = setup (peso 1), M15 = confirmação de entrada (peso 1).
 # M15 confluência → executar em M3/M1.
-MTF_ALIGN_THR = float(os.getenv("OMEGA_MTF_ALIGN_THR", "0.50"))  # 50%=2/4 TFs alinhados
+MTF_ALIGN_THR = float(os.getenv("OMEGA_MTF_ALIGN_THR", "0.50"))  # 50% — bloqueia sinal OPOSTO a macro forte
+# FIX #4-REV (CEO 2026-05-14 rev): alinhamento MINIMO para aceitar qualquer sinal.
+# Formula: (peso_a_favor - peso_contra) / 9. W1=3,D1=2,H4=2,H1=1,M15=1.
+# Com W1 oposto, maximo alcancavel = (2+2+1+1-3)/9 = 33%.
+# 60% bloqueava TODOS os sinais intraday com W1 oposto (pullbacks legitimos).
+# Novo threshold = 0.20: bloqueia 11% (2 TFs contra W1 pesado) mas permite 33% (4 TFs a favor).
+MTF_ALIGN_MIN = float(os.getenv("OMEGA_MTF_ALIGN_MIN", "0.20"))  # 20% minimo — bloqueia so conflito grave
+
+
+def effective_mtf_align_min(tf: str) -> float:
+    """
+    PSA/Conselho 2026-05-15: limiar MTF pode ser relaxado só em TFs intraday (ex.: M15)
+    para reduzir SKIP_MTF_LOW_ALIGN dominante, sem afrouxar H4/D1 em todos os casos.
+    OMEGA_MTF_ALIGN_MIN_INTRADAY — vazio = usar MTF_ALIGN_MIN para todos.
+    OMEGA_MTF_RELAX_TFS — lista separada por vírgulas (default M15).
+    """
+    intra = os.getenv("OMEGA_MTF_ALIGN_MIN_INTRADAY", "").strip()
+    if not intra:
+        return MTF_ALIGN_MIN
+    try:
+        intra_f = float(intra)
+    except ValueError:
+        return MTF_ALIGN_MIN
+    relax_raw = os.getenv("OMEGA_MTF_RELAX_TFS", "M15")
+    relax_tfs = {x.strip().upper() for x in relax_raw.split(",") if x.strip()}
+    if (tf or "").strip().upper() in relax_tfs:
+        return max(0.0, min(1.0, intra_f))
+    return MTF_ALIGN_MIN
+
 
 def get_multi_tf_bias(symbol: str) -> dict:
     """
     CEO Order 04/05/2026: Cascata completa W1→D1→H4→H1→M15.
-    Pesos: W1=3, D1=2, H4=2, H1=1, M15=1 (total=9).
-    W1 é o juiz supremo da direcção. D1 confirma. H4/H1 estrutura. M15 gatilho.
+    Pesos default: W1=3, D1=2, H4=2, H1=1, M15=1 — sobrescrevíveis por env
+    OMEGA_MTF_W1_WEIGHT, OMEGA_MTF_D1_WEIGHT, OMEGA_MTF_H4_WEIGHT,
+    OMEGA_MTF_H1_WEIGHT, OMEGA_MTF_M15_WEIGHT (PSA/Conselho 2026-05-15).
+    alignment = abs(weighted_score) / total_weight dos TFs com dados.
     """
     import MetaTrader5 as mt5
     import numpy as np
+    # Pesos configuráveis (PSA/Conselho 2026-05-15): reduzir W1 (ex.: 3→2) aumenta alinhamento
+    # quando só a semana opõe ao intraday — trade-off documentado em OMEGA-DOC-REGISTRY.
+    _w_w1 = float(os.getenv("OMEGA_MTF_W1_WEIGHT", "3"))
+    _w_d1 = float(os.getenv("OMEGA_MTF_D1_WEIGHT", "2"))
+    _w_h4 = float(os.getenv("OMEGA_MTF_H4_WEIGHT", "2"))
+    _w_h1 = float(os.getenv("OMEGA_MTF_H1_WEIGHT", "1"))
+    _w_m15 = float(os.getenv("OMEGA_MTF_M15_WEIGHT", "1"))
     TFS = [
-        (mt5.TIMEFRAME_W1,  "W1",  30, 3),
-        (mt5.TIMEFRAME_D1,  "D1",  50, 2),
-        (mt5.TIMEFRAME_H4,  "H4",  50, 2),
-        (mt5.TIMEFRAME_H1,  "H1",  50, 1),
-        (mt5.TIMEFRAME_M15, "M15", 50, 1),
+        (mt5.TIMEFRAME_W1,  "W1",  30, _w_w1),
+        (mt5.TIMEFRAME_D1,  "D1",  50, _w_d1),
+        (mt5.TIMEFRAME_H4,  "H4",  50, _w_h4),
+        (mt5.TIMEFRAME_H1,  "H1",  50, _w_h1),
+        (mt5.TIMEFRAME_M15, "M15", 50, _w_m15),
     ]
     weighted_score = 0
     total_weight   = 0
@@ -1493,6 +1791,9 @@ def get_jpy_cluster_signal(min_alignment: float = 0.75) -> dict:
 TREND_MIN_SCORE  = float(os.getenv("OMEGA_TREND_MIN", "0.45"))   # min para operar
 PYRAMID_MAX_LAYERS = int(os.getenv("OMEGA_PYRAMID_LAYERS", "3"))  # camadas máx
 PYRAMID_TRIGGER_ATR = float(os.getenv("OMEGA_PYRAMID_ATR", "0.5"))  # ATR×0.5 de lucro p/ adicionar
+# CEO 2026-05-14: Pyramid PROGRESSIVO — volume AUMENTA por camada (1.5x, 2.0x)
+# Motivo: múltiplas ordens mesmo volume é ineficiente; confirmar direção → aumentar exposição
+PYRAMID_LOT_SCALE = float(os.getenv("OMEGA_PYRAMID_LOT_SCALE", "1.5"))  # multiplicador por camada
 
 def get_trend_strength(symbol: str, direction: str) -> dict:
     """
@@ -1589,9 +1890,12 @@ def check_pyramid_add(symbol: str, direction: str, open_positions: list,
     ts = get_trend_strength(symbol, direction)
     if not ts.get("pyramid_ok"):
         return {"add": False, "reason": f"trend_score={ts['score']:.2f}<min", "layer": current_layers}
-    # Lote regressivo: cada camada é 75% da anterior (preserva capital)
+    # Lote PROGRESSIVO: cada camada é PYRAMID_LOT_SCALE × a anterior (CEO 2026-05-14)
+    # Antes: 0.75^layer (regressivo — camadas menores = ineficiente)
+    # Agora: 1.5^layer (progressivo — confirmação direcional → maior exposição)
+    # Teto: lot_cap do activo para não ultrapassar limite de risco
     base_lot = prof.get("lot_cap", 0.10)
-    layer_lot = round(base_lot * (0.75 ** current_layers), 2)
+    layer_lot = round(base_lot * (PYRAMID_LOT_SCALE ** current_layers), 2)
     sym_info  = None
     try:
         import MetaTrader5 as mt5
@@ -1599,7 +1903,9 @@ def check_pyramid_add(symbol: str, direction: str, open_positions: list,
     except Exception:
         pass
     min_lot = sym_info.volume_min if sym_info else 0.01
-    layer_lot = max(layer_lot, min_lot)
+    max_lot = sym_info.volume_max if sym_info else base_lot * 3
+    # Clampar entre min_lot e lot_cap (não exceder teto de risco do activo)
+    layer_lot = max(min_lot, min(layer_lot, base_lot, max_lot))
     return {
         "add":           True,
         "lot":           layer_lot,
@@ -1607,7 +1913,7 @@ def check_pyramid_add(symbol: str, direction: str, open_positions: list,
         "trend_score":   ts["score"],
         "trigger_pts":   trigger,
         "profit_pts":    _best_profit,
-        "reason":        f"pyramid_layer{current_layers+1} score={ts['score']:.2f}",
+        "reason":        f"pyramid_layer{current_layers+1}_LOT{layer_lot:.2f} score={ts['score']:.2f}",
     }
 
 
@@ -1735,19 +2041,29 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     _agent_ia_open_ok: int = 0  # PN-06: record_trade_open com sucesso (AGENT_IA)
     _agent_ia_close_ok: int = 0
     _agent_ia_close_err: int = 0
+    # PSA-015 2026-05-15: dedup feedback writer por ticket (previne eventos multi-TF)
+    _feedback_written_tickets: set = set()
     _lot_calc = LotCalculatorV2(LotCfgV2())  # CQO 28/04/2026: 4-factor adaptive sizing
     _risk_returns: list = []       # pnl/equity por trade fechado → Sharpe rolling
     _fractal_cache: dict = {}      # asset → {"ts": float, "regime": str, "hurst": float}
+    _sl_consec: dict = {}          # BUG-2 FIX: (asset, tf) → {"n": int, "until": float}
+    _SL_MAX  = int(os.getenv("OMEGA_SL_CONSEC_MAX",      "3"))   # SL consecutivos → cooldown
+    _SL_COOL = int(os.getenv("OMEGA_SL_COOLDOWN_CYCLES", "5"))   # ciclos de espera (~45s cada)
     _flow_state: dict = {}        # symbol → flow confluence score (0-100)
     _partial_close_engines: dict = {}  # ticket → ProgressivePartialCloseComplete (1 engine por posição)
     _trailing_stop_engines: dict = {}  # ticket → HardVolatilityTrailingStopGeometric (1 engine por posição)
 
-    # Conselho 28/04/2026: reset KS baseline com equity real do MT5 para evitar
-    # falsos positivos por drawdown residual de runs anteriores.
+    # BUG-1 FIX: PersistentKillSwitch com âncora diária persistente entre subprocesses.
+    # reset_session() destruía daily_pnl a cada ciclo de 35s → protecção diária = ZERO.
     if mode == "paper" and mt5_connected:
         _acct = mt5.account_info()
         if _acct and _acct.equity > 0:
-            ks.reset_session(_acct.equity)
+            _pks = PersistentKillSwitch(float(os.getenv("OMEGA_DD_DAILY_MAX", "0.02")))
+            _is_safe, _ks_reason = _pks.update_and_check(_acct.equity)
+            log.info(_ks_reason)
+            if not _is_safe:
+                log.critical("[HALT] Kill Switch diário disparou — sistema a parar.")
+                sys.exit(1)
             if _CIRCUIT_BREAKER is not None:
                 _CIRCUIT_BREAKER.initialize_day(_acct.equity)
                 log.info("[CIRCUIT_BREAKER] Inicializado: anchor=$%.2f DD_limit=%.1f%%",
@@ -1788,7 +2104,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
             # Trailing stop engine
             if _rp_ticket not in _trailing_stop_engines and _TRAILING_STOP_AVAILABLE:
                 try:
-                    _ts_eng_boot = _TrailingStopCls(atr_multiplier=2.5, min_multiplier=1.0)
+                    _ts_eng_boot = _TrailingStopCls(atr_multiplier=1.0, min_multiplier=0.5)  # CEO 2026-05-14 FIX: 1.5→1.0
                     _ts_eng_boot.entry_price = _rp.price_open
                     _rp_dir_ts = 1 if _rp.type == 0 else -1
                     # Peak: price_current se em lucro, senao entry (conservador)
@@ -1857,12 +2173,20 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     _rnd_fix5.shuffle(ativos_scheduled)
     log.info("[FIX5] Scheduler de-bias aplicado | ordem=%s", ativos_scheduled)
     _cycle_opened_assets: set = set()  # PSA-WIND Q1: dedup — 1 ordem por ativo por ciclo
+    # ── PACING & DIVERSIFICATION — CEO aprovado 2026-05-12 ───────────────────
+    _cycle_dir_count: dict = {"BUY": 0, "SELL": 0}   # reset a cada ciclo
 
     try:
         for asset in ativos_scheduled:
             for tf in timeframes:
+                # ── BUG-2: SL Cooldown Gate ──────────────────────────────────
+                _cd = _sl_consec.get((asset, tf), {})
+                if _cd.get("until", 0.0) > time.time():
+                    log.info("[%s %s] SKIP_SL_COOLDOWN — %d SL consec. cooldown activo",
+                             asset, tf, _cd.get("n", 0))
+                    results.append({"asset": asset, "timeframe": tf, "status": "SKIP_SL_COOLDOWN"})
+                    continue
                 # Guardrail de Janela — V9: 24/5 liberado (CQO/CTO)
-                import os
                 h_now = datetime.now().hour
                 has_night_pass = os.environ.get("OMEGA_NIGHT_PASS", "").upper() == "AUTHORISED_BY_CEO"
 
@@ -1963,6 +2287,17 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                 except Exception as _flow_err:
                     log.error("[%s %s] [FLOW] erro: %s", asset, tf, _flow_err)
 
+                # CONFLUENCE GATE v1.1 (Auditoria IA 2026-05-09)
+                _MIN_CONF_GATE = float(os.getenv("OMEGA_MIN_CONFLUENCE", "40.0"))
+                # Usar _flow_conf (variável local do passo actual) — mais seguro que
+                # _flow_state.get(asset) que pode ter valores stale de iterações anteriores
+                if _flow_conf < _MIN_CONF_GATE:
+                    log.info(
+                        "[%s %s] [CONFLUENCE_GATE] BLOCKED score=%.1f < min=%.1f",
+                        asset, tf, _flow_conf, _MIN_CONF_GATE
+                    )
+                    continue
+
                 # Guardrail pré-motor
                 prev_hr = 100.0
                 rep_f = ROOT / "audit" / f"{asset}_{tf}" / f"AnalysisReport_{asset}_{tf}.json"
@@ -2009,6 +2344,13 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
 
                 if mode == "paper" and MAX_POSITIONS > 0 and open_pos >= MAX_POSITIONS:
                     log.warning("[%s %s] MAX_POSITIONS=%d atingido.", asset, tf, MAX_POSITIONS); continue
+
+                # FIX-DUPL: gate por ativo — bloqueia 2ª posição no mesmo ativo
+                if MAX_POS_PER_ASSET > 0 and mode == "paper":
+                    _asset_cnt = sum(1 for _p in real_pos if _p.symbol == asset)
+                    if _asset_cnt >= MAX_POS_PER_ASSET:
+                        log.warning("[%s %s] MAX_POS_PER_ASSET=%d atingido — bloqueia duplicação.",
+                                    asset, tf, MAX_POS_PER_ASSET); continue
 
                 # Motor Harmônico V3
                 out_dir  = AUDIT_PAPER / f"{asset}_{tf}"
@@ -2216,7 +2558,14 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                      _kl.get("prev_week_high") or 0,
                                      _kl.get("prev_week_low") or 0,
                                      _kl.get("poc_price") or 0)
-                        rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_M15, 0, 50)
+                        # P2-B C4 FIX: TF dinâmico alinhado com a entrada (era M15 hardcoded)
+                        _TF_MAP_FLOW = {
+                            "M5":  mt5.TIMEFRAME_M5,  "M15": mt5.TIMEFRAME_M15,
+                            "H1":  mt5.TIMEFRAME_H1,  "H4":  mt5.TIMEFRAME_H4,
+                            "D1":  mt5.TIMEFRAME_D1,
+                        }
+                        _flow_tf_dyn = _TF_MAP_FLOW.get(tf, mt5.TIMEFRAME_M15)
+                        rates = mt5.copy_rates_from_pos(asset, _flow_tf_dyn, 0, 50)
                         if rates is not None and len(rates) >= 21:
                             import numpy as _np_flow
                             tick_now = mt5.symbol_info_tick(asset)
@@ -2265,10 +2614,23 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
 
                     # === MULTI-TF BIAS CHECK (CEO 04/05/2026: W1+D1+H4+H1+M15 cascata ponderada) ===
                     # W1 tem peso 3x — se a semana é SELL, nenhum BUY passa.
-                    # Bloquear sinal oposto à direção macro ponderada quando alinhamento >= MTF_ALIGN_THR.
+                    # FIX #4-REV (CEO 2026-05-14): bloquear sinais com alinhamento < MTF_ALIGN_MIN (20%)
+                    # Evita executar em 33%/11% — sinais de baixa qualidade nocturno.
                     if signal_dir:
                         try:
                             _tf_bias = get_multi_tf_bias(asset)
+                            # FIX #4: rejeitar sinais abaixo do minimo de alinhamento (efectivo por TF)
+                            _mtf_min_eff = effective_mtf_align_min(tf)
+                            if _tf_bias["alignment"] < _mtf_min_eff:
+                                log.info("[%s %s] [MTF_BIAS] SKIP_LOW_ALIGN align=%.0f%% < %.0f%% min_eff(tf=%s) | %s",
+                                         asset, tf,
+                                         _tf_bias["alignment"] * 100, _mtf_min_eff * 100, tf,
+                                         _tf_bias["detail"])
+                                results.append({"asset": asset, "timeframe": tf,
+                                               "status": "SKIP_MTF_LOW_ALIGN",
+                                               "alignment": _tf_bias["alignment"],
+                                               "min_required": _mtf_min_eff})
+                                continue
                             if (_tf_bias["alignment"] >= MTF_ALIGN_THR
                                     and _tf_bias["bias"] != "NEUTRAL"
                                     and _tf_bias["bias"] != signal_dir):
@@ -2301,23 +2663,193 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         for _lp_profit in _omega_all:  # atualiza last_profit
                             if _lp_profit.ticket in _pos_ledger:
                                 _pos_ledger[_lp_profit.ticket]["last_profit"] = _lp_profit.profit
+                        # LEDGER_SYNC — recuperar posicoes MT5 nao registadas no ledger (fix JSONL 2026-05-12)
+                        for _live_p in _omega_all:
+                            if _live_p.ticket not in _pos_ledger:
+                                _pos_ledger[_live_p.ticket] = {
+                                    "status": "open",
+                                    "symbol": _live_p.symbol,
+                                    "tf": tf,
+                                    "signal_source": "SYNC_RECOVERY",
+                                    "last_profit": _live_p.profit,
+                                    "entry_time": datetime.now(timezone.utc).isoformat(),
+                                    "sl_pts": 0,
+                                    "risk_usd": 0,
+                                }
+                                log.info("[LEDGER_SYNC] Ticket %d (%s) recuperado para o ledger",
+                                         _live_p.ticket, _live_p.symbol)
+                        # ── TIME-STOP & STAGNATION-STOP (CEO 2026-05-12) ──────────────────
+                        # Liberta slots presos em posicoes sem progresso.
+                        # OMEGA_MAX_TRADE_MIN  : fechar se aberta ha > N min e em perda  (default 90)
+                        # OMEGA_STAG_MIN       : fechar se ha > N min sem mover 20% para TP (default 45)
+                        _TS_MAX_MIN  = int(os.getenv("OMEGA_MAX_TRADE_MIN",  "0"))   # 0=DESACTIVADO por defeito
+                        _STAG_MIN    = int(os.getenv("OMEGA_STAG_MIN",       "0"))   # 0=DESACTIVADO por defeito
+                        _now_ts      = time.time()
+                        for _tp_live in list(_omega_all):
+                            try:
+                                _age_min = (_now_ts - _tp_live.time) / 60.0
+                                _pnl     = _tp_live.profit
+                                _dir_tp  = "BUY" if _tp_live.type == 0 else "SELL"
+                                _entry_p = _tp_live.price_open
+                                _sl_p    = _tp_live.sl
+                                _tp_p    = _tp_live.tp
+                                _close_reason = None
+
+                                # 1. TIME-STOP: posicao em perda ha mais de OMEGA_MAX_TRADE_MIN (0=desactivado)
+                                if _TS_MAX_MIN > 0 and _age_min > _TS_MAX_MIN and _pnl < 0:
+                                    _close_reason = f"TIME_STOP age={_age_min:.0f}min pnl={_pnl:.2f}"
+
+                                # 2. STAGNATION-STOP: posicao ha > OMEGA_STAG_MIN sem atingir 20% do caminho para TP (0=desactivado)
+                                elif _STAG_MIN > 0 and _age_min > _STAG_MIN and _tp_p != 0 and _sl_p != 0:
+                                    _range_total = abs(_tp_p - _entry_p)
+                                    if _range_total > 0:
+                                        if _dir_tp == "BUY":
+                                            _progress = (_tp_live.price_current - _entry_p) / _range_total
+                                        else:
+                                            _progress = (_entry_p - _tp_live.price_current) / _range_total
+                                        if _progress < 0.20:  # nao atingiu 20% do caminho para TP
+                                            _close_reason = (
+                                                f"STAGNATION age={_age_min:.0f}min "
+                                                f"progress={_progress*100:.0f}%<20%"
+                                            )
+
+                                if _close_reason:
+                                    log.warning(
+                                        "[TIME_STOP] Fechando #%d %s %s pnl=%.2f — %s",
+                                        _tp_live.ticket, _tp_live.symbol, _dir_tp,
+                                        _pnl, _close_reason,
+                                    )
+                                    _ts_req = mt5.order_send(mt5.TradeRequest(
+                                        action   = mt5.TRADE_ACTION_DEAL,
+                                        position = _tp_live.ticket,
+                                        symbol   = _tp_live.symbol,
+                                        volume   = _tp_live.volume,
+                                        type     = (mt5.ORDER_TYPE_SELL if _dir_tp == "BUY"
+                                                    else mt5.ORDER_TYPE_BUY),
+                                        price    = (mt5.symbol_info_tick(_tp_live.symbol).bid
+                                                    if _dir_tp == "BUY"
+                                                    else mt5.symbol_info_tick(_tp_live.symbol).ask),
+                                        deviation = 30,
+                                        magic    = 20260512,
+                                        comment  = f"OMEGA_TIME_STOP",
+                                        type_filling = mt5.ORDER_FILLING_IOC,
+                                    ))
+                                    if _ts_req and _ts_req.retcode == mt5.TRADE_RETCODE_DONE:
+                                        log.info("[TIME_STOP] OK #%d fechado retcode=%d",
+                                                 _tp_live.ticket, _ts_req.retcode)
+                                    else:
+                                        _rc = _ts_req.retcode if _ts_req else "N/A"
+                                        log.warning("[TIME_STOP] FALHOU #%d retcode=%s",
+                                                    _tp_live.ticket, _rc)
+                            except Exception as _ts_err:
+                                log.debug("[TIME_STOP] erro ticket=%s: %s",
+                                          getattr(_tp_live, 'ticket', '?'), _ts_err)
+                        # ── FIM TIME-STOP ─────────────────────────────────────────────────
+
+                        # ── ZAK TRAP DETECTION — fechar armadilhas antes do SL (CEO 2026-05-13) ─
+                        if _ZAK_GUARDRAIL_AVAIL and _ZAK_GUARDRAIL is not None:
+                            for _trap_pos in list(_omega_all):
+                                try:
+                                    _trap_dir = "BUY" if _trap_pos.type == 0 else "SELL"
+                                    _trap_sym = _trap_pos.symbol
+                                    _zak_trap_rates = mt5.copy_rates_from_pos(_trap_sym, mt5.TIMEFRAME_H1, 0, 30)
+                                    if _zak_trap_rates is None or len(_zak_trap_rates) < 5:
+                                        continue
+                                    import pandas as _pd_trap
+                                    _zak_trap_df = _pd_trap.DataFrame(_zak_trap_rates)
+                                    _is_trap = _ZAK_GUARDRAIL.detect_trap(
+                                        direction=_trap_dir,
+                                        entry_price=_trap_pos.price_open,
+                                        current_price=_trap_pos.price_current,
+                                        df=_zak_trap_df,
+                                    )
+                                    if _is_trap:
+                                        _trap_tick = mt5.symbol_info_tick(_trap_sym)
+                                        _trap_close_price = (_trap_tick.bid if _trap_dir == "BUY"
+                                                             else _trap_tick.ask)
+                                        _trap_req = mt5.order_send(mt5.TradeRequest(
+                                            action   = mt5.TRADE_ACTION_DEAL,
+                                            position = _trap_pos.ticket,
+                                            symbol   = _trap_sym,
+                                            volume   = _trap_pos.volume,
+                                            type     = (mt5.ORDER_TYPE_SELL if _trap_dir == "BUY"
+                                                        else mt5.ORDER_TYPE_BUY),
+                                            price    = _trap_close_price,
+                                            deviation = 30,
+                                            magic    = 20260513,
+                                            comment  = "OMEGA_ZAK_TRAP",
+                                            type_filling = mt5.ORDER_FILLING_IOC,
+                                        ))
+                                        if _trap_req and _trap_req.retcode == mt5.TRADE_RETCODE_DONE:
+                                            log.warning("[ZAK_TRAP] Fechado #%d %s %s pnl=%.2f — armadilha detectada",
+                                                        _trap_pos.ticket, _trap_sym, _trap_dir,
+                                                        _trap_pos.profit)
+                                        else:
+                                            _tr = _trap_req.retcode if _trap_req else "N/A"
+                                            log.warning("[ZAK_TRAP] Falhou fechar #%d retcode=%s",
+                                                        _trap_pos.ticket, _tr)
+                                except Exception as _trap_err:
+                                    log.debug("[ZAK_TRAP] erro ticket=%s: %s",
+                                              getattr(_trap_pos, 'ticket', '?'), _trap_err)
+                        # ── FIM ZAK TRAP DETECTION ─────────────────────────────────────────
+
                         for _tk, _entry in list(_pos_ledger.items()):
                             if _entry["status"] == "open" and _tk not in _live_tickets:
                                 _entry["status"] = "closed"
                                 _entry["exit_time"] = datetime.now(timezone.utc).isoformat()
-                                # PSA-WIND Q3: calcular métricas de saída para aprendizado ML
-                                _entry_pnl = _entry.get("last_profit", 0.0)
-                                _entry_sl = _entry.get("sl_pts", 0)
-                                _entry_tp = _entry.get("tp_pts", 0)
+                                # ── JSONL FIX 2026-05-13: usar PnL REALIZADO do histórico MT5 ──
+                                # last_profit era o floating P&L da última leitura (não o realizado)
+                                # → TP hits eram registados como LOSS pois floating podia ser negativo
+                                _entry_pnl    = _entry.get("last_profit", 0.0)  # fallback
+                                _exit_reason  = "UNKNOWN"
+                                try:
+                                    _hist_window = timedelta(minutes=90)
+                                    _hist_deals  = mt5.history_deals_get(
+                                        datetime.now(timezone.utc) - _hist_window,
+                                        datetime.now(timezone.utc)
+                                    ) or []
+                                    for _hd in reversed(_hist_deals):
+                                        # DEAL_ENTRY_OUT = 1 — fecho de posição
+                                        if _hd.position_id == _tk and _hd.entry == 1:
+                                            _entry_pnl   = _hd.profit
+                                            if   _hd.reason == 4:   # DEAL_REASON_TP
+                                                _exit_reason = "TP"
+                                            elif _hd.reason == 5:   # DEAL_REASON_SL
+                                                _exit_reason = "SL"
+                                            elif _hd.reason == 6:   # DEAL_REASON_SO
+                                                _exit_reason = "STOP_OUT"
+                                            else:
+                                                _exit_reason = "MANUAL"
+                                            break
+                                except Exception as _hist_e:
+                                    log.debug("[LEDGER] history_deals fallback last_profit: %s", _hist_e)
+                                _entry["exit_reason"] = _exit_reason
+                                _entry_sl   = _entry.get("sl_pts", 0)
                                 _entry_risk = _entry.get("risk_usd", 0)
                                 if _entry_risk > 0:
                                     _entry["r_multiple"] = round(_entry_pnl / _entry_risk, 2)
-                                if _entry_sl > 0:
-                                    _entry["result"] = "WIN" if _entry_pnl > 0 else "LOSS"
+                                _entry["result"] = "WIN" if _entry_pnl > 0 else ("LOSS" if _entry_pnl < 0 else "BE")
+                                # BUG-2 FIX: registar SL/WIN para cooldown por (asset, tf)
+                                _ck2 = (_entry.get("symbol"), tf)
+                                if _entry_pnl < 0:
+                                    _cc2 = _sl_consec.setdefault(_ck2, {"n": 0, "until": 0.0})
+                                    _cc2["n"] += 1
+                                    if _cc2["n"] >= _SL_MAX:
+                                        _cc2["until"] = time.time() + _SL_COOL * 45
+                                        log.warning("[%s %s] [SL_COOLDOWN] %d SL consecutivos — cooldown %ds",
+                                                    _entry.get("symbol"), tf, _cc2["n"], _SL_COOL * 45)
+                                else:
+                                    _sl_consec.pop(_ck2, None)  # WIN: reset contador
+                                # PSA-016 2026-05-15: fix duration_min UTC — normalizar ambos os timestamps para UTC
+                                _entry_dt = datetime.fromisoformat(_entry.get("entry_time", datetime.now(timezone.utc).isoformat()))
+                                if _entry_dt.tzinfo is None:
+                                    _entry_dt = _entry_dt.replace(tzinfo=timezone.utc)
                                 _entry["duration_min"] = round(
-                                    (datetime.now(timezone.utc) -
-                                     datetime.fromisoformat(_entry.get("entry_time", datetime.now(timezone.utc).isoformat()))
-                                    ).total_seconds() / 60, 1)
+                                    (datetime.now(timezone.utc) - _entry_dt).total_seconds() / 60, 1
+                                )
+                                if _entry["duration_min"] < 0:
+                                    log.warning("[LEDGER] duration_min negativo #%d: %.1f (UTC fix)", _tk, _entry["duration_min"])
+                                    _entry["duration_min"] = 0.0  # fallback para não quebrar KPI
                                 _realized_pnl += _entry_pnl
                                 _realized_n   += 1
                                 _lot_calc.update_performance(_entry_pnl)
@@ -2328,31 +2860,42 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                          _entry.get("duration_min", 0),
                                          _realized_pnl, _realized_n)
                                 # Fecho de loop: artefato por trade (todas as fontes) + feedback IA
-                                try:
-                                    trade_feedback_append(
-                                        {
-                                            "event": "position_closed",
-                                            "position_ticket": int(_tk),
-                                            "symbol": _entry.get("symbol"),
-                                            "timeframe": tf,
-                                            "signal_source": _entry.get("signal_source"),
-                                            "agent_id": _entry.get("agent_id"),
-                                            "pnl": round(float(_entry_pnl), 6),
-                                            "r_multiple": _entry.get("r_multiple"),
-                                            "result": _entry.get("result"),
-                                            "duration_min": _entry.get("duration_min"),
-                                            "regime": _entry.get("regime"),
-                                            "confidence": _entry.get("confidence"),
-                                            "entry_deal": _entry.get("entry_deal"),
-                                            "sl_pts": _entry.get("sl_pts"),
-                                            "tp_pts": _entry.get("tp_pts"),
-                                            "slippage_pts": _entry.get("slippage_pts"),
-                                            "detected_at_utc": datetime.now(timezone.utc).isoformat(),
-                                        }
-                                    )
-                                    _trade_feedback_n += 1
-                                except Exception as _fb_e:
-                                    log.debug("[LEDGER] trade_feedback_append: %s", _fb_e)
+                                # PSA-015 2026-05-15: dedup feedback writer por (ticket, event_type)
+                                _event_key = (int(_tk), "position_closed")
+                                if _event_key not in _feedback_written_tickets:
+                                    try:
+                                        trade_feedback_append(
+                                            {
+                                                "event": "position_closed",
+                                                "position_ticket": int(_tk),
+                                                "symbol": _entry.get("symbol"),
+                                                "timeframe": tf,
+                                                "signal_source": _entry.get("signal_source"),
+                                                "agent_id": _entry.get("agent_id"),
+                                                "pnl": round(float(_entry_pnl), 6),
+                                                "r_multiple": _entry.get("r_multiple"),
+                                                "result": _entry.get("result"),
+                                                "duration_min": _entry.get("duration_min"),
+                                                "regime": _entry.get("regime"),
+                                                "confidence": _entry.get("confidence"),
+                                                "entry_deal": _entry.get("entry_deal"),
+                                                "sl_pts": _entry.get("sl_pts"),
+                                                "tp_pts": _entry.get("tp_pts"),
+                                                "slippage_pts": _entry.get("slippage_pts"),
+                                                "detected_at_utc": datetime.now(timezone.utc).isoformat(),
+                                                # schema v1.2 (Auditoria IA 2026-05-09)
+                                                "exit_reason":      _entry.get("exit_reason"),
+                                                "confluence_score": _entry.get("confluence_score"),
+                                                "components_fired": _entry.get("components_fired"),
+                                                "modules_active":   _entry.get("modules_active"),
+                                                "decision_id":      _entry.get("decision_id"),
+                                            }
+                                        )
+                                        _feedback_written_tickets.add(_event_key)
+                                        _trade_feedback_n += 1
+                                    except Exception as _fb_e:
+                                        log.debug("[LEDGER] trade_feedback_append: %s", _fb_e)
+                                # Agent IA close record (if applicable)
                                 if (
                                     agent_ia is not None
                                     and _entry.get("signal_source") == "AGENT_IA"
@@ -2404,10 +2947,10 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         results.append({"asset": asset, "timeframe": tf,
                                         "status": "SKIP_DEDUP_CYCLE"})
                         continue  # FIX: sem este continue, caía no Q2 e abria posição duplicada
-                    # === PSA-WIND Q2: 1 POSIÇÃO POR ATIVO (anti-acumulação de centavos) ===
-                    # Se já existe posição OMEGA aberta neste ativo → não abrir outra
-                    # Escalonamento só via pyramiding (exige profit > 2×ATR, lot crescente)
-                    _MAX_POS_PER_ASSET = int(os.getenv("OMEGA_MAX_POS_PER_ASSET", "1"))  # 1=conservador, 2=permite pyramiding
+                    # === PSA-WIND Q2: 1 POSIÇÃO POR ATIVO (CEO 2026-05-14 FIX) ===
+                    # Forçar MAX_POS_PER_ASSET=1 — 2ª posição só via check_pyramid_add()
+                    # Previne 3× ordens idênticas mesmo volume; pyramid tem lot progressivo (1.5x)
+                    _MAX_POS_PER_ASSET = int(os.getenv("OMEGA_MAX_POS_PER_ASSET", "1"))  # 1=padrão; pyramid path tem seu próprio check
                     _existing_omega_same = [p for p in current_positions if p.get("symbol") == asset]
                     if _existing_omega_same:
                         _n_exist = len(_existing_omega_same)
@@ -2436,6 +2979,32 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                         "existing_dir": _cp_dir, "signal_dir": signal_dir})
                         continue
 
+                    # === PACING & DIVERSIFICATION — CEO 2026-05-12 ========================
+                    _MAX_DIR_CYCLE = int(os.getenv("OMEGA_MAX_SAME_DIR_PER_CYCLE", "2"))   # CEO 2026-05-14: 1→2
+                    _MAX_PER_CLASS = int(os.getenv("OMEGA_MAX_POS_PER_CLASS", "5"))        # CEO 2026-05-14: 2→5
+                    # Guardrail 1: limitar ordens na mesma direção por ciclo
+                    if _cycle_dir_count.get(signal_dir, 0) >= _MAX_DIR_CYCLE:
+                        log.info("[%s %s] [P&D] SKIP — %s já abriu %d/%d neste ciclo",
+                                 asset, tf, signal_dir,
+                                 _cycle_dir_count.get(signal_dir, 0), _MAX_DIR_CYCLE)
+                        results.append({"asset": asset, "timeframe": tf,
+                                        "status": "SKIP_PACING_DIR",
+                                        "dir": signal_dir})
+                        continue
+                    # Guardrail 2: limitar posições por classe de ativo
+                    _asset_class = ASSET_PROFILES.get(asset, _PROFILE_DEFAULT).get("regime", "forex")
+                    _class_count = sum(
+                        1 for _p in current_positions
+                        if ASSET_PROFILES.get(_p.get("symbol", ""), {}).get("regime") == _asset_class
+                    )
+                    if _class_count >= _MAX_PER_CLASS:
+                        log.info("[%s %s] [P&D] SKIP — classe '%s' já tem %d/%d posições",
+                                 asset, tf, _asset_class, _class_count, _MAX_PER_CLASS)
+                        results.append({"asset": asset, "timeframe": tf,
+                                        "status": "SKIP_PACING_CLASS",
+                                        "class": _asset_class,
+                                        "class_count": _class_count})
+                        continue
                     # === PSA-WIND FIX 2: SPIKE DETECTION — bloquear entrada em anomalia ===
                     if _SPIKE_DETECTION_AVAILABLE and _SPIKE_DETECTOR is not None:
                         try:
@@ -2709,17 +3278,278 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                             except Exception as _ke:
                                 log.debug("[%s %s] [KALMAN] scorer falhou: %s", asset, tf, _ke)
 
-                        exec_result = mt5_send_order(
-                            asset, tf, eff_lot,
-                            sl_pts=eff_sl,
-                            tp_pts=eff_tp,
-                            direction=signal_dir)
+                        # C3 FIX: sl_pts_min de perfil + sanitize_sl_tp (cap R:R 59:1 → 8:1)
+                        _sl_pts_min_prof = float(_prof.get("sl_pts_min", 0.0))
+                        if _sl_pts_min_prof > 0:
+                            eff_sl = max(eff_sl, _sl_pts_min_prof)
+                        eff_sl, eff_tp = sanitize_sl_tp(eff_sl, eff_tp, _exec_atr.get("atr_pts", 0.0), asset)
+
+                        # ── ZONE NAVIGATOR GATE (CEO 2026-05-14) ──────────────────────
+                        # Camada 1: regime filter — bloqueia BUFFER e lateralidade
+                        if _ZONE_NAV_AVAIL and _ZONE_NAV is not None:
+                            try:
+                                _tf_const_map_znav = {
+                                    "M1": mt5.TIMEFRAME_M1, "M5": mt5.TIMEFRAME_M5,
+                                    "M15": mt5.TIMEFRAME_M15, "H1": mt5.TIMEFRAME_H1,
+                                    "H4": mt5.TIMEFRAME_H4, "D1": mt5.TIMEFRAME_D1,
+                                }
+                                _znav_rates = mt5.copy_rates_from_pos(
+                                    asset, _tf_const_map_znav.get(tf, mt5.TIMEFRAME_H1), 0, 80
+                                )
+                                _znav_res = _ZONE_NAV.evaluate_for_shadow_loop(
+                                    asset, tf, signal_dir, _znav_rates
+                                )
+                                if not _znav_res.get("can_trade", True):
+                                    _znav_reason = _znav_res.get("reason", "ZONE_BLOCKED")
+                                    log.info("[%s %s] [ZONE] BLOCKED — %s (score=%.3f fuel=%.3f)",
+                                             asset, tf, _znav_reason,
+                                             _znav_res.get("score", 0),
+                                             _znav_res.get("fuel", 0))
+                                    results.append({"asset": asset, "timeframe": tf,
+                                                    "status": "SKIP_ZONE_GATE",
+                                                    "reason": _znav_reason,
+                                                    "zone":   _znav_res.get("zone", "?")})
+                                    continue
+                                log.debug("[%s %s] [ZONE] OK — %s score=%.3f bias=%s",
+                                          asset, tf,
+                                          _znav_res.get("zone", "?"),
+                                          _znav_res.get("score", 0),
+                                          "ok" if _znav_res.get("bias_ok") else "conflict")
+                            except Exception as _znav_err:
+                                log.debug("[%s %s] [ZONE] erro ignorado: %s", asset, tf, _znav_err)
+                        # ── FIM ZONE NAVIGATOR GATE ────────────────────────────────────
+
+                        # ── TESSERACT SNIPER GATE — XAUUSD M5 SPECIALIST (CEO 2026-05-14) ──
+                        # Apenas para XAUUSD em M5. Nos outros activos/TFs passa transparente.
+                        # Se activo: substitui signal_dir, eff_sl, eff_tp pelos valores do Sniper.
+                        if _TESSERACT_AVAIL and _TESSERACT is not None \
+                                and asset == "XAUUSD" and tf == "M5":
+                            try:
+                                _tess_h4 = _build_sniper_df(
+                                    mt5.copy_rates_from_pos("XAUUSD", mt5.TIMEFRAME_H4, 0, 80))
+                                _tess_h1 = _build_sniper_df(
+                                    mt5.copy_rates_from_pos("XAUUSD", mt5.TIMEFRAME_H1, 0, 60))
+                                _tess_m5 = _build_sniper_df(
+                                    mt5.copy_rates_from_pos("XAUUSD", mt5.TIMEFRAME_M5, 0, 60))
+                                _tess_sig = _TESSERACT.evaluate(_tess_h4, _tess_h1, _tess_m5)
+
+                                if not _tess_sig.execute:
+                                    log.info(
+                                        "[XAUUSD M5] [TESSERACT] BLOCKED — %s",
+                                        _tess_sig.reason,
+                                    )
+                                    results.append({"asset": asset, "timeframe": tf,
+                                                    "status": "SKIP_TESSERACT",
+                                                    "reason": _tess_sig.reason})
+                                    continue
+
+                                # Confluência confirmada — sobrescrever direcção e risco
+                                signal_dir = _tess_sig.direction
+                                eff_sl     = _tess_sig.sl_pts
+                                eff_tp     = _tess_sig.tp2_pts   # Linha Vetorial 1.618
+                                log.info(
+                                    "[XAUUSD M5] [TESSERACT] EXECUTE %s | conf=%.2f | "
+                                    "entry=%s | vol_surge=%.2fx | SL=%.1f TP=%.1f",
+                                    signal_dir, _tess_sig.confidence,
+                                    _tess_sig.entry_type,
+                                    _tess_sig.vol_surge_ratio,
+                                    eff_sl, eff_tp,
+                                )
+                            except Exception as _tess_err:
+                                log.debug("[XAUUSD M5] [TESSERACT] erro ignorado: %s", _tess_err)
+                        # ── FIM TESSERACT SNIPER GATE ──────────────────────────────────────
+
+                        # ── ZAK MIR GUARDRAIL — MACRO GEOMETRY GATE (CEO 2026-05-13) ──
+                        # Ordem: ZAK (macro: RSI50+SMA50+Exaustão) → M1-GATE (micro) → Ordem
+                        if _ZAK_GUARDRAIL_AVAIL and _ZAK_GUARDRAIL is not None:
+                            try:
+                                _tf_const_map = {
+                                    "M1": mt5.TIMEFRAME_M1, "M5": mt5.TIMEFRAME_M5,
+                                    "M15": mt5.TIMEFRAME_M15, "H1": mt5.TIMEFRAME_H1,
+                                    "H4": mt5.TIMEFRAME_H4, "D1": mt5.TIMEFRAME_D1,
+                                }
+                                _zak_tf = _tf_const_map.get(tf, mt5.TIMEFRAME_H1)
+                                _zak_rates = mt5.copy_rates_from_pos(asset, _zak_tf, 0, 250)
+                                if _zak_rates is not None and len(_zak_rates) >= 50:
+                                    import pandas as pd
+                                    _zak_df = pd.DataFrame(_zak_rates)
+                                    _zak_df.rename(columns={"open":"open","high":"high",
+                                                            "low":"low","close":"close"}, inplace=True)
+                                    _zak_df = _ZAK_GUARDRAIL.compute_indicators(_zak_df)
+                                    _zak_res = _ZAK_GUARDRAIL.validate_entry(asset, tf, signal_dir, _zak_df)
+                                    if not _zak_res.get("valid", True):
+                                        _zak_reason = _zak_res.get("reason", "ZAK_BLOCKED")
+                                        _zak_risk   = _zak_res.get("risk_level", "UNKNOWN")
+                                        log.info("[%s %s] [ZAK] BLOCKED — %s (risk=%s)",
+                                                 asset, tf, _zak_reason, _zak_risk)
+                                        results.append({"asset": asset, "timeframe": tf,
+                                                        "status": "SKIP_ZAK_GATE",
+                                                        "reason": _zak_reason,
+                                                        "risk_level": _zak_risk})
+                                        continue
+                                    log.info("[%s %s] [ZAK] OK — %s", asset, tf,
+                                             _zak_res.get("reason", "ZAK_MIR_VALIDATED"))
+                            except Exception as _zak_err:
+                                # ZAK falha = não bloqueia (é filtro adicional, não obrigatório)
+                                log.debug("[%s %s] [ZAK] erro ignorado: %s", asset, tf, _zak_err)
+
+                        # ── OMEGA MARKET PROFILE GATE — STRUCTURAL LEVEL FILTER (CEO 2026-05-14) ──
+                        # Ordem no pipeline: ZAK → [MP-GATE] → M1-GATE → Lock → Ordem
+                        # Bloqueia se: shark_absorption >= 0.75 (absorção institucional activa)
+                        # Boost TP se: rPOC resonance confirmado (POC alinhado com 3 dias)
+                        # Falha = NÃO bloqueia (filtro adicional, não obrigatório)
+                        if _MP_AVAIL and _MPEngineCls is not None:
+                            try:
+                                import pandas as _pd_mp
+                                # Lazy engine init por activo (uma vez em memória)
+                                if asset not in _MP_ENGINES:
+                                    _mp_regime = _get_mp_regime(asset, _prof.get("regime", "forex"))
+                                    _MP_ENGINES[asset] = _MPEngineCls.from_regime(_mp_regime)
+                                _mp_eng = _MP_ENGINES[asset]
+
+                                # Fetch H1 OHLCV (200 barras)
+                                _mp_rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_H1, 0, 200)
+                                if _mp_rates is not None and len(_mp_rates) >= 20:
+                                    _mp_df = _pd_mp.DataFrame(_mp_rates)
+                                    if "tick_volume" in _mp_df.columns and "volume" not in _mp_df.columns:
+                                        _mp_df["volume"] = _mp_df["tick_volume"]
+
+                                    # D1 closes (D-3, D-2, D-1)
+                                    _d1_rates = mt5.copy_rates_from_pos(asset, mt5.TIMEFRAME_D1, 0, 6)
+                                    _prev_closes: list = []
+                                    if _d1_rates is not None and len(_d1_rates) >= 4:
+                                        _prev_closes = list(
+                                            _pd_mp.DataFrame(_d1_rates)["close"].iloc[-4:-1].values
+                                        )
+
+                                    # Calcular perfil estrutural
+                                    _mp_state = _mp_eng.compute_from_bars(
+                                        _mp_df,
+                                        prev_closes=_prev_closes,
+                                        tf="H1",
+                                    )
+
+                                    if _mp_state.is_valid:
+                                        _tick_mp     = mt5.symbol_info_tick(asset)
+                                        _cur_price_mp = (
+                                            _tick_mp.bid if signal_dir == "SELL" else _tick_mp.ask
+                                        ) if _tick_mp else _mp_df["close"].iloc[-1]
+                                        _mp_ctx = _mp_state.to_signal_context(float(_cur_price_mp))
+
+                                        # ── BLOCK: absorção institucional activa ─────────
+                                        if _mp_ctx.get("shark_signal") == "BLOCK":
+                                            log.info(
+                                                "[%s %s] [MP-GATE] BLOCKED shark=%.3f POC=%.5f VA=%s",
+                                                asset, tf,
+                                                _mp_state.shark_absorption,
+                                                _mp_state.poc,
+                                                _mp_ctx.get("price_vs_va", "?"),
+                                            )
+                                            results.append({
+                                                "asset": asset, "timeframe": tf,
+                                                "status": "SKIP_MP_SHARK",
+                                                "shark_absorption": _mp_state.shark_absorption,
+                                                "poc": _mp_state.poc,
+                                            })
+                                            continue
+
+                                        # ── TP BOOST: rPOC resonance confirmado ──────────
+                                        if _mp_state.is_resonance and _mp_ctx.get("shark_signal") == "CLEAR":
+                                            _mp_tp_boost = float(os.getenv("OMEGA_MP_TP_BOOST", "1.15"))
+                                            eff_tp = round(eff_tp * _mp_tp_boost, 1)
+                                            log.info(
+                                                "[%s %s] [MP-GATE] rPOC RESONANCE — TP boost x%.2f → %.1f pts",
+                                                asset, tf, _mp_tp_boost, eff_tp,
+                                            )
+
+                                        log.info(
+                                            "[%s %s] [MP-GATE] OK POC=%.5f VA=%s score=%.3f "
+                                            "shark=%.3f resonance=%s gap_fill=%.3f",
+                                            asset, tf,
+                                            _mp_state.poc,
+                                            _mp_ctx.get("price_vs_va", "?"),
+                                            _mp_state.strength,
+                                            _mp_state.shark_absorption,
+                                            _mp_state.is_resonance,
+                                            _mp_state.gap_fill_prob,
+                                        )
+                            except Exception as _mp_err:
+                                # Falha do MP não bloqueia execução
+                                log.debug("[%s %s] [MP-GATE] erro ignorado: %s", asset, tf, _mp_err)
+                        # ── FIM MARKET PROFILE GATE ────────────────────────────────────────
+
+                        # ── MICRO ENTRY FILTER — M1 MANDATORY GATE (CEO 2026-05-12) ────
+                        # REGRA: ordens SÓ se M1 confirmar. Sem confirmação M1 = sem ordem.
+                        if _MICRO_FILTER_AVAIL and _MICRO_FILTER is not None:
+                            try:
+                                _mef_res = _MICRO_FILTER.evaluate(asset, signal_dir, tf)
+                                if not _mef_res.execute:
+                                    log.info("[%s %s] [M1-GATE] BLOCKED — %s (quality=%.2f)",
+                                             asset, tf, _mef_res.reason, _mef_res.entry_quality)
+                                    results.append({"asset": asset, "timeframe": tf,
+                                                    "status": "SKIP_M1_GATE",
+                                                    "reason": _mef_res.reason,
+                                                    "quality": _mef_res.entry_quality})
+                                    continue
+                                # Ajustar SL com estrutura M1 (apertar se qualidade alta)
+                                if _mef_res.sl_adj_pts != 0.0:
+                                    eff_sl = max(eff_sl + _mef_res.sl_adj_pts,
+                                                 float(_prof.get("sl_pts_min", 50)))
+                                    log.info("[%s %s] [M1-GATE] SL ajustado %.0f pts (quality=%.2f)",
+                                             asset, tf, eff_sl, _mef_res.entry_quality)
+                                # Ajustar lote com qualidade M1
+                                if _mef_res.lot_multiplier < 1.0 and eff_lot is not None:
+                                    eff_lot = max(
+                                        round(eff_lot * _mef_res.lot_multiplier, 2),
+                                        0.01
+                                    )
+                                    log.info("[%s %s] [M1-GATE] lot ajustado (mult=%.2f quality=%.2f)",
+                                             asset, tf, _mef_res.lot_multiplier, _mef_res.entry_quality)
+                                log.info("[%s %s] [M1-GATE] OK quality=%.2f lot_mult=%.2f",
+                                         asset, tf, _mef_res.entry_quality, _mef_res.lot_multiplier)
+                            except Exception as _mef_err:
+                                # M1 indisponivel = NAO EXECUTAR (regra CEO)
+                                log.warning("[%s %s] [M1-GATE] ERRO — skip por seguranca: %s",
+                                            asset, tf, _mef_err)
+                                results.append({"asset": asset, "timeframe": tf,
+                                                "status": "SKIP_M1_ERROR",
+                                                "error": str(_mef_err)})
+                                continue
+                        else:
+                            # Modulo indisponivel = NAO EXECUTAR (regra CEO: M1 e obrigatorio)
+                            log.error("[%s %s] [M1-GATE] MicroEntryFilter INDISPONIVEL — skip",
+                                      asset, tf)
+                            results.append({"asset": asset, "timeframe": tf,
+                                            "status": "SKIP_M1_UNAVAILABLE"})
+                            continue
+
+                        # ── ATOMIC LOCK — previne race condition (CEO 2026-05-12) ───────
+                        if not _lock_acquire(timeout=3.0):
+                            log.warning("[%s %s] [LOCK] Timeout — ciclo paralelo a executar, skip",
+                                        asset, tf)
+                            results.append({"asset": asset, "timeframe": tf,
+                                            "status": "SKIP_LOCK_TIMEOUT"})
+                            continue
+                        try:
+                            exec_result = mt5_send_order(
+                                asset, tf, eff_lot,
+                                sl_pts=eff_sl,
+                                tp_pts=eff_tp,
+                                direction=signal_dir)
+                        finally:
+                            _lock_release()
                         success = exec_result.get("success", False)
                         # Idempotência / dedup ticket
                         deal_id = exec_result.get("deal")
+                        # PSA-WIND Q1: marcar ativo no ciclo em QUALQUER fill com sucesso.
+                        # Não acoplar ao dedup de deal: se deal já estiver em _processed_tickets (colisão
+                        # rara / reenvio), o ativo ainda assim abriu posição neste ciclo — sem isto o
+                        # próximo TF podia voltar a enviar (duplicata XAUUSD mesmo lote/preço).
+                        if success:
+                            _cycle_opened_assets.add(asset)
                         if success and deal_id is not None and deal_id not in _processed_tickets:
                             _processed_tickets.add(deal_id)
-                            _cycle_opened_assets.add(asset)  # PSA-WIND Q1: marcar asset como executado neste ciclo
+                            _cycle_dir_count[signal_dir] = _cycle_dir_count.get(signal_dir, 0) + 1  # P&D counter
                             # Ledger: registra APENAS a nova posição (1 ticket por deal)
                             try:
                                 _new_pos = mt5.positions_get(symbol=asset) or []
@@ -2819,18 +3649,20 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                                 )
                                                 _partial_close_engines[_np.ticket] = _pc_engine
                                                 _pos_ledger[_np.ticket]["partial_close"] = True
-                                                log.info("[PARTIAL_CLOSE] %s #%d inicializado PSA-WIND | entry=%.5f lot=%.2f dir=%s levels=[1.5/3/5/8]ATR",
+                                                log.info("[PARTIAL_CLOSE] %s #%d inicializado PSA-WIND | entry=%.5f lot=%.2f dir=%s levels=[0.7/1.5/2.5/4.0]ATR",
                                                          asset, _np.ticket, _entry_price, eff_lot, signal_dir)
                                         except Exception as _pc_err:
                                             log.warning("[PARTIAL_CLOSE] Erro ao inicializar: %s", _pc_err)
                                         # === PSA-WIND FIX 3: TRAILING STOP geométrico POR POSIÇÃO ===
                                         try:
                                             if _TRAILING_STOP_AVAILABLE:
-                                                _ts_engine = _TrailingStopCls(atr_multiplier=2.5, min_multiplier=1.0)
+                                                # CEO 2026-05-14 FIX: 1.5→1.0 trailing mais justo
+                                                # Motivo: 1.5×ATR XAUUSD = ~525pts slack = posição pode reverter $5+ antes de fechar
+                                                _ts_engine = _TrailingStopCls(atr_multiplier=1.0, min_multiplier=0.5)
                                                 _ts_engine.entry_price = exec_result.get("fill_price", _np.price_open)
                                                 _ts_engine._peak_price = _ts_engine.entry_price
                                                 _trailing_stop_engines[_np.ticket] = _ts_engine
-                                                log.info("[TRAILING] %s #%d inicializado | entry=%.5f atr_mult=2.5",
+                                                log.info("[TRAILING] %s #%d inicializado | entry=%.5f atr_mult=1.0",
                                                          asset, _np.ticket, _ts_engine.entry_price)
                                         except Exception as _ts_err:
                                             log.warning("[TRAILING] Erro ao inicializar: %s", _ts_err)
@@ -2921,7 +3753,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         except Exception:
                             _sym_point = 0.0001
                         _atr_price = _atr_pts_val * _sym_point
-                        # === PSA-WIND: TRAILING STOP — atualizar e logar ===
+                        # === PSA-WIND: TRAILING STOP — atualizar SL broker + fechar no EXIT_TRIGGER ===
                         try:
                             _ts_eng = _trailing_stop_engines.get(_p.ticket)
                             if _ts_eng is not None and _atr_price > 0:
@@ -2929,20 +3761,41 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                 _new_sl_val, _exit_trigger = _ts_eng.update(_current_price, _atr_price, _dir_int_ts)
                                 if _new_sl_val is not None:
                                     _old_sl = _pos_ledger[_p.ticket].get("trailing_sl")
-                                    if _old_sl is None or abs(_new_sl_val - _old_sl) > _atr_pts_val * 0.01:
+                                    _sl_moved = (_old_sl is None or
+                                                 abs(_new_sl_val - _old_sl) > _atr_pts_val * 0.01)
+                                    if _sl_moved:
                                         _pos_ledger[_p.ticket]["trailing_sl"] = _new_sl_val
                                         log.info("[TRAILING] %s #%d | price=%.5f peak=%.5f trail_SL=%.5f exit=%s",
                                                  _p.symbol, _p.ticket, _current_price,
                                                  _ts_eng._peak_price, _new_sl_val, _exit_trigger)
+                                        # WIRING BUG-4: Mover SL no broker via TRADE_ACTION_SLTP
+                                        _cur_tp_ts = float(_p.tp) if _p.tp else 0.0
+                                        _sl_mod = mt5_modify_position_sl(
+                                            _p.ticket, _p.symbol, _new_sl_val, _cur_tp_ts)
+                                        if not _sl_mod.get("success"):
+                                            log.warning("[TRAILING] %s #%d SL broker modify falhou: %s",
+                                                        _p.symbol, _p.ticket, _sl_mod.get("error"))
                                 if _exit_trigger:
                                     log.warning("[TRAILING] %s #%d EXIT TRIGGER — trailing stop atingido price=%.5f SL=%.5f",
                                                 _p.symbol, _p.ticket, _current_price, _new_sl_val)
+                                    # WIRING BUG-4: Fechar posição completa quando trailing dispara
+                                    _dir_str_ts = "BUY" if _p.type == 0 else "SELL"
+                                    _ts_close = mt5_close_partial(
+                                        _p.ticket, _p.symbol, _p.volume, _dir_str_ts)
+                                    if _ts_close.get("success"):
+                                        log.info("[TRAILING] %s #%d ✅ FECHADA trailing @ %.5f (%.1fms)",
+                                                 _p.symbol, _p.ticket,
+                                                 _ts_close.get("fill_price", 0), _ts_close.get("latency_ms", 0))
+                                    else:
+                                        log.error("[TRAILING] %s #%d ❌ close falhou: %s — SL broker já actualizado",
+                                                  _p.symbol, _p.ticket, _ts_close.get("error"))
                         except Exception as _ts_check_err:
                             log.debug("[TRAILING] Erro ao verificar: %s", _ts_check_err)
-                        # === PARTIAL_CLOSE: verificar se deve fechar parcialmente (engine por ticket, PSA-WIND) ===
+                        # === PARTIAL_CLOSE: fechar parcialmente + breakeven via MT5 (BUG-4 FIX) ===
                         try:
                             _pc_eng = _partial_close_engines.get(_p.ticket)
                             if _pc_eng is not None and _atr_price > 0:
+                                _dir_str_pc = "BUY" if _p.type == 0 else "SELL"
                                 _partial_orders = _pc_eng.check_partials(
                                     current_price=_current_price,
                                     atr_value=_atr_price
@@ -2952,9 +3805,24 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                         log.info("[PARTIAL_CLOSE] %s #%d: %.2f lotes | %s | move_atr=%.2f",
                                                  _p.symbol, _p.ticket, _order["lots"],
                                                  _order["reason"], _order.get("move_atr", 0))
+                                        # WIRING BUG-4: Executar fecho parcial real via MT5
+                                        _pc_res = mt5_close_partial(
+                                            _p.ticket, _p.symbol, _order["lots"], _dir_str_pc)
+                                        if not _pc_res.get("success"):
+                                            log.error("[PARTIAL_CLOSE] %s #%d ❌ fecho parcial falhou: %s",
+                                                      _p.symbol, _p.ticket, _pc_res.get("error"))
                                     elif _order["action"] == "MOVE_SL_TO_ENTRY":
                                         log.info("[PARTIAL_CLOSE] %s #%d: SL moved to breakeven | %s",
                                                  _p.symbol, _p.ticket, _order["reason"])
+                                        # WIRING BUG-4: Mover SL para entry price (breakeven) via broker
+                                        _entry_be = float(
+                                            _pos_ledger[_p.ticket].get("entry_price", _p.price_open))
+                                        _cur_tp_be = float(_p.tp) if _p.tp else 0.0
+                                        _be_res = mt5_modify_position_sl(
+                                            _p.ticket, _p.symbol, _entry_be, _cur_tp_be)
+                                        if not _be_res.get("success"):
+                                            log.error("[PARTIAL_CLOSE] %s #%d ❌ breakeven SL falhou: %s",
+                                                      _p.symbol, _p.ticket, _be_res.get("error"))
                         except Exception as _pc_check_err:
                             log.warning("[PARTIAL_CLOSE] Erro ao verificar: %s", _pc_check_err)
                     else:
@@ -2985,8 +3853,17 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
             log.info("MT5 desconectado.")
 
     # Skip table
+    # P2-C C5 FIX: skip table acumulativa (era destruída a cada ciclo → zero visibilidade)
     skip_out  = AUDIT_PAPER / "skip_table.json"
-    skip_data = {"generated": datetime.now(timezone.utc).isoformat(), "skips": skip_tbl}
+    _existing_skips: list = []
+    if skip_out.exists():
+        try:
+            _ex_data = json.loads(skip_out.read_text(encoding="utf-8"))
+            _existing_skips = _ex_data.get("skips", [])
+        except Exception:
+            pass
+    _merged_skips = _existing_skips + skip_tbl
+    skip_data = {"generated": datetime.now(timezone.utc).isoformat(), "skips": _merged_skips[-5000:]}
     skip_data["checksum"] = sha3(json.dumps(skip_data, indent=2).encode("utf-8"))
     with open(skip_out, "w", encoding="utf-8") as f:
         json.dump(skip_data, f, indent=2, ensure_ascii=False)
