@@ -34,6 +34,7 @@ Este documento fixa **um único ponto de verdade** no repositório para a entreg
 | `fba65ab` | Código: KS 10018, exit reason, lock, inventário, synthesis inicial |
 | `63a3600` | DOC-OFC + índice `governance/README.md` v2.5 + manifesto + anexo `docs/` subordinado |
 | `2f7d378` | Secção 5: pendência memorando PSA (registo CEO) |
+| `ba885e9` | Secção 8: declaração de encerramento do pacote (CEO); secção 5 refinada (PSA só no fecho do dia) |
 
 *Selo temporal de encerramento CEO (secção 8): usar o commit Git mais recente que alterou este ficheiro com a secção 8 presente (`git log -1 -- governance/DOC-OFC-REGISTO-ALINHAMENTO-DOCUMENTAL-SHADOW-PAPER-OIS-20260517.md`).*
 
