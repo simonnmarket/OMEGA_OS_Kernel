@@ -6,7 +6,7 @@
 
 ## Bases e evidências (o que foi feito nesta passagem)
 
-- Ficheiros alterados / criados no `SOURCE_CODE`: `core_engines/shadow_loop.py`, `scripts/omega_paper_loop_24x7.py`, `scripts/OMEGA_AUDIT_ENGINE.py`, este markdown.
+- Ficheiros alterados / criados no `SOURCE_CODE`: `core_engines/shadow_loop.py`, `scripts/omega_paper_loop_24x7.py`, `scripts/OMEGA_AUDIT_ENGINE.py`, `core_engines/omega_evaluation_context.py`, `audit/CEO_SYNTHESIS_OMEGA_INTELLIGENCE_AUDIT_20260517.md`, `docs/OMEGA_GOVERNANCE_DELIVERY_20260517.md`, `governance/DOC-OFC-REGISTO-ALINHAMENTO-DOCUMENTAL-SHADOW-PAPER-OIS-20260517.md`, `governance/README.md`, `governance/MANIFESTO_DOCUMENTOS.json`.
 - Primeira passagem de inventário: comando  
   `python scripts/OMEGA_AUDIT_ENGINE.py --root <SOURCE_CODE> --no-strict`  
   Execução de referência (repositório actual): **477** ficheiros `.py` inventariados; **8** avisos de sintaxe/BOM (lista em `issues` no JSON).  
@@ -25,6 +25,7 @@
 | **Renomear / localizar motor de auditoria** | Feito | Ficheiro canónico: `scripts/OMEGA_AUDIT_ENGINE.py` (inventário estático; primeira passagem com `--no-strict`). |
 | **Gravação synthesis (este ficheiro)** | Feito | Caminho acordado: `SOURCE_CODE/audit/CEO_SYNTHESIS_OMEGA_INTELLIGENCE_AUDIT_20260517.md`. |
 | **Peso de evidência por dia da semana (regra)** | Integrado | Módulo `core_engines/omega_evaluation_context.py`: cada run regista UTC, dia PT, semana ISO, ano, `evidence_weight` (tabela fixa: núcleo seg–qui = 1.0; sex = 0.92; sáb = 0.42; dom = 0.38) + `evidence_tier`. Campos em `paper_summary.json` (`evaluation_calendar_run_start` / `evaluation_calendar_run_end`), `cycle_exit.json`, append `audit/paper/evaluation_timeline.jsonl`. Runner 24x7: log `[EVAL_CONTEXT] runner_cycle=…` por volta externa. **Não burlar:** o peso não substitui análise humana — obriga a etiquetar divergências temporais. Override só teste: `OMEGA_EVAL_EVIDENCE_WEIGHT_OVERRIDE`. |
+| **Canal oficial de governança (anti-contaminação)** | Integrado | `governance/DOC-OFC-REGISTO-ALINHAMENTO-DOCUMENTAL-SHADOW-PAPER-OIS-20260517.md` — fonte canónica; índice `governance/README.md` v2.5; `MANIFESTO_DOCUMENTOS.json` regenerado com `verify_governance_refs.py`. Anexo operacional: `docs/OMEGA_GOVERNANCE_DELIVERY_20260517.md` (subordinado). |
 
 ## O que posso / não posso afirmar
 

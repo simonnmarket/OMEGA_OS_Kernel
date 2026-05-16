@@ -1,9 +1,14 @@
 # OMEGA — Pacote de governança e entrega técnica (2026-05-17)
 
-**Classificação:** interno OMEGA — rastreio de decisão e evidência  
+**Classificação:** interno OMEGA — anexo operacional (checklist)  
+**Fonte canónica de governança (prevalece em caso de divergência):**  
+`governance/DOC-OFC-REGISTO-ALINHAMENTO-DOCUMENTAL-SHADOW-PAPER-OIS-20260517.md`  
+
 **Referências cruzadas:** OIS-CEO-PRIORITIES-20260517 · OIS-CIO-FINAL-ASSESSMENT-20260517 · OIS-CIO-AGENT-DELIVERY-ASSESSMENT-20260517  
 
-Este documento fixa no repositório o que foi **entregue em código** e o que permanece **governação / evidência em ambiente real**, para auditoria pelo Conselho e PSA.
+Este ficheiro em `docs/` existe para **acesso rápido** ao checklist e ao resumo técnico. **Regras, anti-contaminação bilateral e ponto de restauração Git** estão no **DOC-OFC** indicado acima — não duplicar decisões novas só aqui; actualizar primeiro o canal `governance/`.
+
+Este documento descreve o que foi **entregue em código** e o que permanece **governação / evidência em ambiente real**, para auditoria pelo Conselho e PSA.
 
 ---
 

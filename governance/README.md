@@ -1,6 +1,6 @@
 # Governança OMEGA — Índice de documentos oficiais
 
-**Versão do índice:** 2.4 — **SOP Validação** (DOC-018 + `verify_governance_refs.py`); canal documental auditado automaticamente.
+**Versão do índice:** 2.5 — **SOP Validação** (DOC-018 + `verify_governance_refs.py`); canal documental auditado automaticamente; **+ DOC shadow/paper OIS-20260517** (ponto de restauração).
 
 **Correções e Validação SOP (CEO/PSA):** `DOC-OFC-COMUNICACAO-PSA-CORRECOES-PROCEDIMENTO-VALIDACAO-GOV-CEO-20260327-018` (**018**) — documenta correções 008, 013, 014, 017; estabelece o script de auditoria automática.
 
@@ -42,6 +42,7 @@
 | `DOC-OFC-NOTIFICACAO-FINAL-PSA-ENCERRAMENTO-CICLO-FINSENSE-20260401-010` | Notificação final ao PSA |
 | `DOC-OFC-ACTA-ENCERRAMENTO-OFICIAL-ETAPA-FINSENSE-HOMOLOGACAO-PSA-20260402-011` | **Acta oficial PSA:** encerramento etapa (saída) |
 | `DOC-OFC-REGISTO-FALHA-INDICE-DOC003-CORRECAO-PREVENTIVA-PSA-20260403-012` | Registo de falha (ARQUIVO) |
+| `DOC-OFC-CERTIFICADO-INTERMEDIO-QUALIDADE-GOVERNANCA-PSA-FINSENSE-20260412-014` | **[Arquivo]** redireciona para **015** |
 | `DOC-OFC-SOLICITACAO-EXECUCAO-PSA-ENCERRAMENTO-GAP-FINSENSE-CEO-20260404-013` | **[Arquivo]** redireciona para **017** |
 | `DOC-OFC-CERTIFICADO-CONCLUSAO-ETAPA-FINSENSE-LACUNAS-RESOLVIDAS-CEO-20260404-014` | **[Arquivo]** redireciona para **017** |
 | `DOC-OFC-ENVIO-UNICO-PSA-ENCERRAMENTO-FINSENSE-CEO-20260327-015` | **[Arquivo]** redireciona para **017** |
@@ -59,6 +60,14 @@
 **Evidências de teste (Fatia 1):** `DOC-TESTES-FASE2-FATIA1.md` (raiz; estado `FECHADO_CODIGO`).
 
 **Papéis (DOC Fatia 1 v1.1):** **Engenharia** (execução); **COO** (GO operacional); **MACE-MAX** (conselheiro); **PSA** (governança §7).
+
+### Motor shadow / paper — OIS 2026-05-17 (ponto de restauração)
+
+| ID | Título |
+|----|--------|
+| `DOC-OFC-REGISTO-ALINHAMENTO-DOCUMENTAL-SHADOW-PAPER-OIS-20260517` | **Alinhamento documental:** anti-contaminação bilateral; baseline Git `fba65ab`; KS 10018, exit reason, lock runner, calendário de evidência (`OIS-EVAL-CALENDAR-v1`) |
+
+**Anexo técnico (subordinado a este DOC-OFC):** `docs/OMEGA_GOVERNANCE_DELIVERY_20260517.md` — checklist operacional; **em divergência prevalece sempre o DOC-OFC** acima.
 
 ---
 **Observação:** Auditoria Conselho: `Auditoria PARR-F\Auditoria Conselho\LEIA-ME-AUDITORIA-CONSELHO.md`
