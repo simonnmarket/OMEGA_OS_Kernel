@@ -5,7 +5,8 @@ nebular-kuiper\core_engines\shadow_loop.py
 
 SHADOW : gera sinais, loga, NÃO envia ordens (zero risco).
 PAPER  : envia ordens reais para conta DEMO via MetaTrader5 API.
-         Kill switch: DD diário ≥ 5% OU 3 retcodes de falha consecutivos.
+         Kill switch: DD diário ≥ limiar OU falhas consecutivas de execução (limiar configurável);
+         retcode 10018 (MARKET_CLOSED) não incrementa o contador de falhas consecutivas.
 
 Retcodes MT5 monitorados:
   10009 TRADE_RETCODE_DONE     ← sucesso
@@ -447,6 +448,7 @@ from modules.mt5_position_tag import (
     is_omega_tracked_position,
 )
 from core_engines.intra_candle_executor import IntraCandleExecutor
+from core_engines.omega_evaluation_context import build_evaluation_context, format_eval_log_line
 
 # ─── OMEGA REGIME INJECTION (CQO MOD #5 - THREAD SAFE) ──────────────
 import os
@@ -1972,11 +1974,20 @@ class KillSwitch:
         self.equity = equity; self.daily_pnl = 0.0
         self.consec_fail = 0; self.triggered = False; self.reason = ""
         log.info("KILL SWITCH reset: nova baseline equity=USD %.2f", equity)
-    def update(self, success: bool, pnl_usd: float = 0.0) -> bool:
+    def update(self, success: bool, pnl_usd: float = 0.0, retcode: int | None = None) -> bool:
         if self.triggered: return True
         self.daily_pnl += pnl_usd
-        if not success: self.consec_fail += 1
-        else:           self.consec_fail = 0
+        if not success:
+            # CEO OIS-20260517: MARKET_CLOSED (10018) não incrementa streak — KS não dispara por mercado fechado.
+            if retcode == 10018:
+                log.info(
+                    "KILL SWITCH streak: ignorando falha MARKET_CLOSED (retcode=10018) — consec_fail=%d",
+                    self.consec_fail,
+                )
+            else:
+                self.consec_fail += 1
+        else:
+            self.consec_fail = 0
         if abs(self.daily_pnl) / self.equity >= DD_DAILY_MAX:
             self.reason = f"DD diário {abs(self.daily_pnl)/self.equity*100:.2f}% ≥ {DD_DAILY_MAX*100:.0f}%"
             self.triggered = True; log.critical("💀 KILL SWITCH: %s", self.reason)
@@ -1984,6 +1995,32 @@ class KillSwitch:
             self.reason = f"{self.consec_fail} falhas consecutivas"
             self.triggered = True; log.critical("💀 KILL SWITCH: %s", self.reason)
         return self.triggered
+
+
+def classify_cycle_exit_reason(
+    ks: KillSwitch,
+    *,
+    early_error: str | None = None,
+    persistent_halt: bool = False,
+    persistent_detail: str = "",
+) -> tuple[str, str]:
+    """Código estável de saída por ciclo/run (CEO OIS-20260517 — forensics vs Journal MT5)."""
+    kr = (ks.reason or "").strip()
+    if persistent_halt:
+        return "PERSISTENT_DD_HALT", (persistent_detail or kr or "persistent kill-switch")
+    if early_error:
+        return "MT5_UNAVAILABLE", early_error
+    if ks.triggered:
+        if kr.startswith("CB:"):
+            return "CIRCUIT_BREAKER_TRIP", kr
+        if kr.upper() == "TAIL_RISK_HALT" or "TAIL_RISK" in kr.upper():
+            return "TAIL_RISK_HALT", kr
+        if "DD diário" in kr:
+            return "KILL_SWITCH_DAILY_DD", kr
+        if "falhas consecutivas" in kr:
+            return "KILL_SWITCH_CONSECUTIVE_FAIL", kr
+        return "KILL_SWITCH_OTHER", kr or "triggered_without_detail"
+    return "NORMAL_COMPLETION", ""
 
 
 # ─── Online Statistics ────────────────────────────────────────────────────────
@@ -2014,9 +2051,23 @@ class OnlineStats:
         }
 
 
+def _append_evaluation_timeline_row(audit_dir: Path, row: dict) -> None:
+    """Uma linha por evento de run — cruza data/dia/semana/peso com exit_reason (regra avaliação CIO)."""
+    try:
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        _p = audit_dir / "evaluation_timeline.jsonl"
+        with open(_p, "a", encoding="utf-8") as _tf:
+            _tf.write(json.dumps(row, ensure_ascii=False) + "\n")
+    except Exception as _tl_err:
+        log.warning("evaluation_timeline.jsonl: %s", _tl_err)
+
+
 # ─── Loop Principal ───────────────────────────────────────────────────────────
 def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float):
     import MetaTrader5 as mt5
+    _eval_ctx_run_start = build_evaluation_context()
+    log.info("[EVAL_CONTEXT] run_start | %s", format_eval_log_line(_eval_ctx_run_start))
+
     log.info("=" * 72)
     log.info("OMEGA %s LOOP v3.0 | %d ativos × %d TFs | equity=USD %.2f",
              mode.upper(), len(ativos), len(timeframes), equity)
@@ -2029,7 +2080,49 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
         mt5_connected = mt5_init()
         if not mt5_connected:
             log.critical("MT5 não disponível. Abortando modo paper.")
-            return {"error": "MT5 não conectado", "kill_switch": True}
+            _ev_now = build_evaluation_context()
+            _erc, _erd = classify_cycle_exit_reason(
+                KillSwitch(equity), early_error="MT5 não conectado"
+            )
+            try:
+                AUDIT_PAPER.mkdir(parents=True, exist_ok=True)
+                _ce_mt5 = {
+                    "generated": datetime.now(timezone.utc).isoformat(),
+                    "mode": mode,
+                    "exit_reason": _erc,
+                    "exit_detail": _erd,
+                    "kill_switch": True,
+                    "ks_reason": "",
+                    "evaluation_calendar_run_start": _eval_ctx_run_start,
+                    "evaluation_calendar_at_exit": _ev_now,
+                }
+                (AUDIT_PAPER / "cycle_exit.json").write_text(
+                    json.dumps(_ce_mt5, indent=2, ensure_ascii=False),
+                    encoding="utf-8",
+                )
+                _append_evaluation_timeline_row(
+                    AUDIT_PAPER,
+                    {
+                        "generated": _ce_mt5["generated"],
+                        "event": "run_end",
+                        "exit_reason": _erc,
+                        "exit_detail": _erd,
+                        "kill_switch": True,
+                        "evaluation_calendar_run_start": _eval_ctx_run_start,
+                        "evaluation_calendar_at_exit": _ev_now,
+                    },
+                )
+            except Exception:
+                pass
+            log.critical("[CYCLE_EXIT] reason=%s detail=%s", _erc, _erd)
+            return {
+                "error": "MT5 não conectado",
+                "kill_switch": True,
+                "exit_reason": _erc,
+                "exit_detail": _erd,
+                "evaluation_calendar_run_start": _eval_ctx_run_start,
+                "evaluation_calendar_at_exit": _ev_now,
+            }
 
     dm       = load_dynamic_margins()
     ks       = KillSwitch(equity)
@@ -2063,6 +2156,41 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
             log.info(_ks_reason)
             if not _is_safe:
                 log.critical("[HALT] Kill Switch diário disparou — sistema a parar.")
+                try:
+                    _erc_p, _erd_p = classify_cycle_exit_reason(
+                        ks, persistent_halt=True, persistent_detail=_ks_reason
+                    )
+                    _ev_pks = build_evaluation_context()
+                    AUDIT_PAPER.mkdir(parents=True, exist_ok=True)
+                    _ce_pks = {
+                        "generated": datetime.now(timezone.utc).isoformat(),
+                        "mode": mode,
+                        "exit_reason": _erc_p,
+                        "exit_detail": _erd_p,
+                        "kill_switch": True,
+                        "ks_reason": _ks_reason,
+                        "evaluation_calendar_run_start": _eval_ctx_run_start,
+                        "evaluation_calendar_at_exit": _ev_pks,
+                    }
+                    (AUDIT_PAPER / "cycle_exit.json").write_text(
+                        json.dumps(_ce_pks, indent=2, ensure_ascii=False),
+                        encoding="utf-8",
+                    )
+                    _append_evaluation_timeline_row(
+                        AUDIT_PAPER,
+                        {
+                            "generated": _ce_pks["generated"],
+                            "event": "persistent_dd_halt",
+                            "exit_reason": _erc_p,
+                            "exit_detail": _erd_p,
+                            "kill_switch": True,
+                            "evaluation_calendar_run_start": _eval_ctx_run_start,
+                            "evaluation_calendar_at_exit": _ev_pks,
+                        },
+                    )
+                    log.critical("[CYCLE_EXIT] reason=%s detail=%s", _erc_p, _erd_p)
+                except Exception:
+                    pass
                 sys.exit(1)
             if _CIRCUIT_BREAKER is not None:
                 _CIRCUIT_BREAKER.initialize_day(_acct.equity)
@@ -3675,7 +3803,8 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                             open_pos = min(open_pos + (1 if success else 0), MAX_POSITIONS)
                         else:
                             open_pos = open_pos + (1 if success else 0)
-                        ks.update(success, 0.0)
+                        _ks_rc = (exec_result or {}).get("retcode") if exec_result else None
+                        ks.update(success, 0.0, _ks_rc)
                 elif not guard["skip"] and mode == "shadow":
                     log.info("[%s %s] MONITOR | hr134=%.2f%% | margin=%.1fpts | NO ORDER",
                              asset, tf, hr_real, guard["margin_used"])
@@ -3880,10 +4009,16 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                    "realized_pnl": round(_realized_pnl, 4),
                    "realized_n": _realized_n,
                    "positions": {str(k): v for k, v in _pos_ledger.items()}}
+    _exit_code, _exit_detail = classify_cycle_exit_reason(ks)
+    _eval_ctx_run_end = build_evaluation_context()
     summary = {
         "mode": mode, "generated": now, "equity_demo": equity,
         "total_cycles": len(results),
         "kill_switch": ks.triggered, "ks_reason": ks.reason,
+        "exit_reason": _exit_code,
+        "exit_detail": _exit_detail,
+        "evaluation_calendar_run_start": _eval_ctx_run_start,
+        "evaluation_calendar_run_end": _eval_ctx_run_end,
         "online_stats": stat_sum, "results": results,
         "log_file": str(log_file),
         "positions_ledger": _ledger_sum,
@@ -3902,6 +4037,49 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     sum_out = AUDIT_PAPER / "paper_summary.json"
     with open(sum_out, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)
+
+    try:
+        _cycle_exit_payload = {
+            "generated": now,
+            "mode": mode,
+            "exit_reason": _exit_code,
+            "exit_detail": _exit_detail,
+            "kill_switch": ks.triggered,
+            "ks_reason": ks.reason,
+            "total_cycles": len(results),
+            "paper_summary_checksum": summary["checksum"],
+            "evaluation_calendar_run_start": _eval_ctx_run_start,
+            "evaluation_calendar_run_end": _eval_ctx_run_end,
+        }
+        (AUDIT_PAPER / "cycle_exit.json").write_text(
+            json.dumps(_cycle_exit_payload, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        _append_evaluation_timeline_row(
+            AUDIT_PAPER,
+            {
+                "generated": now,
+                "event": "run_end",
+                "exit_reason": _exit_code,
+                "exit_detail": _exit_detail,
+                "kill_switch": ks.triggered,
+                "evaluation_calendar_run_start": _eval_ctx_run_start,
+                "evaluation_calendar_at_exit": _eval_ctx_run_end,
+            },
+        )
+    except Exception as _ce_err:
+        log.warning("cycle_exit.json: %s", _ce_err)
+    if _exit_code != "NORMAL_COMPLETION" or ks.triggered:
+        log.critical(
+            "[CYCLE_EXIT] reason=%s detail=%s ks_triggered=%s",
+            _exit_code,
+            _exit_detail or "-",
+            ks.triggered,
+        )
+    else:
+        log.info("[CYCLE_EXIT] reason=%s (run concluído sem kill-switch intraday)", _exit_code)
+
+    log.info("[EVAL_CONTEXT] run_end | %s", format_eval_log_line(_eval_ctx_run_end))
 
     log.info("=" * 72)
     log.info("%s LOOP CONCLUÍDO | cycles=%d | KS=%s", mode.upper(), len(results), ks.triggered)
