@@ -50,7 +50,19 @@ Este documento fixa **um único ponto de verdade** no repositório para a entreg
 
 ---
 
-## 5. Procedimento em caso de novo comando que “contradiga” este registo
+## 5. Pendência — memorando de actualização ao agente PSA (registo de memória auditável)
+
+**Estado:** `ABERTO` (registado pelo CEO 2026-05-17).
+
+**Contexto:** As execuções técnicas, commits e documentação desta sessão foram conduzidas pelo agente de engenharia (Cursor); o **agente PSA** deve receber um **memorando completo de actualização** antes do encerramento do dia de operações, para que, em auditoria futura, exista **um único pacote** com: avaliações (CEO/CIO/agente), métricas relevantes, referências a documentos (`DOC-OFC`, synthesis, checklist), lista de commits (`fba65ab`, `63a3600`, e subsequentes se houver), e acções pendentes de evidência (paper 24 h, Journal, ratificação de pesos).
+
+**Entregável:** documento endereçado ao PSA (formato e canal internos da organização — ex.: ficheiro em `governance/` ou processo PSA inbound) com título sugerido: *Memorando de actualização — entrega shadow/paper OIS-20260517 (handover PSA)*.
+
+**Responsabilidade:** CEO / operador de fecho do dia solicita explicitamente ao agente de engenharia a **geração final** do memorando quando indicar que «tudo deve ser salvo» / fim da sessão.
+
+---
+
+## 6. Procedimento em caso de novo comando que “contradiga” este registo
 
 1. **Não** implementar silenciosamente: abrir issue / PR com referência a este ID.  
 2. Se o comando for válido, emitir **novo DOC-OFC** ou actualização CEO que **revogue ou emende** explicitamente a secção afecta.  
@@ -58,7 +70,7 @@ Este documento fixa **um único ponto de verdade** no repositório para a entreg
 
 ---
 
-## 6. Assinatura documental
+## 7. Assinatura documental
 
 **Estado:** `ACTIVO` — documento integrado no índice de governança OMEGA (`governance/README.md`) e no manifesto JSON.
 
