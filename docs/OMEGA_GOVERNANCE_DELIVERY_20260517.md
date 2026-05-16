@@ -4,6 +4,8 @@
 **Fonte canónica de governança (prevalece em caso de divergência):**  
 `governance/DOC-OFC-REGISTO-ALINHAMENTO-DOCUMENTAL-SHADOW-PAPER-OIS-20260517.md`  
 
+**Encerramento CEO (2026-05-17):** pacote OIS-20260517 declarado **concluído no Git** no DOC-OFC secção **8**; memorando PSA apenas no **fecho do dia** (DOC-OFC secção **5**).
+
 **Referências cruzadas:** OIS-CEO-PRIORITIES-20260517 · OIS-CIO-FINAL-ASSESSMENT-20260517 · OIS-CIO-AGENT-DELIVERY-ASSESSMENT-20260517  
 
 Este ficheiro em `docs/` existe para **acesso rápido** ao checklist e ao resumo técnico. **Regras, anti-contaminação bilateral e ponto de restauração Git** estão no **DOC-OFC** indicado acima — não duplicar decisões novas só aqui; actualizar primeiro o canal `governance/`.

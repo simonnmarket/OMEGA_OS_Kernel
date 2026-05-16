@@ -27,6 +27,16 @@ Este documento fixa **um único ponto de verdade** no repositório para a entreg
 
 **Nota:** merges posteriores podem avançar o `HEAD`; para auditoria, usar `git show fba65ab` como baseline da entrega OIS-20260517.
 
+**Cadeia de commits (entrega documentada — `feature/nebular-integration-phase1`):**
+
+| Commit | Conteúdo |
+|--------|-----------|
+| `fba65ab` | Código: KS 10018, exit reason, lock, inventário, synthesis inicial |
+| `63a3600` | DOC-OFC + índice `governance/README.md` v2.5 + manifesto + anexo `docs/` subordinado |
+| `2f7d378` | Secção 5: pendência memorando PSA (registo CEO) |
+
+*Selo temporal de encerramento CEO (secção 8): usar o commit Git mais recente que alterou este ficheiro com a secção 8 presente (`git log -1 -- governance/DOC-OFC-REGISTO-ALINHAMENTO-DOCUMENTAL-SHADOW-PAPER-OIS-20260517.md`).*
+
 ---
 
 ## 3. Artefactos de código e documentação (resumo)
@@ -52,13 +62,15 @@ Este documento fixa **um único ponto de verdade** no repositório para a entreg
 
 ## 5. Pendência — memorando de actualização ao agente PSA (registo de memória auditável)
 
-**Estado:** `ABERTO` (registado pelo CEO 2026-05-17).
+**Estado:** `ABERTO — APENAS NO FECHO DO DIA` (decisão CEO 2026-05-17: não antecipar; concentrar no encerramento da noite).
 
-**Contexto:** As execuções técnicas, commits e documentação desta sessão foram conduzidas pelo agente de engenharia (Cursor); o **agente PSA** deve receber um **memorando completo de actualização** antes do encerramento do dia de operações, para que, em auditoria futura, exista **um único pacote** com: avaliações (CEO/CIO/agente), métricas relevantes, referências a documentos (`DOC-OFC`, synthesis, checklist), lista de commits (`fba65ab`, `63a3600`, e subsequentes se houver), e acções pendentes de evidência (paper 24 h, Journal, ratificação de pesos).
+**Contexto:** As execuções técnicas, commits e documentação desta sessão foram conduzidas pelo agente de engenharia (Cursor); o **agente PSA** deve receber um **memorando completo de actualização** antes do encerramento do dia de operações, para que, em auditoria futura, exista **um único pacote** com: avaliações (CEO/CIO/agente), métricas relevantes, referências a documentos (`DOC-OFC`, synthesis, checklist), lista de commits (`fba65ab`, `63a3600`, `2f7d378` e o commit de encerramento desta secção se aplicável), e acções pendentes de evidência (paper 24 h, Journal, ratificação de pesos).
 
 **Entregável:** documento endereçado ao PSA (formato e canal internos da organização — ex.: ficheiro em `governance/` ou processo PSA inbound) com título sugerido: *Memorando de actualização — entrega shadow/paper OIS-20260517 (handover PSA)*.
 
 **Responsabilidade:** CEO / operador de fecho do dia solicita explicitamente ao agente de engenharia a **geração final** do memorando quando indicar que «tudo deve ser salvo» / fim da sessão.
+
+**Tudo o resto deste pacote OIS-20260517** (código + alinhamento documental + índice/manifesto) considera-se **encerrado no Git** até ao commit referido na secção 8 — não permanece pendência técnica *dentro do âmbito deste DOC-OFC* excepto este memorando no horário acordado.
 
 ---
 
@@ -73,6 +85,20 @@ Este documento fixa **um único ponto de verdade** no repositório para a entreg
 ## 7. Assinatura documental
 
 **Estado:** `ACTIVO` — documento integrado no índice de governança OMEGA (`governance/README.md`) e no manifesto JSON.
+
+---
+
+## 8. Declaração de encerramento do pacote (CEO — 2026-05-17)
+
+**Âmbito:** entrega **OIS-20260517** (motor `shadow_loop`, runner, calendário de evidência, inventário, synthesis, canal `DOC-OFC`, anexo `docs/`, commits listados na secção 2).
+
+**Declarado:**
+
+1. O pacote encontra-se **implementado e versionado** na branch `feature/nebular-integration-phase1` até ao commit que encerra esta declaração (ver `git log -1`).
+2. **Não** há outras pendências **obrigatórias** dentro deste DOC-OFC para continuação imediata da sessão técnica, **excepto** o **memorando ao PSA** na secção 5, **exclusivamente** no **fecho do dia**, conforme ordem CEO.
+3. Pendências **estratégicas / operacionais** que **não** fazem parte do fecho deste pacote (paper 24 h com evidência, ratificação de pesos pelo Conselho, módulo de horário operacional, ecossistema secundário MT5) permanecem nos trilhos descritos na synthesis CEO — **não** são atrasos da entrega código+OFC.
+
+**Efeito:** evita ambiguidade de “supra-informação” — o estado oficial do pacote OIS-20260517 é o Git + este documento; alterações futuras exigem novo registo ou DOC-OFC.
 
 ---
 

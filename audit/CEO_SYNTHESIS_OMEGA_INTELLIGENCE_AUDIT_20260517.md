@@ -26,6 +26,7 @@
 | **Gravação synthesis (este ficheiro)** | Feito | Caminho acordado: `SOURCE_CODE/audit/CEO_SYNTHESIS_OMEGA_INTELLIGENCE_AUDIT_20260517.md`. |
 | **Peso de evidência por dia da semana (regra)** | Integrado | Módulo `core_engines/omega_evaluation_context.py`: cada run regista UTC, dia PT, semana ISO, ano, `evidence_weight` (tabela fixa: núcleo seg–qui = 1.0; sex = 0.92; sáb = 0.42; dom = 0.38) + `evidence_tier`. Campos em `paper_summary.json` (`evaluation_calendar_run_start` / `evaluation_calendar_run_end`), `cycle_exit.json`, append `audit/paper/evaluation_timeline.jsonl`. Runner 24x7: log `[EVAL_CONTEXT] runner_cycle=…` por volta externa. **Não burlar:** o peso não substitui análise humana — obriga a etiquetar divergências temporais. Override só teste: `OMEGA_EVAL_EVIDENCE_WEIGHT_OVERRIDE`. |
 | **Canal oficial de governança (anti-contaminação)** | Integrado | `governance/DOC-OFC-REGISTO-ALINHAMENTO-DOCUMENTAL-SHADOW-PAPER-OIS-20260517.md` — fonte canónica; índice `governance/README.md` v2.5; `MANIFESTO_DOCUMENTOS.json` regenerado com `verify_governance_refs.py`. Anexo operacional: `docs/OMEGA_GOVERNANCE_DELIVERY_20260517.md` (subordinado). |
+| **Encerramento do pacote OIS-20260517 (código + OFC)** | **Concluído (Git)** | CEO 2026-05-17: pacote declarado encerrado no DOC-OFC secção 8; única pendência *dentro do pacote* para esta sessão: memorando PSA no **fecho do dia** (secção 5). |
 
 ## O que posso / não posso afirmar
 
@@ -37,9 +38,14 @@
 
 ## Pendências explícitas (a manter visíveis até resolução)
 
+0. **Memorando completo ao agente PSA** (DOC-OFC secção 5): **ABERTO — apenas no fecho do dia** (CEO 2026-05-17); não antecipar.
 1. **Validação operacional:** correr **24 h de paper trading** com o novo `shadow_loop` e rever `cycle_exit.json`, `paper_summary.json` e `omega_24x7_runner.log` quanto a `[CYCLE_EXIT]` e disparos do kill-switch.
 2. **Ecossistema secundário (terminal MT5 / módulos auxiliares):** permanece **pendência** de alinhamento e fecho de gaps; a prioridade P&L continua a ser o pipeline **Python → MT5**; não referenciar outros projectos ou nomes externos em artefactos OMEGA (regra CEO).
 3. **Horário operacional unificado (novo módulo ou serviço):** broker time, fuso do sistema OMEGA (Berlin), calendário de sessões por bolsa, feriados e calendário económico podem gerar relatórios contraditórios se não existir uma camada única de “tempo operacional”. **Recomendação:** especificar e implementar um módulo dedicado (ex.: `omega_session_clock` ou equivalente) que centralize conversões, flags de mercado fechado por bolsa e cache de feriados, consumido pelo motor e pela auditoria. Isto ainda **não** está implementado nesta entrega.
+
+## Encerramento CEO — pacote OIS-20260517 (2026-05-17)
+
+O pacote **código + governança documental** desta entrega considera-se **concluído no repositório** conforme `DOC-OFC-REGISTO-ALINHAMENTO-DOCUMENTAL-SHADOW-PAPER-OIS-20260517.md` secção **8**. Ficheiros não relacionados no working tree local (outros módulos, `audit/paper/*` de runtime, etc.) **não** fazem parte deste encerramento e exigem triagem separada.
 
 ## Próximos passos sugeridos
 
