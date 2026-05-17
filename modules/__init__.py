@@ -126,15 +126,18 @@ MÓDULOS DISPONÍVEIS
 
 [EXECUTION BRIDGE — FILE JSON ↔ MT5]
   omega_execution_bridge_v2_2.py  Ponte JSON atómica Python → MT5 Common Files
+                        VERSÃO DO COMPONENTE: v2.2 (PSA-EXEC-BRIDGE-v2.2 | 2026-05-14)
+                        VERSÃO DO PACOTE modules: v2.5.1 — numerações independentes
                         Escreve AIRequest.SYMBOL.json (tmp+os.replace) e faz poll AIResponse
                         Kill Switch via ks_daily_state.json; regimes forex/crypto/metal/default
                         strength = w_conf × confidence + w_volt × voltage_norm (pesos normalizados)
                         Bloqueante síncrono — adequado a chamada após decisão final
                         Sem ZMQ; sem pandas/numba obrigatórios (optional com fallback)
-                        → Integração: após decisão final no pipeline (ANTES do envio nativo MT5)
-                          Opção A: hub de decisão / Synapse chama execute_signal() por sinal
-                          Opção B: runner dedicado file-bridge (fora do hot path)
-                          NÃO integrar directamente no shadow_loop sem design aprovado (dupla execução)
+                        → DECISÃO CONSELHO (17/05/2026): Opção B — runner dedicado
+                          scripts/omega_bridge_runner.py executa fora do hot path do shadow_loop
+                          Opção A (hub integrado) condicionada a: desenho aprovado +
+                          OMEGA_FILE_BRIDGE_AFTER_DECISION=1 + regra anti-duplicação mt5_send_order
+                          NÃO integrar directamente no shadow_loop sem desenho assinado pelo Conselho
 
 ════════════════════════════════════════════════════════
 COMO ADICIONAR NOVO MÓDULO
