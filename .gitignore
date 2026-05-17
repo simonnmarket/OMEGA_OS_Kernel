@@ -76,3 +76,7 @@ data/ohlcv/
 audit/paper/cycle_exit.json
 audit/paper/evaluation_timeline.jsonl
 audit/paper/omega_runner.lock
+
+# Fire-test / audit runtime (regeneráveis)
+audit/omega_audit/audit_baseline.json
+audit/omega_audit/logs/precheck_*.json
