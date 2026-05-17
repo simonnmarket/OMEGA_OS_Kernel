@@ -219,6 +219,8 @@ class OmegaKernel:
 
     def execute_mt5_order(self, symbol, action, volume, sl_points, tp_points):
         import MetaTrader5 as mt5
+        from modules.mt5_position_tag import build_v2_order_comment
+
         info = mt5.symbol_info(symbol)
         if not info: return False
         
@@ -243,12 +245,11 @@ class OmegaKernel:
             "sl": sl,
             "tp": tp,
             "deviation": 20,
-            "magic": 999111,
-            "comment": "OMEGA_LIVE_SIG",
+            "comment": build_v2_order_comment("SIG", action),
             "type_time": mt5.ORDER_TIME_GTC,
             "type_filling": mt5.ORDER_FILLING_IOC,
         }
-        
+
         res = mt5.order_send(request)
         if res.retcode != mt5.TRADE_RETCODE_DONE:
             request["type_filling"] = mt5.ORDER_FILLING_RETURN
@@ -268,6 +269,8 @@ class OmegaKernel:
         print("="*60)
         
         import MetaTrader5 as mt5
+        from modules.mt5_position_tag import is_omega_tracked_position
+
         if not mt5.initialize():
             print("[-] Falha ao inicializar o MetaTrader 5:", mt5.last_error())
             return
@@ -409,8 +412,13 @@ class OmegaKernel:
                     if all_positions is None:
                         total_omega_trades = 0
                     else:
-                        # Cada disparo tem 3 tickets (fragmentação). Contamos 1 trade ativo por Símbolo OMEGA
-                        total_omega_trades = len(set(p.symbol for p in all_positions if p.magic and 999111 <= p.magic <= 999115))
+                        total_omega_trades = len(
+                            set(
+                                p.symbol
+                                for p in all_positions
+                                if is_omega_tracked_position(p)
+                            ),
+                        )
                         
                     if total_omega_trades >= 15:
                         print(f"   -> [{sym}] ⛔ TREASURY LOCK: Sistema atingiu Limite de Correlacao Simultanea (Max 15 Posicoes). Entrada Ignorada.")
@@ -523,8 +531,15 @@ if __name__ == '__main__':
         if CLI_ARGS.use_shadow_loop or CLI_ARGS.mode == "shadow":
             print("\n>> Delegando execução ao SHADOW LOOP ENGINE v3.0...")
             from core_engines.shadow_loop import run_loop
+            from modules.omega_asset_schedule import resolve_shadow_loop_assets
+
             mode = "shadow" if CLI_ARGS.mode == "shadow" else "paper"
-            ativos = CLI_ARGS.ativos or ["XAUUSD"]
+            ativos, _sched_meta = resolve_shadow_loop_assets(CLI_ARGS.ativos, PROJ_PATH)
+            if _sched_meta.get("source") == "schedule":
+                print(
+                    f">> [ASSET_SCHEDULE] bucket={_sched_meta.get('bucket')} "
+                    f"class={_sched_meta.get('class')} ativos={ativos} tz={_sched_meta.get('timezone')}"
+                )
             result = run_loop(ativos, CLI_ARGS.timeframes, mode, CLI_ARGS.equity)
             if result and result.get("kill_switch"):
                 print("\n>> KILL SWITCH ACTIVADO. Execução terminada.")
