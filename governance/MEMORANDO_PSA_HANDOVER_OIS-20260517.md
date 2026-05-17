@@ -26,8 +26,9 @@
 | `5adcf6f` | feat(kernel): shadow uses asset schedule; MT5 comments via position tags |
 | `65a5b89` | feat(ois-20260517): shadow_loop audit gate, cycle exit, KS 10018 skip; runner lock; risk valves; legacy audit doc |
 | `cdae393` | chore(git): stop tracking bytecode; ignore paper runtime state files |
+| `aa0ff4b` | governance(doc-ofc): fecho memorando PSA + actualização DOC-OFC + synthesis CEO |
 
-*HEAD exacto após merge local: executar `git rev-parse HEAD` no clone canónico.*
+*HEAD exacto após esta cadência: `aa0ff4b` (confirmar com `git rev-parse HEAD` no clone canónico).*
 
 ---
 

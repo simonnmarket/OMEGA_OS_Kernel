@@ -42,6 +42,7 @@ Este documento fixa **um único ponto de verdade** no repositório para a entreg
 | `5adcf6f` | `main.py` — resolução de ativos via calendário na entrada shadow; comentários MT5 |
 | `65a5b89` | `shadow_loop` / `omega_paper_loop_24x7` / `OMEGA_AUDIT_ENGINE` / `risk_valves_v31` (OIS-20260517) |
 | `cdae393` | Bytecode `.pyc` removido do índice Git; `.gitignore` para estado runtime em `audit/paper/` |
+| `aa0ff4b` | DOC-OFC + memorando PSA (`MEMORANDO_PSA_HANDOVER_OIS-20260517.md`) + actualização `audit/CEO_SYNTHESIS_OMEGA_INTELLIGENCE_AUDIT_20260517.md` |
 
 *Selo temporal de encerramento CEO (secção 8): usar o commit Git mais recente que alterou este ficheiro com a secção 8 presente (`git log -1 -- governance/DOC-OFC-REGISTO-ALINHAMENTO-DOCUMENTAL-SHADOW-PAPER-OIS-20260517.md`). Para a **cadência técnica** de integração Git acima, usar `git show <hash>` por linha.*
 
@@ -64,7 +65,7 @@ Este documento fixa **um único ponto de verdade** no repositório para a entreg
 
 ## 4. Trilhos pós-code-freeze (não bloqueiam arranque técnico)
 
-Estes itens **não** são pré-requisitos para continuar desenvolvimento na branch de integração após a cadência Git `41e75f6`…`cdae393` (secção 2). São **evidência operacional** ou **governança institucional** com calendário próprio.
+Estes itens **não** são pré-requisitos para continuar desenvolvimento na branch de integração após a cadência Git `41e75f6`…`aa0ff4b` (secção 2). São **evidência operacional** ou **governança institucional** com calendário próprio.
 
 - **Paper 24 h + Journal MT5** — runbook e critérios em `docs/OMEGA_GOVERNANCE_DELIVERY_20260517.md` §3; artefactos esperados listados em `governance/MEMORANDO_PSA_HANDOVER_OIS-20260517.md` §4.
 - **Ratificação formal dos pesos** `0.92 / 0.42 / 0.38` — baseline de engenharia **OIS-EVAL-CALENDAR-v1** já em código; Conselho pode emitir `v*` ou acta sem bloquear merges técnicos.
@@ -75,7 +76,7 @@ Estes itens **não** são pré-requisitos para continuar desenvolvimento na bran
 | Item | Estado | Nota |
 |------|--------|------|
 | **Memorando PSA** | **FECHADO** | `governance/MEMORANDO_PSA_HANDOVER_OIS-20260517.md` |
-| **Pacote audit modular + CLI no Git** | **FECHADO** | commits `41e75f6` … `cdae393` |
+| **Pacote audit modular + CLI no Git** | **FECHADO** | commits `41e75f6` … `aa0ff4b` (código até `cdae393`; governança `aa0ff4b`) |
 | **Paper 24 h + evidência MT5** | **Trilho operacional** | Primeira janela útil quando CEO autorizar; não bloqueia código |
 | **Ratificação dos pesos** | **Institucional** | Não bloqueia código; alteração só com novo DOC-OFC ou acta |
 | **`omega_session_clock`** | **Backlog P1** | Especificação dedicada |
@@ -113,7 +114,7 @@ Estes itens **não** são pré-requisitos para continuar desenvolvimento na bran
 
 **Declarado:**
 
-1. O pacote encontra-se **implementado e versionado** na branch `feature/nebular-integration-phase1`, incluindo a cadência técnica `41e75f6`…`cdae393` (secção 2) e a actualização deste DOC-OFC com memorando PSA em `governance/MEMORANDO_PSA_HANDOVER_OIS-20260517.md`.
+1. O pacote encontra-se **implementado e versionado** na branch `feature/nebular-integration-phase1`, incluindo a cadência técnica `41e75f6`…`aa0ff4b` (secção 2) e o memorando PSA em `governance/MEMORANDO_PSA_HANDOVER_OIS-20260517.md`.
 2. **Não** há pendências **obrigatórias** dentro deste DOC-OFC que bloqueiem continuação técnica ou arranque pós‑fim‑de‑semana: memorando PSA (secção 5) encontra-se **fechado**; núcleo `omega_audit` + CLI + calendário de ativos + integrações listadas estão **no Git**.
 3. Itens em **trilhos pós-code-freeze** (secção 4) — paper 24 h com evidência MT5, ratificação formal de pesos pelo Conselho, módulo `omega_session_clock`, ecossistema secundário MT5 — seguem com **calendário operacional / institucional próprio** e **não** contam como atraso da entrega código+OFC nem como bloqueio de merge da linha OIS-20260517.
 
