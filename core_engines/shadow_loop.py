@@ -3084,7 +3084,10 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                 _entry_pnl    = _entry.get("last_profit", 0.0)  # fallback
                                 _exit_reason  = "UNKNOWN"
                                 try:
-                                    _hist_window = timedelta(minutes=90)
+                                    # P1-A (OIS-DIAG-20260517): janela configurável via OMEGA_EXIT_REASON_HISTORY_MIN
+                                    # Default 1440 min (24h) — cobre H1/H4/D1. Antes: 90 min → UNKNOWN em trades longos.
+                                    _hist_min = int(_get_flag("OMEGA_EXIT_REASON_HISTORY_MIN", "1440"))
+                                    _hist_window = timedelta(minutes=_hist_min)
                                     _hist_deals  = mt5.history_deals_get(
                                         datetime.now(timezone.utc) - _hist_window,
                                         datetime.now(timezone.utc)
