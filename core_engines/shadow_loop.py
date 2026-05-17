@@ -751,6 +751,81 @@ if _TESSERACT_AVAIL:
 else:
     log.warning("[TESSERACT] Import falhou — módulo indisponível")
 
+# ── OMEGA INTELLIGENCE AUDIT (Tier-0 — modules.omega_audit) ───────────────────
+# CEO 2026-05-16: integração shadow_loop; activar com OMEGA_STRICT_AUDIT_ENABLED=1
+try:
+    from dataclasses import asdict as _audit_asdict
+
+    from modules.omega_audit import (
+        default_baseline_path,
+        run_pre_cycle_check,
+        verify_against_baseline,
+        write_audit_report,
+    )
+
+    _OMEGA_AUDIT_AVAILABLE = True
+except Exception as _omega_audit_import_err:
+    _audit_asdict = None  # type: ignore
+    _OMEGA_AUDIT_AVAILABLE = False
+    log.warning("[OMEGA_AUDIT] Import falhou — gate desactivado: %s", _omega_audit_import_err)
+
+
+def _omega_strict_audit_enabled() -> bool:
+    v = os.getenv("OMEGA_STRICT_AUDIT_ENABLED", "0").strip().lower()
+    return v in ("1", "true", "yes", "on")
+
+
+def _run_omega_audit_tier0_gate(
+    *,
+    mode: str,
+    mt5_connected: bool,
+    equity_arg: float,
+) -> tuple[bool, str, list]:
+    """
+    Baseline (SHA3) + pré-ciclo (ancora ks_daily_anchor.json + equity vs DD).
+    Retorna (ok, detail, issues_dicts). ok=False => abortar run_loop (fail-closed).
+    """
+    if not _omega_strict_audit_enabled():
+        return True, "audit_disabled", []
+    if not _OMEGA_AUDIT_AVAILABLE or _audit_asdict is None:
+        log.critical(
+            "[OMEGA_AUDIT] OMEGA_STRICT_AUDIT_ENABLED activo mas pacote indisponível — Fail-Closed"
+        )
+        return False, "omega_audit_pkg_unavailable", []
+    root = ROOT
+    baseline_path = default_baseline_path(root)
+    bv = verify_against_baseline(root, baseline_path, strict=True)
+    if not bv.ok:
+        rp = write_audit_report(bv.issues, root, prefix="shadow_loop_baseline_veto")
+        log.critical("[OMEGA_AUDIT] Baseline veto — relatório: %s", rp)
+        return False, f"baseline_veto:{rp.name}", [_audit_asdict(i) for i in bv.issues]
+
+    eq_live = float(equity_arg)
+    if mode == "paper" and mt5_connected:
+        try:
+            import MetaTrader5 as mt5
+
+            _ai = mt5.account_info()
+            if _ai and float(_ai.equity) > 0:
+                eq_live = float(_ai.equity)
+        except Exception as _eq_err:
+            log.warning("[OMEGA_AUDIT] Falha ao ler equity MT5: %s — a usar equity_arg", _eq_err)
+
+    max_dd = float(os.getenv("OMEGA_DD_DAILY_MAX", "0.02"))
+    account_state = {"equity": eq_live, "max_dd_allowed": max_dd}
+    pr = run_pre_cycle_check(root, account_state, [], strict_mode=True)
+    if not pr.allowed:
+        rp = write_audit_report(pr.issues, root, prefix="shadow_loop_precycle_veto")
+        log.critical("[OMEGA_AUDIT] Pré-ciclo veto — relatório: %s", rp)
+        return False, f"precycle_veto:{rp.name}", [_audit_asdict(i) for i in pr.issues]
+
+    log.info(
+        "AUDIT_ENGINE ACTIVE | Tier-0 gate passed | baseline_paths_checked=%d",
+        bv.checked,
+    )
+    log.info("AUDIT_PRE_CYCLE | cycle authorized (anchor+equity+baseline OK)")
+    return True, "ok", []
+
 
 # ─── SHA3-256 ────────────────────────────────────────────────────────────────
 def sha3(data: bytes) -> str:
@@ -2305,6 +2380,56 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
     _cycle_dir_count: dict = {"BUY": 0, "SELL": 0}   # reset a cada ciclo
 
     try:
+        _audit_ok, _audit_detail, _audit_issue_dicts = _run_omega_audit_tier0_gate(
+            mode=mode,
+            mt5_connected=mt5_connected,
+            equity_arg=equity,
+        )
+        if not _audit_ok:
+            log.critical("[CYCLE_EXIT] OMEGA_AUDIT_GATE detail=%s", _audit_detail)
+            _erc_a, _erd_a = "OMEGA_AUDIT_GATE", _audit_detail
+            _ev_audit = build_evaluation_context()
+            try:
+                AUDIT_PAPER.mkdir(parents=True, exist_ok=True)
+                _ce_a = {
+                    "generated": datetime.now(timezone.utc).isoformat(),
+                    "mode": mode,
+                    "exit_reason": _erc_a,
+                    "exit_detail": _erd_a,
+                    "kill_switch": True,
+                    "ks_reason": "OMEGA_AUDIT_TIER0",
+                    "evaluation_calendar_run_start": _eval_ctx_run_start,
+                    "evaluation_calendar_at_exit": _ev_audit,
+                    "omega_audit_issues": _audit_issue_dicts,
+                }
+                (AUDIT_PAPER / "cycle_exit.json").write_text(
+                    json.dumps(_ce_a, indent=2, ensure_ascii=False),
+                    encoding="utf-8",
+                )
+                _append_evaluation_timeline_row(
+                    AUDIT_PAPER,
+                    {
+                        "generated": _ce_a["generated"],
+                        "event": "run_end",
+                        "exit_reason": _erc_a,
+                        "exit_detail": _erd_a,
+                        "kill_switch": True,
+                        "evaluation_calendar_run_start": _eval_ctx_run_start,
+                        "evaluation_calendar_at_exit": _ev_audit,
+                    },
+                )
+            except Exception:
+                pass
+            return {
+                "error": "OMEGA_AUDIT_GATE",
+                "kill_switch": True,
+                "exit_reason": _erc_a,
+                "exit_detail": _erd_a,
+                "evaluation_calendar_run_start": _eval_ctx_run_start,
+                "evaluation_calendar_run_end": _ev_audit,
+                "omega_audit_issues": _audit_issue_dicts,
+            }
+
         for asset in ativos_scheduled:
             for tf in timeframes:
                 # ── BUG-2: SL Cooldown Gate ──────────────────────────────────

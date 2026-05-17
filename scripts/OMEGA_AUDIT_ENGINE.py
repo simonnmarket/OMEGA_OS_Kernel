@@ -2,10 +2,18 @@
 """
 OMEGA_AUDIT_ENGINE — inventário estático do código OMEGA (SOURCE_CODE).
 
+DEPRECADO (Conselho Tier-0 — pacote modular):
+  Preferir o CLI e a baseline institucional:
+    python scripts/omega_audit_cli.py baseline-init
+    python scripts/omega_audit_cli.py verify-baseline
+    python scripts/omega_audit_cli.py inventory
+    python scripts/omega_audit_cli.py precheck --equity <n> --max-dd 0.02
+  Fachada Python: ``from modules.omega_audit import run_static_inventory, verify_against_baseline``
+
 Primeira passagem (CEO OIS-20260517): mapear ficheiros Python, imports prováveis,
 e checksums SHA3-256 sem exigir conformidade estrita.
 
-Uso (PowerShell, a partir de SOURCE_CODE):
+Uso legado (PowerShell, a partir de SOURCE_CODE):
   python scripts/OMEGA_AUDIT_ENGINE.py --root . --no-strict
   python scripts/OMEGA_AUDIT_ENGINE.py --root C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE --no-strict
 """

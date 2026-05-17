@@ -16,6 +16,7 @@ Ou via ambiente (ativos separados por espaço ou vírgula):
   $env:OMEGA_24X7_MODE = "paper"
   python scripts/omega_paper_loop_24x7.py
 
+Sem --ativos nem OMEGA_24X7_ATIVOS: usa config/omega_asset_schedule.json (crypto fim-de-semana).
 Variáveis úteis:
   OMEGA_LOOP_INTERVAL_SEC — segundos mínimos entre fim de um ciclo e início do próximo (default 10)
   OMEGA_24X7_LOG — ficheiro de log (default audit/paper/omega_24x7_runner.log)
@@ -275,6 +276,16 @@ def main() -> int:
     args = ap.parse_args()
 
     ativos = args.ativos or _parse_ativos_from_env()
+    if not ativos:
+        try:
+            from modules.omega_asset_schedule import resolve_shadow_loop_assets
+
+            ativos, _sched_meta = resolve_shadow_loop_assets(None, ROOT)
+        except Exception as _sched_err:
+            ap.error(
+                "Indique --ativos … ou defina OMEGA_24X7_ATIVOS. "
+                f"Calendário automático falhou: {_sched_err}"
+            )
     if not ativos:
         ap.error("Indique --ativos … ou defina a variável de ambiente OMEGA_24X7_ATIVOS")
 
