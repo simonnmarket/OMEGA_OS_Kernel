@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "description": "Sem --ativos: main.py e runner 24x7 usam este calendário. Sáb/Dom: núcleo crypto + EURUSD/XAUUSD (obrigatórios no runner 24x7).",
+  "timezone": "Europe/Lisbon",
+  "no_cli": {
+    "weekday_mon_fri": {
+      "class": "core",
+      "symbols": ["XAUUSD", "EURUSD", "BTCUSD"]
+    },
+    "saturday": {
+      "class": "crypto",
+      "symbols": ["BTCUSD", "ETHUSD", "SOLUSD", "EURUSD", "XAUUSD"]
+    },
+    "sunday": {
+      "class": "crypto",
+      "symbols": ["BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD", "EURUSD", "XAUUSD"]
+    }
+  }
+}
