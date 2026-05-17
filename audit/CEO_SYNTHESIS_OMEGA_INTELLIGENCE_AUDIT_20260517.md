@@ -38,10 +38,23 @@
 
 ## Pendências explícitas (a manter visíveis até resolução)
 
+*Quadro espelhado no `DOC-OFC-REGISTO-ALINHAMENTO-DOCUMENTAL-SHADOW-PAPER-OIS-20260517.md` secção **4.1**.*
+
 0. **Memorando completo ao agente PSA** (DOC-OFC secção 5): **ABERTO — apenas no fecho do dia** (CEO 2026-05-17); não antecipar.
 1. **Validação operacional:** correr **24 h de paper trading** com o novo `shadow_loop` e rever `cycle_exit.json`, `paper_summary.json` e `omega_24x7_runner.log` quanto a `[CYCLE_EXIT]` e disparos do kill-switch.
 2. **Ecossistema secundário (terminal MT5 / módulos auxiliares):** permanece **pendência** de alinhamento e fecho de gaps; a prioridade P&L continua a ser o pipeline **Python → MT5**; não referenciar outros projectos ou nomes externos em artefactos OMEGA (regra CEO).
 3. **Horário operacional unificado (novo módulo ou serviço):** broker time, fuso do sistema OMEGA (Berlin), calendário de sessões por bolsa, feriados e calendário económico podem gerar relatórios contraditórios se não existir uma camada única de “tempo operacional”. **Recomendação:** especificar e implementar um módulo dedicado (ex.: `omega_session_clock` ou equivalente) que centralize conversões, flags de mercado fechado por bolsa e cache de feriados, consumido pelo motor e pela auditoria. Isto ainda **não** está implementado nesta entrega.
+4. **Working tree local extenso:** muitas alterações e ficheiros não rastreados **fora** do commit único de encerramento OIS — exigem **triagem** e commits dedicados quando o Conselho quiser repo “limpo” (ver DOC-OFC §4.1).
+5. **Ratificação formal dos pesos** (`0.92` / `0.42` / `0.38`) pelo Conselho (ou nova versão `OIS-EVAL-CALENDAR-v*`) — ver DOC-OFC §4.1.
+
+## Actualização técnica pós‑declaração de encerramento OIS (engenharia — 2026-05-18)
+
+*Trabalho útil ao produto; **não** revoga a secção 8 do DOC-OFC sem novo registo CEO — permanece pendente o memorando PSA (secção 5) no fecho do dia.*
+
+- **Pacote modular** `modules/omega_audit/` + CLI `scripts/omega_audit_cli.py`; integração `OMEGA_STRICT_AUDIT_ENABLED` no `shadow_loop.py` (gate baseline + pré‑ciclo); logs `AUDIT_ENGINE ACTIVE` / `AUDIT_PRE_CYCLE`.
+- **Teste de fogo v1.2 (shadow):** evidências em `audit/omega_audit/FIRE_TEST_EXEC_20260516_232329.txt` e `audit/omega_audit/FIRE_TEST_RELATORIO_CEO_20260517.txt`.
+- **Calendário de ativos** (`config/omega_asset_schedule.json`, `modules/omega_asset_schedule.py`): 24/7 com listas por dia (crypto fim‑de‑semana + triple mínimo para o runner); telemetria `audit/paper/asset_schedule.jsonl`.
+- **Baseline** `audit/omega_audit/audit_baseline.json` regenerada durante o teste — rever se deve entrar em commit.
 
 ## Encerramento CEO — pacote OIS-20260517 (2026-05-17)
 
