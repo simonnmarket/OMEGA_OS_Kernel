@@ -411,7 +411,22 @@ AGENT_IA_PATH = Path(__file__).parent.parent / "agent_ia"
 if AGENT_IA_PATH.exists():
     sys.path.insert(0, str(AGENT_IA_PATH))
 
-USE_AGENT_IA = os.getenv("OMEGA_USE_AGENT_IA", "0").strip() == "1"  # Habilitar: OMEGA_USE_AGENT_IA=1
+# P4 (OIS-DIAG-20260517 Red Team Risk 2): carregar live_flags.json como fallback ao env var.
+# Garante persistência em reinícios via systemd/supervisor/cron sem env vars exportadas.
+_LIVE_FLAGS_PATH = Path(__file__).parent.parent / "config" / "live_flags.json"
+_live_flags: dict = {}
+if _LIVE_FLAGS_PATH.exists():
+    try:
+        with open(_LIVE_FLAGS_PATH, "r", encoding="utf-8") as _lf:
+            _live_flags = {k: v for k, v in json.load(_lf).items() if not k.startswith("_")}
+    except Exception:
+        pass
+
+def _get_flag(key: str, default: str = "0") -> str:
+    """Lê flag: env var tem precedência; live_flags.json é fallback persistente."""
+    return os.getenv(key) or _live_flags.get(key, default)
+
+USE_AGENT_IA = _get_flag("OMEGA_USE_AGENT_IA", "0").strip() == "1"  # Habilitar: OMEGA_USE_AGENT_IA=1
 if USE_AGENT_IA:
     try:
         from agent_ia.core.omega_strategy_catalog import StrategyCatalog
@@ -2737,7 +2752,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         # Feature flag de emergência: desactiva fallback EMA8/21 sem inverter lógica.
                         # Activo com: OMEGA_DISABLE_MOMENTUM_FALLBACK=1
                         # Inactivo por omissão ("0") para não afectar deploys existentes.
-                        if os.getenv("OMEGA_DISABLE_MOMENTUM_FALLBACK", "0").strip().lower() in ("1", "true", "yes"):
+                        if _get_flag("OMEGA_DISABLE_MOMENTUM_FALLBACK", "0").strip().lower() in ("1", "true", "yes"):
                             log.info("[%s %s] [MOMENTUM_FALLBACK] DISABLED via OMEGA_DISABLE_MOMENTUM_FALLBACK — SKIP",
                                      asset, tf)
                             results.append({"asset": asset, "timeframe": tf,

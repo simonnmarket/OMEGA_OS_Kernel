@@ -299,6 +299,11 @@ def main():
         if not trades:
             print(f"\n[ERRO] Nenhum trade encontrado para signal_source='{args.source}' em {jsonl_path}")
             return
+        # PSA Council §3.2: N mínimo uniforme — aplica em single-source quando --start-date activo
+        _n_min = 30 if start_date is not None else 5
+        if len(trades) < _n_min:
+            print(f"\n[AVISO] {args.source}: apenas {len(trades)} trades — N < {_n_min} (mínimo para conclusão válida pós-PSA-015)")
+            print(f"  Resultado é exploratório. Aguardar N>={_n_min} trades antes de decisão operacional.")
         result = concordance_analysis(trades, trace)
         print_report(args.source, result, jsonl_path)
 
