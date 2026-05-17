@@ -124,6 +124,18 @@ MÓDULOS DISPONÍVEIS
                         ComponentState: phase, spring_score, utad_score, strength, direction
                         → Integração: gate de fase Wyckoff (shadow_loop / regime engine)
 
+[EXECUTION BRIDGE — FILE JSON ↔ MT5]
+  omega_execution_bridge_v2_2.py  Ponte JSON atómica Python → MT5 Common Files
+                        Escreve AIRequest.SYMBOL.json (tmp+os.replace) e faz poll AIResponse
+                        Kill Switch via ks_daily_state.json; regimes forex/crypto/metal/default
+                        strength = w_conf × confidence + w_volt × voltage_norm (pesos normalizados)
+                        Bloqueante síncrono — adequado a chamada após decisão final
+                        Sem ZMQ; sem pandas/numba obrigatórios (optional com fallback)
+                        → Integração: após decisão final no pipeline (ANTES do envio nativo MT5)
+                          Opção A: hub de decisão / Synapse chama execute_signal() por sinal
+                          Opção B: runner dedicado file-bridge (fora do hot path)
+                          NÃO integrar directamente no shadow_loop sem design aprovado (dupla execução)
+
 ════════════════════════════════════════════════════════
 COMO ADICIONAR NOVO MÓDULO
 ════════════════════════════════════════════════════════
@@ -132,10 +144,10 @@ COMO ADICIONAR NOVO MÓDULO
   3. Adicionar entrada aqui em __all__
   4. Nenhuma dependência de outros módulos OMEGA
 
-Versão: 2.4.8 — 2026-05-04
+Versão: 2.5.1 — 2026-05-17
 """
 
-__version__ = "2.5.0"
+__version__ = "2.5.1"
 __all__ = [
     "risk_metrics",        # VaR institucional
     "anomaly_detector",    # Isolation Forest + Autoencoder
@@ -161,4 +173,5 @@ __all__ = [
     "fimathe_breakout_engine",         # FIMATHE: channel breakout + ATR risk sizing
     "pattern_detector_engine",         # Institutional Pattern Detector: ZigZag + multi-pattern
     "microstructure_tracker",          # Microstructure: tick delta imbalance + Welford z-score
+    "omega_execution_bridge_v2_2",      # FILE BRIDGE: AIRequest/AIResponse JSON atómico ↔ MT5 Common Files
 ]
