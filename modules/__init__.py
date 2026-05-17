@@ -124,6 +124,13 @@ MÓDULOS DISPONÍVEIS
                         ComponentState: phase, spring_score, utad_score, strength, direction
                         → Integração: gate de fase Wyckoff (shadow_loop / regime engine)
 
+[SESSION CLOCK — TIER-0]
+  omega_session_clock.py  Relógio canónico: UTC, OMEGA_BERLIN, BROKER, TERMINAL_LOCAL; sessões OMEGA (UTC)
+                        NYSE/LSE venue status + overrides opcionais em config/omega_session_clock.json
+                        ID: MOD-SESSION-CLOCK-001 | register_module() + run_self_test() T01–T07
+                        Env: OMEGA_POLICY_TZ, OMEGA_BROKER_TZ, OMEGA_BROKER_OFFSET_MINUTES, OMEGA_TERMINAL_TZ, OMEGA_SOURCE_ROOT
+                        → Integração: carimbos temporais e audit_bundle em pipelines/JSONL (sem MT5)
+
 [EXECUTION BRIDGE — FILE JSON ↔ MT5]
   omega_execution_bridge_v2_2.py  Ponte JSON atómica Python → MT5 Common Files
                         VERSÃO DO COMPONENTE: v2.2 (PSA-EXEC-BRIDGE-v2.2 | 2026-05-14)
@@ -177,4 +184,5 @@ __all__ = [
     "pattern_detector_engine",         # Institutional Pattern Detector: ZigZag + multi-pattern
     "microstructure_tracker",          # Microstructure: tick delta imbalance + Welford z-score
     "omega_execution_bridge_v2_2",      # FILE BRIDGE: AIRequest/AIResponse JSON atómico ↔ MT5 Common Files
+    "omega_session_clock",              # TIER-0: relógio canónico + sessões UTC + venues NYSE/LSE
 ]
