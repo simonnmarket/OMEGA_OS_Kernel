@@ -1,8 +1,8 @@
 {
   "_comment": "Flags operacionais persistentes — lidas pelo shadow_loop.py como fallback ao env var.",
   "_doc": "OIS-DIAG-20260517 P4 (Red Team Risk 2): se o processo reiniciar via systemd/supervisor sem env vars, estas flags garantem o estado correcto.",
-  "_last_updated": "2026-05-17",
+  "_last_updated": "2026-05-18",
 
-  "OMEGA_DISABLE_MOMENTUM_FALLBACK": "1",
+  "OMEGA_DISABLE_MOMENTUM_FALLBACK": "0",
   "OMEGA_USE_AGENT_IA": "1"
 }
