@@ -71,3 +71,8 @@ portability_verification_output.txt
 
 # Dados locais (OHLCV copiados para ./data/)
 data/ohlcv/
+
+# Paper / shadow — estado regenerável (não versionar; ver runbook OIS)
+audit/paper/cycle_exit.json
+audit/paper/evaluation_timeline.jsonl
+audit/paper/omega_runner.lock
