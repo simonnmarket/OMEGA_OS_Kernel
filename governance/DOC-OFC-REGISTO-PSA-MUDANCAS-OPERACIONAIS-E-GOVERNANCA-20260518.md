@@ -2,13 +2,13 @@
 
 | Campo | Valor |
 |-------|--------|
-| **ID documento** | DOC-OFC-PSA-REGISTO-MUDANCAS-v1.0 |
+| **ID documento** | DOC-OFC-PSA-REGISTO-MUDANCAS-v1.1 |
 | **Data emissão** | 2026-05-18 |
 | **Para** | PSA Lead |
 | **Cc** | CEO, Tech Lead, CKO, CIO |
-| **Assunto** | Registo único de alterações recentes (bridge, trilho modo real, relógio de sessão, memorandos, flags 24/7) para arquivo e auditoria |
+| **Assunto** | Registo único de alterações recentes (bridge, trilho modo real, relógio de sessão, memorandos, flags 24/7, **teto SL por regime**) para arquivo e auditoria |
 | **Branch** | `feature/nebular-integration-phase1` |
-| **Repositório remoto** | `origin` (último push inclui commit `e449cc8` na data deste registo) |
+| **Repositório remoto** | `origin` (último push inclui commit `4875a67` na data deste registo) |
 
 ---
 
@@ -20,9 +20,10 @@ Centralizar para o **PSA** todas as mudanças **documentadas e persistidas em Gi
 - **governança B6** (desbloqueio Opção A);
 - **trilho modo real** (checklist Fase A, memorando de fecho, envio oficial);
 - módulo **`omega_session_clock`** (Fase A A4);
-- **operação 24/7** (reactivação do **MOMENTUM_FALLBACK**).
+- **operação 24/7** (reactivação do **MOMENTUM_FALLBACK**);
+- **risco de execução — SL** (teto `OMEGA_SL_MAX_*` aplicado em todo o pipeline até `mt5_send_order`).
 
-Evita dispersão por vários e-mails: este ficheiro é a **fonte canónica** do registo `DOC-OFC-PSA-REGISTO-MUDANCAS-v1.0`. Actualizações futuras: **editar este ficheiro** (Secção 11) ou emitir `v1.1` com novo ID — **não** duplicar com o mesmo ID.
+Evita dispersão por vários e-mails: este ficheiro é a **fonte canónica** do registo `DOC-OFC-PSA-REGISTO-MUDANCAS-v1.1`. Actualizações futuras: **editar este ficheiro** (Secção 11) — **não** duplicar com o mesmo ID.
 
 ---
 
@@ -30,6 +31,8 @@ Evita dispersão por vários e-mails: este ficheiro é a **fonte canónica** do 
 
 | Commit | Resumo |
 |--------|--------|
+| `4875a67` | **Risco SL (CEO):** `core_engines/shadow_loop.py` — função `apply_regime_sl_cap`; teto `OMEGA_SL_MAX_*` após `sanitize_sl_tp` e após **Tesseract** XAU M5; SL da **IA** limitado a `_max_sl_pre`; cap em **`mt5_send_order`** após `min_dist+50` (evita SL 600+ pts em XAUUSD / commodity). |
+| `3fe5a1a` | **Governança:** criação deste registo consolidado PSA (v1.0 inicial). |
 | `e449cc8` | **Operação 24/7:** `OMEGA_DISABLE_MOMENTUM_FALLBACK=0` em `config/live_flags.json` + `scripts/run_omega_24x7.ps1` (env com precedência; rollback documentado no commit). |
 | `24cdd9e` | **Envio PSA Fase A:** criação `DOC-OFC-ENVIO-PSA-FECHO-FASE-A-TRILHO-MODO-REAL-20260517.md` (ID `DOC-OFC-ENVIO-PSA-FECHO-FASE-A-v1.0`). |
 | `a9f957d` | **Checklist v1.0.3** + **GOV-MEMO §6.1:** Secção 9 (fonte canónica `omega_session_clock` + regra Pendente); consolidação memorando duplicado. |
@@ -106,6 +109,19 @@ Evita dispersão por vários e-mails: este ficheiro é a **fonte canónica** do 
 
 ---
 
+## 7.1 Correcção — teto de stop-loss por regime (XAUUSD / commodity)
+
+| Campo | Valor |
+|-------|--------|
+| **Commit** | `4875a67` |
+| **Ficheiro** | `core_engines/shadow_loop.py` |
+| **Problema** | SL em **600+ pontos** em XAUUSD: o teto `OMEGA_SL_MAX_METAL` (defeito **250** para `commodity`) aplicava-se só a `_pre_sl`; **IA** (`stop_loss_pips`), **`sanitize_sl_tp`** (piso ATR) e **Tesseract** podiam ignorar o teto; **`mt5_send_order`** ainda podia inflar com `min_dist + 50`. |
+| **Correcção** | `apply_regime_sl_cap()`; cap após sanitize e após Tesseract; IA `min(ia_sl, _max_sl_pre)`; cap final no envio MT5 + log `[MT5_SEND_SL_CONFLICT]` se cap < distância mínima do broker. |
+| **Ajuste fino** | Variável de ambiente **`OMEGA_SL_MAX_METAL`** (ex. `180`) — precedência via código existente de env. |
+| **Ops** | `git pull` + **reiniciar** runner 24x7 para carregar o `shadow_loop.py` corrigido. |
+
+---
+
 ## 8. Contexto operacional (registo — não alterado por commits isolados acima)
 
 | Tema | Nota para PSA |
@@ -118,9 +134,9 @@ Evita dispersão por vários e-mails: este ficheiro é a **fonte canónica** do 
 
 ## 9. Pedido de acções ao PSA
 
-1. **Arquivar** este documento como `DOC-OFC-PSA-REGISTO-MUDANCAS-v1.0` (path Secção 10).
-2. **Confirmar** no remoto os hashes da Secção 2 (`git fetch` + `git log`).
-3. **Validar** com Eng/Ops que o runner 24x7 foi **reiniciado** após `e449cc8`.
+1. **Arquivar** este documento como `DOC-OFC-PSA-REGISTO-MUDANCAS-v1.1` (path Secção 10).
+2. **Confirmar** no remoto os hashes da Secção 2 (`git fetch` + `git log`) — **incluir** `4875a67`.
+3. **Validar** com Eng/Ops que o runner 24x7 foi **reiniciado** após `e449cc8` **e** após `4875a67` (código SL).
 4. **Rubrificar** no checklist (Secção 6) ciência da **Fase A** se ainda em aberto; **Fase B** continua dependente de **EA MQL5** (GOV-B6).
 5. **Decisão Conselho pendente (opcional):** fallback **condicional** (Opção B técnica) vs manter fallback pleno — este registo apenas documenta o estado **actual** (fallback **activo**).
 
@@ -137,7 +153,8 @@ Evita dispersão por vários e-mails: este ficheiro é a **fonte canónica** do 
 | Versão | Data | Autor | Alteração |
 |--------|------|-------|-----------|
 | v1.0 | 2026-05-18 | Eng / Conselho | Emissão inicial — registo consolidado pós-push `e449cc8`. |
+| v1.1 | 2026-05-18 | Eng / CEO | Secção 7.1 — correcção teto SL (`4875a67`); actualização Secção 2 e pedidos PSA; ID v1.1. |
 
 ---
 
-*Fim do registo PSA v1.0.*
+*Fim do registo PSA v1.1.*
