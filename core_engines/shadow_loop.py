@@ -690,6 +690,34 @@ _MAX_SL_PTS: dict = {
     "generic":   int(os.getenv("OMEGA_SL_MAX_GENERIC",    "300")),
 }
 
+
+def apply_regime_sl_cap(
+    sl_pts: float,
+    tp_pts: float,
+    *,
+    regime: str,
+    sl_mult: float,
+    tp_mult: float,
+    asset: str,
+    tf: str,
+) -> tuple:
+    """
+    Teto duro OMEGA_SL_MAX_<regime> após IA, sanitize_sl_tp ou Tesseract.
+    O pré-cálculo (_pre_sl) já era limitado; IA / piso ATR / Sniper podiam ignorar esse teto.
+    """
+    max_sl = float(_MAX_SL_PTS.get(regime, _MAX_SL_PTS["generic"]))
+    if sl_pts <= max_sl + 1e-9:
+        return sl_pts, tp_pts
+    log.warning(
+        "[%s %s] [SL_REGIME_CAP] %.0f → %.0f (regime=%s max=%.0f)",
+        asset, tf, sl_pts, max_sl, regime, max_sl,
+    )
+    sl_pts = max_sl
+    rr_floor = sl_pts * (tp_mult / max(sl_mult, 0.01))
+    tp_pts = max(float(tp_pts), rr_floor)
+    return sl_pts, tp_pts
+
+
 # ─── JPY Correlation Cluster ──────────────────────────────────────────────────
 # Quando USDJPY confirma direção com força, todas as crosses JPY seguem.
 JPY_CROSSES = ["EURJPY", "GBPJPY", "AUDJPY", "CADJPY", "CHFJPY"]
@@ -1220,7 +1248,23 @@ def mt5_send_order(asset: str, tf: str, lot: float,
     final_sl_pts = max(sl_pts, min_dist + 50)          # Safe buffer para SL
     final_tp_pts = max(tp_pts, min_dist + 50)          # Distância mínima para TP
     final_tp_pts = max(final_tp_pts, final_sl_pts * 3.0)  # R:R mínimo 1:3.0
-    
+
+    # Teto OMEGA_SL_MAX_* também no envio MT5 (buffer min_dist+50 podia inflar além do regime)
+    _prof_m = ASSET_PROFILES.get(asset, _PROFILE_DEFAULT)
+    _cap_m = float(_MAX_SL_PTS.get(str(_prof_m.get("regime", "generic")), _MAX_SL_PTS["generic"]))
+    if final_sl_pts > _cap_m + 1e-9:
+        log.warning(
+            "[%s %s] [MT5_SEND_SL_CAP] %.0f → %.0f (regime=%s min_dist=%.0f)",
+            asset, tf, final_sl_pts, _cap_m, _prof_m.get("regime"), float(min_dist),
+        )
+        final_sl_pts = _cap_m
+        final_tp_pts = max(float(final_tp_pts), final_sl_pts * 3.0)
+    if final_sl_pts + 1e-6 < float(min_dist):
+        log.error(
+            "[%s %s] [MT5_SEND_SL_CONFLICT] SL_pts=%.0f < min_dist=%.0f — ajuste broker stops ou OMEGA_SL_MAX_%s",
+            asset, tf, final_sl_pts, float(min_dist), str(_prof_m.get("regime", "")).upper(),
+        )
+
     if direction == "BUY":
         sl_price = round(price - final_sl_pts * point, digits)
         tp_price = round(price + final_tp_pts * point, digits)
@@ -3408,9 +3452,13 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         except Exception:
                             pass
                         # SL/TP: valores já calculados acima (com cap + mult)
-                        # SL: IA pode fornecer valor mais apertado, respeitamos
-                        # TP: IA pode sugerir alvo, mas NUNCA abaixo do R:R mínimo do perfil
-                        eff_sl = float(ia_sl_pts) if ia_sl_pts is not None else _pre_sl
+                        # SL: IA pode sugerir; aplica-se o MESMO teto _max_sl_pre (IA não pode
+                        #     violar OMEGA_SL_MAX_* — era causa de SL 600+ em XAUUSD).
+                        if ia_sl_pts is not None:
+                            eff_sl = min(float(ia_sl_pts), float(_max_sl_pre))
+                            eff_sl = max(eff_sl, float(_min_pts_pre))
+                        else:
+                            eff_sl = float(_pre_sl)
                         _tp_rr_floor = eff_sl * (_tp_mult_pre / max(_sl_mult_pre, 0.01))
                         if ia_tp_pts is not None:
                             eff_tp = max(float(ia_tp_pts), _tp_rr_floor)
@@ -3567,6 +3615,15 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                         if _sl_pts_min_prof > 0:
                             eff_sl = max(eff_sl, _sl_pts_min_prof)
                         eff_sl, eff_tp = sanitize_sl_tp(eff_sl, eff_tp, _exec_atr.get("atr_pts", 0.0), asset)
+                        eff_sl, eff_tp = apply_regime_sl_cap(
+                            eff_sl,
+                            eff_tp,
+                            regime=str(_prof.get("regime", "generic")),
+                            sl_mult=float(_sl_mult_pre),
+                            tp_mult=float(_tp_mult_pre),
+                            asset=asset,
+                            tf=tf,
+                        )
 
                         # ── ZONE NAVIGATOR GATE (CEO 2026-05-14) ──────────────────────
                         # Camada 1: regime filter — bloqueia BUFFER e lateralidade
@@ -3638,6 +3695,15 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                     _tess_sig.entry_type,
                                     _tess_sig.vol_surge_ratio,
                                     eff_sl, eff_tp,
+                                )
+                                eff_sl, eff_tp = apply_regime_sl_cap(
+                                    eff_sl,
+                                    eff_tp,
+                                    regime=str(_prof.get("regime", "generic")),
+                                    sl_mult=float(_sl_mult_pre),
+                                    tp_mult=float(_tp_mult_pre),
+                                    asset=asset,
+                                    tf=tf,
                                 )
                             except Exception as _tess_err:
                                 log.debug("[XAUUSD M5] [TESSERACT] erro ignorado: %s", _tess_err)
