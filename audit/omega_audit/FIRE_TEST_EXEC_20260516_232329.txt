@@ -1,0 +1,99 @@
+--- FASE 0 2026-05-16T23:23:29.4840205+02:00 ---
+PWD: C:\OMEGA_QUANTUM_LAB\SOURCE_CODE
+py_compile: OK
+--- OMEGA_STRICT_AUDIT_ENABLED (antes) ---
+env=
+--- MT5 Fase 0 ---
+Terminal: MetaTrader 5
+Connected: True
+Equity: 1435.97
+Balance: 1435.97
+--- Flag assert (deve ser 0 ou vazio) ---
+OMEGA_STRICT_AUDIT_ENABLED = '0'
+OK flag
+
+--- FASE 1 2026-05-16T23:24:18.2167203+02:00 ---
+OMEGA_STRICT_AUDIT_ENABLED=1
+OMEGA_USE_AGENT_IA=0
+OMEGA_DD_DAILY_MAX=0.05
+
+--- FASE 2 run_loop shadow (pode demorar varios minutos) ---
+2026-05-16 23:24:18,459 | INFO     | === AUDIT ENGINE FIRE TEST START ===
+2026-05-16 23:24:18,459 | INFO     | OMEGA_STRICT_AUDIT_ENABLED = 1
+2026-05-16 23:24:21,500 | INFO     | [ZONE_NAV] Estado restaurado: 22 simbolos
+2026-05-16 23:24:30,941 | INFO | [TESSERACT] Sniper v1.0 carregado ù 1.0.0-SPEC-ALIGNED
+2026-05-16 23:24:30,998 | INFO | [EVAL_CONTEXT] run_start | date=2026-05-16 dow=5 iso_w20/2026 tier=WEEKEND_PARTIAL weight=0.42
+2026-05-16 23:24:31,000 | INFO | ========================================================================
+2026-05-16 23:24:31,000 | INFO | OMEGA SHADOW LOOP v3.0 | 2 ativos Î 1 TFs | equity=USD 10000.00
+2026-05-16 23:24:31,000 | INFO | Risk/trade=0.25% | MaxPos=3 | DD_max=5% | comment_mark='OV2|' legacy_magic=234001 scale_magic_range=999111..999130
+2026-05-16 23:24:31,001 | INFO | ========================================================================
+2026-05-16 23:24:31,002 | INFO     | [TESSERACT] Engine ativado para Multi-Timeframe (H4->M1, H1->M3, e buffer de ConfluÛncia M15)
+2026-05-16 23:24:31,003 | INFO     | [JOHANSEN] DB carregado. 1 anchors.
+2026-05-16 23:24:31,003 | INFO | [FIX5] Scheduler de-bias aplicado | ordem=['XAUUSD', 'EURUSD']
+2026-05-16 23:24:35,640 | CRITICAL | [OMEGA_AUDIT] Baseline veto ù relat¾rio: C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\audit\omega_audit\logs\shadow_loop_baseline_veto_1778966675.json
+2026-05-16 23:24:35,640 | CRITICAL | [CYCLE_EXIT] OMEGA_AUDIT_GATE detail=baseline_veto:shadow_loop_baseline_veto_1778966675.json
+2026-05-16 23:24:35,644 | INFO     | === AUDIT ENGINE FIRE TEST RESULTS ===
+2026-05-16 23:24:35,645 | INFO     | Total Cycles: N/A
+2026-05-16 23:24:35,645 | INFO     | Exit Reason:  OMEGA_AUDIT_GATE
+2026-05-16 23:24:35,645 | INFO     | Kill Switch:  True
+2026-05-16 23:24:35,645 | INFO     | cycle_exit.json size=2197 bytes
+2026-05-16 23:24:35,645 | INFO     | === AUDIT ENGINE FIRE TEST COMPLETE ===
+[FORENSIC] CODE_SHA3=9de958e6d4fd ù rastreamento de versÒo ativado
+
+--- BASELINE REFRESH 2026-05-16T23:24:46.0474948+02:00 ---
+OK baseline: C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\audit\omega_audit\audit_baseline.json
+{
+  "ok": true,
+  "checked": 484,
+  "mismatched": []
+}
+
+--- FASE 2 RETRY (apos baseline) ---
+2026-05-16 23:24:47,950 | INFO     | === FIRE TEST RETRY START ===
+2026-05-16 23:24:49,115 | INFO     | [ZONE_NAV] Estado restaurado: 22 simbolos
+2026-05-16 23:24:49,713 | INFO | [TESSERACT] Sniper v1.0 carregado ù 1.0.0-SPEC-ALIGNED
+2026-05-16 23:24:49,758 | INFO | [EVAL_CONTEXT] run_start | date=2026-05-16 dow=5 iso_w20/2026 tier=WEEKEND_PARTIAL weight=0.42
+2026-05-16 23:24:49,758 | INFO | ========================================================================
+2026-05-16 23:24:49,759 | INFO | OMEGA SHADOW LOOP v3.0 | 2 ativos Î 1 TFs | equity=USD 10000.00
+2026-05-16 23:24:49,759 | INFO | Risk/trade=0.25% | MaxPos=3 | DD_max=2% | comment_mark='OV2|' legacy_magic=234001 scale_magic_range=999111..999130
+2026-05-16 23:24:49,759 | INFO | ========================================================================
+2026-05-16 23:24:49,759 | INFO     | [TESSERACT] Engine ativado para Multi-Timeframe (H4->M1, H1->M3, e buffer de ConfluÛncia M15)
+2026-05-16 23:24:49,760 | INFO     | [JOHANSEN] DB carregado. 1 anchors.
+2026-05-16 23:24:49,760 | INFO | [FIX5] Scheduler de-bias aplicado | ordem=['XAUUSD', 'EURUSD']
+2026-05-16 23:24:50,399 | INFO | AUDIT_ENGINE ACTIVE | Tier-0 gate passed | baseline_paths_checked=484
+2026-05-16 23:24:50,400 | INFO | AUDIT_PRE_CYCLE | cycle authorized (anchor+equity+baseline OK)
+2026-05-16 23:24:50,400 | INFO | [XAUUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-05-16 23:24:50,402 | WARNING | [XAUUSD H1] [FLOW] sem dados M1
+2026-05-16 23:24:53,338 | INFO | [XAUUSD H1] MONITOR | hr134=99.93% | margin=150.0pts | NO ORDER
+2026-05-16 23:24:53,341 | INFO | [XAUUSD H1] MONITOR | hr134=99.93% IC=[99.8243%, 99.9734%] | SHA3=271a6f6fe32f0c33...
+2026-05-16 23:24:53,341 | INFO | [EURUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-05-16 23:24:53,341 | WARNING | [EURUSD H1] [FLOW] sem dados M1
+2026-05-16 23:24:56,072 | INFO | [EURUSD H1] MONITOR | hr134=100.00% | margin=150.0pts | NO ORDER
+2026-05-16 23:24:56,073 | INFO | [EURUSD H1] MONITOR | hr134=100.00% IC=[99.9162%, 100.0000%] | SHA3=cd5acef10dd2a2a6...
+2026-05-16 23:24:56,081 | INFO | \u2500\u2500 ESTAT═STICAS ONLINE \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+2026-05-16 23:24:56,082 | INFO |   total_signals             : 2
+2026-05-16 23:24:56,082 | INFO |   executed                  : 2
+2026-05-16 23:24:56,083 | INFO |   skipped                   : 0
+2026-05-16 23:24:56,083 | INFO |   avg_hit_rate_134          : 99.965
+2026-05-16 23:24:56,083 | INFO |   avg_slippage_pts          : 0.0
+2026-05-16 23:24:56,083 | INFO |   avg_latency_ms            : 0.0
+2026-05-16 23:24:56,084 | INFO |   max_latency_ms            : 0
+2026-05-16 23:24:56,089 | INFO | [CYCLE_EXIT] reason=NORMAL_COMPLETION (run concluÝdo sem kill-switch intraday)
+2026-05-16 23:24:56,090 | INFO | [EVAL_CONTEXT] run_end | date=2026-05-16 dow=5 iso_w20/2026 tier=WEEKEND_PARTIAL weight=0.42
+2026-05-16 23:24:56,091 | INFO | ========================================================================
+2026-05-16 23:24:56,091 | INFO | SHADOW LOOP CONCLU═DO | cycles=2 | KS=False
+2026-05-16 23:24:56,091 | INFO | SHA3 summary: 7953e5838bc70fd278380f0e3b3cf75699aadc2195ed6b23f7c23798e7227f79
+2026-05-16 23:24:56,092 | INFO | Artifacts: C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\audit\paper
+2026-05-16 23:24:56,093 | INFO | ========================================================================
+2026-05-16 23:24:56,095 | INFO     | exit_reason=NORMAL_COMPLETION kill_switch=False total_cycles=2
+[FORENSIC] CODE_SHA3=9de958e6d4fd ù rastreamento de versÒo ativado
+
+--- FASE 3 2026-05-16T23:25:04.2892598+02:00 ---
+exit_reason: NORMAL_COMPLETION
+kill_switch: False
+evidence_weight: 0.42
+Posicoes OMEGA magic 234001: 0
+
+--- FASE 4 Restauracao ---
+OMEGA_STRICT_AUDIT_ENABLED agora: 0
+FIRE TEST RUN COMPLETE

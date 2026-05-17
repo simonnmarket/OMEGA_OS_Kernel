@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-05-16T21:24:35.639404+00:00",
+  "status": "ATTENTION",
+  "critical_count": 1,
+  "high_count": 0,
+  "warning_count": 0,
+  "issues": [
+    {
+      "severity": "CRITICAL",
+      "module": "STATIC_INVENTORY",
+      "message": "Hash mismatch: core_engines/shadow_loop.py",
+      "code": "AUD-BL-006",
+      "timestamp": "2026-05-16T21:24:35.637910+00:00",
+      "detail": {
+        "path": "core_engines/shadow_loop.py",
+        "expected_prefix": "5198c45b2b4a529b",
+        "actual_prefix": "9de958e6d4fd6456"
+      }
+    }
+  ]
+}
