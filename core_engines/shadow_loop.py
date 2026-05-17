@@ -243,6 +243,7 @@ _KERNEL_MODULE_MAP = [
     ("fimathe",    "modules.fimathe_breakout_engine"),
     ("pattern",    "modules.pattern_detector_engine"),
     ("micro",      "modules.microstructure_tracker"),
+    ("synapse",    "modules.omega_sensory_synapse"),
 ]
 
 def _get_analysis_engines(regime: str) -> Dict:
@@ -378,9 +379,9 @@ def compute_flow_confluence(bar: Dict, symbol: str, direction: int, df=None) -> 
         engines = _get_analysis_engines(regime)
         _new_weights = {
             "vof":       0.10, "footprint": 0.09,
-            "sto_inst":  0.07, "sto_fused": 0.14, "pvsra":    0.07,
-            "vwap":      0.11, "pullback":  0.10, "wyckoff":  0.08,
-            "liq_abs":   0.09, "elliott":  0.15,
+            "sto_inst":  0.06, "sto_fused": 0.14, "pvsra":    0.05,
+            "vwap":      0.11, "pullback":  0.08, "wyckoff":  0.05,
+            "liq_abs":   0.09, "elliott":  0.15, "synapse":  0.08,
         }  # soma = 1.00
         for key, eng in engines.items():
             if eng is None:
@@ -2732,6 +2733,17 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                  asset, tf, signal_dir, ia_signal.get('confidence', 0),
                                  ia_signal.get('strategy'))
                     else:
+                        # === P0-A: OMEGA_DISABLE_MOMENTUM_FALLBACK (OIS-DIAG-20260517) ===
+                        # Feature flag de emergência: desactiva fallback EMA8/21 sem inverter lógica.
+                        # Activo com: OMEGA_DISABLE_MOMENTUM_FALLBACK=1
+                        # Inactivo por omissão ("0") para não afectar deploys existentes.
+                        if os.getenv("OMEGA_DISABLE_MOMENTUM_FALLBACK", "0").strip().lower() in ("1", "true", "yes"):
+                            log.info("[%s %s] [MOMENTUM_FALLBACK] DISABLED via OMEGA_DISABLE_MOMENTUM_FALLBACK — SKIP",
+                                     asset, tf)
+                            results.append({"asset": asset, "timeframe": tf,
+                                            "status": "SKIP_MOMENTUM_DISABLED",
+                                            "reason": "OMEGA_DISABLE_MOMENTUM_FALLBACK=1"})
+                            continue
                         # === A2: EDGE GATE (CEO+Conselho 2026-04-27) ===
                         # Bloquear fallback momentum quando ATR/spread/ADX
                         # indicarem que não há edge matemático suficiente.
@@ -2924,6 +2936,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                     "symbol": _live_p.symbol,
                                     "tf": tf,
                                     "signal_source": "SYNC_RECOVERY",
+                                    "direction": "BUY" if _live_p.type == 0 else "SELL",
                                     "last_profit": _live_p.profit,
                                     "entry_time": datetime.now(timezone.utc).isoformat(),
                                     "sl_pts": 0,
@@ -3842,6 +3855,12 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                             "last_profit": _np.profit, "status": "open",
                                             "spread_cost_usd": _spread_cost,
                                             "slippage_pts": exec_result.get("slippage_pts", 0),
+                                            # P0-C: Tech Lead G.1 (OIS-DIAG-20260517) — persistir no ledger na abertura
+                                            "confluence_score": round(float(_flow_conf), 4),
+                                            "components_fired": sorted(
+                                                [k for k, v in (_flow_details or {}).items()
+                                                 if isinstance(v, (int, float)) and float(v) > 50]
+                                            )[:40],
                                         }
                                         _registered_this_deal = True
                                         log.info("[LEDGER] entry=%s #%d lot=%.2f spread_cost=$%.4f slip_pts=%.1f",
