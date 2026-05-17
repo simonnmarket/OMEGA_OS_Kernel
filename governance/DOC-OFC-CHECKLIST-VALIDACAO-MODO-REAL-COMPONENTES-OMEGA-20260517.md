@@ -56,7 +56,7 @@ Antes de criar **novo** ficheiro em `governance/` com o mesmo assunto:
 | A1 | Self-tests do bridge runner (T01–T03 ou equivalente) | Saída: `All self-tests PASSED — BridgeRunner v1.0.0` • commit `5fc18c0` | ☑ |
 | A2 | Self-tests / smoke do `omega_execution_bridge_v2_2.py` | Saída: `All self-tests PASSED — v2.2` • commit `dcdd949` | ☑ |
 | A3 | Dry-run runner (`--dry-run`) com sinal de teste | `audit_record: {event: dry_run, symbol: XAUUSD, action: BUY, confidence: 0.85}` • `file_removed: True` • commit `8d07809` | ☑ |
-| A4 | `omega_session_clock.py` self-test após integração no lab | `[OK] omega_session_clock self-test passed` | ☐ |
+| A4 | `omega_session_clock.py` self-test após integração no lab | `[OK] omega_session_clock self-test passed` • commit `d321006` | ☑ |
 
 ### Fase B — Integração ficheiro (com MT5, paper/demo)
 
@@ -117,3 +117,4 @@ Antes de criar **novo** ficheiro em `governance/` com o mesmo assunto:
 |--------|------|-------|-----------|
 | v1.0 | 2026-05-17 | Conselho OMEGA | Emissão inicial |
 | v1.0.1 | 2026-05-17 | PSA Lead | A1–A3 preenchidas com evidência (commits `dcdd949`, `5fc18c0`, `8d07809`) |
+| v1.0.2 | 2026-05-17 | PSA Lead | A4 concluída — `omega_session_clock` self-test passed • commit `d321006` — **Fase A 4/4** |
