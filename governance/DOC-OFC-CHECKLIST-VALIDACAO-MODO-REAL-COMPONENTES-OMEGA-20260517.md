@@ -40,7 +40,7 @@ Antes de criar **novo** ficheiro em `governance/` com o mesmo assunto:
 | D2 | **`omega_bridge_runner.py`** (Opção B) + evidência `audit/bridge/bridge_runner.jsonl` | D1 para *feedback* real; dry-run sem D1 | Confiança em I/O bridge |
 | D3 | **`omega_execution_bridge_v2_2.py`** (contrato de sinal / serialização) | D2 | Consistência de payloads |
 | D4 | **Risco e caps** (`OMEGA_MAX_POSITIONS`, DD, risco por trade, confluência — o que estiver em vigor no lab) | Política CEO/PSA escrita | Modo real seguro |
-| D5 | **`omega_session_clock`** (relógio / sessão — integração em curso) | `OMEGA_*` env + raiz para `config/omega_session_clock.json` se aplicável | Auditoria temporal coerente em JSONL |
+| D5 | **`omega_session_clock`** (relógio / sessão — **integrado no lab**) | `OMEGA_*` env + `OMEGA_SOURCE_ROOT` → `config/omega_session_clock.json` se aplicável | Auditoria temporal coerente em JSONL |
 | D6 | **Opção A / B6** (`shadow_loop` + bridge após decisão) | GOV-B6 assinado + flag `OMEGA_FILE_BRIDGE_AFTER_DECISION` testada | Um só caminho de execução MT5 |
 
 **Ordem recomendada de trabalho paralelo ao EA:** D4 e D5 podem avançar **em paralelo** com D1; D6 **só** após GOV-B6.
@@ -118,3 +118,14 @@ Antes de criar **novo** ficheiro em `governance/` com o mesmo assunto:
 | v1.0 | 2026-05-17 | Conselho OMEGA | Emissão inicial |
 | v1.0.1 | 2026-05-17 | PSA Lead | A1–A3 preenchidas com evidência (commits `dcdd949`, `5fc18c0`, `8d07809`) |
 | v1.0.2 | 2026-05-17 | PSA Lead | A4 concluída — `omega_session_clock` self-test passed • commit `d321006` — **Fase A 4/4** |
+| v1.0.3 | 2026-05-17 | CEO / Conselho | Nota de governança activa: **fonte canónica** `SOURCE_CODE/modules/omega_session_clock.py`; pasta **Pendente** = arquivo de trabalho apenas — sem sincronização sem decisão explícita |
+
+---
+
+## 9. Nota de governança — `omega_session_clock` (anti-divergência)
+
+| Regra | Texto |
+|-------|--------|
+| **Canónico (runtime / PSA / CI)** | `SOURCE_CODE/modules/omega_session_clock.py` (registado em `modules/__init__.py`). |
+| **Pendente (Desktop)** | Cópia de trabalho / histórico local; **não** promover nem fundir para o lab sem acto escrito ou PR único. |
+| **Evidência Fase A** | Fase A **4/4** com commits A1–A4 conforme Secção 4; próximo *gate*: **Fase B** (EA MQL5). |

@@ -72,6 +72,14 @@ Não substitui o GOV-B6; evita conflito de **duas fontes** para o mesmo nome de 
 | Evidência dry-run | `audit/bridge/bridge_runner.jsonl` | 2026-05-17T19:09 UTC |
 | Catálogo módulos | `modules/__init__.py` | v2.5.1 |
 
+### 6.1 Consolidação — duplicado removido (correcção de governação)
+
+| Campo | Valor |
+|-------|--------|
+| **Problema** | Existia um segundo ficheiro com o mesmo propósito (`MEMO_PSA_FECHO_SECCAO_GOVERNANCA_BRIDGE_v1.md`), risco de **duas fontes** para o mesmo ID de memorando. |
+| **Acção** | Ficheiro duplicado **eliminado**; **única** fonte canónica para `GOV-MEMO-PSA-FECHO-BRIDGE-v1.0` é **este** path: `governance/GOV-MEMO-PSA-FECHO-BRIDGE-v1.0.md`. |
+| **Regra** | Antes de criar novo artefacto em `governance/`: confirmar por listagem / grep que **não existe** já ficheiro com o mesmo ID ou assunto; preferir **actualizar** o existente. |
+
 ---
 
 *Emitido para suporte ao fecho de secção; não altera requisitos técnicos do GOV-B6.*
