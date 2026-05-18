@@ -1,0 +1,24 @@
+{
+  "sl_pct": null,
+  "tp_pct": null,
+  "max_dd_threshold": 10.0,
+  "position_sizing_rules": {
+    "max_positions": 15,
+    "risk_trade_pct": 1.0,
+    "note": "Parsed from log banner sample only — not a full env/shadow_loop matrix."
+  },
+  "kill_switch_threshold": null,
+  "circuit_breaker_threshold": null,
+  "source": "engineering_snapshot_20260518",
+  "from_logs_sample": {
+    "risk_trade_pct": 1.0,
+    "max_positions": 15,
+    "dd_max_pct": 10.0,
+    "comment_mark": "OV2|",
+    "legacy_magic": 234001,
+    "scale_magic_range": "999111-999130",
+    "paper_loop_version": "OMEGA PAPER LOOP v3.0",
+    "ativos_x_tf": "32 x 3"
+  },
+  "note": "sl_pct/tp_pct/kill_switch/circuit_breaker not resolved in this build; PSA should export effective shadow_loop.py / env values."
+}

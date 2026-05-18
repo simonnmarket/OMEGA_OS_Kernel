@@ -1,0 +1,402 @@
+[
+  {
+    "timestamp_utc": "2026-05-16 18:52:23",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-16T18:52:23.861870+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-16 21:24:35",
+    "exit_reason": "OMEGA_AUDIT_GATE",
+    "exit_detail": "baseline_veto:shadow_loop_baseline_veto_1778966675.json",
+    "kill_switch": true,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-16T21:24:35.640945+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-16 21:24:56",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-16T21:24:56.084459+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-17 22:24:42",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-17T22:24:42.269418+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-17 22:33:43",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-17T22:33:43.852639+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-17 22:40:44",
+    "exit_reason": "TAIL_RISK_HALT",
+    "exit_detail": "TAIL_RISK_HALT",
+    "kill_switch": true,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-17T22:40:44.539166+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-17 22:50:03",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-17T22:50:03.735937+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-17 23:01:35",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-17T23:01:35.368234+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-17 23:09:31",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-17T23:09:31.487426+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-17 23:17:48",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-17T23:17:48.567743+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-17 23:26:38",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-17T23:26:38.103356+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-17 23:34:03",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-17T23:34:03.717444+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-17 23:42:08",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-17T23:42:08.398196+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-17 23:50:09",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-17T23:50:09.933681+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-17 23:58:36",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-17T23:58:36.426833+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 00:06:50",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T00:06:50.919509+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 00:14:41",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T00:14:41.914787+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 00:22:26",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T00:22:26.161727+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 00:30:04",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T00:30:04.609266+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 00:37:24",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T00:37:24.804852+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 00:44:49",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T00:44:49.842432+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 00:52:46",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T00:52:46.383321+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 01:00:48",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T01:00:48.438778+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 01:09:43",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T01:09:43.091850+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 01:18:20",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T01:18:20.377418+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 01:22:34",
+    "exit_reason": "TAIL_RISK_HALT",
+    "exit_detail": "TAIL_RISK_HALT",
+    "kill_switch": true,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T01:22:34.494990+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 01:31:31",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T01:31:31.406803+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 01:40:05",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T01:40:05.769072+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 01:48:06",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T01:48:06.894499+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 01:56:40",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T01:56:40.262302+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 02:05:18",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T02:05:18.707470+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 02:13:40",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T02:13:40.542321+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 02:22:25",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T02:22:25.417354+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 02:31:16",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T02:31:16.271519+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 02:39:32",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T02:39:32.726163+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 02:48:23",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T02:48:23.493965+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 02:56:21",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T02:56:21.221290+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 03:05:10",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T03:05:10.821184+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 03:14:15",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T03:14:15.047458+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 03:22:31",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T03:22:31.762514+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 03:31:04",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T03:31:04.131273+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 03:39:54",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T03:39:54.907771+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 03:48:43",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T03:48:43.155689+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 03:57:40",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T03:57:40.743608+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 04:06:49",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T04:06:49.111756+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 04:15:47",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T04:15:47.927537+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 04:25:02",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T04:25:02.193161+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 04:33:46",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T04:33:46.318143+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 04:50:27",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T04:50:27.700806+00:00"
+  },
+  {
+    "timestamp_utc": "2026-05-18 05:03:35",
+    "exit_reason": "NORMAL_COMPLETION",
+    "exit_detail": "",
+    "kill_switch": false,
+    "dd_pct_inferred": null,
+    "generated_raw": "2026-05-18T05:03:35.961561+00:00"
+  }
+]

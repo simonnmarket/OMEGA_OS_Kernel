@@ -1,0 +1,48 @@
+{
+  "manifest_version": "2.0-tier0",
+  "package_id": "PSA_PACOTE_TIER0_YYYYMMDD_HHMMSSZ",
+  "generated_at_utc": "2026-05-19T12:00:00+00:00",
+  "classification": "RAW_DATA_ONLY",
+  "window_utc": {
+    "from": "2026-05-04T00:00:00+00:00",
+    "to": "2026-05-18T23:59:59+00:00"
+  },
+  "mt5": {
+    "login": 0,
+    "server": "REPLACE_ME",
+    "csv_locale": "en"
+  },
+  "deals_export_notes": "",
+  "files": [
+    {
+      "path": "PSA_MANIFEST.json",
+      "role": "control",
+      "sha256": "CALCULATE_AFTER_FILES"
+    },
+    {
+      "path": "PSA_MANIFEST.sha256",
+      "role": "control",
+      "sha256": null
+    },
+    {
+      "path": "mt5_deals_raw.csv",
+      "role": "raw_mt5",
+      "sha256": "REQUIRED"
+    },
+    {
+      "path": "mt5_orders_raw.csv",
+      "role": "raw_mt5",
+      "sha256": "REQUIRED"
+    },
+    {
+      "path": "runtime_manifest.json",
+      "role": "raw_runtime",
+      "sha256": "REQUIRED"
+    },
+    {
+      "path": "account_equity_eod.jsonl",
+      "role": "raw_account",
+      "sha256": "REQUIRED"
+    }
+  ]
+}
