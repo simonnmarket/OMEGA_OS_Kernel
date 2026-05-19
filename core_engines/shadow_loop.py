@@ -1185,6 +1185,71 @@ def mt5_check_order(request: dict) -> Optional[dict]:
     return r
 
 
+# ─── RCV P0 2026-05-20 — Gates de execução (Mandatos 2–4 CKO) ─────────────────
+_ALLOWED_ENTRY_SIGNAL_SOURCES = frozenset({
+    "AGENT_IA",
+    "MOMENTUM_MT5",
+    "TESSERACT",
+})
+
+
+def pre_execution_safety_check(
+    asset: str,
+    tf: str,
+    signal_source: Optional[str],
+    entry_price: float,
+    sl_price: float,
+) -> Tuple[bool, str, str]:
+    """
+  Mandatos CKO OMEGA-RCV-20260520-P0 antes de mt5_send_order.
+  Retorna (ok, status_skip, mensagem).
+    """
+    import MetaTrader5 as mt5
+
+    # Mandato 3 — blackout rollover 23:55–00:10 UTC
+    _now = datetime.now(timezone.utc)
+    if (_now.hour == 23 and _now.minute >= 55) or (_now.hour == 0 and _now.minute < 10):
+        _msg = f"EXECUCAO BLOQUEADA: janela rollover UTC {_now.strftime('%H:%M')}"
+        log.warning("[%s %s] %s", asset, tf, _msg)
+        return False, "SKIP_ROLLOVER_BLACKOUT", _msg
+
+    # Mandato 4 — bloqueio fonte NULL / não documentada
+    _src = (signal_source or "").strip()
+    if not _src or _src.upper() in ("NULL", "NONE", "UNTAGGED"):
+        _msg = f"EXECUCAO BLOQUEADA: signal_source ausente ou NULL ({signal_source!r})"
+        log.error("[%s %s] %s", asset, tf, _msg)
+        return False, "SKIP_NULL_SIGNAL_SOURCE", _msg
+    if _src == "SYNC_RECOVERY":
+        _msg = "EXECUCAO BLOQUEADA: SYNC_RECOVERY nao abre novas posicoes"
+        log.warning("[%s %s] %s", asset, tf, _msg)
+        return False, "SKIP_SYNC_RECOVERY_ENTRY", _msg
+    if _src not in _ALLOWED_ENTRY_SIGNAL_SOURCES:
+        _msg = f"EXECUCAO BLOQUEADA: signal_source nao autorizado ({_src})"
+        log.error("[%s %s] %s", asset, tf, _msg)
+        return False, "SKIP_SIGNAL_SOURCE_NOT_ALLOWED", _msg
+
+    # Mandato 2 — spread guard: SL_pts >= 3× spread actual
+    _sym = mt5.symbol_info(asset)
+    _tick = mt5.symbol_info_tick(asset)
+    if _sym is None or _tick is None:
+        _msg = "EXECUCAO BLOQUEADA: symbol_info/tick indisponivel para spread guard"
+        log.error("[%s %s] %s", asset, tf, _msg)
+        return False, "SKIP_SPREAD_GUARD_NO_TICK", _msg
+    _point = float(_sym.point) or 1e-5
+    _spread_pts = (_tick.ask - _tick.bid) / _point
+    _sl_dist_pts = abs(float(sl_price) - float(entry_price)) / _point
+    _min_sl = _spread_pts * 3.0
+    if _sl_dist_pts + 1e-9 < _min_sl:
+        _msg = (
+            f"EXECUCAO BLOQUEADA: SL ({_sl_dist_pts:.1f} pts) < 3x spread "
+            f"({_min_sl:.1f} pts, spread={_spread_pts:.1f})"
+        )
+        log.warning("[%s %s] %s", asset, tf, _msg)
+        return False, "SKIP_SPREAD_GUARD", _msg
+
+    return True, "OK", ""
+
+
 # ─── Guardrail de Mercado Aberto ──────────────────────────────────────────────
 def is_market_open(symbol: str = "XAUUSD") -> bool:
     """Verifica se mercado está aberto via MT5 (trade_mode FULL + tick disponível).
@@ -1297,11 +1362,25 @@ def mt5_send_order(asset: str, tf: str, lot: float,
              {mt5.ORDER_FILLING_IOC: "IOC", mt5.ORDER_FILLING_FOK: "FOK",
               mt5.ORDER_FILLING_RETURN: "RETURN"}.get(filling, str(filling)))
 
-    # Pre-check
+    # Pre-check — Mandato 1 RCV P0: INVALID_STOPS (10016) → abortar, sem retry sem SL
     check = mt5_check_order(request)
-    if check and check.get("retcode", 0) not in (0, 10009):
-        log.warning("[%s %s] order_check retcode=%d — enviando mesmo assim (demo)",
-                    asset, tf, check.get("retcode", -1))
+    if check:
+        _chk_rc = int(check.get("retcode", -1))
+        if _chk_rc == 10016:
+            log.error(
+                "[%s %s] ATOMIC_EXEC: order_check INVALID_STOPS (10016) — trade cancelado",
+                asset, tf,
+            )
+            return {
+                "retcode": 10016,
+                "retcode_str": "INVALID_STOPS",
+                "success": False,
+                "error": "order_check rejected: SL/TP invalid for broker",
+                "latency_ms": 0.0,
+            }
+        if _chk_rc not in (0, 10009):
+            log.warning("[%s %s] order_check retcode=%d — enviando mesmo assim (demo)",
+                        asset, tf, _chk_rc)
 
     t0     = time.perf_counter()
     result = mt5.order_send(request)
@@ -1338,8 +1417,23 @@ def mt5_send_order(asset: str, tf: str, lot: float,
     }
 
     if out["success"]:
+        # Mandato 1 — auditoria: alertar se posição OMEGA no símbolo ficou sem SL no broker
+        try:
+            for _pv in (mt5.positions_get(symbol=asset) or []):
+                if is_omega_tracked_position(_pv) and (not _pv.sl or float(_pv.sl) == 0.0):
+                    log.error(
+                        "[%s %s] ATOMIC_EXEC ALERT: posição #%d sem SL no broker — investigar",
+                        asset, tf, _pv.ticket,
+                    )
+        except Exception as _pv_err:
+            log.debug("[%s %s] verificação SL pós-fill ignorada: %s", asset, tf, _pv_err)
         log.info("[%s %s] ✅ ORDER DONE | deal=%d price=%.5f slip=%.2fpts lat=%dms",
                  asset, tf, out["deal"], out["fill_price"], out["slippage_pts"], lat_ms)
+    elif retcode == 10016:
+        log.error(
+            "[%s %s] ATOMIC_EXEC: order_send INVALID_STOPS (10016) — sem modify pós-entrada",
+            asset, tf,
+        )
     elif retcode in RETCODE_WARN:
         log.warning("[%s %s] ⚠️ REQUOTE | bid=%.5f ask=%.5f", asset, tf,
                     r.get("bid", 0), r.get("ask", 0))
@@ -3871,6 +3965,40 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                                       asset, tf)
                             results.append({"asset": asset, "timeframe": tf,
                                             "status": "SKIP_M1_UNAVAILABLE"})
+                            continue
+
+                        # ── RCV P0 2026-05-20: gates rollover / NULL / spread ─────────
+                        _tick_gate = mt5.symbol_info_tick(asset)
+                        _sym_gate = mt5.symbol_info(asset)
+                        if _tick_gate is None or _sym_gate is None:
+                            results.append({
+                                "asset": asset, "timeframe": tf,
+                                "status": "SKIP_SPREAD_GUARD_NO_TICK",
+                            })
+                            continue
+                        _entry_px = float(
+                            _tick_gate.ask if signal_dir == "BUY" else _tick_gate.bid
+                        )
+                        _pt_gate = float(_sym_gate.point) or 0.0001
+                        _sl_px_gate = (
+                            _entry_px - eff_sl * _pt_gate if signal_dir == "BUY"
+                            else _entry_px + eff_sl * _pt_gate
+                        )
+                        _gate_ok, _gate_st, _gate_msg = pre_execution_safety_check(
+                            asset, tf, signal_source, _entry_px, _sl_px_gate,
+                        )
+                        if not _gate_ok:
+                            results.append({
+                                "asset": asset, "timeframe": tf,
+                                "status": _gate_st, "detail": _gate_msg,
+                            })
+                            decision_trace_append({
+                                "asset": asset, "timeframe": tf,
+                                "phase": "pre_exec_gate",
+                                "status": _gate_st,
+                                "signal_source": signal_source,
+                                "detail": _gate_msg,
+                            })
                             continue
 
                         # ── ATOMIC LOCK — previne race condition (CEO 2026-05-12) ───────

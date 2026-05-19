@@ -1,0 +1,170 @@
+Resumo Executivo para o Conselho
+Situação Atual (2026-05-20)
+
+
+Sistema em HALT:
+
+O sistema de paper trading parou em 2026-05-18 ~21:48 devido ao Kill Switch (DD diário de 12,9% ≥ limite de 10%).
+Equity: $1.250,80 vs. âncora: $1.435,97.
+Não está ativo (apesar de relatórios anteriores indicarem o contrário).
+
+
+Pacote de Diagnóstico:
+
+95% completo (dados de MT5, trade feedback, sinais, agregados).
+Gaps críticos (P0):
+
+ks_daily_state histórico (apenas snapshot disponível).
+risk_config completo (sl_pct, tp_pct, kill_switch_threshold, circuit_breaker_threshold).
+account_equity_eod.jsonl confiável (valores repetidos).
+
+
+
+Conflito de Prioridades:
+
+PSA: 3 P0s de dados até 2026-05-20 12:00 UTC.
+CKO: Apenas GAP-02 (risk_config) + desligar MOMENTUM_FALLBACK.
+Realidade: Sistema já está parado (HALT por DD).
+
+
+🎯 Decisões Críticas para o Conselho (Votação)
+O documento mestre (OMEGA_CONSELHO_DOCUMENTO_MESTRE_DIAGNOSTICO_E_PLANO_20260520.md) propõe 5 decisões para ratificação:
+
+| Decisão | Opções | Recomendação |
+| --- | --- | --- |
+| D1 | Reactivar trading após HALT? | Manter parado até remediação SL/ATR. |
+| D2 | MOMENTUM_FALLBACK | Desligar (OMEGA_DISABLE_MOMENTUM_FALLBACK=1). |
+| D3 | Prioridade PSA hoje | Apenas GAP-02 (risk_config efetivo). |
+| D4 | Diagnóstico Red Team | Parcial agora (MT5 + pacote atual). |
+| D5 | Novos módulos (agent_ia, modules/) | Fora de produção até checklist de modo real. |
+
+Recomendação Integrada:
+
+Não reiniciar o runner até D1/D2 serem ratificados.
+PSA: Entregar GAP-02 (risk_config) nas próximas 24h.
+Engenharia: Preparar remediação SL/TP dinâmico (ATR) após receber GAP-02.
+Novos componentes: Tratar como R&D/auditoria (não integrar em produção sem aprovação).
+
+🔍 Hipóteses Testáveis (Corrida de 24h)
+O documento OMEGA_24H_VERIFICACAO_COMPONENTES_HIPOTESES_20260520.md propõe uma corrida de 24h em modo demo para testar as seguintes hipóteses:
+
+
+| Hipótese | Mecanismo | Como Testar |
+| --- | --- | --- |
+| H1 | Fallback momentum injeta trades fracos | Desligar fallback (D2) e contar SKIP_MOMENTUM_DISABLED. |
+| H2 | Agent IA + confluence bloqueia ou desalinha | Verificar decision_trace.jsonl (FASE4 DECISION=AGENT_IA). |
+| H3 | MTF bias contradiz sinal | Contar SKIP_MTF_BIAS/SKIP_MTF_LOW_ALIGN. |
+| H4 | SL/TP muito largos → R:R ruim | Comparar sl_pts/tp_pts em feedback vs. ATR. |
+| H5 | SYNC_RECOVERY distorce relatórios | Ignorar SYNC em win-rate por sinal. |
+| H6 | DD 10% + 15 pos → HALT inevitável | Monitorizar DD% no log ([KILL_SWITCH]). |
+| H7 | Âncora KS "presa" em dia antigo | Novo dia → nova âncora no 1º ciclo. |
+
+Objetivo:
+
+Métricas concretas (ex: % SL vs. TP, skips por motivo, DD máximo intraday).
+Não provar causalidade definitiva, mas medir o efeito das alterações.
+
+⚡ Ações Imediatas (Pré-Corrida de 24h)
+1. Pré-Voo Obrigatório
+Alterações aplicadas para a corrida de 24h:
+
+OMEGA_DISABLE_MOMENTUM_FALLBACK = 1 (Desligar fallback).
+OMEGA_DECISION_TRACE = 1 (Rastrear decisões em decision_trace.jsonl).
+OMEGA_USE_AGENT_IA = 1 (Manter IA ativa).
+Checklist manual (CEO/OPS):
+
+MT5 aberto, conta demo, trade_allowed=True.
+Confirmar balance/equity atual (anotar valor).
+Âncora KS:
+
+Se a data em ks_daily_anchor.json for dia anterior, o 1º ciclo define nova âncora = equity atual.
+Se a data for hoje e âncora ainda $1.435 com equity $1.250 → HALT no 1º ciclo (ver Opção B abaixo).
+
+Backup: Copiar ks_daily_anchor.json e ks_daily_state.json.
+Iniciar: scripts/run_omega_24x7.ps1.
+Não apagar logs antigos (renomear omega_24x7_runner.log se quiser log limpo).
+
+2. Cenário Crítico: HALT no Arranque
+Se reiniciar no mesmo dia civil com âncora $1.435,97 e equity ~$1.250:
+
+DD ainda ~12,9% ≥ 10% → HALT imediato (comportamento correto do KS).
+Não significa que as alterações não funcionam → significa que a governança de risco está bloqueando.
+Opções (apenas com decisão do CEO):
+
+| Opção | Ação |
+| --- | --- |
+| A | Esperar novo dia local (âncora repõe automaticamente). |
+| B | Arquivar ks_daily_anchor.json e deixar o sistema criar nova âncora no 1º ciclo (registrar em ata). |
+| C | Reduzir temporariamente OMEGA_DD_DAILY_MAX (ex: 15%) → Não recomendado sem voto. |
+
+Recomendação: Opção B (reset documentado da âncora).
+
+3. O que Observar nas Primeiras 3 Horas
+
+| Log/Ficheiro | Procurar |
+| --- | --- |
+| omega_24x7_runner.log | [MOMENTUM_FALLBACK] DISABLED (confirma D2). |
+|  | Ausência de entradas por fallback. |
+|  | [KILL_SWITCH] DD% subindo. |
+| decision_trace.jsonl | Contagens por status: SKIP_*, AGENT_IA, ordens. |
+| trade_feedback.jsonl | signal_source (não tratar SYNC_RECOVERY como alpha). |
+| MT5 | Nº posições abertas ≤ OMEGA_MAX_POSITIONS (15). |
+
+
+
+Métricas de Sucesso (Após 24h)
+Ao final de 24h, o Conselho deve receber números concretos:
+
+| Métrica | Fonte | Pergunta |
+| --- | --- | --- |
+| Trades fechados/abertos | MT5 + trade_feedback | Volume caiu com fallback OFF? |
+| % SL vs. TP vs. EXPERT | mt5_deals (reason) | SL ainda domina? |
+| Skips por motivo | decision_trace | O que bloqueia mais? |
+| DD máximo intraday | Log KS | Atinge 10% novamente? |
+| PnL líquido 24h | MT5 | Melhorou vs. cluster de 18/05? |
+| HALT/cycle_exit | evaluation_timeline | Quantos PERSISTENT_DD_HALT? |
+
+Script sugerido pós-24h:
+Reexecutar build_omega_diagnostic_package_20260518.py na janela do dia e comparar agregados.
+
+🎯 Decisões Imediatas para o CEO (Resumo)
+
+Confirmar reinício com fallback OFF + trace ON?
+
+Recomendação: Sim (para testar H1).
+
+Se HALT no 1º ciclo: Opção A (novo dia), B (reset âncora), ou C (adiar)?
+
+Recomendação: Opção B (reset documentado).
+
+Manter modo demo agressivo (10% DD, 15 pos) ou modo conservador temporário?
+
+Recomendação: Modo agressivo (para testar hipótese em condições reais).
+
+
+📢 Próximos Passos (Checklist)
+
+
+| Fase | Ação | Responsável | Prazo |
+| --- | --- | --- | --- |
+| I — Agora | Pré-voo + start demo | OPS/Engenharia | Imediato |
+| II — 24h | Monitorização | OPS | Contínuo |
+| III — Pós-24h | Relatório intermédio | Red Team | 24h após start |
+| Paralelo | Entregar GAP-02 (risk_config) | PSA | 2026-05-20 12:00 UTC |
+
+Resumo Final para o Conselho
+
+O sistema está parado por DD (comportamento correto do Kill Switch).
+O pacote de diagnóstico está pronto (95% completo).
+A corrida de 24h vai testar H1–H7 com fallback desligado e trace ativo.
+Decisões críticas:
+
+D1: Manter parado até remediação.
+D2: Desligar MOMENTUM_FALLBACK.
+D3: PSA foca em GAP-02.
+D4: Diagnóstico parcial agora.
+D5: Novos módulos fora de produção.
+
+Pergunta Final:
+Conselho, podemos prosseguir com a corrida de 24h nas condições propostas (fallback OFF, trace ON, âncora reset Opção B)?
+Se sim, o Red Team e a Engenharia estão prontos para executar e monitorar.

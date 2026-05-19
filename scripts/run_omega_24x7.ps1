@@ -1,14 +1,17 @@
 # OMEGA — arranque 24/7 (MT5 tem de estar aberto e ligado à conta)
-# CEO 2026-05-14: MODO DEMO AGRESSIVO — risco 1%, 15 posições, 10% DD diário
-# CEO 2026-05-15: CONGELAMENTO 24h — não alterar mais envs até novo ciclo de medição (excepto ordem explícita).
+# CKO 2026-05-20: MODO DIAGNÓSTICO CIRÚRGICO 24h (após RCV P0 mandatos em shadow_loop.py)
+# RCV P0: não reiniciar sem validar logs [EQUITY] + [MOMENTUM_FALLBACK] DISABLED + gates activos
 $ErrorActionPreference = "Stop"
 Set-Location "C:\OMEGA_QUANTUM_LAB\SOURCE_CODE"
 $env:PYTHONPATH = (Get-Location).Path
 
-# ─── CEO 2026-05-18: operação 24/7 — reactivar MOMENTUM_FALLBACK ─────────────
-# OIS-DIAG-20260517 tinha P0-A=1 (sem fallback quando IA=HOLD → 0 ordens).
-# Env tem precedência sobre config/live_flags.json. Rollback: "1" + reiniciar runner.
-$env:OMEGA_DISABLE_MOMENTUM_FALLBACK = "0"
+# ─── CEO 2026-05-20: corrida verificação 24h — fallback OFF (H1 / D2) ─────────
+# OIS-DIAG-20260517: P0-A=1 desactiva fallback EMA8/21 quando IA não decide.
+# Env tem precedência sobre config/live_flags.json. Rollback 24/7 antigo: "0".
+$env:OMEGA_DISABLE_MOMENTUM_FALLBACK = "1"
+
+# Rastreio por componente/skip (veredito 24h): audit/paper/decision_trace.jsonl
+$env:OMEGA_DECISION_TRACE = "1"
 
 # Intervalo entre ciclos (segundos) — reduzido para capturar mais oportunidades
 $env:OMEGA_LOOP_INTERVAL_SEC = "20"
@@ -16,12 +19,12 @@ $env:OMEGA_LOOP_INTERVAL_SEC = "20"
 # paper | shadow
 $env:OMEGA_24X7_MODE = "paper"
 
-# ─── MODO DEMO AGRESSIVO — CEO 2026-05-14 ────────────────────────────────────
-# RISCO: 1% por trade (era 0.25%) — lotes 4x maiores por operação
-$env:OMEGA_RISK_PER_TRADE = "0.010"
+# ─── CKO OVERRIDE: MODO DIAGNÓSTICO CIRÚRGICO 24H ───────────────────────────
+# 0.2% risco (~$2.5/trade em conta ~$1250) — sobreviver 24h para decision_trace
+$env:OMEGA_RISK_PER_TRADE = "0.002"
 
-# POSIÇÕES: 15 máximo simultâneas (era 3) — captura máxima de oportunidades
-$env:OMEGA_MAX_POSITIONS = "15"
+# Exposição controlada (5 pos — evita cluster SL correlacionado)
+$env:OMEGA_MAX_POSITIONS = "5"
 
 # DRAWDOWN: 10% diário (era 2%) — espaço operacional para 15 posições de risco 1%
 $env:OMEGA_DD_DAILY_MAX = "0.10"
@@ -74,7 +77,7 @@ $env:OMEGA_SCALE_LOT_TO_MIN_TP_USD = "1"
 # Portfolio completo: Forex + Metals + Oils + Indices + Crypto
 $env:OMEGA_24X7_ATIVOS = "EURUSD GBPUSD USDJPY AUDUSD NZDUSD USDCAD USDCHF EURJPY GBPJPY AUDJPY CADJPY CHFJPY XAUUSD XAGUSD UKOIL+ USOIL+ GER40 UK100 US500 US30 BTCUSD ETHUSD SOLUSD BNBUSD LTCUSD XRPUSD ADAUSD AVAXUSD DOGUSD DOTUSD UNIUSD XLMUSD"
 
+# Equity real via MT5 no arranque (P2-A BUG-5) — sem --equity hardcoded
 python -u scripts/omega_paper_loop_24x7.py `
   --timeframes H1 M15 H4 `
-  --equity 10000 `
   --pre-sync-ohlcv
