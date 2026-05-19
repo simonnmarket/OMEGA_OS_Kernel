@@ -154,7 +154,46 @@ Evita dispersão por vários e-mails: este ficheiro é a **fonte canónica** do 
 |--------|------|-------|-----------|
 | v1.0 | 2026-05-18 | Eng / Conselho | Emissão inicial — registo consolidado pós-push `e449cc8`. |
 | v1.1 | 2026-05-18 | Eng / CEO | Secção 7.1 — correcção teto SL (`4875a67`); actualização Secção 2 e pedidos PSA; ID v1.1. |
+| v1.2 | 2026-05-20 | PSA | Secção 12 — RCV P0 Mandatos CKO; commit `76af476`; branch `fix/rcv-p0-execution-20260520`. |
 
 ---
 
-*Fim do registo PSA v1.1.*
+## 12. RCV P0 — Mandatos CKO (2026-05-20)
+
+| Campo | Valor |
+|-------|-------|
+| **ID** | OMEGA-RCV-20260520-P0 |
+| **Ref memorando** | PSA-MEMO-20260520-OMEGA-P0 |
+| **Branch** | `fix/rcv-p0-execution-20260520` |
+| **Commit** | `76af476` |
+| **Push** | `origin fix/rcv-p0-execution-20260520` |
+| **PR GitHub** | https://github.com/simonnmarket/OMEGA_OS_Kernel/pull/new/fix/rcv-p0-execution-20260520 |
+| **Autorização** | CEO (oral) 2026-05-20 |
+| **Estado** | COMMITADO/PUSHED — aguarda validação demo MT5 (T3) |
+
+### Mandatos implementados
+
+| Mandato | Ficheiro | Descrição |
+|---------|----------|-----------|
+| M1 | `core_engines/shadow_loop.py` | Spread Guard — bloqueia ordem se spread > SL distance |
+| M2 | `core_engines/shadow_loop.py` | Rollover Blackout — bloqueia abertura em ±5min de 00:00 UTC |
+| M3 | `core_engines/shadow_loop.py` | MOMENTUM_FALLBACK DISABLED — signal_source=NULL não abre posições |
+| M4 | `core_engines/shadow_loop.py` | INVALID_STOPS Guard — valida SL/TP vs SYMBOL_TRADE_STOPS_LEVEL |
+| —  | `scripts/run_omega_24x7.ps1` | Modo diagnóstico CKO com flags de gate activos |
+
+### Artefactos arquivados
+
+| Artefacto | Caminho |
+|-----------|---------|
+| Documento RCV-P0 CKO | `docs/conselho_arquivo/OMEGA-RCV-20260520-P0-ARQUITECTURAL-FIX.md` |
+| Matriz componentes | `docs/conselho_arquivo/COMPONENT_HEALTH_MATRIX.md` |
+| Runbook CEO | `docs/conselho_arquivo/CEO_MANUAL_INICIO_OPERACOES.md` |
+| 4 TXT Desktop CEO | `docs/conselho_arquivo/desktop_originais_20260520/*.txt` |
+| Snapshot JSON | `audit/component_health/component_health_20260520.json` |
+
+### GAP-02 (risk_config efectivo)
+Marcado como dependência do patch ATR (Cenário B CKO). Resolução prevista: pós-validação demo T3 (extracção `shadow_loop.py` valores efectivos `sl_pct`, `tp_pct`, `kill_switch_threshold`, `circuit_breaker_threshold`).
+
+---
+
+*Fim do registo PSA v1.2.*
