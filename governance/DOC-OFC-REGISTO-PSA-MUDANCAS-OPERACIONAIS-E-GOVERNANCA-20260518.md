@@ -279,6 +279,17 @@ Marcado como dependência do patch ATR (Cenário B CKO). Resolução prevista: p
 Critério PASS: 0% deals novas com magic=0; 100% magic=234001.  
 Relatório: `docs/requests/PSA_RELATORIO_VALIDACAO_CICC_20260520.md`
 
+### Sub-entrada v1.3.1 — Correções AIC pós-arranque (2026-05-20 noite)
+
+**Contexto:** Durante arranque CEO (23:25–23:29), `export_ohlcv_mt5.py` falhava com `rc=1` por `UnicodeEncodeError` cp1252 no Windows ao imprimir `→` e `—`. Runner ficava em loop. AIC corrigiu em working tree; export passou para `Exportados: 10 | Falhas: 0`.
+
+| Ficheiro | Correcção | Evidência |
+|----------|-----------|-----------|
+| `scripts/export_ohlcv_mt5.py` | `→` → `->` em print; `--strict-exit`; `ALL_SYMBOLS` alargada; TFs M5/M15/M30/D1 | `Exportados: 10 \| Falhas: 0` (CEO 23:29) |
+| `scripts/run_omega_diagnostico_post_cicc.ps1` | em-dash `—` → `-` em comentários e `Write-Host` | Script executável sem `TerminatorExpectedAtEndOfString` |
+
+Ref auditoria de memória: `docs/requests/PSA_AUDITORIA_MEMORIA_CORRECOES_AIC_20260520.md`
+
 ---
 
-*Fim do registo PSA v1.3.*
+*Fim do registo PSA v1.3.1.*

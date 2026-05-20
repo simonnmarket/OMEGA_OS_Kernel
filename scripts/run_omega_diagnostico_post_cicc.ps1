@@ -1,5 +1,5 @@
-# OMEGA — modo diagnóstico pós-remediação CICC (CEO 2026-05-20)
-# 3 pares forex + gate portfolio (XAU/BTC mínimos) + fallback OFF
+# OMEGA - modo diagnostico pos-remediacao CICC (CEO 2026-05-20)
+# 3 pares forex + gate portfolio (XAU/BTC minimos) + fallback OFF
 $ErrorActionPreference = "Stop"
 Set-Location "C:\OMEGA_QUANTUM_LAB\SOURCE_CODE"
 $env:PYTHONPATH = (Get-Location).Path
@@ -17,5 +17,5 @@ $env:OMEGA_24X7_MODE = "paper"
 # Portfolio gate do runner exige XAU+BTC; forex foco + obrigatórios
 $env:OMEGA_24X7_ATIVOS = "EURUSD GBPUSD USDJPY XAUUSD BTCUSD"
 
-Write-Host "[OMEGA] Modo diagnostico CICC — madrugada. Log: audit/paper/omega_24x7_runner.log"
+Write-Host "[OMEGA] Modo diagnostico CICC - madrugada. Log: audit/paper/omega_24x7_runner.log"
 python -u scripts/omega_paper_loop_24x7.py --timeframes H1 M15 --pre-sync-ohlcv
