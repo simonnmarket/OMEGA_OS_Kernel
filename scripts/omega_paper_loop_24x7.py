@@ -300,16 +300,20 @@ def main() -> int:
     log = _setup_logger(log_path)
 
     # P1-B C1 FIX: validação de portfolio obrigatória no arranque
-    ASSETS_REQUIRED = {"EURUSD", "XAUUSD", "BTCUSD"}
-    current_assets = set(ativos)
-    missing = ASSETS_REQUIRED - current_assets
-    if missing:
-        log.critical(
-            "[STARTUP_BLOCK] Portfolio incompleto! Faltam: %s. "
-            "Runner não inicia sem ativos obrigatórios.", missing
-        )
-        return 1
-    log.info("[PORTFOLIO_VALID] Ativos confirmados: %s", sorted(current_assets))
+    _diag = os.getenv("OMEGA_DIAGNOSTIC_MODE", "").strip().lower() in ("1", "true", "yes")
+    if _diag:
+        log.info("[PORTFOLIO_VALID] Modo diagnostico CICC — gate portfolio relaxado")
+    else:
+        ASSETS_REQUIRED = {"EURUSD", "XAUUSD", "BTCUSD"}
+        current_assets = set(ativos)
+        missing = ASSETS_REQUIRED - current_assets
+        if missing:
+            log.critical(
+                "[STARTUP_BLOCK] Portfolio incompleto! Faltam: %s. "
+                "Runner não inicia sem ativos obrigatórios.", missing
+            )
+            return 1
+        log.info("[PORTFOLIO_VALID] Ativos confirmados: %s", sorted(current_assets))
 
     # P2-A BUG-5 FIX: equity real MT5 substitui CLI se divergência > 10%%
     if args.mode == "paper":

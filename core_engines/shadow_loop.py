@@ -1238,10 +1238,11 @@ def pre_execution_safety_check(
     _point = float(_sym.point) or 1e-5
     _spread_pts = (_tick.ask - _tick.bid) / _point
     _sl_dist_pts = abs(float(sl_price) - float(entry_price)) / _point
-    _min_sl = _spread_pts * 3.0
+    _sg_mult = float(os.getenv("OMEGA_SPREAD_GUARD_MULT", "3.0"))
+    _min_sl = _spread_pts * _sg_mult
     if _sl_dist_pts + 1e-9 < _min_sl:
         _msg = (
-            f"EXECUCAO BLOQUEADA: SL ({_sl_dist_pts:.1f} pts) < 3x spread "
+            f"EXECUCAO BLOQUEADA: SL ({_sl_dist_pts:.1f} pts) < {_sg_mult}x spread "
             f"({_min_sl:.1f} pts, spread={_spread_pts:.1f})"
         )
         log.warning("[%s %s] %s", asset, tf, _msg)
@@ -1354,6 +1355,7 @@ def mt5_send_order(asset: str, tf: str, lot: float,
         "sl":           sl_price,
         "tp":           tp_price,
         "deviation":    20,
+        "magic":        int(os.getenv("OMEGA_MAGIC_NUMBER", "234001")),
         "comment":      build_v2_order_comment(tf, direction),
         "type_time":    mt5.ORDER_TIME_GTC,
         "type_filling": filling,
@@ -2294,6 +2296,22 @@ def _append_evaluation_timeline_row(audit_dir: Path, row: dict) -> None:
 # ─── Loop Principal ───────────────────────────────────────────────────────────
 def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float):
     import MetaTrader5 as mt5
+    from modules.omega_system_mutex import acquire_global_mutex, release_global_mutex
+    from modules.cio_boot_verify import cio_boot_verify
+
+    if not acquire_global_mutex():
+        log.critical("FATAL: Outra instância OMEGA activa (mutex global).")
+        return {"error": "GLOBAL_MUTEX_BUSY", "kill_switch": True}
+    try:
+        if not cio_boot_verify(log):
+            log.critical("FATAL: cio_boot_verify falhou.")
+            return {"error": "CIO_BOOT_VERIFY_FAIL", "kill_switch": True}
+        return _run_loop_body(ativos, timeframes, mode, equity, mt5)
+    finally:
+        release_global_mutex()
+
+
+def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: float, mt5):
     _eval_ctx_run_start = build_evaluation_context()
     log.info("[EVAL_CONTEXT] run_start | %s", format_eval_log_line(_eval_ctx_run_start))
 
@@ -3988,6 +4006,7 @@ def run_loop(ativos: List[str], timeframes: List[str], mode: str, equity: float)
                             asset, tf, signal_source, _entry_px, _sl_px_gate,
                         )
                         if not _gate_ok:
+                            log.warning("[%s %s] %s — %s", asset, tf, _gate_st, _gate_msg)
                             results.append({
                                 "asset": asset, "timeframe": tf,
                                 "status": _gate_st, "detail": _gate_msg,

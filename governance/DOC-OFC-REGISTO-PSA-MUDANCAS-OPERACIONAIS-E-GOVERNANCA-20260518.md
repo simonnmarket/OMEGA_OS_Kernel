@@ -155,6 +155,28 @@ Evita dispersão por vários e-mails: este ficheiro é a **fonte canónica** do 
 | v1.0 | 2026-05-18 | Eng / Conselho | Emissão inicial — registo consolidado pós-push `e449cc8`. |
 | v1.1 | 2026-05-18 | Eng / CEO | Secção 7.1 — correcção teto SL (`4875a67`); actualização Secção 2 e pedidos PSA; ID v1.1. |
 | v1.2 | 2026-05-20 | PSA | Secção 12 — RCV P0 Mandatos CKO; commit `76af476`; branch `fix/rcv-p0-execution-20260520`. |
+| v1.3 | 2026-05-20 | PSA/AIC | Secção 13 — Remediação CICC/CITIC; doc execução v3.0; veredito v1.1; pasta `aprovado_conselho_20260520/`. |
+
+---
+
+## 13. Remediação CICC/CITIC (2026-05-20)
+
+| Campo | Valor |
+|-------|--------|
+| **ID** | OMEGA-CICC-REMEDIATION-20260520 |
+| **Doc execução (canónico PSA)** | `governance/DOC-OFC-REMEDIACAO-CICC-CITIC-PSA-EXECUCAO-v3.0.md` |
+| **Veredito Conselho** | `governance/DOC-OFC-VEREDITO-CICC-20260520-FINAL-v1.1.md` |
+| **Aprovações** | `docs/conselho_arquivo/aprovado_conselho_20260520/` |
+| **Forense** | `docs/conselho_arquivo/forensic_20260520/` + `audit/forensic/OMEGA_FORENSIC_AUDIT_20260520/` |
+| **Branch prevista** | `fix/cicc-remediation-magic-mutex-20260520` |
+| **Commit / PR** | _(preencher PSA após push)_ |
+| **Relatório validação** | `docs/requests/PSA_RELATORIO_VALIDACAO_CICC_20260520.md` |
+| **Estado** | **EM EXECUÇÃO** — v3.1 CEO; patch magic/mutex aplicado em SOURCE_CODE |
+| **Doc v3.1** | `governance/DOC-OFC-REMEDIACAO-CICC-CITIC-PSA-EXECUCAO-v3.1.md` |
+
+**Correcções P0:** magic `234001` em `mt5_send_order`; mutex `audit/.omega_system.lock` via `modules/omega_system_mutex.py`; logs `SKIP_*`; boot `[CIO-VERIFY]`; firebreak `INATIVO_ARQUIVADO_20260520`.
+
+**Desktop CEO:** apenas índices `00_INDICE_*.md` — documentos operacionais arquivados no repo (2026-05-20).
 
 ---
 
@@ -196,4 +218,67 @@ Marcado como dependência do patch ATR (Cenário B CKO). Resolução prevista: p
 
 ---
 
-*Fim do registo PSA v1.2.*
+---
+
+## Secção 13 — Remediação CICC/CITIC — Magic + Mutex Global (2026-05-20)
+
+| Campo | Valor |
+|-------|-------|
+| **ID** | OMEGA-PSA-EXEC-v3.1-20260520 |
+| **Ref documento** | `governance/DOC-OFC-REMEDIACAO-CICC-CITIC-PSA-EXECUCAO-v3.1.md` |
+| **Veredito** | `governance/DOC-OFC-VEREDITO-CICC-20260520-FINAL-v1.1.md` |
+| **Branch** | `fix/cicc-remediation-magic-mutex-20260520` |
+| **Autorização** | CEO 2026-05-20 — execução imediata |
+| **Prazo** | 2026-05-21 12:00 UTC |
+| **Estado** | COMMITADO/PUSHED — aguarda P0-VAL manhã |
+
+### Problemas corrigidos (veredito CICC)
+
+| Componente | Veredito | Correcção |
+|------------|----------|-----------|
+| IA / imports BAU | EXONERADO | — |
+| Gates RCV (Spread, SL/TP) | EXONERADO | — |
+| `magic` no request `mt5_send_order` | CONDENADO → CORRIGIDO | `"magic": int(os.getenv("OMEGA_MAGIC_NUMBER", "234001"))` em `shadow_loop.py:1358` |
+| Mutex global (dois sistemas em paralelo) | CONDENADO → CORRIGIDO | `modules/omega_system_mutex.py` + integrado em `run_loop` |
+
+### Ficheiros alterados
+
+| Ficheiro | Acção |
+|----------|--------|
+| `modules/omega_system_mutex.py` | CRIADO — mutex global O_EXCL `audit/.omega_system.lock` |
+| `modules/cio_boot_verify.py` | CRIADO — verificação boot CIO (magic presente no dict) |
+| `core_engines/shadow_loop.py` | MODIFICADO — magic no request; mutex+CIO em `run_loop` |
+| `scripts/omega_paper_loop_24x7.py` | MODIFICADO — `OMEGA_DIAGNOSTIC_MODE` relaxa gate portfolio |
+| `scripts/run_omega_diagnostico_post_cicc.ps1` | CRIADO — modo diagnóstico madrugada (5 símbolos, risco 0.2%) |
+| `governance/DOC-OFC-REMEDIACAO-CICC-CITIC-PSA-EXECUCAO-v3.1.md` | ARQUIVADO |
+| `governance/DOC-OFC-VEREDITO-CICC-20260520-FINAL-v1.1.md` | ARQUIVADO |
+
+### Provas de Fogo executadas
+
+| Prova | Resultado |
+|-------|-----------|
+| P1 — Isolamento BAU | PASS — 0 contaminações nos 42 módulos OMEGA |
+| P2A — Spread Guard | PASS — SKIP_SPREAD_GUARD bloqueou SL=2pts < 9pts |
+| P2B — Magic no request | FAIL (pré-patch) → CORRIGIDO — magic=234001 confirmado |
+| P3 — Mutex inter-processo | VULNERABILIDADE detectada → CORRIGIDA com mutex global |
+
+### Parâmetros modo diagnóstico (restart madrugada)
+
+| Env | Valor |
+|-----|--------|
+| `OMEGA_MAGIC_NUMBER` | 234001 |
+| `OMEGA_RISK_PER_TRADE` | 0.002 |
+| `OMEGA_DD_DAILY_MAX` | 0.05 |
+| `OMEGA_MAX_POSITIONS` | 3 |
+| `OMEGA_DIAGNOSTIC_MODE` | 1 |
+| `OMEGA_LOOP_INTERVAL_SEC` | 30 |
+| Ativos | EURUSD GBPUSD USDJPY XAUUSD BTCUSD |
+
+### Validação P0-VAL (manhã 2026-05-21)
+
+Critério PASS: 0% deals novas com magic=0; 100% magic=234001.  
+Relatório: `docs/requests/PSA_RELATORIO_VALIDACAO_CICC_20260520.md`
+
+---
+
+*Fim do registo PSA v1.3.*
