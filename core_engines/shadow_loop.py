@@ -160,13 +160,16 @@ try:
 except Exception:
     _PARTIAL_CLOSE_AVAILABLE = False
     _ProgressivePartialCloseCompleteCls = None
-# CEO 2026-05-14: TP1 reduzido de 1.5× para 1.0× ATR para capturar parciais antes do polling gap
+# P0-CICC-20260521: magic único para TODOS os order_send (entrada e saída) — PSA v3
+OMEGA_MAGIC = int(os.getenv("OMEGA_MAGIC_NUMBER", "234001"))
+
+# P1-2 CEO 2026-05-21: TP1 1.0→2.5 ATR (menos parciais prematuros); CEO 2026-05-14 antes reduziu de 1.5→1.0
 # XAUUSD atingiu 1.67× ATR mas sistema só verificou a 1.03× ATR (gap de 30s) — TP1 nunca disparou
 _PARTIAL_CLOSE_LEVELS_PSA = [
-    {"atr": 1.0, "fraction": 0.25, "description": "TP1-1ATR",    "executed": False},  # era 1.5×
-    {"atr": 2.5, "fraction": 0.25, "description": "TP2-2.5ATR",  "executed": False},  # era 3.0×
-    {"atr": 4.0, "fraction": 0.25, "description": "TP3-4ATR",    "executed": False},  # era 5.0×
-    {"atr": 6.0, "fraction": 0.15, "description": "TP4-6ATR",    "executed": False},  # era 8.0×
+    {"atr": 2.5, "fraction": 0.25, "description": "TP1-2.5ATR",  "executed": False},  # P1-2: 1.0→2.5
+    {"atr": 4.0, "fraction": 0.25, "description": "TP2-4ATR",    "executed": False},  # P1-2: 2.5→4.0
+    {"atr": 5.5, "fraction": 0.25, "description": "TP3-5.5ATR",  "executed": False},  # P1-2: 4.0→5.5
+    {"atr": 7.0, "fraction": 0.15, "description": "TP4-7ATR",    "executed": False},  # P1-2: 6.0→7.0
     # 10% residual sobrevive até TP final
 ]
 
@@ -1355,7 +1358,7 @@ def mt5_send_order(asset: str, tf: str, lot: float,
         "sl":           sl_price,
         "tp":           tp_price,
         "deviation":    20,
-        "magic":        int(os.getenv("OMEGA_MAGIC_NUMBER", "234001")),
+        "magic":        OMEGA_MAGIC,
         "comment":      build_v2_order_comment(tf, direction),
         "type_time":    mt5.ORDER_TIME_GTC,
         "type_filling": filling,
@@ -1554,7 +1557,8 @@ def mt5_close_partial(ticket: int, symbol: str, lots: float, direction: str) -> 
         "position":     ticket,
         "price":        price,
         "deviation":    20,
-        "comment":      "OMEGA_PARTIAL_CLOSE",
+        "magic":        OMEGA_MAGIC,
+        "comment":      f"OV2|{int(time.time())}|PARTIAL|{ticket}",
         "type_time":    mt5.ORDER_TIME_GTC,
         "type_filling": filling,
     }
@@ -3167,8 +3171,8 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                                     if _dir_tp == "BUY"
                                                     else mt5.symbol_info_tick(_tp_live.symbol).ask),
                                         deviation = 30,
-                                        magic    = 20260512,
-                                        comment  = f"OMEGA_TIME_STOP",
+                                        magic    = OMEGA_MAGIC,
+                                        comment  = f"OV2|TIME_STOP|{_tp_live.ticket}",
                                         type_filling = mt5.ORDER_FILLING_IOC,
                                     ))
                                     if _ts_req and _ts_req.retcode == mt5.TRADE_RETCODE_DONE:
@@ -3213,8 +3217,8 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                                         else mt5.ORDER_TYPE_BUY),
                                             price    = _trap_close_price,
                                             deviation = 30,
-                                            magic    = 20260513,
-                                            comment  = "OMEGA_ZAK_TRAP",
+                                            magic    = OMEGA_MAGIC,
+                                            comment  = f"OV2|ZAK_TRAP|{_trap_pos.ticket}",
                                             type_filling = mt5.ORDER_FILLING_IOC,
                                         ))
                                         if _trap_req and _trap_req.retcode == mt5.TRADE_RETCODE_DONE:
@@ -3263,6 +3267,8 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                             break
                                 except Exception as _hist_e:
                                     log.debug("[LEDGER] history_deals fallback last_profit: %s", _hist_e)
+                                if _exit_reason == "UNKNOWN":
+                                    _exit_reason = "BROKER_CLOSE"  # P0-7: nunca UNKNOWN em fechos novos
                                 _entry["exit_reason"] = _exit_reason
                                 _entry_sl   = _entry.get("sl_pts", 0)
                                 _entry_risk = _entry.get("risk_usd", 0)
