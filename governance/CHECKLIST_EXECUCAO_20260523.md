@@ -6,8 +6,8 @@
 | **Data** | 2026-05-23 |
 | **Executor** | PSA (Devin) |
 | **Branch** | `fix/cicc-remediation-p0-abc-20260522` |
-| **Commits hoje** | 4a80b0c, 94bbc64, 860192e |
-| **Status global** | FASE 0 + 0b COMPLETAS | Smoke pendente (ação CEO) |
+| **Commits hoje** | 4a80b0c, 94bbc64, 860192e, 5865df9, 511e230 |
+| **Status global** | FASE 0 + 0b + Comment fix COMPLETAS | Smoke pendente (ação CEO) |
 
 ---
 
@@ -41,6 +41,8 @@
 | **T-D4b** | `4a80b0c` | PositionManager wiring | `core_engines/shadow_loop.py`, `tests/test_p0_abc_20260522.py` |
 | **Fase 0b** | `94bbc64` | Weekend 24×7 (T-W1, T-W3) | `core_engines/shadow_loop.py`, `scripts/run_omega_24x7.ps1`, `scripts/run_omega_madrugada_pos_p0.ps1` |
 | **Relatório** | `860192e` | Atualizar relatório PSA | `governance/PSA_RELATORIO_VALIDACAO_P0_ABC_20260522.md` |
+| **Checklist** | `5865df9` | Adicionar CHECKLIST_EXECUCAO_20260523 | `governance/CHECKLIST_EXECUCAO_20260523.md` |
+| **Comment fix** | `511e230` | MT5 comment <= 31 chars (CEO 20260523) | `core_engines/shadow_loop.py`, `tests/test_p0_abc_20260522.py` |
 
 ### 2.2 Ficheiros de Código Alterados
 
@@ -76,6 +78,8 @@
 |----|--------|--------|-----------|
 | T-W1 | Remover lista fixa OMEGA_24X7_ATIVOS dos PS1 | ✅ PASS | run_omega_24x7.ps1 L80 + run_omega_madrugada_pos_p0.ps1 L39 |
 | T-W3 | Guard is_market_open em fechos automáticos | ✅ PASS | shadow_loop.py L1541, L1476, L3198, L3268 |
+| Comment fix | MT5 comment <= 31 chars (PARTIAL, TS, ZAK) | ✅ PASS | shadow_loop.py L1589, L3226, L3291 + UT-9 |
+| Comment fix | MT5 comment <= 31 chars (PARTIAL, TS, ZAK) | ✅ PASS | shadow_loop.py L1589, L3226, L3291 + UT-9 |
 
 ### 3.3 T-W2 (Opcional — NÃO implementado)
 
@@ -98,10 +102,11 @@
 | UT-5 | ✅ PASS | test_ut5_xauUSD_sl_floor_1500 |
 | UT-6 | ✅ PASS | test_ut6_partial_tp50_trigger |
 | UT-7 | ✅ PASS | test_ut7_guardrail_cache_60s |
-| **UT-8** | ✅ PASS | **test_ut8_position_manager_wiring (NOVO)** |
+| UT-8 | ✅ PASS | test_ut8_position_manager_wiring |
+| **UT-9** | ✅ PASS | **test_ut9_comment_length_31_chars (NOVO - CEO 20260523)** |
 | runner test | ✅ PASS | test_runner_targets_v1_only |
 
-**Total:** 9/9 PASS (8 P0 + 1 runner)
+**Total:** 10/10 PASS (9 P0 + 1 runner)
 
 ---
 
@@ -166,6 +171,7 @@
 | T-D4b DEFERRED (sem excepção CEO) | Implementado PositionManager wiring completo | ✅ RESOLVIDO |
 | Lista fixa OMEGA_24X7_ATIVOS ignorava schedule FDS | Comentado nos PS1 | ✅ RESOLVIDO |
 | Fechos automáticos sem guard mercado fechado | Adicionado is_market_open em 4 pontos | ✅ RESOLVIDO |
+| MT5 comment > 31 chars (timestamp em PARTIAL) | Removido timestamp, abreviado TIME_STOP→TS, ZAK_TRAP→ZAK | ✅ RESOLVIDO |
 
 ### 6.2 Problemas Identificados (Não Resolvidos)
 
