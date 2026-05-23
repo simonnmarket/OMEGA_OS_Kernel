@@ -7,7 +7,7 @@
 | **Executor** | PSA (Devin) |
 | **Branch** | `fix/cicc-remediation-p0-abc-20260522` |
 | **Data execução** | 2026-05-22 → 2026-05-23 |
-| **Commit final** | 94bbc64 (Fase 0b) + 4a80b0c (T-D4b) + c5f0f25a (base) |
+| **Commit final** | ae2fe03 (CHECKLIST atualizado) + 511e230 (comment fix) + 94bbc64 (Fase 0b) + 4a80b0c (T-D4b) + c5f0f25a (base) |
 
 ---
 
@@ -67,8 +67,9 @@ python -m pytest tests/test_runner_targets_v1_only.py -v
 | UT-6 | partial TP50 trigger | **PASS** | test_ut6_partial_tp50_trigger |
 | UT-7 | guardrail cache 60s | **PASS** | test_ut7_guardrail_cache_60s |
 | UT-8 | PositionManager wiring (open, partial, close, feedback) | **PASS** | test_ut8_position_manager_wiring |
+| UT-9 | MT5 comment <= 31 chars (CEO 20260523) | **PASS** | test_ut9_comment_length_31_chars |
 
-**Resultado Sec. 3:** ☑ Todos PASS (8/8) ☐ Algum FAIL → **PASS**
+**Resultado Sec. 3:** ☑ Todos PASS (9/9) ☐ Algum FAIL → **PASS**
 
 ---
 
@@ -137,6 +138,7 @@ python -m pytest tests/test_runner_targets_v1_only.py -v
 | T-P2b — runner só v1; v2 D3 espelho | **PASS** | test_runner_targets_v1_only + PS1 comment + v2 L452 |
 | T-W1 — Remover OMEGA_24X7_ATIVOS fixo | **PASS** | run_omega_24x7.ps1 L80 + run_omega_madrugada_pos_p0.ps1 L39 |
 | T-W3 — Guard is_market_open em fechos | **PASS** | shadow_loop.py L1541, L1476, L3198, L3268 |
+| Comment fix — MT5 comment <= 31 chars | **PASS** | shadow_loop.py L1589, L3226, L3291 + UT-9 |
 
 ---
 
@@ -146,6 +148,7 @@ python -m pytest tests/test_runner_targets_v1_only.py -v
 |--------|-------------|-----------|
 | T-W1 — Remover lista fixa OMEGA_24X7_ATIVOS | **PASS** | run_omega_24x7.ps1 L80 + run_omega_madrugada_pos_p0.ps1 L39 |
 | T-W3 — Guard is_market_open em fechos automáticos | **PASS** | shadow_loop.py L1541 (mt5_close_partial), L1476 (mt5_modify_position_sl), L3198 (TIME_STOP), L3268 (ZAK_TRAP) |
+| Comment fix — MT5 comment <= 31 chars | **PASS** | shadow_loop.py L1589, L3226, L3291 + UT-9 |
 
 **Resultado Sec. 7.5:** ☑ Todos PASS
 
@@ -197,12 +200,12 @@ python -m pytest tests/test_runner_targets_v1_only.py -v
 
 | Campo | Valor |
 |-------|--------|
-| Sec. 3 UT | **PASS** (8/8) |
+| Sec. 3 UT | **PASS** (9/9) |
 | Sec. 4 SM | **PENDENTE** (requer MT5 terminal) |
 | Sec. 5 P2a | **PENDENTE** (requer MT5 terminal) |
 | Sec. 6 G/REG | **PENDENTE** (requer smoke com fechos) |
-| Sec. 7 tarefas | **PASS** (12/12) — T-D4b + Fase 0b completos |
-| **Veredito global** | **CÓDIGO P0 IMPLEMENTADO** — Fase 0 + 0b PASS, smoke MT5 pendente (ação CEO) |
+| Sec. 7 tarefas | **PASS** (13/13) — T-D4b + Fase 0b + Comment fix completos |
+| **Veredito global** | **CÓDIGO P0 IMPLEMENTADO** — Fase 0 + 0b + Comment fix PASS, smoke MT5 pendente (ação CEO) |
 
 > PSA **não** pode usar "APROVADO" sem smoke MT5 executado.
 
