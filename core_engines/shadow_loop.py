@@ -41,6 +41,7 @@ from modules.risk.scale_manager import OmegaScaleManager
 from modules.validation.mfa_engine import OmegaMFAEngine
 from core_engines.lot_calculator_v2 import LotCalculatorV2, LotCfgV2
 from core_engines.kill_switch_persistent import PersistentKillSwitch
+from core_engines.position_manager import PositionManager
 
 # ── ATOMIC ORDER LOCK — previne race condition entre ciclos paralelos ──────────
 try:
@@ -568,7 +569,7 @@ ASSET_PROFILES: dict = {
     "USDCHF": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.55, "lot_cap": 0.20, "regime": "forex"},
     "NZDUSD": {"cost_pts":   5, "sl_atr_mult": 1.3, "tp_atr_mult": 4.0, "min_conf": 0.55, "lot_cap": 0.20, "regime": "forex"},
     # ── COMMODITIES: spreads médios, safe-haven/fluxos ──────────────────────
-    "XAUUSD": {"cost_pts":  30, "sl_atr_mult": 0.7, "tp_atr_mult": 3.0, "min_conf": 0.58, "lot_cap": 0.30, "sl_pts_min": 150, "regime": "commodity"},  # CEO 2026-05-14: sl_atr_mult 1.2→0.7 (SL mais justo)
+    "XAUUSD": {"cost_pts":  30, "sl_atr_mult": 0.7, "tp_atr_mult": 3.0, "min_conf": 0.58, "lot_cap": 0.30, "sl_pts_min": 1500, "regime": "commodity"},  # P0-ABC 20260522: sl_pts_min 150→1500 (SL floor $15 vs range $40-200)
     "XAGUSD": {"cost_pts":  20, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.15, "regime": "commodity"},
     "UKOIL+": {"cost_pts":  30, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.10, "regime": "commodity"},
     "USOIL+": {"cost_pts":  30, "sl_atr_mult": 1.5, "tp_atr_mult": 5.0, "min_conf": 0.58, "lot_cap": 0.10, "regime": "commodity"},
@@ -655,6 +656,9 @@ _EDGE_GATE: dict = {
     "jpy_cross":  {"atr_pct_min": 0.0008, "adx_min": 18.0},
     "generic":    {"atr_pct_min": 0.0008, "adx_min": 18.0},
 }
+# P0-ABC 20260522: Guardrail cache 60s
+_GUARDRAIL_CACHE = {}  # {(asset, tf, reason_hash): (result, timestamp)}
+_GUARDRAIL_CACHE_TTL = 60  # seconds
 
 # ─── MARKET PROFILE: mapeamento shadow_regime → MP regime ───────────────────
 # shadow_loop usa "commodity" para XAUUSD e Oil. MP usa "metal" para metais.
@@ -1420,6 +1424,14 @@ def mt5_send_order(asset: str, tf: str, lot: float,
         "latency_ms":       lat_ms,
         "mode":             "MT5_DEMO_REAL",
     }
+    
+    # P0-ABC 20260522: Ghost orders — validar fill>0 e ticket>0
+    if out["success"]:
+        if out["fill_price"] <= 0 or out["deal"] <= 0 or out["order"] <= 0:
+            out["success"] = False
+            out["retcode_str"] = "FILL_ZERO_OR_NO_TICKET"
+            log.error("[%s %s] [GHOST_ORDER] success=False fill=%.5f deal=%d order=%d",
+                     asset, tf, out["fill_price"], out["deal"], out["order"])
 
     if out["success"]:
         # Mandato 1 — auditoria: alertar se posição OMEGA no símbolo ficou sem SL no broker
@@ -1434,6 +1446,14 @@ def mt5_send_order(asset: str, tf: str, lot: float,
             log.debug("[%s %s] verificação SL pós-fill ignorada: %s", asset, tf, _pv_err)
         log.info("[%s %s] ✅ ORDER DONE | deal=%d price=%.5f slip=%.2fpts lat=%dms",
                  asset, tf, out["deal"], out["fill_price"], out["slippage_pts"], lat_ms)
+        # P0-ABC 20260522: Persist ticket em state para 1POS bypass comment cego
+        try:
+            from modules.mt5_position_tag import save_open_ticket
+            if out["deal"] > 0 and out["fill_price"] > 0:
+                save_open_ticket(out["order"], asset, direction, out["deal"])
+                log.debug("[%s %s] [1POS_STATE] ticket=%d persistido", asset, tf, out["order"])
+        except Exception as _state_err:
+            log.warning("[%s %s] [1POS_STATE] falha persistir ticket: %s", asset, tf, _state_err)
     elif retcode == 10016:
         log.error(
             "[%s %s] ATOMIC_EXEC: order_send INVALID_STOPS (10016) — sem modify pós-entrada",
@@ -1653,6 +1673,19 @@ def get_price_result(asset: str = "XAUUSD", current_price: float = 0.0) -> dict:
 # ─── Guardrail Check ─────────────────────────────────────────────────────────
 def check_guardrails(asset: str, tf: str, hr: float,
                      mach: float, dm: dict) -> dict:
+    # P0-ABC 20260522: Guardrail cache 60s
+    import time
+    import hashlib
+    _reasons_raw = f"{hr:.2f}_{mach:.2f}"
+    _cache_key = (asset, tf, hashlib.md5(_reasons_raw.encode()).hexdigest()[:8])
+    _now = time.time()
+    
+    if _cache_key in _GUARDRAIL_CACHE:
+        _cached_result, _cached_ts = _GUARDRAIL_CACHE[_cache_key]
+        if _now - _cached_ts < _GUARDRAIL_CACHE_TTL:
+            log.debug("[GUARDRAIL_CACHE_HIT] %s %s (age=%.0fs)", asset, tf, _now - _cached_ts)
+            return _cached_result
+    
     reasons = []
     dyn_min_hr = get_regime_config().get('MIN_CONFIDENCE', 0.8) * 100
     if hr < dyn_min_hr:    reasons.append(f"hit_rate_134={hr:.2f}% < {dyn_min_hr}%")
@@ -1661,9 +1694,12 @@ def check_guardrails(asset: str, tf: str, hr: float,
     d = dm.get(asset, {}).get(tf)
     if d and isinstance(d, dict): margin = float(d.get("margin_dynamic", 150.0))
     tier   = "T1" if asset in TIER1_ASSETS else ("T2" if hr >= HIT_RATE_MIN else "T3")
-    return {"asset": asset, "timeframe": tf, "tier": tier,
-            "hit_rate_134": hr, "mach": mach, "margin_used": margin,
-            "skip": len(reasons) > 0, "skip_reasons": reasons}
+    result = {"asset": asset, "timeframe": tf, "tier": tier,
+              "hit_rate_134": hr, "mach": mach, "margin_used": margin,
+              "skip": len(reasons) > 0, "skip_reasons": reasons}
+    
+    _GUARDRAIL_CACHE[_cache_key] = (result, _now)
+    return result
 
 
 # ─── Position Sizing (MT5 contract-aware) ─────────────────────────────────────
@@ -2396,6 +2432,8 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
     _flow_state: dict = {}        # symbol → flow confluence score (0-100)
     _partial_close_engines: dict = {}  # ticket → ProgressivePartialCloseComplete (1 engine por posição)
     _trailing_stop_engines: dict = {}  # ticket → HardVolatilityTrailingStopGeometric (1 engine por posição)
+    # P0-ABC 20260522 T-D4b: PositionManager wiring
+    _position_manager = PositionManager(feedback_path=str(AUDIT_PAPER / "trade_feedback.jsonl"))
 
     # BUG-1 FIX: PersistentKillSwitch com âncora diária persistente entre subprocesses.
     # reset_session() destruía daily_pnl a cada ciclo de 35s → protecção diária = ZERO.
@@ -3178,6 +3216,20 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                     if _ts_req and _ts_req.retcode == mt5.TRADE_RETCODE_DONE:
                                         log.info("[TIME_STOP] OK #%d fechado retcode=%d",
                                                  _tp_live.ticket, _ts_req.retcode)
+                                        # P0-ABC 20260522 T-D4b: Registrar fecho no PositionManager
+                                        try:
+                                            _pnl_ts = float(_tp_live.profit) if hasattr(_tp_live, 'profit') else 0.0
+                                            _position_manager.register_close(
+                                                position_ticket=int(_tp_live.ticket),
+                                                deal_ticket=int(_ts_req.deal if hasattr(_ts_req, 'deal') else 0),
+                                                lot=float(_tp_live.volume),
+                                                price=float(_ts_req.price if hasattr(_ts_req, 'price') else 0),
+                                                pnl=_pnl_ts,
+                                                reason="TIME_STOP",
+                                            )
+                                            log.debug("[PositionManager] CLOSE TIME_STOP registrado: %s #%d", _tp_live.symbol, _tp_live.ticket)
+                                        except Exception as _pm_err:
+                                            log.warning("[PositionManager] falha registrar CLOSE TIME_STOP: %s", _pm_err)
                                     else:
                                         _rc = _ts_req.retcode if _ts_req else "N/A"
                                         log.warning("[TIME_STOP] FALHOU #%d retcode=%s",
@@ -3225,6 +3277,20 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                             log.warning("[ZAK_TRAP] Fechado #%d %s %s pnl=%.2f — armadilha detectada",
                                                         _trap_pos.ticket, _trap_sym, _trap_dir,
                                                         _trap_pos.profit)
+                                            # P0-ABC 20260522 T-D4b: Registrar fecho no PositionManager
+                                            try:
+                                                _pnl_trap = float(_trap_pos.profit) if hasattr(_trap_pos, 'profit') else 0.0
+                                                _position_manager.register_close(
+                                                    position_ticket=int(_trap_pos.ticket),
+                                                    deal_ticket=int(_trap_req.deal if hasattr(_trap_req, 'deal') else 0),
+                                                    lot=float(_trap_pos.volume),
+                                                    price=float(_trap_req.price if hasattr(_trap_req, 'price') else 0),
+                                                    pnl=_pnl_trap,
+                                                    reason="ZAK_TRAP",
+                                                )
+                                                log.debug("[PositionManager] CLOSE ZAK_TRAP registrado: %s #%d", _trap_sym, _trap_pos.ticket)
+                                            except Exception as _pm_err:
+                                                log.warning("[PositionManager] falha registrar CLOSE ZAK_TRAP: %s", _pm_err)
                                         else:
                                             _tr = _trap_req.retcode if _trap_req else "N/A"
                                             log.warning("[ZAK_TRAP] Falhou fechar #%d retcode=%s",
@@ -3319,6 +3385,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                                 "signal_source": _entry.get("signal_source"),
                                                 "agent_id": _entry.get("agent_id"),
                                                 "pnl": round(float(_entry_pnl), 6),
+                                                "total_realized_pnl": round(float(_realized_pnl), 6),  # P0-ABC 20260522
                                                 "r_multiple": _entry.get("r_multiple"),
                                                 "result": _entry.get("result"),
                                                 "duration_min": _entry.get("duration_min"),
@@ -3396,34 +3463,51 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                     # === PSA-WIND Q2: 1 POSIÇÃO POR ATIVO (CEO 2026-05-14 FIX) ===
                     # Forçar MAX_POS_PER_ASSET=1 — 2ª posição só via check_pyramid_add()
                     # Previne 3× ordens idênticas mesmo volume; pyramid tem lot progressivo (1.5x)
+                    # P0-ABC 20260522: Usar has_omega_exposure (MT5 + state) para bypass comment cego
                     _MAX_POS_PER_ASSET = int(os.getenv("OMEGA_MAX_POS_PER_ASSET", "1"))  # 1=padrão; pyramid path tem seu próprio check
-                    _existing_omega_same = [p for p in current_positions if p.get("symbol") == asset]
-                    if _existing_omega_same:
-                        _n_exist = len(_existing_omega_same)
-                        if _n_exist >= _MAX_POS_PER_ASSET:
-                            _pnl_exist = sum(p.get("profit", 0) for p in _existing_omega_same)
-                            log.info("[%s %s] [POS_RULE] SKIP — já tem %d/%d posições OMEGA (pnl=%.2f)",
-                                     asset, tf, _n_exist, _MAX_POS_PER_ASSET, _pnl_exist)
+                    try:
+                        from modules.mt5_position_tag import has_omega_exposure
+                        if has_omega_exposure(asset, signal_dir):
+                            log.info("[%s %s] [POS_RULE] SKIP — já tem exposição OMEGA %s em %s (state+MT5)",
+                                     asset, tf, signal_dir, asset)
                             results.append({"asset": asset, "timeframe": tf,
                                             "status": "SKIP_ALREADY_POSITIONED",
-                                            "existing_count": _n_exist,
-                                            "existing_pnl": round(_pnl_exist, 2)})
+                                            "reason": "has_omega_exposure"})
                             continue
+                    except Exception as _exposure_err:
+                        log.warning("[%s %s] [POS_RULE] falha has_omega_exposure: %s", asset, tf, _exposure_err)
+                        # Fallback para lógica original
+                        _existing_omega_same = [p for p in current_positions if p.get("symbol") == asset]
+                        if _existing_omega_same:
+                            _n_exist = len(_existing_omega_same)
+                            if _n_exist >= _MAX_POS_PER_ASSET:
+                                _pnl_exist = sum(p.get("profit", 0) for p in _existing_omega_same)
+                                log.info("[%s %s] [POS_RULE] SKIP — já tem %d/%d posições OMEGA (pnl=%.2f)",
+                                         asset, tf, _n_exist, _MAX_POS_PER_ASSET, _pnl_exist)
+                                results.append({"asset": asset, "timeframe": tf,
+                                                "status": "SKIP_ALREADY_POSITIONED",
+                                                "existing_count": _n_exist,
+                                                "existing_pnl": round(_pnl_exist, 2)})
+                                continue
 
                     # === PSA-WIND FIX 1: ANTI-HEDGE — bloquear BUY+SELL no mesmo ativo ===
-                    _has_opposite = False
-                    for _cp in current_positions:
-                        _cp_dir = "BUY" if _cp.get("type") == 0 else "SELL"
-                        if _cp_dir != signal_dir:
-                            _has_opposite = True
-                            break
-                    if _has_opposite:
-                        log.warning("[%s %s] [ANTI_HEDGE] BLOCKED — já existe posição %s, sinal=%s (hedge não intencional)",
-                                    asset, tf, _cp_dir, signal_dir)
-                        results.append({"asset": asset, "timeframe": tf,
-                                        "status": "SKIP_ANTI_HEDGE",
-                                        "existing_dir": _cp_dir, "signal_dir": signal_dir})
-                        continue
+                    # P0-ABC 20260522: Anti-hedge QUALQUER posição MT5 (sem filtro OV2)
+                    try:
+                        import MetaTrader5 as mt5
+                        _all_positions = mt5.positions_get(symbol=asset)
+                        if _all_positions:
+                            for _cp in _all_positions:
+                                _cp_dir = "BUY" if _cp.type == 0 else "SELL"
+                                if _cp_dir != signal_dir:
+                                    log.warning("[%s %s] [ANTI_HEDGE] BLOCKED — posição MT5 %s ticket=%d dir=%s vs sinal=%s",
+                                             asset, tf, asset, _cp.ticket, _cp_dir, signal_dir)
+                                    results.append({"asset": asset, "timeframe": tf,
+                                                    "status": "SKIP_ANTI_HEDGE",
+                                                    "existing_dir": _cp_dir, "signal_dir": signal_dir,
+                                                    "existing_ticket": _cp.ticket})
+                                    continue
+                    except Exception as _anti_hedge_err:
+                        log.warning("[%s %s] [ANTI_HEDGE] falha MT5 positions_get: %s", asset, tf, _anti_hedge_err)
 
                     # === PACING & DIVERSIFICATION — CEO 2026-05-12 ========================
                     _MAX_DIR_CYCLE = int(os.getenv("OMEGA_MAX_SAME_DIR_PER_CYCLE", "2"))   # CEO 2026-05-14: 1→2
@@ -4105,6 +4189,22 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                                  exec_result.get("slippage_pts", 0))
                                         log.info("[LEDGER] Posicao aberta: %s #%d entry=%.5f",
                                                  asset, _np.ticket, _np.price_open)
+                                        # P0-ABC 20260522 T-D4b: Registrar posição no PositionManager
+                                        try:
+                                            _position_manager.register_open(
+                                                position_ticket=int(_np.ticket),
+                                                entry_ticket=int(deal_id),
+                                                entry_magic=OMEGA_MAGIC,
+                                                entry_comment=exec_result.get("comment", ""),
+                                                symbol=asset,
+                                                direction=signal_dir,
+                                                entry_price=float(exec_result.get("fill_price", 0) or 0),
+                                                entry_lot=eff_lot,
+                                                entry_time=datetime.now(timezone.utc).isoformat(),
+                                            )
+                                            log.debug("[PositionManager] OPEN registrado: %s #%d", asset, _np.ticket)
+                                        except Exception as _pm_err:
+                                            log.warning("[PositionManager] falha registrar OPEN: %s", _pm_err)
                                         if agent_ia is not None and signal_source == "AGENT_IA":
                                             try:
                                                 agent_ia.record_trade_open(
@@ -4194,9 +4294,14 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                 report = build_report(asset, tf, mode, harmonic, 
                                       {"price": a_price, "base_price": b_price, "metadata": {}}, 
                                       guard, exec_result, lot_info)
-                out_f = out_dir / f"PaperReport_{asset}_{tf}.json"
-                with open(out_f, "w", encoding="utf-8") as f:
-                    json.dump(report, f, indent=2, ensure_ascii=False)
+                # P0-ABC 20260522: Não salvar PaperReport EXEC se ghost order (fill=0)
+                if exec_result and not exec_result.get("success", True):
+                    _ghost_reason = exec_result.get("retcode_str", "UNKNOWN")
+                    log.warning("[%s %s] [GHOST_ORDER] não salvando PaperReport (reason=%s)", asset, tf, _ghost_reason)
+                else:
+                    out_f = out_dir / f"PaperReport_{asset}_{tf}.json"
+                    with open(out_f, "w", encoding="utf-8") as f:
+                        json.dump(report, f, indent=2, ensure_ascii=False)
 
                 stats.record(report)
                 action = report["signal"]["action"]
@@ -4296,6 +4401,20 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                         log.info("[TRAILING] %s #%d ✅ FECHADA trailing @ %.5f (%.1fms)",
                                                  _p.symbol, _p.ticket,
                                                  _ts_close.get("fill_price", 0), _ts_close.get("latency_ms", 0))
+                                        # P0-ABC 20260522 T-D4b: Registrar fecho no PositionManager
+                                        try:
+                                            _pnl_est = float(_p.profit) if hasattr(_p, 'profit') else 0.0
+                                            _position_manager.register_close(
+                                                position_ticket=int(_p.ticket),
+                                                deal_ticket=int(_ts_close.get("retcode", 0)),  # usar order como deal proxy
+                                                lot=float(_ts_close.get("volume", _p.volume)),
+                                                price=float(_ts_close.get("fill_price", 0)),
+                                                pnl=_pnl_est,
+                                                reason="TRAILING_STOP",
+                                            )
+                                            log.debug("[PositionManager] CLOSE registrado: %s #%d", _p.symbol, _p.ticket)
+                                        except Exception as _pm_err:
+                                            log.warning("[PositionManager] falha registrar CLOSE: %s", _pm_err)
                                     else:
                                         log.error("[TRAILING] %s #%d ❌ close falhou: %s — SL broker já actualizado",
                                                   _p.symbol, _p.ticket, _ts_close.get("error"))
@@ -4318,21 +4437,50 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                         # WIRING BUG-4: Executar fecho parcial real via MT5
                                         _pc_res = mt5_close_partial(
                                             _p.ticket, _p.symbol, _order["lots"], _dir_str_pc)
-                                        if not _pc_res.get("success"):
+                                        if _pc_res.get("success"):
+                                            # P0-ABC 20260522 T-D4b: Registrar fecho parcial no PositionManager
+                                            try:
+                                                _pnl_est = float(_p.profit) if hasattr(_p, 'profit') else 0.0
+                                                _position_manager.register_partial(
+                                                    position_ticket=int(_p.ticket),
+                                                    deal_ticket=int(_pc_res.get("retcode", 0)),  # usar order como deal proxy
+                                                    lot=float(_pc_res.get("volume", _order["lots"])),
+                                                    price=float(_pc_res.get("fill_price", 0)),
+                                                    pnl=_pnl_est,
+                                                    reason=_order.get("reason", "PARTIAL"),
+                                                )
+                                                log.debug("[PositionManager] PARTIAL registrado: %s #%d", _p.symbol, _p.ticket)
+                                            except Exception as _pm_err:
+                                                log.warning("[PositionManager] falha registrar PARTIAL: %s", _pm_err)
+                                        else:
                                             log.error("[PARTIAL_CLOSE] %s #%d ❌ fecho parcial falhou: %s",
                                                       _p.symbol, _p.ticket, _pc_res.get("error"))
                                     elif _order["action"] == "MOVE_SL_TO_ENTRY":
                                         log.info("[PARTIAL_CLOSE] %s #%d: SL moved to breakeven | %s",
                                                  _p.symbol, _p.ticket, _order["reason"])
-                                        # WIRING BUG-4: Mover SL para entry price (breakeven) via broker
+                                        # P0-ABC 20260522: Breakeven com buffer 1.5x spread
                                         _entry_be = float(
                                             _pos_ledger[_p.ticket].get("entry_price", _p.price_open))
+                                        _sym_info = mt5.symbol_info(_p.symbol)
+                                        _spread_pts = getattr(_sym_info, "spread", 0) if _sym_info else 0
+                                        _point = getattr(_sym_info, "point", 0.0001) if _sym_info else 0.0001
+                                        _buffer_pts = max(_spread_pts * 1.5, 2.0)  # min 2 pts
+                                        _buffer_price = _buffer_pts * _point
+                                        
+                                        if _p.type == 0:  # BUY
+                                            _sl_new = _entry_be - _buffer_price
+                                        else:  # SELL
+                                            _sl_new = _entry_be + _buffer_price
+                                        
                                         _cur_tp_be = float(_p.tp) if _p.tp else 0.0
                                         _be_res = mt5_modify_position_sl(
-                                            _p.ticket, _p.symbol, _entry_be, _cur_tp_be)
+                                            _p.ticket, _p.symbol, _sl_new, _cur_tp_be)
                                         if not _be_res.get("success"):
                                             log.error("[PARTIAL_CLOSE] %s #%d ❌ breakeven SL falhou: %s",
                                                       _p.symbol, _p.ticket, _be_res.get("error"))
+                                        else:
+                                            log.info("[BREAKEVEN] %s #%d SL entry=%.5f -> %.5f (buffer=%.2fpts)",
+                                                     _p.symbol, _p.ticket, _entry_be, _sl_new, _buffer_pts)
                         except Exception as _pc_check_err:
                             log.warning("[PARTIAL_CLOSE] Erro ao verificar: %s", _pc_check_err)
                     else:
