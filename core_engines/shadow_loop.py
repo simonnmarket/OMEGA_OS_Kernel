@@ -1477,6 +1477,10 @@ def mt5_modify_position_sl(ticket: int, symbol: str, new_sl: float, new_tp: floa
     Retorna dict com success, retcode, latency_ms.
     """
     import MetaTrader5 as mt5
+    # P0-ABC 20260522 Fase 0b T-W3: Guard is_market_open antes de modificar SL
+    if not is_market_open(symbol):
+        log.info("[MARKET_CLOSED] mt5_modify_position_sl adiado ticket=%d symbol=%s", ticket, symbol)
+        return {"success": False, "error": "MARKET_CLOSED", "retcode": 10018}
     sym = mt5.symbol_info(symbol)
     if sym is None:
         log.error("[MT5_MODIFY_SL] %s symbol_info None", symbol)
@@ -1544,6 +1548,10 @@ def mt5_close_partial(ticket: int, symbol: str, lots: float, direction: str) -> 
     Retorna dict com success, retcode, fill_price, latency_ms.
     """
     import MetaTrader5 as mt5
+    # P0-ABC 20260522 Fase 0b T-W3: Guard is_market_open antes de fecho
+    if not is_market_open(symbol):
+        log.info("[MARKET_CLOSED] mt5_close_partial adiado ticket=%d symbol=%s", ticket, symbol)
+        return {"success": False, "error": "MARKET_CLOSED", "retcode": 10018}
     tick = mt5.symbol_info_tick(symbol)
     sym  = mt5.symbol_info(symbol)
     if tick is None or sym is None:
@@ -3198,6 +3206,11 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                         _tp_live.ticket, _tp_live.symbol, _dir_tp,
                                         _pnl, _close_reason,
                                     )
+                                    # P0-ABC 20260522 Fase 0b T-W3: Guard is_market_open antes de fecho
+                                    if not is_market_open(_tp_live.symbol):
+                                        log.info("[MARKET_CLOSED] TIME_SKIP fecho adiado ticket=%d symbol=%s",
+                                                 _tp_live.ticket, _tp_live.symbol)
+                                        continue
                                     _ts_req = mt5.order_send(mt5.TradeRequest(
                                         action   = mt5.TRADE_ACTION_DEAL,
                                         position = _tp_live.ticket,
@@ -3260,6 +3273,11 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                         _trap_tick = mt5.symbol_info_tick(_trap_sym)
                                         _trap_close_price = (_trap_tick.bid if _trap_dir == "BUY"
                                                              else _trap_tick.ask)
+                                        # P0-ABC 20260522 Fase 0b T-W3: Guard is_market_open antes de fecho
+                                        if not is_market_open(_trap_sym):
+                                            log.info("[MARKET_CLOSED] ZAK_TRAP fecho adiado ticket=%d symbol=%s",
+                                                     _trap_pos.ticket, _trap_sym)
+                                            continue
                                         _trap_req = mt5.order_send(mt5.TradeRequest(
                                             action   = mt5.TRADE_ACTION_DEAL,
                                             position = _trap_pos.ticket,

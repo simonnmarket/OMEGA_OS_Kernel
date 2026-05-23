@@ -1,14 +1,13 @@
 # OMEGA — arranque 24/7 (MT5 tem de estar aberto e ligado à conta)
-# CKO 2026-05-20: MODO DIAGNÓSTICO CIRÚRGICO 24h (após RCV P0 mandatos em shadow_loop.py)
-# RCV P0: não reiniciar sem validar logs [EQUITY] + [MOMENTUM_FALLBACK] DISABLED + gates activos
+# CEO 2026-05-20: MODO DEMO TESTE — conta demo, fallback ON para gerar ordens + gates P0 activos
+# RCV P0 (M1-M4) mantém-se em shadow_loop.py; reiniciar runner após alterar envs
 $ErrorActionPreference = "Stop"
 Set-Location "C:\OMEGA_QUANTUM_LAB\SOURCE_CODE"
 $env:PYTHONPATH = (Get-Location).Path
 
-# ─── CEO 2026-05-20: corrida verificação 24h — fallback OFF (H1 / D2) ─────────
-# OIS-DIAG-20260517: P0-A=1 desactiva fallback EMA8/21 quando IA não decide.
-# Env tem precedência sobre config/live_flags.json. Rollback 24/7 antigo: "0".
-$env:OMEGA_DISABLE_MOMENTUM_FALLBACK = "1"
+# ─── DEMO TESTE: fallback ON quando IA=HOLD (sem isto = 0 ordens em 10h) ─────
+# Rollback diagnóstico silencioso: "1"
+$env:OMEGA_DISABLE_MOMENTUM_FALLBACK = "0"
 
 # Rastreio por componente/skip (veredito 24h): audit/paper/decision_trace.jsonl
 $env:OMEGA_DECISION_TRACE = "1"
@@ -19,12 +18,16 @@ $env:OMEGA_LOOP_INTERVAL_SEC = "20"
 # paper | shadow
 $env:OMEGA_24X7_MODE = "paper"
 
-# ─── CKO OVERRIDE: MODO DIAGNÓSTICO CIRÚRGICO 24H ───────────────────────────
-# 0.2% risco (~$2.5/trade em conta ~$1250) — sobreviver 24h para decision_trace
-$env:OMEGA_RISK_PER_TRADE = "0.002"
+# ─── DEMO TESTE: risco moderado (conta demo — CEO autoriza teste real) ───────
+$env:OMEGA_RISK_PER_TRADE = "0.005"
 
-# Exposição controlada (5 pos — evita cluster SL correlacionado)
-$env:OMEGA_MAX_POSITIONS = "5"
+# Até 8 posições simultâneas para ver execução P0 sem cluster extremo
+$env:OMEGA_MAX_POSITIONS = "8"
+
+# Gates P0 relaxados só em demo (spread 2x em vez de 3x; M1 aceita 1/3 velas)
+$env:OMEGA_SPREAD_GUARD_MULT = "2.0"
+$env:OMEGA_M1_MIN_CONFIRMED = "1"
+$env:OMEGA_MIN_CONFLUENCE = "35"
 
 # DRAWDOWN: 10% diário (era 2%) — espaço operacional para 15 posições de risco 1%
 $env:OMEGA_DD_DAILY_MAX = "0.10"
@@ -75,7 +78,8 @@ $env:OMEGA_RUNNER_MAX_PARALLEL = "1"
 $env:OMEGA_SCALE_LOT_TO_MIN_TP_USD = "1"
 
 # Portfolio completo: Forex + Metals + Oils + Indices + Crypto
-$env:OMEGA_24X7_ATIVOS = "EURUSD GBPUSD USDJPY AUDUSD NZDUSD USDCAD USDCHF EURJPY GBPJPY AUDJPY CADJPY CHFJPY XAUUSD XAGUSD UKOIL+ USOIL+ GER40 UK100 US500 US30 BTCUSD ETHUSD SOLUSD BNBUSD LTCUSD XRPUSD ADAUSD AVAXUSD DOGUSD DOTUSD UNIUSD XLMUSD"
+# P0-ABC 20260522 Fase 0b T-W1: REMOVIDO lista fixa — usa omega_asset_schedule.json
+# $env:OMEGA_24X7_ATIVOS = "EURUSD GBPUSD USDJPY AUDUSD NZDUSD USDCAD USDCHF EURJPY GBPJPY AUDJPY CADJPY CHFJPY XAUUSD XAGUSD UKOIL+ USOIL+ GER40 UK100 US500 US30 BTCUSD ETHUSD SOLUSD BNBUSD LTCUSD XRPUSD ADAUSD AVAXUSD DOGUSD DOTUSD UNIUSD XLMUSD"
 
 # Equity real via MT5 no arranque (P2-A BUG-5) — sem --equity hardcoded
 python -u scripts/omega_paper_loop_24x7.py `
