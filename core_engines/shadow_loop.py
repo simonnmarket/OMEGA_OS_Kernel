@@ -1586,7 +1586,7 @@ def mt5_close_partial(ticket: int, symbol: str, lots: float, direction: str) -> 
         "price":        price,
         "deviation":    20,
         "magic":        OMEGA_MAGIC,
-        "comment":      f"OV2|{int(time.time())}|PARTIAL|{ticket}",
+        "comment":      f"OV2|PARTIAL|{ticket}",  # CEO 20260523: comment <= 31 chars MT5
         "type_time":    mt5.ORDER_TIME_GTC,
         "type_filling": filling,
     }
@@ -3223,7 +3223,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                                     else mt5.symbol_info_tick(_tp_live.symbol).ask),
                                         deviation = 30,
                                         magic    = OMEGA_MAGIC,
-                                        comment  = f"OV2|TIME_STOP|{_tp_live.ticket}",
+                                        comment  = f"OV2|TS|{_tp_live.ticket}",  # CEO 20260523: comment <= 31 chars MT5
                                         type_filling = mt5.ORDER_FILLING_IOC,
                                     ))
                                     if _ts_req and _ts_req.retcode == mt5.TRADE_RETCODE_DONE:
@@ -3288,7 +3288,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                             price    = _trap_close_price,
                                             deviation = 30,
                                             magic    = OMEGA_MAGIC,
-                                            comment  = f"OV2|ZAK_TRAP|{_trap_pos.ticket}",
+                                            comment  = f"OV2|ZAK|{_trap_pos.ticket}",  # CEO 20260523: comment <= 31 chars MT5
                                             type_filling = mt5.ORDER_FILLING_IOC,
                                         ))
                                         if _trap_req and _trap_req.retcode == mt5.TRADE_RETCODE_DONE:

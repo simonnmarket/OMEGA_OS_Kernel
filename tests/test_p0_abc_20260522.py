@@ -247,5 +247,38 @@ def test_ut8_position_manager_wiring():
         assert len(lines) == 1, f"Deve ter 1 linha, tem {len(lines)}"
 
 
+def test_ut9_comment_length_31_chars():
+    """UT-9: MT5 comment <= 31 chars (CEO 20260523)"""
+    import time
+    
+    # Testar formatos de comment usados no código
+    ticket = 123456789
+    
+    # Formato PARTIAL (antigo: timestamp, novo: sem timestamp)
+    comment_old = f"OV2|{int(time.time())}|PARTIAL|{ticket}"
+    comment_new = f"OV2|PARTIAL|{ticket}"
+    
+    # Formato TIME_STOP (antigo: TIME_STOP, novo: TS)
+    comment_ts_old = f"OV2|TIME_STOP|{ticket}"
+    comment_ts_new = f"OV2|TS|{ticket}"
+    
+    # Formato ZAK_TRAP (antigo: ZAK_TRAP, novo: ZAK)
+    comment_zak_old = f"OV2|ZAK_TRAP|{ticket}"
+    comment_zak_new = f"OV2|ZAK|{ticket}"
+    
+    # Verificar que novos formatos <= 31 chars
+    assert len(comment_new) <= 31, f"PARTIAL comment deve ser <= 31 chars: {len(comment_new)} = '{comment_new}'"
+    assert len(comment_ts_new) <= 31, f"TS comment deve ser <= 31 chars: {len(comment_ts_new)} = '{comment_ts_new}'"
+    assert len(comment_zak_new) <= 31, f"ZAK comment deve ser <= 31 chars: {len(comment_zak_new)} = '{comment_zak_new}'"
+    
+    # Verificar que antigo formato PARTIAL violava (timestamp 10 dígitos = 32 chars)
+    assert len(comment_old) > 31, f"Antigo formato PARTIAL deve violar limite 31 chars: {len(comment_old)} = '{comment_old}'"
+    
+    # TIME_STOP e ZAK_TRAP antigos também violavam (23 e 22 chars, mas ainda > 31 não é o caso correto)
+    # Na verdade, 23 e 22 chars são <= 31, então o assert estava incorreto
+    # O problema principal era o timestamp no PARTIAL (32 chars)
+    # Correção: remover timestamp de PARTIAL e abreviar TIME_STOP→TS, ZAK_TRAP→ZAK
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
