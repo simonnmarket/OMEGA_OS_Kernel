@@ -1,0 +1,262 @@
+Resumo do Conflito e Decisão Necessária
+Conflito entre Documentos
+
+
+
+
+
+  
+    
+      Tópico
+      Resumo Executivo para o Conselho
+      Memorando CKO
+      Recomendação Técnica
+    
+  
+  
+    
+      Risco por trade
+      1% (modo agressivo)
+      0,2% (modo diagnóstico)
+      0,2% (para evitar HALT recorrente)
+    
+    
+      Max posições
+      15
+      5
+      5 (para reduzir exposição)
+    
+    
+      --equity 10000
+      Não menciona
+      Remover (usar equity real do MT5)
+      Remover (boa prática + alinha com CKO)
+    
+    
+      Objetivo da corrida
+      Testar em condições "reais"
+      Sobreviver 24h com trace limpo
+      Modo diagnóstico (CKO)
+    
+    
+      Âncora KS
+      Opção B (reset documentado)
+      Opção B + comandos PowerShell
+      Opção B (reset documentado)
+    
+  
+
+
+Conclusão:
+O Memorando CKO deve prevalecer para a configuração da corrida de 24h, pois:
+
+Evita HALT recorrente (modo agressivo pode repetir o problema em poucas horas).
+Permite um decision_trace.jsonl útil (com menos ruído de drawdown).
+Alinha com a causa raiz identificada (--equity 10000 desalinhado com a conta real).
+
+🎯 Decisão Final para o Conselho
+Pergunta:
+"A corrida de 24h deve ser executada no modo diagnóstico CKO (0,2% risco, 5 posições, equity MT5 real, âncora Opção B) ou no modo agressivo (1%, 15 posições)?"
+Recomendação Técnica:
+✅ Modo diagnóstico CKO (0,2%, 5 posições, equity real, âncora Opção B).
+Razões:
+
+Reduz risco de HALT recorrente (modo agressivo pode repetir o problema em poucas horas).
+Permite um decision_trace.jsonl limpo (com menos skips por drawdown).
+Alinha com a hipótese de causa raiz (--equity 10000 desalinhado).
+
+📢 Checklist OPS (Se Aprovar Modo Diagnóstico CKO)
+1. Pré-Corrida (Ações Imediatas)
+
+
+
+
+
+  
+    
+      Ação
+      Comando/Arquivo
+      Validação
+    
+  
+  
+    
+      Backup + Remover ks_daily_anchor.json
+      copy audit\risk\ks_daily_anchor.json audit\risk\ks_daily_anchor_backup_20260520.json + del audit\risk\ks_daily_anchor.json
+      Confirmar que o arquivo foi removido.
+    
+    
+      Remover --equity 10000 do run_omega_24x7.ps1
+      Editar scripts/run_omega_24x7.ps1 e remover a linha --equity 10000
+      Confirmar que a linha foi removida.
+    
+    
+      Ajustar OMEGA_RISK_PER_TRADE e OMEGA_MAX_POSITIONS
+      Adicionar ao run_omega_24x7.ps1: $env:OMEGA_RISK_PER_TRADE = "0.002" e $env:OMEGA_MAX_POSITIONS = "5"
+      Confirmar valores no script.
+    
+    
+      Manter OMEGA_DISABLE_MOMENTUM_FALLBACK=1 e OMEGA_DECISION_TRACE=1
+      Já está aplicado em live_flags.json e run_omega_24x7.ps1
+      Confirmar no script.
+    
+  
+
+
+2. Início da Corrida
+
+
+
+
+
+  
+    
+      Ação
+      Comando
+      Validação
+    
+  
+  
+    
+      Abrir MT5
+      -
+      Confirmar que o MT5 está aberto e conectado à conta demo.
+    
+    
+      Iniciar runner
+      scripts/run_omega_24x7.ps1
+      -
+    
+    
+      Confirmar equity real no log
+      Procurar por [EQUITY] Equity MT5 real: $1250.xx
+      Se não aparecer, não prosseguir até corrigir.
+    
+    
+      Confirmar fallback desligado
+      Procurar por [MOMENTUM_FALLBACK] DISABLED
+      -
+    
+  
+
+
+3. Monitorização (Primeiras 3 Horas)
+
+
+
+
+
+  
+    
+      Log/Ficheiro
+      O que Procurar
+    
+  
+  
+    
+      omega_24x7_runner.log
+      [KILL_SWITCH] (DD% subindo), [MOMENTUM_FALLBACK] DISABLED
+    
+    
+      decision_trace.jsonl
+      Contagens de SKIP_*, AGENT_IA, ordens
+    
+    
+      trade_feedback.jsonl
+      signal_source (ignorar SYNC_RECOVERY para análise de win-rate)
+    
+    
+      MT5
+      Nº de posições abertas ≤ 5
+    
+  
+
+
+
+📊 Métricas Esperadas Após 24h
+
+
+
+
+
+  
+    
+      Métrica
+      Fonte
+      Objetivo
+    
+  
+  
+    
+      Trades fechados/abertos
+      MT5 + trade_feedback
+      Volume deve ser menor que no modo agressivo.
+    
+    
+      % SL vs. TP vs. EXPERT
+      mt5_deals (reason)
+      SL deve dominar menos que no cluster de 18/05.
+    
+    
+      Skips por motivo
+      decision_trace
+      Identificar o que bloqueia mais (ex: SKIP_MTF_BIAS).
+    
+    
+      DD máximo intraday
+      Log KS
+      Deve ficar abaixo de 10% (modo conservador).
+    
+    
+      PnL líquido 24h
+      MT5
+      Deve ser menos negativo que em 18/05.
+    
+    
+      HALT/cycle_exit
+      evaluation_timeline
+      Zero PERSISTENT_DD_HALT (objetivo).
+    
+  
+
+
+
+🔹 Próximos Passos (Se Aprovar Modo Diagnóstico CKO)
+
+
+Conselho vota:
+
+Modo diagnóstico CKO (0,2%, 5 posições, equity real, âncora Opção B).
+Aplicar checklist OPS (acima).
+
+
+Engenharia/PSA:
+
+Aplicar alterações no código (--equity, OMEGA_RISK_PER_TRADE, OMEGA_MAX_POSITIONS).
+Iniciar corrida de 24h e monitorar.
+
+
+Red Team:
+
+Gerar relatório intermédio após 24h com métricas de H1–H7.
+
+
+Pós-24h:
+
+Reexecutar build_omega_diagnostic_package_20260518.py para comparar agregados.
+Apresentar veredito ao Conselho.
+
+
+📢 Pergunta Final para o Conselho
+Podemos prosseguir com a corrida de 24h no modo diagnóstico CKO (0,2%, 5 posições, equity real, âncora Opção B)?
+Se sim, o Red Team e a Engenharia estão prontos para:
+
+Aplicar as 3 alterações do CKO (--equity, OMEGA_RISK_PER_TRADE, OMEGA_MAX_POSITIONS).
+Iniciar a corrida e monitorar conforme o checklist OPS.
+Resposta esperada:
+
+Sim (para modo diagnóstico CKO).
+Não (para modo agressivo, com justificativa).
+
+Nota:
+Se o Conselho aprovar o modo diagnóstico CKO, posso gerar um script automático para aplicar as alterações no código e iniciar a corrida. Basta confirmar! 

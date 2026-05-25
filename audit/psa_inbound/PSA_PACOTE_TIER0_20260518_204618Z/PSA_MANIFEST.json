@@ -1,0 +1,48 @@
+{
+  "manifest_version": "2.0-tier0",
+  "package_id": "PSA_PACOTE_TIER0_20260518_204618Z",
+  "generated_at_utc": "2026-05-18T20:46:19.104595+00:00",
+  "classification": "RAW_DATA_ONLY",
+  "window_utc": {
+    "from": "2026-05-04T00:00:00+00:00",
+    "to": "2026-05-18T23:59:59+00:00"
+  },
+  "mt5": {
+    "login": 510075151,
+    "server": "HantecMarketsMU-MT5",
+    "csv_locale": "en"
+  },
+  "deals_export_notes": "",
+  "files": [
+    {
+      "path": "PSA_MANIFEST.json",
+      "role": "control",
+      "sha256": "CALCULATE_AFTER_FILES"
+    },
+    {
+      "path": "PSA_MANIFEST.sha256",
+      "role": "control",
+      "sha256": null
+    },
+    {
+      "path": "mt5_deals_raw.csv",
+      "role": "raw_mt5",
+      "sha256": "23b87eb6d9b3dbb213db47803dd4f0c0fb704bad602f26f038da513ef69ed62f"
+    },
+    {
+      "path": "mt5_orders_raw.csv",
+      "role": "raw_mt5",
+      "sha256": "92621a68d66d831a20b64eced086827e207b8a6a6e777ea56bfd4fa5838bfc8f"
+    },
+    {
+      "path": "runtime_manifest.json",
+      "role": "raw_runtime",
+      "sha256": "aac3e0c36fd98fc0bbb3411cdd9e5d9d89f770635cef2ce798e501851a40401a"
+    },
+    {
+      "path": "account_equity_eod.jsonl",
+      "role": "raw_account",
+      "sha256": "eec5b6eb2e21247e5ced442c0e423542ae1b9bceba60ff30aecf6eebed9437a0"
+    }
+  ]
+}

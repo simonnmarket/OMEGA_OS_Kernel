@@ -1,0 +1,83 @@
+2026-04-27 00:45:30,443 | INFO | ========================================================================
+2026-04-27 00:45:30,443 | INFO | OMEGA PAPER LOOP v3.0 | 4 ativos × 2 TFs | equity=USD 10000.00
+2026-04-27 00:45:30,443 | INFO | Risk/trade=0.25% | MaxPos=6 | DD_max=5% | MT5_MAGIC=234001
+2026-04-27 00:45:30,443 | INFO | ========================================================================
+2026-04-27 00:45:30,473 | INFO | MT5 conectado | build=5833 | trade_allowed=True | connected=True
+2026-04-27 00:45:30,475 | INFO | MT5 State Sync: 2 posicoes ativas detectadas.
+2026-04-27 00:45:30,506 | INFO | [TESSERACT] Engine ativado para Multi-Timeframe (H4->M1, H1->M3, e buffer de Confluência M15)
+2026-04-27 00:45:30,507 | INFO | [JOHANSEN] Banco de dados de Cointegração lido com sucesso. (1 anchors)
+2026-04-27 00:45:30,511 | INFO | [FASE4] Agente IA inicializado (assets=4, capital=$10000.00)
+2026-04-27 00:45:30,512 | INFO | [FIX5] Scheduler de-bias aplicado | ordem=['BTCUSD', 'DOGUSD', 'SOLUSD', 'ETHUSD']
+2026-04-27 00:45:30,512 | INFO | [BTCUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 00:45:33,858 | INFO | [BTCUSD H1] FIX6 ai_decision_ms=27.31
+2026-04-27 00:45:33,858 | INFO | [BTCUSD H1] [IA] Sinal rejeitado: action=HOLD
+2026-04-27 00:45:33,859 | INFO | [BTCUSD H1] Sentiment: Current=78359.13000 | Avg3=78311.76000 | DIR: BUY (src=MOMENTUM_MT5)
+2026-04-27 00:45:33,859 | INFO | [BTCUSD H1] filling_mode=3 \u2192 tipo=IOC
+2026-04-27 00:45:33,859 | INFO | order_check OK | margin=8.97 balance=3345.37 equity=3345.67 free_margin=3336.70
+2026-04-27 00:45:34,168 | INFO | [BTCUSD H1] \u2705 ORDER DONE | deal=182391690 price=78367.00000 slip=787.00pts lat=307ms
+2026-04-27 00:45:34,168 | INFO | [BTCUSD H1] FASE4 EXEC source=MOMENTUM_MT5 success=True deal=182391690
+2026-04-27 00:45:34,170 | INFO | [BTCUSD H1] MT5_PAPER_EXECUTE | hr134=94.45% IC=[93.1902%, 95.4908%] lot=0.01 slip=787.00 lat=307ms | SHA3=81207830fcad2744...
+2026-04-27 00:45:34,170 | INFO | [BTCUSD H4] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 00:45:37,365 | INFO | [BTCUSD H4] FIX6 ai_decision_ms=26.45
+2026-04-27 00:45:37,365 | INFO | [BTCUSD H4] [IA] Sinal rejeitado: action=HOLD
+2026-04-27 00:45:37,365 | INFO | [BTCUSD H4] Sentiment: Current=78380.00000 | Avg3=78318.71667 | DIR: BUY (src=MOMENTUM_MT5)
+2026-04-27 00:45:37,366 | INFO | [BTCUSD H4] filling_mode=3 \u2192 tipo=IOC
+2026-04-27 00:45:37,367 | INFO | order_check OK | margin=12.89 balance=3345.37 equity=3345.72 free_margin=3332.83
+2026-04-27 00:45:37,407 | INFO | [BTCUSD H4] \u2705 ORDER DONE | deal=182391706 price=78380.00000 slip=0.00pts lat=40ms
+2026-04-27 00:45:37,408 | INFO | [BTCUSD H4] FASE4 EXEC source=MOMENTUM_MT5 success=True deal=182391706
+2026-04-27 00:45:37,410 | INFO | [BTCUSD H4] MT5_PAPER_EXECUTE | hr134=95.39% IC=[94.2208%, 96.3265%] lot=0.01 slip=0.00 lat=40ms | SHA3=8a1bb717f7adf73d...
+2026-04-27 00:45:37,410 | INFO | [DOGUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 00:45:41,153 | INFO | [DOGUSD H1] FIX6 ai_decision_ms=27.36
+2026-04-27 00:45:41,153 | INFO | [DOGUSD H1] [IA] Sinal rejeitado: action=HOLD
+2026-04-27 00:45:41,153 | INFO | [DOGUSD H1] Sentiment: Current=0.09938 | Avg3=0.09902 | DIR: BUY (src=MOMENTUM_MT5)
+2026-04-27 00:45:41,156 | INFO | [DOGUSD H1] filling_mode=3 \u2192 tipo=IOC
+2026-04-27 00:45:41,156 | INFO | order_check OK | margin=12.94 balance=3345.37 equity=3345.59 free_margin=3332.65
+2026-04-27 00:45:41,184 | INFO | [DOGUSD H1] \u2705 ORDER DONE | deal=182391718 price=0.09938 slip=0.00pts lat=27ms
+2026-04-27 00:45:41,185 | INFO | [DOGUSD H1] FASE4 EXEC source=MOMENTUM_MT5 success=True deal=182391718
+2026-04-27 00:45:41,188 | INFO | [DOGUSD H1] MT5_PAPER_EXECUTE | hr134=100.00% IC=[99.8138%, 100.0000%] lot=0.10 slip=0.00 lat=27ms | SHA3=7786550839323369...
+2026-04-27 00:45:41,188 | INFO | [DOGUSD H4] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 00:45:44,676 | INFO | [DOGUSD H4] FIX6 ai_decision_ms=24.07
+2026-04-27 00:45:44,676 | INFO | [DOGUSD H4] [IA] Sinal rejeitado: action=HOLD
+2026-04-27 00:45:44,677 | INFO | [DOGUSD H4] Sentiment: Current=0.09939 | Avg3=0.09902 | DIR: BUY (src=MOMENTUM_MT5)
+2026-04-27 00:45:44,677 | INFO | [DOGUSD H4] filling_mode=3 \u2192 tipo=IOC
+2026-04-27 00:45:44,678 | INFO | order_check OK | margin=12.99 balance=3345.37 equity=3345.54 free_margin=3332.55
+2026-04-27 00:45:44,703 | INFO | [DOGUSD H4] \u2705 ORDER DONE | deal=182391741 price=0.09939 slip=0.00pts lat=25ms
+2026-04-27 00:45:44,703 | INFO | [DOGUSD H4] FASE4 EXEC source=MOMENTUM_MT5 success=True deal=182391741
+2026-04-27 00:45:44,706 | INFO | [DOGUSD H4] MT5_PAPER_EXECUTE | hr134=100.00% IC=[99.8247%, 100.0000%] lot=0.10 slip=0.00 lat=25ms | SHA3=e5d4e16bf0ceeb3d...
+2026-04-27 00:45:44,706 | INFO | [SOLUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 00:45:44,707 | WARNING | [SOLUSD H1] MAX_POSITIONS=6 atingido.
+2026-04-27 00:45:44,707 | INFO | [SOLUSD H4] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 00:45:44,708 | WARNING | [SOLUSD H4] MAX_POSITIONS=6 atingido.
+2026-04-27 00:45:44,708 | INFO | [ETHUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 00:45:44,709 | WARNING | [ETHUSD H1] MAX_POSITIONS=6 atingido.
+2026-04-27 00:45:44,709 | INFO | [ETHUSD H4] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-27 00:45:44,710 | WARNING | [ETHUSD H4] MAX_POSITIONS=6 atingido.
+2026-04-27 00:45:44,710 | INFO | MT5 desconectado.
+2026-04-27 00:45:44,711 | INFO | \u2500\u2500 ESTATÍSTICAS ONLINE \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+2026-04-27 00:45:44,711 | INFO |   total_signals             : 4
+2026-04-27 00:45:44,711 | INFO |   executed                  : 4
+2026-04-27 00:45:44,711 | INFO |   skipped                   : 0
+2026-04-27 00:45:44,712 | INFO |   avg_hit_rate_134          : 97.46
+2026-04-27 00:45:44,712 | INFO |   avg_slippage_pts          : 196.75
+2026-04-27 00:45:44,712 | INFO |   avg_latency_ms            : 100.4
+2026-04-27 00:45:44,712 | INFO |   max_latency_ms            : 307.8
+2026-04-27 00:45:44,714 | INFO | ========================================================================
+2026-04-27 00:45:44,714 | INFO | PAPER LOOP CONCLUÍDO | cycles=4 | KS=False
+2026-04-27 00:45:44,714 | INFO | SHA3 summary: 2787072a6030a3e54e7c6d96ade0f85016477ba06cdee6da9147487ac9d5f8dd
+2026-04-27 00:45:44,714 | INFO | Artifacts: C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\audit\paper
+2026-04-27 00:45:44,714 | INFO | ========================================================================
+[OMEGA] Orquestrador Global inicializado
+[OMEGA] Sessão atual: CLOSED
+[OMEGA] Ativos: ['BTCUSD', 'ETHUSD', 'SOLUSD', 'DOGUSD']
+[OMEGA] Capital total: $10,000.00
+
+======================================================================
+ OMEGA AGENT IA INTEGRATION
+======================================================================
+ Status: ATIVO
+ Ativos: ['BTCUSD', 'ETHUSD', 'SOLUSD', 'DOGUSD']
+ Capital: $10,000.00
+ Sessão: CLOSED
+ Liquidez: MINIMUM
+======================================================================
+

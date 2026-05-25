@@ -1,0 +1,39 @@
+OMEGA — Teste de Fogo Audit Engine v1.2 (execução automática)
+Referência: OIS-CIO-AUDIT-ENGINE-FIRE-TEST-20260517
+Data execução (servidor): 2026-05-16 (log horário local +02:00 nos timestamps do ficheiro bruto)
+
+1) AUTORIZAÇÃO
+   Foi executado nesta sessão o protocolo v1.2 (Fases 0–4) com a sua delegação
+   de concluir hoje e validar amanhã o documento final.
+
+2) LOG BRUTO (saída integral consola + fases)
+   Ficheiro: audit/omega_audit/FIRE_TEST_EXEC_20260516_232329.txt
+
+3) RESULTADOS RESUMIDOS
+   FASE 0: py_compile OK; MT5 Terminal conectado (Equity/Balance ~1435.97).
+   FASE 2 (1ª tentativa): Baseline VETO — código alterado desde a última baseline
+         (esperado). Relatório: audit/omega_audit/logs/shadow_loop_baseline_veto_*.json
+         Exit: OMEGA_AUDIT_GATE (fail-closed demonstrado).
+   Baseline: Executado `python scripts/omega_audit_cli.py baseline-init` (484 paths).
+   FASE 2 (2ª tentativa, após baseline): SUCESSO em modo SHADOW
+         - Log: AUDIT_ENGINE ACTIVE | baseline_paths_checked=484
+         - Log: AUDIT_PRE_CYCLE | cycle authorized (anchor+equity+baseline OK)
+         - Ciclos: 2 (XAUUSD H1, EURUSD H1); MONITOR | NO ORDER (sem order_send entrada)
+         - exit_reason: NORMAL_COMPLETION; kill_switch: false
+   FASE 3: cycle_exit.json — evidence_weight: 0.42 (calendário OIS-EVAL fim-de-semana)
+           Posições MT5 magic 234001: 0
+   FASE 4: OMEGA_STRICT_AUDIT_ENABLED=0; OMEGA_NIGHT_PASS / USE_AGENT_IA / DD_DAILY_MAX removidos do processo.
+
+4) ARTEFACTOS ÚTEIS AMANHÃ
+   - audit/paper/paper_loop_<ts>.log — logger PAPER (linhas AUDIT_*)
+   - audit/paper/cycle_exit.json — último run (NORMAL_COMPLETION)
+   - audit/paper/paper_summary.json — checksum + evaluation_calendar_run_end
+   - audit/omega_audit/audit_baseline.json — REGENERADO nesta execução (revisar commit se aplicável)
+
+5) NOTA PARA REVISÃO DO OIS (Fase 0)
+   Em Python usar os.environ.get('OMEGA_STRICT_AUDIT_ENABLED') sem default '0',
+   ou assert explicitamente em ('', None, '0'), para não mascarar flag activa.
+
+6) LIMITAÇÕES
+   Execução foi neste ambiente; não substitui assinatura humana do Conselho
+   sobre risco operacional global.

@@ -1,0 +1,45 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-26T19:54:08.701473+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 2,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 2,
+    "executed": 2,
+    "skipped": 0,
+    "avg_hit_rate_134": 94.92,
+    "avg_slippage_pts": 117.0,
+    "avg_latency_ms": 34.5,
+    "max_latency_ms": 35.8
+  },
+  "results": [
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 94.45,
+      "ic_95": "[93.1902%, 95.4908%]",
+      "margin_used": 1757.2,
+      "lot": 0.01,
+      "retcode": 10009,
+      "slippage_pts": 234.0,
+      "checksum": "ff93635a2de48403baddc2b4"
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 95.39,
+      "ic_95": "[94.2208%, 96.3265%]",
+      "margin_used": 3210.5,
+      "lot": 0.01,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "787d9dd1133f87ccccf14359"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260426_195405.log",
+  "checksum": "2973785c73ec03f1ad0c824866843e9ad30cb0e9ed3fa031aae6fdc2abad5f7c"
+}

@@ -1,0 +1,12 @@
+symbol,timezone,avg_slippage,max_slippage,avg_latency,max_latency,rejection_rate,sample_size
+AUDJPY,UTC,2.0,2.0,NaN,NaN,NaN,1
+BTCUSD,UTC,25.8443,669.0,NaN,NaN,NaN,122
+DOGUSD,UTC,1.0,1.0,NaN,NaN,NaN,3
+ETHUSD,UTC,34.95,270.0,NaN,NaN,NaN,20
+GBPJPY,UTC,0.0,0.0,NaN,NaN,NaN,1
+GER40,UTC,8.3333,50.0,NaN,NaN,NaN,12
+UK100,UTC,0.0,0.0,NaN,NaN,NaN,2
+USDJPY,UTC,0.0,0.0,NaN,NaN,NaN,1
+XAGUSD,UTC,0.0,0.0,NaN,NaN,NaN,4
+XAUUSD,UTC,1.5833,9.0,NaN,NaN,NaN,12
+XRPUSD,UTC,0.0,0.0,NaN,NaN,NaN,2

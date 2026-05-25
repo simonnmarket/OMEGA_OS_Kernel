@@ -1,0 +1,3034 @@
+{
+  "gerado_em": "2026-04-29T16:15:13.086252",
+  "nebular_total_files": 5131,
+  "source_total_files": 3415,
+  "components": {
+    "calendario_economico": {
+      "priority": "CRITICAL",
+      "integration_point": "Edge Gate → news pause",
+      "status": "ENCONTRADO",
+      "total_instances": 92,
+      "not_integrated": 68,
+      "best_candidate": {
+        "file": "OMEGA_OS_Kernel\\src\\agent_system_original.py",
+        "abs": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\src\\agent_system_original.py",
+        "size_kb": 74.9,
+        "modified": "2026-03-04",
+        "hash": "7bb1099d3a484be0",
+        "keywords_hit": [
+          "calendar",
+          "economic"
+        ],
+        "in_source_code": true
+      }
+    },
+    "order_block": {
+      "priority": "HIGH",
+      "integration_point": "Entry confirmation",
+      "status": "NAO_ENCONTRADO",
+      "total_instances": 0,
+      "not_integrated": 0,
+      "best_candidate": null
+    },
+    "walk_forward_oos": {
+      "priority": "HIGH",
+      "integration_point": "Backtest validation",
+      "status": "ENCONTRADO",
+      "total_instances": 14,
+      "not_integrated": 2,
+      "best_candidate": {
+        "file": "core_engines\\omega_module_v553.py",
+        "abs": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\core_engines\\omega_module_v553.py",
+        "size_kb": 23.8,
+        "modified": "2026-03-20",
+        "hash": "0bf761fcfaeeff09",
+        "keywords_hit": [
+          "out_of_sample"
+        ],
+        "in_source_code": true
+      }
+    },
+    "pullback_engine": {
+      "priority": "HIGH",
+      "integration_point": "Entry logic refinement",
+      "status": "ENCONTRADO",
+      "total_instances": 68,
+      "not_integrated": 11,
+      "best_candidate": {
+        "file": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Server\\Numeia\\prometheus_master_control_v5.1.py",
+        "abs": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Server\\Numeia\\prometheus_master_control_v5.1.py",
+        "size_kb": 46.4,
+        "modified": "2026-02-27",
+        "hash": "d3658bc43d7dccd9",
+        "keywords_hit": [
+          "pullback"
+        ],
+        "in_source_code": true
+      }
+    },
+    "mfa_engine": {
+      "priority": "HIGH",
+      "integration_point": "Signal aggregation",
+      "status": "ENCONTRADO",
+      "total_instances": 1,
+      "not_integrated": 0,
+      "best_candidate": {
+        "file": "core_engines\\shadow_loop.py",
+        "abs": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\core_engines\\shadow_loop.py",
+        "size_kb": 35.8,
+        "modified": "2026-04-21",
+        "hash": "2dede86ec30c6b6e",
+        "keywords_hit": [
+          "mfa_engine"
+        ],
+        "in_source_code": true
+      }
+    },
+    "integration_gate": {
+      "priority": "HIGH",
+      "integration_point": "Pre-trade validation",
+      "status": "ENCONTRADO",
+      "total_instances": 59,
+      "not_integrated": 38,
+      "best_candidate": {
+        "file": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Concepts\\DOCUMENTO TÉCNICO COMPLETO - SISTEMA AURORA NCNT v2.0 LITE SEEK.txt",
+        "abs": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Concepts\\DOCUMENTO TÉCNICO COMPLETO - SISTEMA AURORA NCNT v2.0 LITE SEEK.txt",
+        "size_kb": 80.7,
+        "modified": "2026-02-27",
+        "hash": "afd6ae0908d35546",
+        "keywords_hit": [
+          "integration_gate"
+        ],
+        "in_source_code": false
+      }
+    },
+    "trailing_stop": {
+      "priority": "MEDIUM",
+      "integration_point": "Position management",
+      "status": "ENCONTRADO",
+      "total_instances": 120,
+      "not_integrated": 85,
+      "best_candidate": {
+        "file": "Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\tabulate\\__init__.py",
+        "abs": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\tabulate\\__init__.py",
+        "size_kb": 108.7,
+        "modified": "2026-04-10",
+        "hash": "1de5e3fea9d515d1",
+        "keywords_hit": [
+          "trailing"
+        ],
+        "in_source_code": true
+      }
+    },
+    "dashboard": {
+      "priority": "MEDIUM",
+      "integration_point": "Monitoring",
+      "status": "ENCONTRADO",
+      "total_instances": 298,
+      "not_integrated": 264,
+      "best_candidate": {
+        "file": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\05-Documentacao\\Audit-Reports\\AURORA_ULTRA_COMPLETE_REPORT_b6225600860cc46d.md",
+        "abs": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\05-Documentacao\\Audit-Reports\\AURORA_ULTRA_COMPLETE_REPORT_b6225600860cc46d.md",
+        "size_kb": 395.4,
+        "modified": "2026-02-27",
+        "hash": "be210b766ea6cd80",
+        "keywords_hit": [
+          "dashboard",
+          "fastapi"
+        ],
+        "in_source_code": false
+      }
+    },
+    "regime_classifier": {
+      "priority": "MEDIUM",
+      "integration_point": "Strategy selection",
+      "status": "ENCONTRADO",
+      "total_instances": 392,
+      "not_integrated": 225,
+      "best_candidate": {
+        "file": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Documentation\\03_Relatorios_Conselho\\CODIGOS_COMPLETOS_APROVACAO_CONSELHO.md",
+        "abs": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Documentation\\03_Relatorios_Conselho\\CODIGOS_COMPLETOS_APROVACAO_CONSELHO.md",
+        "size_kb": 54.0,
+        "modified": "2026-02-27",
+        "hash": "01464e2c5a6a5e4f",
+        "keywords_hit": [
+          "trending"
+        ],
+        "in_source_code": false
+      }
+    },
+    "genesis_core": {
+      "priority": "HIGH",
+      "integration_point": "Next-gen architecture",
+      "status": "ENCONTRADO",
+      "total_instances": 909,
+      "not_integrated": 810,
+      "best_candidate": {
+        "file": "tree.txt",
+        "abs": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\tree.txt",
+        "size_kb": 2733.9,
+        "modified": "2026-04-14",
+        "hash": "343f07973a6c4c4d",
+        "keywords_hit": [
+          "genesis",
+          "omega_os_kernel"
+        ],
+        "in_source_code": true
+      }
+    }
+  },
+  "exclusive_nebular": [
+    {
+      "file": "ncnt_system_complete.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora BACKUP_2025_COMPLETO\\BACKUPS\\pre_fix_20251224_211958\\ncnt_system_complete.py",
+      "size_kb": 314.9,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" 🏦 NCNT - NÚCLEO CENTRAL NEURO TRANSMISSOR TEMPLATES PADRÃO COMPLETOS (RULES) Goldman Sachs Bank Structure Implementation Data: 2024-12-07 Versão: 2.0 Status: ✅ PRODUCTION RE"
+    },
+    {
+      "file": "ncnt_system_complete.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora BACKUP_2025_COMPLETO\\backup_definitivo_pre_correcao\\ncnt_system_complete.py",
+      "size_kb": 314.9,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" 🏦 NCNT - NÚCLEO CENTRAL NEURO TRANSMISSOR TEMPLATES PADRÃO COMPLETOS (RULES) Goldman Sachs Bank Structure Implementation Data: 2024-12-07 Versão: 2.0 Status: ✅ PRODUCTION RE"
+    },
+    {
+      "file": "ncnt_system_complete.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\ncnt_system_complete.py",
+      "size_kb": 314.9,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" 🏦 NCNT - NÚCLEO CENTRAL NEURO TRANSMISSOR TEMPLATES PADRÃO COMPLETOS (RULES) Goldman Sachs Bank Structure Implementation Data: 2024-12-07 Versão: 2.0 Status: ✅ PRODUCTION RE"
+    },
+    {
+      "file": "ncnt_system_complete.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora BACKUP_2025_COMPLETO\\backups_pre_fix\\ncnt_system_complete.py",
+      "size_kb": 314.7,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" 🏦 NCNT - NÚCLEO CENTRAL NEURO TRANSMISSOR TEMPLATES PADRÃO COMPLETOS (RULES) Goldman Sachs Bank Structure Implementation Data: 2024-12-07 Versão: 2.0 Status: ✅ PRODUCTION RE"
+    },
+    {
+      "file": "ncnt_system_complete.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora BACKUP_2025_COMPLETO\\backup_definitivo_pre_correcao\\backups_pre_fix\\ncnt_system_complete.py",
+      "size_kb": 314.7,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" 🏦 NCNT - NÚCLEO CENTRAL NEURO TRANSMISSOR TEMPLATES PADRÃO COMPLETOS (RULES) Goldman Sachs Bank Structure Implementation Data: 2024-12-07 Versão: 2.0 Status: ✅ PRODUCTION RE"
+    },
+    {
+      "file": "bloco4_integracao_final.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\bloco4_integracao_final.py",
+      "size_kb": 60.0,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" 🔥 BLOCO 4: INTEGRAÇÃO FINAL E ATIVAÇÃO DO SISTEMA - ARCH-001 Nível: EXCELÊNCIA MÁXIMA Função: Integrar TODOS os 4 blocos e ativar o sistema principal Status: PRONTO PARA EXE"
+    },
+    {
+      "file": "teste_verificacao_operacional_final.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\teste_verificacao_operacional_final.py",
+      "size_kb": 59.1,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" 🔬 TESTE DE VERIFICAÇÃO OPERACIONAL FINAL - ARCH-001 Nível: VERIFICAÇÃO CIRÚRGICA - ANTI-CAMUFLAGEM Função: Validar que o sistema está 100% operacional e integrado         Ve"
+    },
+    {
+      "file": "app (2).py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Theodora 13092025 BAB\\Backend\\app (2).py",
+      "size_kb": 58.9,
+      "modified": "2026-02-27",
+      "preview": "import os import json import time import logging from typing import Optional, Tuple  from flask import Flask, request, jsonify  try:     import MetaTrader5 as mt5 except Exception:  # pragma: no cover"
+    },
+    {
+      "file": "app.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Theodora 13092025 BAB\\Backend\\app.py",
+      "size_kb": 58.9,
+      "modified": "2026-02-27",
+      "preview": "import os import json import time import logging from typing import Optional, Tuple  from flask import Flask, request, jsonify  try:     import MetaTrader5 as mt5 except Exception:  # pragma: no cover"
+    },
+    {
+      "file": "silver_system_v3.0_escalonado.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SilverGMarket\\Server\\Silver\\silver_system_v3.0_escalonado.py",
+      "size_kb": 47.0,
+      "modified": "2026-02-27",
+      "preview": "# ============================================================================== # SILVER SYSTEM V3.0: SISTEMA ESCALONADO COM MÚLTIPLAS ENTRADAS # Projeto: SilverGMarket (Independente) # Foco: Operaçõ"
+    },
+    {
+      "file": "financial_governance_orchestrator.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\00-Governanca\\financial_governance_orchestrator.py",
+      "size_kb": 46.7,
+      "modified": "2026-02-27",
+      "preview": "\"\"\" FINANCIAL SYSTEM GOVERNANCE ORCHESTRATOR - ENTERPRISE EDITION ================================================================  ESTRUTURA DE GOVERNANÇA INSTITUCIONAL ------------------------------"
+    },
+    {
+      "file": "prometheus_brain_v2.0.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Server\\prometheus_brain_v2.0.py",
+      "size_kb": 46.1,
+      "modified": "2026-02-27",
+      "preview": "# -*- coding: utf-8 -*- \"\"\" SAMSUNG GLOBAL MARKET - PROMETHEUS v3.0 DOCUMENTO FINAL DE DIRETRIZES: CHARTER TECNOLÓGICO FASE 2 & 3  Versão: 1.3 - Diretiva Final com Foco em Robustez e Resiliência Data:"
+    },
+    {
+      "file": "backtest_runner_v3.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\02-Processos-Chave\\backtesting\\backtest_runner_v3.py",
+      "size_kb": 46.0,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" BACKTEST RUNNER v3.0 - COM INTERVALO DE CONFIANÇA SHARPE STATUS: CRÍTICO - VALIDAÇÃO ESTATÍSTICA DE ESTRATÉGIAS COMPLETUDE: ✅ 100% (1200 linhas) Adaptado para estrutura Auro"
+    },
+    {
+      "file": "prometheus_master_control_v6.0.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Server\\Numeia\\prometheus_master_control_v6.0.py",
+      "size_kb": 45.0,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 # -*- coding: utf-8 -*- \"\"\" PROMETHEUS MASTER CONTROL v6.0: MOTOR DE CONTROLE E EXECUÇÃO ML-ADAPTATIVO  Arquitetura Científica: Karl Popper + John von Neumann + ML (Reforço Adap"
+    },
+    {
+      "file": "ncnt_module_template_v2.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\modules\\ncnt_module_template_v2.py",
+      "size_kb": 44.5,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" NCNT MODULE TEMPLATE v2.0 - COM CONEXÃO NEURAL E COMPLIANCE EMBEDDED STATUS: PADRÃO OURO INSTITUCIONAL GOLDMAN SACHS TIER-0 TODOS os novos módulos DEVEM usar esta versão v2."
+    },
+    {
+      "file": "generate_ultra_complete_report.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora BACKUP_2025_COMPLETO\\backup_definitivo_pre_correcao\\00-Governanca\\generate_ultra_complete_report.py",
+      "size_kb": 44.4,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" AURORA PROJECT - ULTRA COMPLETE REPORT GENERATOR Gera relatório 100% completo com TODAS as informações Sem truncamento - todos os módulos, todos os detalhes \"\"\"  import os i"
+    },
+    {
+      "file": "generate_ultra_complete_report.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\00-Governanca\\generate_ultra_complete_report.py",
+      "size_kb": 44.4,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" AURORA PROJECT - ULTRA COMPLETE REPORT GENERATOR Gera relatório 100% completo com TODAS as informações Sem truncamento - todos os módulos, todos os detalhes \"\"\"  import os i"
+    },
+    {
+      "file": "ncnt_module_template.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\modules\\ncnt_module_template.py",
+      "size_kb": 44.4,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" NCNT MODULE TEMPLATE v2.0 - COM CONEXÃO NEURAL E COMPLIANCE EMBEDDED STATUS: PADRÃO OURO INSTITUCIONAL GOLDMAN SACHS TIER-0 TODOS os novos módulos DEVEM usar esta versão v2."
+    },
+    {
+      "file": "prometheus_master_control_v4.2.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Server\\Numeia\\prometheus_master_control_v4.2.py",
+      "size_kb": 42.6,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 # -*- coding: utf-8 -*- \"\"\" PROGRAMA MESTRE DE CONTROLE PROMETHEUS v4.2 Sistema de Missão Crítica - Resiliência, Gestão de Risco e Precisão Algorítmica  Diretiva: Sistema autôno"
+    },
+    {
+      "file": "AURORA_FINAL_EXECUCAO_AIC_V5.1.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora BACKUP_2025_COMPLETO\\BACKUPS\\pre_fix_20251224_211958\\AURORA_FINAL_EXECUCAO_AIC_V5.1.py",
+      "size_kb": 41.7,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3  \"\"\" AURORA_FINAL_EXECUCAO_AIC_V5.1.py  =================================  DOCUMENTO FINAL DEFINITIVO PARA EXECUÇÃO PELO AIC    PRINCÍPIOS FUNDAMENTAIS:  1. ✅ ZERO REGRESSÃO - A"
+    },
+    {
+      "file": "AURORA_FINAL_EXECUCAO_AIC_V5.1.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\AURORA_FINAL_EXECUCAO_AIC_V5.1.py",
+      "size_kb": 41.7,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3  \"\"\" AURORA_FINAL_EXECUCAO_AIC_V5.1.py  =================================  DOCUMENTO FINAL DEFINITIVO PARA EXECUÇÃO PELO AIC    PRINCÍPIOS FUNDAMENTAIS:  1. ✅ ZERO REGRESSÃO - A"
+    },
+    {
+      "file": "audit_system_complete.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora BACKUP_2025_COMPLETO\\backup_definitivo_pre_correcao\\00-Governanca\\audit_system_complete.py",
+      "size_kb": 40.9,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" AURORA PROJECT - COMPLETE AUDIT SYSTEM International Standards Compliance Auditor for AI Financial Systems Status: CRITICAL - CONFLICT OF INTEREST RESOLUTION  This system pe"
+    },
+    {
+      "file": "audit_system_complete.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\00-Governanca\\audit_system_complete.py",
+      "size_kb": 40.9,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" AURORA PROJECT - COMPLETE AUDIT SYSTEM International Standards Compliance Auditor for AI Financial Systems Status: CRITICAL - CONFLICT OF INTEREST RESOLUTION  This system pe"
+    },
+    {
+      "file": "teste_integridade_absoluta_bloco3.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\teste_integridade_absoluta_bloco3.py",
+      "size_kb": 40.0,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" 🔬 TESTE DE INTEGRIDADE ABSOLUTA - BLOCO 3 ARCH-001 Nível: VERIFICAÇÃO CIRÚRGICA ANTI-MANIPULAÇÃO Função: Verificar se BLOCO 3 foi executado EXATAMENTE como especificado Prot"
+    },
+    {
+      "file": "AURORA_ETAPA_A_EXECUCAO_AUTOMATICA_AIC.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora BACKUP_2025_COMPLETO\\BACKUPS\\pre_fix_20251224_211958\\AURORA_ETAPA_A_EXECUCAO_AUTOMATICA_AIC.py",
+      "size_kb": 39.8,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" AURORA_ETAPA_A_EXECUCAO_AUTOMATICA_AIC.py  ========================================= SCRIPT DE EXECUÇÃO AUTOMÁTICA PARA AIC/CURSOR  Executa a Etapa A completa do sistema Aur"
+    },
+    {
+      "file": "AURORA_ETAPA_A_EXECUCAO_AUTOMATICA_AIC.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\AURORA_ETAPA_A_EXECUCAO_AUTOMATICA_AIC.py",
+      "size_kb": 39.8,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" AURORA_ETAPA_A_EXECUCAO_AUTOMATICA_AIC.py  ========================================= SCRIPT DE EXECUÇÃO AUTOMÁTICA PARA AIC/CURSOR  Executa a Etapa A completa do sistema Aur"
+    },
+    {
+      "file": "AURORA_FINAL_COMPLETO_100.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora BACKUP_2025_COMPLETO\\BACKUPS\\pre_fix_20251224_211958\\AURORA_FINAL_COMPLETO_100.py",
+      "size_kb": 39.4,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" AURORA_FINAL_COMPLETO_100.py ============================  SISTEMA AURORA v5.1 - 100% OPERACIONAL E TESTADO  STATUS: ✅ 100% FUNCIONAL  ÚLTIMA ATUALIZAÇÃO: 2025-12-21  PROBLE"
+    },
+    {
+      "file": "AURORA_FINAL_COMPLETO_100.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\AURORA_FINAL_COMPLETO_100.py",
+      "size_kb": 39.4,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" AURORA_FINAL_COMPLETO_100.py ============================  SISTEMA AURORA v5.1 - 100% OPERACIONAL E TESTADO  STATUS: ✅ 100% FUNCIONAL  ÚLTIMA ATUALIZAÇÃO: 2025-12-21  PROBLE"
+    },
+    {
+      "file": "prometheus_v2.3_gerenciamento_escalonado.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Server\\Numeia\\prometheus_v2.3_gerenciamento_escalonado.py",
+      "size_kb": 39.4,
+      "modified": "2026-02-27",
+      "preview": "# ============================================================================== # PROMETHEUS V2.3: SISTEMA OPERACIONAL (GERENCIAMENTO ESCALONADO) # Foco: Manter Telemetria (V2.0) + BE/TS (V2.1) + Imp"
+    },
+    {
+      "file": "AURORA_TEST_MODE_NO_STOPS.py",
+      "path": "OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora BACKUP_2025_COMPLETO\\BACKUPS\\pre_fix_20251224_211958\\AURORA_TEST_MODE_NO_STOPS.py",
+      "size_kb": 39.2,
+      "modified": "2026-02-27",
+      "preview": "#!/usr/bin/env python3 \"\"\" AURORA_TEST_MODE_NO_STOPS.py ============================ MODO TESTE AURORA - Executa sistema COMPLETO sem problemas de stops  OBJETIVO: Validar fluxo completo do sistema ig"
+    }
+  ],
+  "conflicts": [
+    {
+      "name": "align_prfs.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\align_prfs.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\align_prfs.py",
+      "nebular_hash": "9525e8638a338f14",
+      "source_hash": "4bdc2cd29bbeaa03",
+      "nebular_size_kb": 0.9
+    },
+    {
+      "name": "dos_trading_v1.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Auditoria Conselho\\DOS_MODULE\\dos_trading_v1.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\DOS_MODULE\\omega_dos\\trading\\dos_trading_v1.py",
+      "nebular_hash": "d92747f58873258a",
+      "source_hash": "d6014fde5655fad0",
+      "nebular_size_kb": 0.2
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Auditoria Conselho\\DOS_MODULE\\omega_dos\\metrics\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "81b67f1bedcb1b92",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.7
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Auditoria Conselho\\DOS_MODULE\\omega_dos\\trading\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "e3cf98c7c219db03",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Auditoria Conselho\\DOS_MODULE\\omega_dos\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "65ee4c9cd8620f01",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.9
+    },
+    {
+      "name": "omega_parr_f_engine.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Auditoria Conselho\\omega_parr_f_engine.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\omega_parr_f_engine.py",
+      "nebular_hash": "9084224ecebd4a87",
+      "source_hash": "68a5a77f0178b56e",
+      "nebular_size_kb": 7.3
+    },
+    {
+      "name": "omega_v550_realtime_mt5.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Auditoria Conselho\\omega_v550_realtime_mt5.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\omega_v550_realtime_mt5.py",
+      "nebular_hash": "8b87afa647bf5e20",
+      "source_hash": "8080eac5e30d63eb",
+      "nebular_size_kb": 13.9
+    },
+    {
+      "name": "fin_sense_l1_esqueleto_v120.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\fin_sense_l1_esqueleto_v120.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\fin_sense_l1_esqueleto_v120.py",
+      "nebular_hash": "5308bad1a5108134",
+      "source_hash": "a00c7b94e0c45a9d",
+      "nebular_size_kb": 3.2
+    },
+    {
+      "name": "verify_tier0_psa.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\evidencia_pre_demo\\verify_tier0_psa.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\evidencia_pre_demo\\verify_tier0_psa.py",
+      "nebular_hash": "4665f148f2114b31",
+      "source_hash": "3b1291d236e0527c",
+      "nebular_size_kb": 5.6
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\colorama\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "119eb4ef03b58def",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "_version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\contourpy\\_version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\_version.py",
+      "nebular_hash": "efb4df782123123b",
+      "source_hash": "ecfe0a444cba192e",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\contourpy\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "96eb6d6d230d4612",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 11.8
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\cycler\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "5aef771cc11c001b",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 16.9
+    },
+    {
+      "name": "utils.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\dateutil\\utils.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\packaging\\utils.py",
+      "nebular_hash": "d2bf235715fd4f87",
+      "source_hash": "8ecb4a1d4b16a747",
+      "nebular_size_kb": 2.0
+    },
+    {
+      "name": "_common.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\dateutil\\_common.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\psutil\\_common.py",
+      "nebular_hash": "923e4eaf66223a7e",
+      "source_hash": "a244dae5ce8745f1",
+      "nebular_size_kb": 1.0
+    },
+    {
+      "name": "_version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\dateutil\\_version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\_version.py",
+      "nebular_hash": "fb73a3b7218bf36a",
+      "source_hash": "ecfe0a444cba192e",
+      "nebular_size_kb": 0.2
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\dateutil\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "9bd8aa7b748308dd",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.6
+    },
+    {
+      "name": "unicode.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\fontTools\\unicode.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pyparsing\\unicode.py",
+      "nebular_hash": "cf95f959bc5cbb7c",
+      "source_hash": "31a80b2f90ddba2a",
+      "nebular_size_kb": 1.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\fontTools\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "4e7211c3594b1b6f",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.2
+    },
+    {
+      "name": "__main__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\fontTools\\__main__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pytest\\__main__.py",
+      "nebular_hash": "90115a944d23f23e",
+      "source_hash": "4ea5e82bcc8376be",
+      "nebular_size_kb": 0.9
+    },
+    {
+      "name": "exceptions.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\iniconfig\\exceptions.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pyparsing\\exceptions.py",
+      "nebular_hash": "2cba76d33fc8ef64",
+      "source_hash": "b2fb41f25e265912",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "_version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\iniconfig\\_version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\_version.py",
+      "nebular_hash": "61e2d69ab6813e74",
+      "source_hash": "ecfe0a444cba192e",
+      "nebular_size_kb": 0.7
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\iniconfig\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "8e9f5a33f167739e",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 7.6
+    },
+    {
+      "name": "exceptions.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\kiwisolver\\exceptions.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pyparsing\\exceptions.py",
+      "nebular_hash": "0ee5e69f0136464c",
+      "source_hash": "b2fb41f25e265912",
+      "nebular_size_kb": 1.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\kiwisolver\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "bbdf372406b59e31",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 1.0
+    },
+    {
+      "name": "markers.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\matplotlib\\markers.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\packaging\\markers.py",
+      "nebular_hash": "4d968fba9fb5a069",
+      "source_hash": "115b5402831fa69b",
+      "nebular_size_kb": 33.8
+    },
+    {
+      "name": "pylab.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\matplotlib\\pylab.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pylab.py",
+      "nebular_hash": "4ef80c25cc43af5f",
+      "source_hash": "2b993357075c1be6",
+      "nebular_size_kb": 2.4
+    },
+    {
+      "name": "_version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\matplotlib\\_version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\_version.py",
+      "nebular_hash": "1d1e6b59a292f996",
+      "source_hash": "ecfe0a444cba192e",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\matplotlib\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "55482cfca61cadf5",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 56.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\MetaTrader5\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "6fe21072b1eacea4",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 17.3
+    },
+    {
+      "name": "conftest.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\numpy\\conftest.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\DOS_MODULE\\tests\\conftest.py",
+      "nebular_hash": "e9b3d7c6e9bd66ef",
+      "source_hash": "920cdf8b22b498c2",
+      "nebular_size_kb": 8.7
+    },
+    {
+      "name": "exceptions.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\numpy\\exceptions.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pyparsing\\exceptions.py",
+      "nebular_hash": "21ff1e8a07ca37fc",
+      "source_hash": "b2fb41f25e265912",
+      "nebular_size_kb": 7.8
+    },
+    {
+      "name": "version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\numpy\\version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\setuptools\\version.py",
+      "nebular_hash": "e0bf18ed04bff4ae",
+      "source_hash": "dd7d72cb43664d66",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\numpy\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "f92c1b3b680e194c",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 26.6
+    },
+    {
+      "name": "version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\packaging\\version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\setuptools\\version.py",
+      "nebular_hash": "8b92f977a4c3ec34",
+      "source_hash": "dd7d72cb43664d66",
+      "nebular_size_kb": 23.5
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\packaging\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "1eb95af9b132ffd1",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.5
+    },
+    {
+      "name": "conftest.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pandas\\conftest.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\DOS_MODULE\\tests\\conftest.py",
+      "nebular_hash": "7ce3cf37aad1a25e",
+      "source_hash": "920cdf8b22b498c2",
+      "nebular_size_kb": 54.3
+    },
+    {
+      "name": "testing.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pandas\\testing.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pyparsing\\testing.py",
+      "nebular_hash": "8bda8af69c2282dc",
+      "source_hash": "2337b344f08f8621",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "_typing.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pandas\\_typing.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\PIL\\_typing.py",
+      "nebular_hash": "9dae72b23f8af562",
+      "source_hash": "78050178e1730f10",
+      "nebular_size_kb": 16.9
+    },
+    {
+      "name": "_version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pandas\\_version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\_version.py",
+      "nebular_hash": "cad3f34e24c21dd0",
+      "source_hash": "ecfe0a444cba192e",
+      "nebular_size_kb": 23.8
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pandas\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "7ea5b65534ec4b14",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 8.7
+    },
+    {
+      "name": "_version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\PIL\\_version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\_version.py",
+      "nebular_hash": "1aa868d73bde1690",
+      "source_hash": "ecfe0a444cba192e",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\PIL\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "43ce592810eb49f6",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 2.1
+    },
+    {
+      "name": "__main__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\PIL\\__main__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pytest\\__main__.py",
+      "nebular_hash": "17c78cb9b69db130",
+      "source_hash": "4ea5e82bcc8376be",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pip\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "e613f0a508f357e3",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "__main__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pip\\__main__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pytest\\__main__.py",
+      "nebular_hash": "a0394be40325ee24",
+      "source_hash": "4ea5e82bcc8376be",
+      "nebular_size_kb": 0.9
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pkg_resources\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "ab292817c16a0575",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 109.2
+    },
+    {
+      "name": "_version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pluggy\\_version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\_version.py",
+      "nebular_hash": "62d9d9f597b65a93",
+      "source_hash": "ecfe0a444cba192e",
+      "nebular_size_kb": 0.5
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pluggy\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "b0a2306d2755dca3",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.8
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\psutil\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "7ba291858664771a",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 90.2
+    },
+    {
+      "name": "util.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pygments\\util.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pyparsing\\util.py",
+      "nebular_hash": "dc3e814c8eeacb8f",
+      "source_hash": "2da4a034fab8c30b",
+      "nebular_size_kb": 10.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pygments\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "24eeb4252760ac87",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 3.0
+    },
+    {
+      "name": "__main__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pygments\\__main__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pytest\\__main__.py",
+      "nebular_hash": "fedf78bd48a4bca9",
+      "source_hash": "4ea5e82bcc8376be",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "warnings.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pyparsing\\warnings.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\warnings.py",
+      "nebular_hash": "c7ab7d80a58b0577",
+      "source_hash": "71e61b831f71b487",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pyparsing\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "81bd078eea44d663",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 13.5
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\pytest\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a3d70e5a3f10e2fd",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 5.6
+    },
+    {
+      "name": "logging.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\setuptools\\logging.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\logging.py",
+      "nebular_hash": "422f981fca208b4e",
+      "source_hash": "0e1f135c1b36fe47",
+      "nebular_size_kb": 1.2
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\setuptools\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "cda3429412d93628",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 8.5
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\tabulate\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "1de5e3fea9d515d1",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 108.7
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\tzdata\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "25c6e76c8f34599e",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\_distutils_hack\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "e01b979fef000926",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 6.2
+    },
+    {
+      "name": "main.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\_pytest\\main.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\main.py",
+      "nebular_hash": "5b466ab69b63a8ad",
+      "source_hash": "78a7a9f571df1c7d",
+      "nebular_size_kb": 42.6
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\Núcleo de Validação OMEGA\\venv_psa\\Lib\\site-packages\\_pytest\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "974ea280f61af826",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\colorama\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "119eb4ef03b58def",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "_version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\contourpy\\_version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\_version.py",
+      "nebular_hash": "efb4df782123123b",
+      "source_hash": "ecfe0a444cba192e",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\contourpy\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "96eb6d6d230d4612",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 11.8
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\cycler\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "5aef771cc11c001b",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 16.9
+    },
+    {
+      "name": "utils.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\dateutil\\utils.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\packaging\\utils.py",
+      "nebular_hash": "d2bf235715fd4f87",
+      "source_hash": "8ecb4a1d4b16a747",
+      "nebular_size_kb": 2.0
+    },
+    {
+      "name": "_common.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\dateutil\\_common.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\psutil\\_common.py",
+      "nebular_hash": "923e4eaf66223a7e",
+      "source_hash": "a244dae5ce8745f1",
+      "nebular_size_kb": 1.0
+    },
+    {
+      "name": "_version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\dateutil\\_version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\_version.py",
+      "nebular_hash": "fb73a3b7218bf36a",
+      "source_hash": "ecfe0a444cba192e",
+      "nebular_size_kb": 0.2
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\dateutil\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "9bd8aa7b748308dd",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.6
+    },
+    {
+      "name": "unicode.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\fontTools\\unicode.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pyparsing\\unicode.py",
+      "nebular_hash": "cf95f959bc5cbb7c",
+      "source_hash": "31a80b2f90ddba2a",
+      "nebular_size_kb": 1.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\fontTools\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "4e7211c3594b1b6f",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.2
+    },
+    {
+      "name": "__main__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\fontTools\\__main__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pytest\\__main__.py",
+      "nebular_hash": "90115a944d23f23e",
+      "source_hash": "4ea5e82bcc8376be",
+      "nebular_size_kb": 0.9
+    },
+    {
+      "name": "exceptions.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\iniconfig\\exceptions.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pyparsing\\exceptions.py",
+      "nebular_hash": "2cba76d33fc8ef64",
+      "source_hash": "b2fb41f25e265912",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "_version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\iniconfig\\_version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\_version.py",
+      "nebular_hash": "61e2d69ab6813e74",
+      "source_hash": "ecfe0a444cba192e",
+      "nebular_size_kb": 0.7
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\iniconfig\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "8e9f5a33f167739e",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 7.6
+    },
+    {
+      "name": "exceptions.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\kiwisolver\\exceptions.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pyparsing\\exceptions.py",
+      "nebular_hash": "0ee5e69f0136464c",
+      "source_hash": "b2fb41f25e265912",
+      "nebular_size_kb": 1.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\kiwisolver\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "bbdf372406b59e31",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 1.0
+    },
+    {
+      "name": "markers.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\matplotlib\\markers.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\packaging\\markers.py",
+      "nebular_hash": "4d968fba9fb5a069",
+      "source_hash": "115b5402831fa69b",
+      "nebular_size_kb": 33.8
+    },
+    {
+      "name": "pylab.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\matplotlib\\pylab.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pylab.py",
+      "nebular_hash": "4ef80c25cc43af5f",
+      "source_hash": "2b993357075c1be6",
+      "nebular_size_kb": 2.4
+    },
+    {
+      "name": "_version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\matplotlib\\_version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\_version.py",
+      "nebular_hash": "1d1e6b59a292f996",
+      "source_hash": "ecfe0a444cba192e",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\matplotlib\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "55482cfca61cadf5",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 56.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\MetaTrader5\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "6fe21072b1eacea4",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 17.3
+    },
+    {
+      "name": "conftest.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\numpy\\conftest.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\DOS_MODULE\\tests\\conftest.py",
+      "nebular_hash": "e9b3d7c6e9bd66ef",
+      "source_hash": "920cdf8b22b498c2",
+      "nebular_size_kb": 8.7
+    },
+    {
+      "name": "exceptions.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\numpy\\exceptions.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pyparsing\\exceptions.py",
+      "nebular_hash": "21ff1e8a07ca37fc",
+      "source_hash": "b2fb41f25e265912",
+      "nebular_size_kb": 7.8
+    },
+    {
+      "name": "version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\numpy\\version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\setuptools\\version.py",
+      "nebular_hash": "e0bf18ed04bff4ae",
+      "source_hash": "dd7d72cb43664d66",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\numpy\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "f92c1b3b680e194c",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 26.6
+    },
+    {
+      "name": "version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\packaging\\version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\setuptools\\version.py",
+      "nebular_hash": "8b92f977a4c3ec34",
+      "source_hash": "dd7d72cb43664d66",
+      "nebular_size_kb": 23.5
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\packaging\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "1eb95af9b132ffd1",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.5
+    },
+    {
+      "name": "conftest.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pandas\\conftest.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\DOS_MODULE\\tests\\conftest.py",
+      "nebular_hash": "7ce3cf37aad1a25e",
+      "source_hash": "920cdf8b22b498c2",
+      "nebular_size_kb": 54.3
+    },
+    {
+      "name": "testing.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pandas\\testing.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pyparsing\\testing.py",
+      "nebular_hash": "8bda8af69c2282dc",
+      "source_hash": "2337b344f08f8621",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "_typing.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pandas\\_typing.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\PIL\\_typing.py",
+      "nebular_hash": "9dae72b23f8af562",
+      "source_hash": "78050178e1730f10",
+      "nebular_size_kb": 16.9
+    },
+    {
+      "name": "_version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pandas\\_version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\_version.py",
+      "nebular_hash": "cad3f34e24c21dd0",
+      "source_hash": "ecfe0a444cba192e",
+      "nebular_size_kb": 23.8
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pandas\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "7ea5b65534ec4b14",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 8.7
+    },
+    {
+      "name": "_version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\PIL\\_version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\_version.py",
+      "nebular_hash": "1aa868d73bde1690",
+      "source_hash": "ecfe0a444cba192e",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\PIL\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "43ce592810eb49f6",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 2.1
+    },
+    {
+      "name": "__main__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\PIL\\__main__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pytest\\__main__.py",
+      "nebular_hash": "17c78cb9b69db130",
+      "source_hash": "4ea5e82bcc8376be",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pip\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "e613f0a508f357e3",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "__main__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pip\\__main__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pytest\\__main__.py",
+      "nebular_hash": "a0394be40325ee24",
+      "source_hash": "4ea5e82bcc8376be",
+      "nebular_size_kb": 0.9
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pkg_resources\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "ab292817c16a0575",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 109.2
+    },
+    {
+      "name": "_version.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pluggy\\_version.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\_version.py",
+      "nebular_hash": "62d9d9f597b65a93",
+      "source_hash": "ecfe0a444cba192e",
+      "nebular_size_kb": 0.5
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pluggy\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "b0a2306d2755dca3",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.8
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\psutil\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "7ba291858664771a",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 90.2
+    },
+    {
+      "name": "util.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pygments\\util.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pyparsing\\util.py",
+      "nebular_hash": "dc3e814c8eeacb8f",
+      "source_hash": "2da4a034fab8c30b",
+      "nebular_size_kb": 10.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pygments\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "24eeb4252760ac87",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 3.0
+    },
+    {
+      "name": "__main__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pygments\\__main__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pytest\\__main__.py",
+      "nebular_hash": "fedf78bd48a4bca9",
+      "source_hash": "4ea5e82bcc8376be",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "warnings.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pyparsing\\warnings.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\warnings.py",
+      "nebular_hash": "c7ab7d80a58b0577",
+      "source_hash": "71e61b831f71b487",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pyparsing\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "81bd078eea44d663",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 13.5
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\pytest\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a3d70e5a3f10e2fd",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 5.6
+    },
+    {
+      "name": "logging.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\setuptools\\logging.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\logging.py",
+      "nebular_hash": "422f981fca208b4e",
+      "source_hash": "0e1f135c1b36fe47",
+      "nebular_size_kb": 1.2
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\setuptools\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "cda3429412d93628",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 8.5
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\tabulate\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "1de5e3fea9d515d1",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 108.7
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\tzdata\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "25c6e76c8f34599e",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_distutils_hack\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "e01b979fef000926",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 6.2
+    },
+    {
+      "name": "main.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\main.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\main.py",
+      "nebular_hash": "5b466ab69b63a8ad",
+      "source_hash": "78a7a9f571df1c7d",
+      "nebular_size_kb": 42.6
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\_pytest\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "974ea280f61af826",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "validate_audit_batch.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\protocol\\PSA\\validate_audit_batch.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\protocol\\PSA\\validate_audit_batch.py",
+      "nebular_hash": "ff25dc563d056002",
+      "source_hash": "780ff5301c4df735",
+      "nebular_size_kb": 3.1
+    },
+    {
+      "name": "regenerate_seed.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\regenerate_seed.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\regenerate_seed.py",
+      "nebular_hash": "67c385d2a1697a04",
+      "source_hash": "129d6fa345ce2fbf",
+      "nebular_size_kb": 1.1
+    },
+    {
+      "name": "risk_circuit_breaker.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\risk_circuit_breaker.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\risk_circuit_breaker.py",
+      "nebular_hash": "b7c6b68c3bd15485",
+      "source_hash": "88c82588876c62a0",
+      "nebular_size_kb": 8.2
+    },
+    {
+      "name": "seed_db.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\seed_db.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\seed_db.py",
+      "nebular_hash": "e05151839d5a9183",
+      "source_hash": "902449ba7a415f81",
+      "nebular_size_kb": 0.6
+    },
+    {
+      "name": "shadow_paper_loop.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\shadow_paper_loop.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\shadow_paper_loop.py",
+      "nebular_hash": "21c1d4f3107f13c5",
+      "source_hash": "32bce18490777086",
+      "nebular_size_kb": 1.2
+    },
+    {
+      "name": "visualizer_tier0.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\Auditoria PARR-F\\visualizer_tier0.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\visualizer_tier0.py",
+      "nebular_hash": "5037cd2bbff4cca1",
+      "source_hash": "51669a95853ea72f",
+      "nebular_size_kb": 2.9
+    },
+    {
+      "name": "daily_paper_run.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\core_engines\\daily_paper_run.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\core_engines\\daily_paper_run.py",
+      "nebular_hash": "763796a8367a5bcd",
+      "source_hash": "8ed7422868719ff5",
+      "nebular_size_kb": 26.9
+    },
+    {
+      "name": "gamaray_orchestrator.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\core_engines\\gamaray_orchestrator.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\core_engines\\gamaray_orchestrator.py",
+      "nebular_hash": "0f7c9012bb8ab57d",
+      "source_hash": "b4c66098a759d5e4",
+      "nebular_size_kb": 15.6
+    },
+    {
+      "name": "generate_report.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\core_engines\\generate_report.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\core_engines\\generate_report.py",
+      "nebular_hash": "97053e09a449756e",
+      "source_hash": "4c39be079a8009c1",
+      "nebular_size_kb": 5.7
+    },
+    {
+      "name": "integration_gate.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\core_engines\\integration_gate.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\core_engines\\integration_gate.py",
+      "nebular_hash": "2782ec3a3ed3c283",
+      "source_hash": "8cadfb5e79b17abc",
+      "nebular_size_kb": 20.0
+    },
+    {
+      "name": "intra_candle_executor.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\core_engines\\intra_candle_executor.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\core_engines\\intra_candle_executor.py",
+      "nebular_hash": "019cfc6fc31d01f9",
+      "source_hash": "90d25425dd93d91d",
+      "nebular_size_kb": 2.0
+    },
+    {
+      "name": "omega_harmonic_engine_v3.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\core_engines\\omega_harmonic_engine_v3.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\core_engines\\omega_harmonic_engine_v3.py",
+      "nebular_hash": "1b183288a805efc0",
+      "source_hash": "23883c56104881cd",
+      "nebular_size_kb": 12.7
+    },
+    {
+      "name": "shadow_loop.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\core_engines\\shadow_loop.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\core_engines\\shadow_loop.py",
+      "nebular_hash": "2dede86ec30c6b6e",
+      "source_hash": "c008b706c166fc17",
+      "nebular_size_kb": 35.8
+    },
+    {
+      "name": "create_certificate.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\create_certificate.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\create_certificate.py",
+      "nebular_hash": "eed5fddcbe460570",
+      "source_hash": "d76821d02cd33ad8",
+      "nebular_size_kb": 2.2
+    },
+    {
+      "name": "execute_blindagem.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\execute_blindagem.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\execute_blindagem.py",
+      "nebular_hash": "101132ec6af15bea",
+      "source_hash": "8b838045e302f7b2",
+      "nebular_size_kb": 4.2
+    },
+    {
+      "name": "execute_ceo_steps.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\execute_ceo_steps.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\execute_ceo_steps.py",
+      "nebular_hash": "595b43c2f7c0f1ba",
+      "source_hash": "cb2095343a7e8f21",
+      "nebular_size_kb": 3.4
+    },
+    {
+      "name": "execute_instr_def.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\execute_instr_def.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\execute_instr_def.py",
+      "nebular_hash": "287d130e85ef5b40",
+      "source_hash": "a83f6a7f6302c7cc",
+      "nebular_size_kb": 2.2
+    },
+    {
+      "name": "check_positions.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\inativo\\check_positions.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\check_positions.py",
+      "nebular_hash": "a63b08d35d0de9c9",
+      "source_hash": "08ab2d4b663abb9c",
+      "nebular_size_kb": 0.6
+    },
+    {
+      "name": "diag_mt5.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\inativo\\diag_mt5.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\diag_mt5.py",
+      "nebular_hash": "85ff60a90ae8e9b0",
+      "source_hash": "60ce897678ca1626",
+      "nebular_size_kb": 0.8
+    },
+    {
+      "name": "omega_honest_orchestrator.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\inativo\\omega_honest_orchestrator.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_honest_orchestrator.py",
+      "nebular_hash": "a8b6fff04ed05175",
+      "source_hash": "505cf5456e028155",
+      "nebular_size_kb": 5.4
+    },
+    {
+      "name": "v_flow_microstructure.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\inativo\\v_flow_microstructure.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\v_flow_microstructure.py",
+      "nebular_hash": "68e478e8bb04a485",
+      "source_hash": "15e361916fd05f67",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "live_drone_v5.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\live_drone_v5.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\live_drone_v5.py",
+      "nebular_hash": "7ed4c3db658d4687",
+      "source_hash": "d71ff17ccf326f8e",
+      "nebular_size_kb": 9.9
+    },
+    {
+      "name": "log_tr01.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\log_tr01.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\log_tr01.py",
+      "nebular_hash": "f8c69abd09146c39",
+      "source_hash": "e6e823c5f04c71c4",
+      "nebular_size_kb": 0.7
+    },
+    {
+      "name": "main.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\main.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\main.py",
+      "nebular_hash": "726629b31da1a8b8",
+      "source_hash": "78a7a9f571df1c7d",
+      "nebular_size_kb": 22.9
+    },
+    {
+      "name": "cfo_evidence.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\audit\\cfo_evidence.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\audit\\cfo_evidence.py",
+      "nebular_hash": "e30bf6822aabbd64",
+      "source_hash": "f16ef1cf31c9ad6b",
+      "nebular_size_kb": 4.5
+    },
+    {
+      "name": "forensic_audit.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\audit\\forensic_audit.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\audit\\forensic_audit.py",
+      "nebular_hash": "cbd344be6f47455e",
+      "source_hash": "3702a4844f44c753",
+      "nebular_size_kb": 9.6
+    },
+    {
+      "name": "psa_engine.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\audit\\psa_engine.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\audit\\psa_engine.py",
+      "nebular_hash": "42d4e5f6f576c01e",
+      "source_hash": "314a83b0e02d603b",
+      "nebular_size_kb": 14.3
+    },
+    {
+      "name": "psa_validator.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\audit\\psa_validator.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\audit\\psa_validator.py",
+      "nebular_hash": "dbf96d8ed828e7c4",
+      "source_hash": "8f8977e377732123",
+      "nebular_size_kb": 2.7
+    },
+    {
+      "name": "reconciliation.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\audit\\reconciliation.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\audit\\reconciliation.py",
+      "nebular_hash": "05fd1dfc439ec912",
+      "source_hash": "bd48e79d4eabb17c",
+      "nebular_size_kb": 4.5
+    },
+    {
+      "name": "whale_hunter.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\audit\\whale_hunter.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\audit\\whale_hunter.py",
+      "nebular_hash": "19f5ec4257960661",
+      "source_hash": "8eac58b7156bcf79",
+      "nebular_size_kb": 3.5
+    },
+    {
+      "name": "spoof_iceberg_detector.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\detection\\spoof_iceberg_detector.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\detection\\spoof_iceberg_detector.py",
+      "nebular_hash": "7b6f160e65a74fcd",
+      "source_hash": "00964a80f5c7bbbf",
+      "nebular_size_kb": 0.2
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\detection\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "970284b7b2f8631f",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "dos_trading_v1.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\DOS_MODULE\\dos_trading_v1.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\DOS_MODULE\\omega_dos\\trading\\dos_trading_v1.py",
+      "nebular_hash": "d92747f58873258a",
+      "source_hash": "d6014fde5655fad0",
+      "nebular_size_kb": 0.2
+    },
+    {
+      "name": "bridge_fin_sense.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\DOS_MODULE\\omega_dos\\bridge_fin_sense.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\DOS_MODULE\\omega_dos\\bridge_fin_sense.py",
+      "nebular_hash": "8972b41d0832cf10",
+      "source_hash": "50d848c9c04a1392",
+      "nebular_size_kb": 7.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\DOS_MODULE\\omega_dos\\metrics\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "81b67f1bedcb1b92",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.7
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\DOS_MODULE\\omega_dos\\trading\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "c24c392631923076",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\DOS_MODULE\\omega_dos\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "65ee4c9cd8620f01",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.9
+    },
+    {
+      "name": "test_pipeline_synthetic.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\DOS_MODULE\\tests\\test_pipeline_synthetic.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\DOS_MODULE\\tests\\test_pipeline_synthetic.py",
+      "nebular_hash": "6022ac9d6f94004c",
+      "source_hash": "493da57df1b1c1f7",
+      "nebular_size_kb": 2.2
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\FIN_SENSE_DATA_MODULE\\fin_sense_data_module\\bronze\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "327b8f27341b9f95",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\FIN_SENSE_DATA_MODULE\\fin_sense_data_module\\gold\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "c6b275be3bb95bff",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\FIN_SENSE_DATA_MODULE\\fin_sense_data_module\\schemas\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "45753fc6463f7dd7",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\FIN_SENSE_DATA_MODULE\\fin_sense_data_module\\silver\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "37a8374001d16a31",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\FIN_SENSE_DATA_MODULE\\fin_sense_data_module\\storage\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "1321dd544896d81a",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\FIN_SENSE_DATA_MODULE\\fin_sense_data_module\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "5ff4e7f54eae6f49",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.5
+    },
+    {
+      "name": "correlation_filter.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\portfolio\\correlation_filter.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\portfolio\\correlation_filter.py",
+      "nebular_hash": "0b49b75670b1fde2",
+      "source_hash": "089e6fc6f7932e58",
+      "nebular_size_kb": 3.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\portfolio\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "ccdc1501c712167b",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "scale_manager.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\risk\\scale_manager.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\risk\\scale_manager.py",
+      "nebular_hash": "932d8720b041f3d5",
+      "source_hash": "0f64fbb956c9e970",
+      "nebular_size_kb": 6.0
+    },
+    {
+      "name": "crisis_probability_validator.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\validation\\crisis_probability_validator.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\validation\\crisis_probability_validator.py",
+      "nebular_hash": "4427bb6249db3635",
+      "source_hash": "96d528fb44e499aa",
+      "nebular_size_kb": 3.0
+    },
+    {
+      "name": "gate_timing_validator.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\validation\\gate_timing_validator.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\validation\\gate_timing_validator.py",
+      "nebular_hash": "84644ec3b26600d6",
+      "source_hash": "a39b5efca1cf50e6",
+      "nebular_size_kb": 2.3
+    },
+    {
+      "name": "mfa_engine.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\validation\\mfa_engine.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\validation\\mfa_engine.py",
+      "nebular_hash": "5c9844c04deb1019",
+      "source_hash": "793fca0562d15047",
+      "nebular_size_kb": 6.2
+    },
+    {
+      "name": "slo_validator_china.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\validation\\slo_validator_china.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\validation\\slo_validator_china.py",
+      "nebular_hash": "9b15d90a43075391",
+      "source_hash": "f785ec9e84c75115",
+      "nebular_size_kb": 1.9
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\modules\\validation\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "9af20cdfdac2aa45",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.5
+    },
+    {
+      "name": "omega_agent_manager.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\omega_agent_manager.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\omega_agent_manager.py",
+      "nebular_hash": "e42af867324d9ee4",
+      "source_hash": "f6e0492940c0ee66",
+      "nebular_size_kb": 7.5
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\01_CORE\\architecture\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "c78d587572145aaf",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.7
+    },
+    {
+      "name": "main.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Concepts\\main.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\main.py",
+      "nebular_hash": "a7ffc6f8bf1ed766",
+      "source_hash": "78a7a9f571df1c7d",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "main.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora BACKUP_2025_COMPLETO\\BACKUPS\\pre_fix_20251224_211958\\main.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\main.py",
+      "nebular_hash": "51df07bf608a05b4",
+      "source_hash": "78a7a9f571df1c7d",
+      "nebular_size_kb": 1.5
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora BACKUP_2025_COMPLETO\\backup_definitivo_pre_correcao\\00-Governanca\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "2988b5e7f1ffdcbf",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "main.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora BACKUP_2025_COMPLETO\\backup_definitivo_pre_correcao\\main.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\main.py",
+      "nebular_hash": "51df07bf608a05b4",
+      "source_hash": "78a7a9f571df1c7d",
+      "nebular_size_kb": 1.5
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\00-Governanca\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "2988b5e7f1ffdcbf",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\01-Departamentos\\Compliance-Audit\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "ad59125b54849b2a",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\01-Departamentos\\Engineering-Infra\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "466dd02436ce4a7c",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\01-Departamentos\\Execution-Trading\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "5233f5d769bc4cc3",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\01-Departamentos\\Innovation-Lab\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "fc4c1d95a844af08",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "risk_engine.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\01-Departamentos\\Risk-Controls\\risk_engine.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\src\\risk_engine.py",
+      "nebular_hash": "8f829a8269a3b9cd",
+      "source_hash": "9fff195ae17cbe73",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\01-Departamentos\\Risk-Controls\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "fedcee21db119980",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\01-Departamentos\\Treasury-Capital\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "d295aebeac56a4c7",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\02-Processos-Chave\\CI-CD\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "19c543c1d8640294",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\02-Processos-Chave\\Incident-Response\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "d07a50cb75dc2334",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\02-Processos-Chave\\Onboarding\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a14319667898b833",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "backtest_engine.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\02-Processos-Chave\\QA-Backtesting\\backtest_engine.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\backtest_engine.py",
+      "nebular_hash": "3c8e1e8ca85f0cdb",
+      "source_hash": "969cbb6cd75c0b6c",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\02-Processos-Chave\\QA-Backtesting\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "55f19b82042b964d",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\03-Operacoes-Diarias\\Execution-Window\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "dae5a7d902b587e7",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "reconciliation.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\03-Operacoes-Diarias\\Post-Trade\\reconciliation.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\audit\\reconciliation.py",
+      "nebular_hash": "2bc01b1cd8668af6",
+      "source_hash": "bd48e79d4eabb17c",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\03-Operacoes-Diarias\\Post-Trade\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "0016eb7d86f09f3c",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\03-Operacoes-Diarias\\Pre-Market\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "9d83459eecd85293",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\03-Operacoes-Diarias\\Real-Time-Dashboard\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "3c6f3888d77553f2",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "main.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\04-Infraestrutura\\api\\main.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\main.py",
+      "nebular_hash": "844880761309f5a4",
+      "source_hash": "78a7a9f571df1c7d",
+      "nebular_size_kb": 1.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\04-Infraestrutura\\api\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "8f70d8cbecc20ba9",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.6
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\04-Infraestrutura\\database\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "c08de299bf64ac99",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\06-Monitoramento\\Feedback-Loop\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a7ffc6f8bf1ed766",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "main.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\main.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\main.py",
+      "nebular_hash": "51df07bf608a05b4",
+      "source_hash": "78a7a9f571df1c7d",
+      "nebular_size_kb": 1.5
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\modules\\connectors\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "fbdca5901933f546",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\modules\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "b311407a512fb805",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Aurora_v5.1_2025\\system_core\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "f4263c8820aaf7b0",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\api\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a0e257d55ff5a8db",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "main.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\aurora_core\\src\\main.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\main.py",
+      "nebular_hash": "941a923eefcf3a91",
+      "source_hash": "78a7a9f571df1c7d",
+      "nebular_size_kb": 1.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\aurora_core\\src\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "9d5dd45db1c28efb",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "conftest.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\aurora_core\\tests\\conftest.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\DOS_MODULE\\tests\\conftest.py",
+      "nebular_hash": "6661d846130336bf",
+      "source_hash": "920cdf8b22b498c2",
+      "nebular_size_kb": 2.6
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\aurora_core\\tests\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "b9511e235d916de8",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\auth\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "4eb2c61a0f3eae84",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\BACKUP_PRE_INTEGRATION_20260111_223657\\config\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a7ffc6f8bf1ed766",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\BACKUP_PRE_INTEGRATION_20260111_223657\\connectors\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a7ffc6f8bf1ed766",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\BACKUP_PRE_INTEGRATION_20260111_223657\\execution\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a7ffc6f8bf1ed766",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\BACKUP_PRE_INTEGRATION_20260111_223657\\learning\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a7ffc6f8bf1ed766",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "main.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\BACKUP_PRE_INTEGRATION_20260111_223657\\main.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\main.py",
+      "nebular_hash": "d2b3918112251a20",
+      "source_hash": "78a7a9f571df1c7d",
+      "nebular_size_kb": 10.6
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\BACKUP_PRE_INTEGRATION_20260111_223657\\ml_models\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a7ffc6f8bf1ed766",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "risk_engine.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\BACKUP_PRE_INTEGRATION_20260111_223657\\risk\\risk_engine.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\src\\risk_engine.py",
+      "nebular_hash": "8f829a8269a3b9cd",
+      "source_hash": "9fff195ae17cbe73",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\BACKUP_PRE_INTEGRATION_20260111_223657\\risk\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a7ffc6f8bf1ed766",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\BACKUP_PRE_INTEGRATION_20260111_223657\\strategies\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a7ffc6f8bf1ed766",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\BACKUP_PRE_INTEGRATION_20260111_223657\\system_core\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a7ffc6f8bf1ed766",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\config\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a7ffc6f8bf1ed766",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\connectors\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "bab8160ba57360f4",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.2
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\execution\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "4f96abe9bd9ac91f",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.2
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\health\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "b616cb4e6aa0d593",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\learning\\specialized_agents\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "b5c9166e6be3c4f3",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\learning\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a7ffc6f8bf1ed766",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "main.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\main.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\main.py",
+      "nebular_hash": "912af6505db9d4f5",
+      "source_hash": "78a7a9f571df1c7d",
+      "nebular_size_kb": 1.8
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\ml_models\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a7ffc6f8bf1ed766",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\monitoring\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a7ffc6f8bf1ed766",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "risk_engine.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\risk\\risk_engine.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\src\\risk_engine.py",
+      "nebular_hash": "8f829a8269a3b9cd",
+      "source_hash": "9fff195ae17cbe73",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\risk\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "bedffc0985eaf938",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\strategies\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a7ffc6f8bf1ed766",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\system_core\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "1a017d4a449a9d47",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\tests\\auth\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "a611b95732aac4aa",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "conftest.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\tests\\conftest.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\DOS_MODULE\\tests\\conftest.py",
+      "nebular_hash": "a780136dd06e2855",
+      "source_hash": "920cdf8b22b498c2",
+      "nebular_size_kb": 2.6
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\tests\\health\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "90820de66bc5c51e",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\tests\\integration\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "51c521f14e81d054",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\tests\\risk\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "7ddfabcb65f30198",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\tests\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "98a69aa050c2a57a",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\AURORA_v6.0_MVP\\utils\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "75cda47d441f7852",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.2
+    },
+    {
+      "name": "main.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Genesis 24082025\\SkyLabGlobalMarket 010525\\backend\\main.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\main.py",
+      "nebular_hash": "ca53b3922f603eeb",
+      "source_hash": "78a7a9f571df1c7d",
+      "nebular_size_kb": 7.5
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Genesis 24082025\\SkyLabGlobalMarket 010525\\backend\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "9692b013f3355bc8",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\Genesis 24082025\\SkyLabGlobalMarket 010525\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "9692b013f3355bc8",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "config.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\mpi_project\\mpi\\config.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\DOS_MODULE\\omega_dos\\config.py",
+      "nebular_hash": "42757d28d83e0b86",
+      "source_hash": "adda4a86fad076c2",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "features.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\mpi_project\\mpi\\features.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\Auditoria PARR-F\\omega_core_validation\\venv_psa\\Lib\\site-packages\\PIL\\features.py",
+      "nebular_hash": "696cbf95ba520a6a",
+      "source_hash": "9d83ef5093a47f5a",
+      "nebular_size_kb": 2.0
+    },
+    {
+      "name": "volume_profile.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\mpi_project\\mpi\\volume_profile.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\volume_profile.py",
+      "nebular_hash": "30f592a79078df59",
+      "source_hash": "17542df2210b8e4f",
+      "nebular_size_kb": 1.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Core\\Calendars\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "1a914d600dcc9749",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Core\\Config\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "9f52c396b7f33ba2",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Core\\Monitoring\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "3116a99b92452f5a",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Core\\MultiTimeframe\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "e47f324a65cf3221",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.6
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Modules\\Crypto\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "bebbb0e64f6e0a49",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.3
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Modules\\Forex\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "013b73aad25b2d2c",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.4
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Modules\\Metals\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "d814336a5c78d9b6",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.2
+    },
+    {
+      "name": "prometheus_master_control_v5.1.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Server\\Numeia\\prometheus_master_control_v5.1.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\bau\\03_ORCHESTRATOR\\prometheus_master_control_v5.1.py",
+      "nebular_hash": "d3658bc43d7dccd9",
+      "source_hash": "1aa60021cde1eaec",
+      "nebular_size_kb": 46.4
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Server\\Numeia\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "c8076a05047d2f28",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SamsungGlobalMarket 301125\\Server\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "d23357d4a40a3f97",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.2
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SkyLabGlobalMarket 010525\\backend\\alembic\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "9692b013f3355bc8",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "config.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SkyLabGlobalMarket 010525\\backend\\app\\config.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\DOS_MODULE\\omega_dos\\config.py",
+      "nebular_hash": "82d985784f60fc0d",
+      "source_hash": "adda4a86fad076c2",
+      "nebular_size_kb": 4.0
+    },
+    {
+      "name": "main.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SkyLabGlobalMarket 010525\\backend\\app\\main.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\main.py",
+      "nebular_hash": "dbdfc0086836346a",
+      "source_hash": "78a7a9f571df1c7d",
+      "nebular_size_kb": 4.9
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SkyLabGlobalMarket 010525\\backend\\app\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "d4a8e4571329e47e",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.0
+    },
+    {
+      "name": "config.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SkyLabGlobalMarket 010525\\backend\\core\\config.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\DOS_MODULE\\omega_dos\\config.py",
+      "nebular_hash": "d01b3a4199d37573",
+      "source_hash": "adda4a86fad076c2",
+      "nebular_size_kb": 3.3
+    },
+    {
+      "name": "main.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SkyLabGlobalMarket 010525\\backend\\main.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\main.py",
+      "nebular_hash": "ca53b3922f603eeb",
+      "source_hash": "78a7a9f571df1c7d",
+      "nebular_size_kb": 7.5
+    },
+    {
+      "name": "conftest.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SkyLabGlobalMarket 010525\\backend\\tests\\conftest.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\DOS_MODULE\\tests\\conftest.py",
+      "nebular_hash": "c92506cc2b58a51f",
+      "source_hash": "920cdf8b22b498c2",
+      "nebular_size_kb": 3.2
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SkyLabGlobalMarket 010525\\backend\\tests\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "9692b013f3355bc8",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SkyLabGlobalMarket 010525\\backend\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "9692b013f3355bc8",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "__init__.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_INTELLIGENCE_OS\\09_INBOX\\Projects\\SkyLabGlobalMarket 010525\\__init__.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py",
+      "nebular_hash": "9692b013f3355bc8",
+      "source_hash": "4fa124babf57d456",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "audit_xauusd_resonance.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\audit_xauusd_resonance.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\audit_xauusd_resonance.py",
+      "nebular_hash": "4e488973ad39a59e",
+      "source_hash": "0e0b4de55d74030f",
+      "nebular_size_kb": 2.7
+    },
+    {
+      "name": "calculate_sei.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\calculate_sei.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\calculate_sei.py",
+      "nebular_hash": "f82313c41eb57537",
+      "source_hash": "9f5cb5cffd3e5ca7",
+      "nebular_size_kb": 1.0
+    },
+    {
+      "name": "check_positions.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\check_positions.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\check_positions.py",
+      "nebular_hash": "a63b08d35d0de9c9",
+      "source_hash": "08ab2d4b663abb9c",
+      "nebular_size_kb": 0.6
+    },
+    {
+      "name": "hfd_diag.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\hfd_diag.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\hfd_diag.py",
+      "nebular_hash": "e6fcebf82481c00d",
+      "source_hash": "5aa78a1a21c41220",
+      "nebular_size_kb": 1.0
+    },
+    {
+      "name": "hfd_diag_2.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\hfd_diag_2.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\hfd_diag_2.py",
+      "nebular_hash": "8a7afb134d56f178",
+      "source_hash": "66e7e8d97f417a96",
+      "nebular_size_kb": 1.0
+    },
+    {
+      "name": "live_drone_v5.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\live_drone_v5.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\live_drone_v5.py",
+      "nebular_hash": "3c1b84a47c0346f5",
+      "source_hash": "d71ff17ccf326f8e",
+      "nebular_size_kb": 9.7
+    },
+    {
+      "name": "main.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\main.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\main.py",
+      "nebular_hash": "bfc4e18a3d7c0861",
+      "source_hash": "78a7a9f571df1c7d",
+      "nebular_size_kb": 24.9
+    },
+    {
+      "name": "omega_confluence_engine.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\modules\\omega_confluence_engine.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\omega_confluence_engine.py",
+      "nebular_hash": "16743c18e36e566d",
+      "source_hash": "1fb85291393d27f1",
+      "nebular_size_kb": 3.4
+    },
+    {
+      "name": "omega_parr_f_engine.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\modules\\omega_parr_f_engine.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\omega_parr_f_engine.py",
+      "nebular_hash": "b2e8afaa4b75d3a4",
+      "source_hash": "68a5a77f0178b56e",
+      "nebular_size_kb": 3.2
+    },
+    {
+      "name": "omega_agent_manager.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_agent_manager.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\omega_agent_manager.py",
+      "nebular_hash": "e42af867324d9ee4",
+      "source_hash": "f6e0492940c0ee66",
+      "nebular_size_kb": 7.5
+    },
+    {
+      "name": "omega_cfo_evidence_gen.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_cfo_evidence_gen.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_cfo_evidence_gen.py",
+      "nebular_hash": "e30bf6822aabbd64",
+      "source_hash": "29ab8f6ae3f648a3",
+      "nebular_size_kb": 4.5
+    },
+    {
+      "name": "omega_crash_test_2008_2020.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_crash_test_2008_2020.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_crash_test_2008_2020.py",
+      "nebular_hash": "ac6d9c5d9217d8c6",
+      "source_hash": "f3518e6f2da7437f",
+      "nebular_size_kb": 2.6
+    },
+    {
+      "name": "omega_critical_day_analysis.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_critical_day_analysis.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_critical_day_analysis.py",
+      "nebular_hash": "7f7e94763ed56b17",
+      "source_hash": "2f1f0790c89a30d5",
+      "nebular_size_kb": 1.3
+    },
+    {
+      "name": "omega_deep_dive_forensics.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_deep_dive_forensics.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_deep_dive_forensics.py",
+      "nebular_hash": "11c647f92c566062",
+      "source_hash": "7b139f0b7617b5fd",
+      "nebular_size_kb": 5.9
+    },
+    {
+      "name": "omega_fiduciary_audit_psa.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_fiduciary_audit_psa.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_fiduciary_audit_psa.py",
+      "nebular_hash": "78fba4d7d41f9447",
+      "source_hash": "83192f03ec2dd428",
+      "nebular_size_kb": 6.2
+    },
+    {
+      "name": "omega_fiduciary_audit_psa_final.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_fiduciary_audit_psa_final.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_fiduciary_audit_psa_final.py",
+      "nebular_hash": "00a96a255b688d97",
+      "source_hash": "5bd92f8ef5e29545",
+      "nebular_size_kb": 4.6
+    },
+    {
+      "name": "omega_forensic_audit_v560.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_forensic_audit_v560.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_forensic_audit_v560.py",
+      "nebular_hash": "cbd344be6f47455e",
+      "source_hash": "ef0c7875b4e5a8fd",
+      "nebular_size_kb": 9.6
+    },
+    {
+      "name": "omega_forensic_sim_50k.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_forensic_sim_50k.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_forensic_sim_50k.py",
+      "nebular_hash": "baaddd104a384004",
+      "source_hash": "4633d68af57bb5d9",
+      "nebular_size_kb": 3.2
+    },
+    {
+      "name": "omega_full_historical_audit.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_full_historical_audit.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_full_historical_audit.py",
+      "nebular_hash": "193fe77944132551",
+      "source_hash": "57416f3f0a0c9f23",
+      "nebular_size_kb": 4.5
+    },
+    {
+      "name": "omega_generate_audit_log.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_generate_audit_log.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_generate_audit_log.py",
+      "nebular_hash": "216f4e08d1033958",
+      "source_hash": "68708450c080980c",
+      "nebular_size_kb": 2.3
+    },
+    {
+      "name": "omega_historical_audit_v545.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_historical_audit_v545.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_historical_audit_v545.py",
+      "nebular_hash": "a0df884e4eea53cf",
+      "source_hash": "d2eccbba3e97876e",
+      "nebular_size_kb": 5.0
+    },
+    {
+      "name": "omega_historical_audit_v546.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_historical_audit_v546.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_historical_audit_v546.py",
+      "nebular_hash": "c6d4c602c549c5d1",
+      "source_hash": "eeb6b32cbd347790",
+      "nebular_size_kb": 4.9
+    },
+    {
+      "name": "omega_historical_audit_v548.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_historical_audit_v548.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_historical_audit_v548.py",
+      "nebular_hash": "c8a36023d7ce646c",
+      "source_hash": "124108e20b821fc6",
+      "nebular_size_kb": 5.8
+    },
+    {
+      "name": "omega_institutional_predator_backtest.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_institutional_predator_backtest.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_institutional_predator_backtest.py",
+      "nebular_hash": "1e3a7199c9a1eda9",
+      "source_hash": "3438183d8ee8e96b",
+      "nebular_size_kb": 3.8
+    },
+    {
+      "name": "omega_kpi_validator_v590.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_kpi_validator_v590.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_kpi_validator_v590.py",
+      "nebular_hash": "18c623a81da5bd56",
+      "source_hash": "5c85082cf76d6bc4",
+      "nebular_size_kb": 1.8
+    },
+    {
+      "name": "omega_live_v522_runner.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_live_v522_runner.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_live_v522_runner.py",
+      "nebular_hash": "f23d651ddf1a2013",
+      "source_hash": "3462be73fb9ded7e",
+      "nebular_size_kb": 7.0
+    },
+    {
+      "name": "omega_market_cardiogram.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_market_cardiogram.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_market_cardiogram.py",
+      "nebular_hash": "30c31105f6827344",
+      "source_hash": "e1ff9157c65b5719",
+      "nebular_size_kb": 1.9
+    },
+    {
+      "name": "omega_metabolic_audit.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_metabolic_audit.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_metabolic_audit.py",
+      "nebular_hash": "58b69305be2755e5",
+      "source_hash": "990951c8543e88d9",
+      "nebular_size_kb": 2.3
+    },
+    {
+      "name": "omega_mfa_engine.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_mfa_engine.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_mfa_engine.py",
+      "nebular_hash": "220276181f4a4290",
+      "source_hash": "250ddb95115c9fb0",
+      "nebular_size_kb": 5.9
+    },
+    {
+      "name": "omega_multicycle_full_backtest.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_multicycle_full_backtest.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_multicycle_full_backtest.py",
+      "nebular_hash": "e47feb618e08299d",
+      "source_hash": "575d761c717a7d10",
+      "nebular_size_kb": 3.2
+    },
+    {
+      "name": "omega_multi_cycle_validator.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_multi_cycle_validator.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_multi_cycle_validator.py",
+      "nebular_hash": "748b71819103653c",
+      "source_hash": "797d97d913373efa",
+      "nebular_size_kb": 1.8
+    },
+    {
+      "name": "omega_overnight_tester.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_overnight_tester.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_overnight_tester.py",
+      "nebular_hash": "6afeb7e99f0f6f04",
+      "source_hash": "de8725fd3c0f67b4",
+      "nebular_size_kb": 3.0
+    },
+    {
+      "name": "omega_predator_long_audit.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_predator_long_audit.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_predator_long_audit.py",
+      "nebular_hash": "6418a18b59ab66f2",
+      "source_hash": "a43e4b6b09dce087",
+      "nebular_size_kb": 3.7
+    },
+    {
+      "name": "omega_psa_certification_v550.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_psa_certification_v550.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_psa_certification_v550.py",
+      "nebular_hash": "ab77ef22561f38bf",
+      "source_hash": "0b3261644a260a0a",
+      "nebular_size_kb": 5.2
+    },
+    {
+      "name": "omega_psa_evidence_validator.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_psa_evidence_validator.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_psa_evidence_validator.py",
+      "nebular_hash": "dbf96d8ed828e7c4",
+      "source_hash": "8f8977e377732123",
+      "nebular_size_kb": 2.7
+    },
+    {
+      "name": "omega_reconciliation_v590.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_reconciliation_v590.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_reconciliation_v590.py",
+      "nebular_hash": "05fd1dfc439ec912",
+      "source_hash": "550e08da34e54050",
+      "nebular_size_kb": 4.5
+    },
+    {
+      "name": "omega_sre_audit_v552.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_sre_audit_v552.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_sre_audit_v552.py",
+      "nebular_hash": "6156db2b5329b94e",
+      "source_hash": "a8598d53d7011cf1",
+      "nebular_size_kb": 5.1
+    },
+    {
+      "name": "omega_tier0_scientific_validator.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_tier0_scientific_validator.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_tier0_scientific_validator.py",
+      "nebular_hash": "12cc63b7070f1927",
+      "source_hash": "ba21f00dac3d968e",
+      "nebular_size_kb": 4.7
+    },
+    {
+      "name": "omega_tier0_scientific_validator_v2.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_tier0_scientific_validator_v2.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_tier0_scientific_validator_v2.py",
+      "nebular_hash": "043e966a9a51a764",
+      "source_hash": "39030a91a9cc7939",
+      "nebular_size_kb": 3.9
+    },
+    {
+      "name": "omega_triple_confluence_backtest.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_triple_confluence_backtest.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_triple_confluence_backtest.py",
+      "nebular_hash": "74e5018f6caca480",
+      "source_hash": "a4bc6ad6b03992c0",
+      "nebular_size_kb": 3.9
+    },
+    {
+      "name": "omega_ultimate_audit_v570.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_ultimate_audit_v570.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_ultimate_audit_v570.py",
+      "nebular_hash": "8c2b719e73f35f0c",
+      "source_hash": "22d99372ac871c89",
+      "nebular_size_kb": 8.8
+    },
+    {
+      "name": "omega_ultimate_audit_v580.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_ultimate_audit_v580.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_ultimate_audit_v580.py",
+      "nebular_hash": "d6f837ee46c44d15",
+      "source_hash": "aade0e24375d3e2d",
+      "nebular_size_kb": 6.2
+    },
+    {
+      "name": "omega_whale_hunter_audit.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\omega_whale_hunter_audit.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\omega_whale_hunter_audit.py",
+      "nebular_hash": "19f5ec4257960661",
+      "source_hash": "93ecf1376f4ef260",
+      "nebular_size_kb": 3.5
+    },
+    {
+      "name": "summarize_full_audit.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\summarize_full_audit.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\summarize_full_audit.py",
+      "nebular_hash": "81a5884546e44998",
+      "source_hash": "27baaa2f916b245d",
+      "nebular_size_kb": 1.2
+    },
+    {
+      "name": "summarize_v543_psa.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\summarize_v543_psa.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\summarize_v543_psa.py",
+      "nebular_hash": "950da524f0670877",
+      "source_hash": "54cd88250efe3170",
+      "nebular_size_kb": 1.5
+    },
+    {
+      "name": "surgical_audit_xauusd.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\surgical_audit_xauusd.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\inativo\\surgical_audit_xauusd.py",
+      "nebular_hash": "fca6a50e90a0a1c4",
+      "source_hash": "3c2ba60451d4d8e4",
+      "nebular_size_kb": 2.6
+    },
+    {
+      "name": "v_flow_microstructure.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\OMEGA_OS_Kernel\\v_flow_microstructure.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\v_flow_microstructure.py",
+      "nebular_hash": "68e478e8bb04a485",
+      "source_hash": "15e361916fd05f67",
+      "nebular_size_kb": 0.1
+    },
+    {
+      "name": "omega_parr_f_engine.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\omega_parr_f_engine.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\omega_parr_f_engine.py",
+      "nebular_hash": "9084224ecebd4a87",
+      "source_hash": "68a5a77f0178b56e",
+      "nebular_size_kb": 7.3
+    },
+    {
+      "name": "omega_turing_calibrate.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\omega_turing_calibrate.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\omega_turing_calibrate.py",
+      "nebular_hash": "e3732a23d326c1bd",
+      "source_hash": "ba2bbb25567edbf6",
+      "nebular_size_kb": 7.4
+    },
+    {
+      "name": "omega_turing_live.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\omega_turing_live.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\omega_turing_live.py",
+      "nebular_hash": "df2f6de7d6d5a1e8",
+      "source_hash": "e1b76e11dbdac919",
+      "nebular_size_kb": 9.8
+    },
+    {
+      "name": "omega_v550_realtime_mt5.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\omega_v550_realtime_mt5.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\omega_v550_realtime_mt5.py",
+      "nebular_hash": "8b87afa647bf5e20",
+      "source_hash": "8080eac5e30d63eb",
+      "nebular_size_kb": 13.9
+    },
+    {
+      "name": "psa_audit_engine.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\psa_audit_engine.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\psa_audit_engine.py",
+      "nebular_hash": "42d4e5f6f576c01e",
+      "source_hash": "83c2899c6672d89b",
+      "nebular_size_kb": 14.3
+    },
+    {
+      "name": "psa_run_ami_calibration.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\psa_run_ami_calibration.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\psa_run_ami_calibration.py",
+      "nebular_hash": "d49120d48e0619d5",
+      "source_hash": "2aca50ef954d1e29",
+      "nebular_size_kb": 8.9
+    },
+    {
+      "name": "runner_ami_v21.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\runner_ami_v21.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\runner_ami_v21.py",
+      "nebular_hash": "f639f6bccd6baa43",
+      "source_hash": "f50a5acb45340dac",
+      "nebular_size_kb": 2.2
+    },
+    {
+      "name": "run_75_percent_sniper.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\run_75_percent_sniper.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\run_75_percent_sniper.py",
+      "nebular_hash": "a49ed88c23898a02",
+      "source_hash": "b58efade454298db",
+      "nebular_size_kb": 9.5
+    },
+    {
+      "name": "run_bivariate_turing_test.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\run_bivariate_turing_test.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\run_bivariate_turing_test.py",
+      "nebular_hash": "e83a373c9451ee91",
+      "source_hash": "c86710641885498f",
+      "nebular_size_kb": 6.2
+    },
+    {
+      "name": "run_hybrid_momentum_test.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\run_hybrid_momentum_test.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\run_hybrid_momentum_test.py",
+      "nebular_hash": "68b8c4ea7da90b78",
+      "source_hash": "4f25b5b1ba02ebad",
+      "nebular_size_kb": 7.5
+    },
+    {
+      "name": "run_tesseract.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\run_tesseract.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\run_tesseract.py",
+      "nebular_hash": "f26518f8b00dc016",
+      "source_hash": "2860055611d0e83a",
+      "nebular_size_kb": 9.9
+    },
+    {
+      "name": "run_ultimate_rigorous_test.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\run_ultimate_rigorous_test.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\run_ultimate_rigorous_test.py",
+      "nebular_hash": "144797fa238c2ffa",
+      "source_hash": "d83c79d0ad42c1f9",
+      "nebular_size_kb": 6.8
+    },
+    {
+      "name": "crash_test_historical.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\tests\\crash_test_historical.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\tests\\crash_test_historical.py",
+      "nebular_hash": "ac6d9c5d9217d8c6",
+      "source_hash": "f3518e6f2da7437f",
+      "nebular_size_kb": 2.6
+    },
+    {
+      "name": "tier0_validator.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\tests\\tier0_validator.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\tests\\tier0_validator.py",
+      "nebular_hash": "12cc63b7070f1927",
+      "source_hash": "268f8b6a1c44f985",
+      "nebular_size_kb": 4.7
+    },
+    {
+      "name": "update_fs03.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\update_fs03.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\update_fs03.py",
+      "nebular_hash": "b40129d1a3114d9f",
+      "source_hash": "8da449a2b3c57cc5",
+      "nebular_size_kb": 2.3
+    },
+    {
+      "name": "update_fs04.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\update_fs04.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\update_fs04.py",
+      "nebular_hash": "04485845a386d78d",
+      "source_hash": "cf3fca06406ca6d2",
+      "nebular_size_kb": 3.4
+    },
+    {
+      "name": "update_history_mt5.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\update_history_mt5.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\update_history_mt5.py",
+      "nebular_hash": "7a7b2fb02a0235b8",
+      "source_hash": "d6ac89d0c82d1ce4",
+      "nebular_size_kb": 3.8
+    },
+    {
+      "name": "update_manifest.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\update_manifest.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\update_manifest.py",
+      "nebular_hash": "07a018678becfd86",
+      "source_hash": "d3337b56d1195adb",
+      "nebular_size_kb": 3.3
+    },
+    {
+      "name": "update_ps01.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\update_ps01.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\update_ps01.py",
+      "nebular_hash": "b307cbc6c7aa519d",
+      "source_hash": "32045a39b68f1b48",
+      "nebular_size_kb": 1.5
+    },
+    {
+      "name": "update_tr01_manifest.py",
+      "nebular": "C:\\Users\\Lenovo\\.gemini\\antigravity\\playground\\nebular-kuiper\\update_tr01_manifest.py",
+      "source": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\update_tr01_manifest.py",
+      "nebular_hash": "95cebfce7c3e0a92",
+      "source_hash": "fe70cf215e60ebb6",
+      "nebular_size_kb": 0.8
+    }
+  ]
+}

@@ -1,0 +1,985 @@
+{
+  "cycles": 30,
+  "total_signals": 32,
+  "total_executed": 32,
+  "total_skipped": 0,
+  "total_trades_per_asset": {
+    "ETHUSD": 2,
+    "GER40": 10,
+    "SOLUSD": 0,
+    "DOGUSD": 0,
+    "GBPUSD": 0,
+    "BTCUSD": 8,
+    "USDJPY": 0,
+    "XAUUSD": 12,
+    "US500": 0,
+    "EURUSD": 0
+  },
+  "total_trades": 32,
+  "by_action": {
+    "SKIP_EDGE_GATE": 312,
+    "MT5_PAPER_EXECUTE": 32
+  },
+  "retcodes": {
+    "10009": 32
+  },
+  "hit_rate_avg": 98.4106,
+  "hit_rate_min": 95.51,
+  "latency_ms_avg": 63.48,
+  "latency_ms_max": 361.7,
+  "latency_ms_p95": 234.1,
+  "slippage_avg_pts": 1.6111,
+  "kill_switch_triggers": 0,
+  "ledger_total_pnl": -4.3,
+  "ledger_n_positions": 32,
+  "max_concentration_pct": 37.5,
+  "max_concentration_asset": "XAUUSD",
+  "corr_blocks": 0,
+  "label": "IA_ON",
+  "timestamp_utc": "20260428_135222",
+  "cycles_requested": 30,
+  "closes_per_cycle": [
+    {
+      "cycle": 1,
+      "n_success": 0
+    },
+    {
+      "cycle": 2,
+      "n_success": 0
+    },
+    {
+      "cycle": 3,
+      "n_success": 0
+    },
+    {
+      "cycle": 4,
+      "n_success": 0
+    },
+    {
+      "cycle": 5,
+      "n_success": 0
+    },
+    {
+      "cycle": 6,
+      "n_success": 0
+    },
+    {
+      "cycle": 7,
+      "n_success": 0
+    },
+    {
+      "cycle": 8,
+      "n_success": 0
+    },
+    {
+      "cycle": 9,
+      "n_success": 0
+    },
+    {
+      "cycle": 10,
+      "n_success": 0
+    },
+    {
+      "cycle": 11,
+      "n_success": 0
+    },
+    {
+      "cycle": 12,
+      "n_success": 0
+    },
+    {
+      "cycle": 13,
+      "n_success": 0
+    },
+    {
+      "cycle": 14,
+      "n_success": 0
+    },
+    {
+      "cycle": 15,
+      "n_success": 0
+    },
+    {
+      "cycle": 16,
+      "n_success": 0
+    },
+    {
+      "cycle": 17,
+      "n_success": 0
+    },
+    {
+      "cycle": 18,
+      "n_success": 0
+    },
+    {
+      "cycle": 19,
+      "n_success": 0
+    },
+    {
+      "cycle": 20,
+      "n_success": 0
+    },
+    {
+      "cycle": 21,
+      "n_success": 0
+    },
+    {
+      "cycle": 22,
+      "n_success": 0
+    },
+    {
+      "cycle": 23,
+      "n_success": 0
+    },
+    {
+      "cycle": 24,
+      "n_success": 0
+    },
+    {
+      "cycle": 25,
+      "n_success": 0
+    },
+    {
+      "cycle": 26,
+      "n_success": 0
+    },
+    {
+      "cycle": 27,
+      "n_success": 0
+    },
+    {
+      "cycle": 28,
+      "n_success": 0
+    },
+    {
+      "cycle": 29,
+      "n_success": 0
+    },
+    {
+      "cycle": 30,
+      "n_success": 0
+    }
+  ],
+  "pnl_financial": {
+    "closed_positions": 0,
+    "net_pnl": 0,
+    "gross_profit": 0,
+    "gross_loss": 0,
+    "win_rate_dollar": 0.0,
+    "profit_factor": 0.0,
+    "expectancy": 0.0,
+    "avg_win": 0.0,
+    "avg_loss": 0.0,
+    "sharpe_per_trade": 0.0,
+    "max_drawdown_pct": 0.0,
+    "consecutive_losses": 0,
+    "per_symbol": {}
+  },
+  "pnl_per_cycle": [
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -1.68,
+      "open_positions_snapshot": {
+        "open_positions": 3,
+        "floating_pnl": -1.68,
+        "symbols": {
+          "BTCUSD": {
+            "n": 2,
+            "pnl": -0.36
+          },
+          "XAUUSD": {
+            "n": 1,
+            "pnl": -1.32
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.31,
+      "open_positions_snapshot": {
+        "open_positions": 3,
+        "floating_pnl": -0.31,
+        "symbols": {
+          "BTCUSD": {
+            "n": 2,
+            "pnl": -0.15
+          },
+          "XAUUSD": {
+            "n": 1,
+            "pnl": -0.16
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -1.47,
+      "open_positions_snapshot": {
+        "open_positions": 3,
+        "floating_pnl": -1.47,
+        "symbols": {
+          "BTCUSD": {
+            "n": 2,
+            "pnl": -0.27
+          },
+          "XAUUSD": {
+            "n": 1,
+            "pnl": -1.2
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": 1.26,
+      "open_positions_snapshot": {
+        "open_positions": 3,
+        "floating_pnl": 1.26,
+        "symbols": {
+          "BTCUSD": {
+            "n": 2,
+            "pnl": 0.43
+          },
+          "XAUUSD": {
+            "n": 1,
+            "pnl": 0.83
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": 0.09,
+      "open_positions_snapshot": {
+        "open_positions": 2,
+        "floating_pnl": 0.09,
+        "symbols": {
+          "BTCUSD": {
+            "n": 2,
+            "pnl": 0.09
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.72,
+      "open_positions_snapshot": {
+        "open_positions": 3,
+        "floating_pnl": -0.72,
+        "symbols": {
+          "BTCUSD": {
+            "n": 2,
+            "pnl": -0.41
+          },
+          "XAUUSD": {
+            "n": 1,
+            "pnl": -0.31
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -1.55,
+      "open_positions_snapshot": {
+        "open_positions": 5,
+        "floating_pnl": -1.55,
+        "symbols": {
+          "BTCUSD": {
+            "n": 2,
+            "pnl": -0.35
+          },
+          "XAUUSD": {
+            "n": 3,
+            "pnl": -1.2
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -2.29,
+      "open_positions_snapshot": {
+        "open_positions": 5,
+        "floating_pnl": -2.29,
+        "symbols": {
+          "BTCUSD": {
+            "n": 2,
+            "pnl": -0.07
+          },
+          "XAUUSD": {
+            "n": 3,
+            "pnl": -2.22
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -3.28,
+      "open_positions_snapshot": {
+        "open_positions": 4,
+        "floating_pnl": -3.28,
+        "symbols": {
+          "BTCUSD": {
+            "n": 2,
+            "pnl": -0.77
+          },
+          "XAUUSD": {
+            "n": 2,
+            "pnl": -2.51
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.33,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": -0.33,
+        "symbols": {
+          "BTCUSD": {
+            "n": 1,
+            "pnl": -0.33
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -1.24,
+      "open_positions_snapshot": {
+        "open_positions": 2,
+        "floating_pnl": -1.24,
+        "symbols": {
+          "XAUUSD": {
+            "n": 2,
+            "pnl": -1.24
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -1.3,
+      "open_positions_snapshot": {
+        "open_positions": 2,
+        "floating_pnl": -1.3,
+        "symbols": {
+          "BTCUSD": {
+            "n": 1,
+            "pnl": -0.01
+          },
+          "XAUUSD": {
+            "n": 1,
+            "pnl": -1.29
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": 0.43,
+      "open_positions_snapshot": {
+        "open_positions": 2,
+        "floating_pnl": 0.43,
+        "symbols": {
+          "BTCUSD": {
+            "n": 1,
+            "pnl": -0.04
+          },
+          "XAUUSD": {
+            "n": 1,
+            "pnl": 0.47
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": 1.26,
+      "open_positions_snapshot": {
+        "open_positions": 2,
+        "floating_pnl": 1.26,
+        "symbols": {
+          "BTCUSD": {
+            "n": 1,
+            "pnl": 0.1
+          },
+          "XAUUSD": {
+            "n": 1,
+            "pnl": 1.16
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.87,
+      "open_positions_snapshot": {
+        "open_positions": 2,
+        "floating_pnl": -0.87,
+        "symbols": {
+          "BTCUSD": {
+            "n": 1,
+            "pnl": -0.01
+          },
+          "XAUUSD": {
+            "n": 1,
+            "pnl": -0.86
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -0.33,
+      "open_positions_snapshot": {
+        "open_positions": 2,
+        "floating_pnl": -0.33,
+        "symbols": {
+          "BTCUSD": {
+            "n": 1,
+            "pnl": -0.04
+          },
+          "XAUUSD": {
+            "n": 1,
+            "pnl": -0.29
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -1.33,
+      "open_positions_snapshot": {
+        "open_positions": 2,
+        "floating_pnl": -1.33,
+        "symbols": {
+          "BTCUSD": {
+            "n": 1,
+            "pnl": 0.31
+          },
+          "XAUUSD": {
+            "n": 1,
+            "pnl": -1.64
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": -1.07,
+      "open_positions_snapshot": {
+        "open_positions": 2,
+        "floating_pnl": -1.07,
+        "symbols": {
+          "XAUUSD": {
+            "n": 2,
+            "pnl": -1.07
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": 2.21,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": 2.21,
+        "symbols": {
+          "XAUUSD": {
+            "n": 1,
+            "pnl": 2.21
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {}
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": 1.21,
+      "open_positions_snapshot": {
+        "open_positions": 1,
+        "floating_pnl": 1.21,
+        "symbols": {
+          "XAUUSD": {
+            "n": 1,
+            "pnl": 1.21
+          }
+        }
+      }
+    },
+    {
+      "closed_positions": 0,
+      "net_pnl": 0,
+      "gross_profit": 0,
+      "gross_loss": 0,
+      "win_rate_dollar": 0.0,
+      "profit_factor": 0.0,
+      "expectancy": 0.0,
+      "avg_win": 0.0,
+      "avg_loss": 0.0,
+      "sharpe_per_trade": 0.0,
+      "max_drawdown_pct": 0.0,
+      "consecutive_losses": 0,
+      "per_symbol": {},
+      "floating_pnl": 1.11,
+      "open_positions_snapshot": {
+        "open_positions": 3,
+        "floating_pnl": 1.11,
+        "symbols": {
+          "XAUUSD": {
+            "n": 1,
+            "pnl": 1.11
+          },
+          "ETHUSD": {
+            "n": 2,
+            "pnl": 0.0
+          }
+        }
+      }
+    }
+  ],
+  "close_mode": "ttl",
+  "close_ttl_sec": 600,
+  "go_no_go": {
+    "go": false,
+    "go_full": false,
+    "mandatory": {
+      "net_pnl_ok": true,
+      "win_rate_ok": false,
+      "profit_factor_ok": false,
+      "expectancy_ok": false,
+      "sample_size_ok": false
+    },
+    "recommended": {
+      "sharpe_ok": true,
+      "max_drawdown_ok": true,
+      "consec_losses_ok": true,
+      "slip_cost_ok": true,
+      "bias_ok": true
+    },
+    "agg_checks": {
+      "ks_triggers_zero": true,
+      "concentration_ok": true,
+      "hit_rate_ok": true,
+      "p95_latency_ok": false,
+      "ia_exec_ok": true,
+      "corr_filter_ok": true
+    },
+    "thresholds": {
+      "min_net_pnl": 0.0,
+      "min_win_rate_$": 0.45,
+      "min_profit_factor": 1.3,
+      "min_expectancy": 0.02,
+      "min_trades": 20,
+      "min_sharpe": 0.0,
+      "max_drawdown_pct": 0.05,
+      "max_consecutive_losses": 5,
+      "max_concentration_pct": 0.4,
+      "min_hit_rate_pct": 60.0,
+      "max_p95_latency_ms": 200.0,
+      "min_ia_exec": 30,
+      "max_slip_pts": 3.0,
+      "max_bias_ratio": 0.8
+    },
+    "failed_mandatory": [
+      "win_rate_ok",
+      "profit_factor_ok",
+      "expectancy_ok",
+      "sample_size_ok"
+    ],
+    "failed_recommended": [
+      "p95_latency_ok"
+    ]
+  },
+  "latency_circuit_breaker": {
+    "triggered": false,
+    "reason": "",
+    "current_p95_ms": 234.1,
+    "samples": 30
+  },
+  "performance_monitor": {
+    "samples": 0,
+    "alerts": [],
+    "alerts_count": 0
+  }
+}

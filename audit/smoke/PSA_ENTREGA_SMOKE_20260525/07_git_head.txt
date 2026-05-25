@@ -1,0 +1,4 @@
+54ee899 docs: fecho P0 mandato transição level 1 (B2-B6)
+54ee899b7afb5c01724be6e8a66d44646d70adc1
+Git SHA3 manual smoke:
+Log: audit/smoke/p0_smoke_manual_20260525_185900.log

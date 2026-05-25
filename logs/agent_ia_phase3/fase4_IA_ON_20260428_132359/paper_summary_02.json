@@ -1,0 +1,113 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-28T13:24:55.831535+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 5,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 1,
+    "executed": 1,
+    "skipped": 0,
+    "avg_hit_rate_134": 99.92,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 37.4,
+    "max_latency_ms": 37.4
+  },
+  "results": [
+    {
+      "asset": "US500",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 5.392857,
+        "atr_pct": 0.000756,
+        "spread": 0.4,
+        "atr_over_spread": 13.482,
+        "adx": 44.37,
+        "vol_ratio": 0.516,
+        "asset_class": "index",
+        "thr_atr_pct": 0.001,
+        "thr_atr_over_spr": 4.0,
+        "thr_adx": 18.0,
+        "thr_vol_ratio": 0.7,
+        "ok": false,
+        "reason": "atr_pct=0.076%<0.100%[index]|vol_ratio<0.7(index)"
+      }
+    },
+    {
+      "asset": "US500",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 5.392857,
+        "atr_pct": 0.000756,
+        "spread": 0.4,
+        "atr_over_spread": 13.482,
+        "adx": 44.37,
+        "vol_ratio": 0.52,
+        "asset_class": "index",
+        "thr_atr_pct": 0.001,
+        "thr_atr_over_spr": 4.0,
+        "thr_adx": 18.0,
+        "thr_vol_ratio": 0.7,
+        "ok": false,
+        "reason": "atr_pct=0.076%<0.100%[index]|vol_ratio<0.7(index)"
+      }
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 113.690714,
+        "atr_pct": 0.001494,
+        "spread": 8.0,
+        "atr_over_spread": 14.211,
+        "adx": 33.12,
+        "vol_ratio": 0.903,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct=0.149%<0.150%[crypto]"
+      }
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 113.690714,
+        "atr_pct": 0.001494,
+        "spread": 8.0,
+        "atr_over_spread": 14.211,
+        "adx": 33.12,
+        "vol_ratio": 0.909,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct=0.149%<0.150%[crypto]"
+      }
+    },
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 99.92,
+      "ic_95": "[99.7864%, 99.9677%]",
+      "margin_used": 150.0,
+      "lot": 0.01,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "160a3041a89a728d6c95e1b6"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260428_132441.log",
+  "checksum": "70bf3bfd6b57481a0b65b74ece79ed127c9065c18d07ad657ef73e71ffddc610"
+}

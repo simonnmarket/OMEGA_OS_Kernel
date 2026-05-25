@@ -1,0 +1,13 @@
+{
+  "generated_at_utc": "2026-05-18T20:46:18.959490+00:00",
+  "package_id": "PSA_PACOTE_TIER0_20260518_204618Z",
+  "git_head": "ca43ad2221636190d37808b010cdcc372e806717",
+  "mt5_terminal_build": 5833,
+  "mt5_account_login": 510075151,
+  "mt5_server": "HantecMarketsMU-MT5",
+  "mt5_server_timezone": "UTC+3 (broker)",
+  "export_tool": "psa_export_mt5_tier0.py",
+  "operator_id": "ENG-AUTO",
+  "window_from_utc": "2026-05-04T00:00:00+00:00",
+  "window_to_utc": "2026-05-18T23:59:59+00:00"
+}

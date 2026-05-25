@@ -1,0 +1,240 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-29T01:20:04.920112+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 14,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 1,
+    "executed": 1,
+    "skipped": 0,
+    "avg_hit_rate_134": 99.92,
+    "avg_slippage_pts": 10.0,
+    "avg_latency_ms": 36.5,
+    "max_latency_ms": 36.5
+  },
+  "results": [
+    {
+      "asset": "AUDJPY",
+      "timeframe": "H1",
+      "status": "SKIP_HARMONIC"
+    },
+    {
+      "asset": "AUDJPY",
+      "timeframe": "H4",
+      "status": "SKIP_HARMONIC"
+    },
+    {
+      "asset": "GBPJPY",
+      "timeframe": "H1",
+      "status": "SKIP_HARMONIC"
+    },
+    {
+      "asset": "GBPJPY",
+      "timeframe": "H4",
+      "status": "SKIP_HARMONIC"
+    },
+    {
+      "asset": "USDJPY",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.033857,
+        "atr_pct": 0.000212,
+        "spread": 0.009,
+        "atr_over_spread": 3.762,
+        "adx": 31.08,
+        "vol_ratio": 1.02,
+        "asset_class": "forex",
+        "thr_atr_pct": 0.0008,
+        "thr_atr_over_spr": 3.0,
+        "thr_adx": 15.0,
+        "thr_vol_ratio": 0.7,
+        "ok": false,
+        "reason": "atr_pct=0.021%<0.080%[forex]"
+      }
+    },
+    {
+      "asset": "USDJPY",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.033857,
+        "atr_pct": 0.000212,
+        "spread": 0.009,
+        "atr_over_spread": 3.762,
+        "adx": 31.08,
+        "vol_ratio": 1.02,
+        "asset_class": "forex",
+        "thr_atr_pct": 0.0008,
+        "thr_atr_over_spr": 3.0,
+        "thr_adx": 15.0,
+        "thr_vol_ratio": 0.7,
+        "ok": false,
+        "reason": "atr_pct=0.021%<0.080%[forex]"
+      }
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 84.882857,
+        "atr_pct": 0.001113,
+        "spread": 8.0,
+        "atr_over_spread": 10.61,
+        "adx": 22.05,
+        "vol_ratio": 1.094,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct=0.111%<0.150%[crypto]"
+      }
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 84.882857,
+        "atr_pct": 0.001113,
+        "spread": 8.0,
+        "atr_over_spread": 10.61,
+        "adx": 22.05,
+        "vol_ratio": 1.104,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct=0.111%<0.150%[crypto]"
+      }
+    },
+    {
+      "asset": "EURJPY",
+      "timeframe": "H1",
+      "status": "SKIP_HARMONIC"
+    },
+    {
+      "asset": "EURJPY",
+      "timeframe": "H4",
+      "status": "SKIP_HARMONIC"
+    },
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 99.92,
+      "ic_95": "[99.7864%, 99.9677%]",
+      "margin_used": 150.0,
+      "lot": 0.05,
+      "lot_v2": {
+        "vol_f": 1.0,
+        "conf_f": 0.786,
+        "perf_f": 1.0,
+        "kelly_f": 1.0,
+        "base_lot": 0.0181,
+        "risk_usd": 10.0
+      },
+      "retcode": 10009,
+      "slippage_pts": 10.0,
+      "checksum": "2b401e0cab08294a03d5b754"
+    },
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 5.682857,
+        "atr_pct": 0.001239,
+        "spread": 0.37,
+        "atr_over_spread": 15.359,
+        "adx": 39.86,
+        "vol_ratio": 0.001,
+        "asset_class": "metal",
+        "thr_atr_pct": 0.0012,
+        "thr_atr_over_spr": 4.0,
+        "thr_adx": 18.0,
+        "thr_vol_ratio": 0.7,
+        "ok": false,
+        "reason": "vol_ratio<0.7(metal)"
+      }
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 3.169714,
+        "atr_pct": 0.001389,
+        "spread": 0.44,
+        "atr_over_spread": 7.204,
+        "adx": 23.35,
+        "vol_ratio": 0.011,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct=0.139%<0.150%[crypto]|vol_ratio<0.8(crypto)"
+      }
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 3.1955,
+        "atr_pct": 0.0014,
+        "spread": 0.508,
+        "atr_over_spread": 6.29,
+        "adx": 23.35,
+        "vol_ratio": 0.021,
+        "asset_class": "crypto",
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "thr_vol_ratio": 0.8,
+        "ok": false,
+        "reason": "atr_pct=0.140%<0.150%[crypto]|vol_ratio<0.8(crypto)"
+      }
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260429_011940.log",
+  "positions_ledger": {
+    "n": 1,
+    "total_pnl": -4.3,
+    "realized_pnl": 0.0,
+    "realized_n": 0,
+    "positions": {
+      "180821354": {
+        "symbol": "XAUUSD",
+        "direction": "BUY",
+        "lot": 0.05,
+        "entry_price": 4585.94,
+        "sl": 4577.57,
+        "tp": 4599.62,
+        "entry_deal": 184076334,
+        "entry_time": "2026-04-29T01:19:57.790779+00:00",
+        "last_profit": -4.3,
+        "status": "open",
+        "spread_cost_usd": 1.85,
+        "slippage_pts": 10.0
+      }
+    }
+  },
+  "lot_calc_v2": {
+    "perf_n": 0,
+    "perf_f": 1.0,
+    "perf_trend": "flat",
+    "lot_range": "0.05–0.25",
+    "kelly_on": false
+  },
+  "checksum": "381c1d3a26e3e442412cf007bc2df389f6d49771e28ba5cb2b6744415ee1c853"
+}

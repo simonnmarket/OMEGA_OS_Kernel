@@ -1,0 +1,53 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-29T13:22:23.678555+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 0,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 0,
+    "executed": 0,
+    "skipped": 0,
+    "avg_hit_rate_134": 0,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 0.0,
+    "max_latency_ms": 0
+  },
+  "results": [],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260429_132223.log",
+  "positions_ledger": {
+    "n": 2,
+    "total_pnl": 15.57,
+    "realized_pnl": 0.0,
+    "realized_n": 0,
+    "positions": {
+      "181064069": {
+        "symbol": "USDJPY",
+        "direction": "BUY",
+        "lot": 0.25,
+        "entry_price": 159.934,
+        "entry_time": "2026-04-29T15:47:50+00:00",
+        "last_profit": 10.62,
+        "status": "open"
+      },
+      "181064090": {
+        "symbol": "USDJPY",
+        "direction": "BUY",
+        "lot": 0.12,
+        "entry_price": 159.936,
+        "entry_time": "2026-04-29T15:47:53+00:00",
+        "last_profit": 4.95,
+        "status": "open"
+      }
+    }
+  },
+  "lot_calc_v2": {
+    "perf_n": 0,
+    "perf_f": 1.0,
+    "perf_trend": "flat",
+    "lot_range": "0.01–0.25",
+    "kelly_on": false
+  },
+  "checksum": "43dee03d7f45f7bddbd8835dd017a14f3ef3561b022a8c784578081d745e1946"
+}

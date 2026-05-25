@@ -1,0 +1,69 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-26T22:34:44.638922+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 4,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 4,
+    "executed": 4,
+    "skipped": 0,
+    "avg_hit_rate_134": 95.2275,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 121.9,
+    "max_latency_ms": 282.0
+  },
+  "results": [
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 98.6,
+      "ic_95": "[97.9732%, 99.0373%]",
+      "margin_used": 150.0,
+      "lot": 0.1,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "ac85093e819ae5d1964ee2e8"
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 92.47,
+      "ic_95": "[90.9439%, 93.7486%]",
+      "margin_used": 150.0,
+      "lot": 0.1,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "e372b844ea6a12de52328147"
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 94.45,
+      "ic_95": "[93.1902%, 95.4908%]",
+      "margin_used": 1757.2,
+      "lot": 0.01,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "d58f84c77c647fc638119b2a"
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 95.39,
+      "ic_95": "[94.2208%, 96.3265%]",
+      "margin_used": 3210.5,
+      "lot": 0.01,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "688f3bf2a00d61c6d7953a64"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260426_223430.log",
+  "checksum": "d6617c26e3f7b3a7f1a3c3510e94b78d56b5911b18155f33e2126dbf447111cc"
+}

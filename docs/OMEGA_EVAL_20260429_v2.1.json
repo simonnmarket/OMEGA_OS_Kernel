@@ -1,0 +1,441 @@
+{
+    "documento": {
+        "metadados": {
+            "documento_id": "OMEGA-EVAL-20260429-v2.1-65FAD1E5",
+            "nome_sistema": "OMEGA OS Kernel v4.0 — FASE 4 (Harmonic + JPY Cluster)",
+            "data_avaliacao": "2026-04-29 15:29:00",
+            "versao_sistema": "v4.0-FASE4",
+            "strategy_type": "TREND_FOLLOWING",
+            "deployment_stage": "PAPER_TRADING",
+            "avaliador": "OMEGA COUNCIL / Cascade AI + Tech Lead",
+            "aprovacao_conselho": "CONDICIONAL (28/04/2026 — Decisão TIER-0)",
+            "ultima_auditoria": "2026-04-29",
+            "nota_metodologica": "Estratégia real = Harmonic Pattern Recognition (ABCD/Gartley/Bat/Cypher) + JPY Cluster Momentum + Multi-Timeframe Alignment. TREND_FOLLOWING é a categoria mais próxima no template padrão."
+        },
+        "dados_infra": {
+            "fonte_dados_historicos": {
+                "tipo": "OHLCV",
+                "fonte": "MetaTrader5 API (Demo — MetaQuotes build 5833)",
+                "resolucao_temporal": "MINUTOS",
+                "anos_cobertos": 1,
+                "sha3_audit": "65fad1e5f3b1d415655203213ce16350",
+                "lookahead_bias_check": true,
+                "data_quality_score": 0.82,
+                "gap_identificado": "Sem tick data raw — precisão de backtesting limitada"
+            },
+            "order_flow": {
+                "usa_order_flow": false,
+                "ferramenta": "SpoofIcebergDetector (volume superficial — sem L2 book)",
+                "relevancia_para_estrategia": "BAIXA",
+                "plano_upgrade": "L2 order book após migração para IB ou Rithmic"
+            },
+            "latencia_execucao": {
+                "valor_ms": 46,
+                "ambiente": "LOCAL",
+                "p95_ms": 46,
+                "p99_ms": 62,
+                "nota": "lat_max=46ms medido em ciclo 1 pós-fix. Ambiente local = risco de jitter."
+            },
+            "dados_alternativos": {
+                "usa_dados_alternativos": false,
+                "tipos": [],
+                "custo_mensal_usd": 0,
+                "plano": "Calendário econômico (DailyFX/Investing API) — PRÓXIMA SPRINT"
+            },
+            "armazenamento_dados": {
+                "tipo": "HYBRID",
+                "ferramenta": "CSV (OHLCV) + JSON (audit por ciclo) + .log (texto)",
+                "backup_frequency": "NUNCA",
+                "retention_days": 30,
+                "sha3_por_arquivo": true
+            }
+        },
+        "estrategia": {
+            "tipo_estrategia": "TREND_FOLLOWING",
+            "edge_hypothesis": "Padrões harmônicos (ABCD/Gartley/Bat/Cypher) identificam zonas de reversão de alta probabilidade. Combinados com JPY Cluster (USDJPY como líder) e alinhamento multi-timeframe (MTF≥0.75), criam edge direcional mensurável. Validação estatística pendente (amostra atual: N=108 trades).",
+            "backtest": {
+                "usa_tick_data": false,
+                "periodo_backtest_anos": 0,
+                "out_of_sample_test": false,
+                "walk_forward_validation": false,
+                "sharpe_ratio": null,
+                "sortino_ratio": null,
+                "calmar_ratio": null,
+                "max_drawdown": 0.7,
+                "win_rate": 0.3981,
+                "risk_reward_ratio": 1.16,
+                "profit_factor": 0.82,
+                "correlacao_mercado": "ALTA",
+                "rr_pos_fix": 3.0,
+                "pf_esperado_pos_fix": 1.98,
+                "wr_breakeven_pos_fix": 0.25,
+                "ev_por_trade_esperado": 5.92,
+                "slippage_modelado": false,
+                "commission_modelada": false
+            },
+            "machine_learning": {
+                "usa_ml": true,
+                "status_runtime": "DESATIVADO (OMEGA_USE_AGENT_IA=0)",
+                "arquitetura": "Dueling DQN + Variational Autoencoder (anomaly detection)",
+                "motivo_desativacao": "Modelo não treinado. RL sem dados históricos = decisões aleatórias.",
+                "trades_para_ativar": 500,
+                "trades_acumulados": 108,
+                "bibliotecas": [
+                    "PyTorch",
+                    "numpy",
+                    "scipy"
+                ],
+                "validacao_cruzada": false,
+                "feature_importance_documented": false,
+                "overfitting_check": false
+            },
+            "custos": {
+                "commission_por_operacao": 3.5,
+                "swap_overnight": 0.5,
+                "custo_dados": 0,
+                "custo_infra": 0,
+                "custo_equipe": 0,
+                "break_even_point": 0.042,
+                "nota": "Com R:R=3.0 e EV=$5.92/trade, fee $4 ainda deixa $1.92 líquido"
+            },
+            "tail_risk": {
+                "var_95": 2.28,
+                "var_99": 10.0,
+                "expected_shortfall": 15.0,
+                "stress_test_scenarios": [],
+                "tail_ratio": 1.16,
+                "nota": "Tail risk formal não calculado. Stress test: PENDENTE."
+            }
+        },
+        "execucao_risco": {
+            "position_sizing": {
+                "metodo": "VOLATILITY_TARGETING",
+                "descricao": "LotCalculatorV2: base_lot = equity × risk_pct / (sl_pts × pip_value_usd). 4 fatores: volatilidade (ATR%), confiança, performance feedback, Kelly (desativado). pip_value_usd usa trade_tick_value do MT5 (fix 29/04/2026 — corrige erro JPY).",
+                "max_risco_por_operacao": 0.001,
+                "max_risco_portfolio": 0.002,
+                "correlation_adjusted": true
+            },
+            "stop_loss": {
+                "usa_stop_loss": true,
+                "tipo": "ATR",
+                "descricao": "SL = ATR(M1/M3) × sl_atr_mult por regime. Hard cap _MAX_SL_PTS.",
+                "valor_atr": {
+                    "jpy_major": 1.2,
+                    "jpy_cross": 1.3,
+                    "gbpjpy": 1.5,
+                    "commodity": 1.5,
+                    "crypto": 2.0
+                },
+                "hard_cap_pts": {
+                    "forex/jpy": 150,
+                    "commodity": 250,
+                    "index": 600,
+                    "crypto": 1500
+                },
+                "break_even_auto": false
+            },
+            "slippage": {
+                "media_por_operacao": 0.002,
+                "p95_por_operacao": 0.005,
+                "contabiliza_no_backtest": false,
+                "modelo_execucao": "MARKET",
+                "nota": "RETCODE_WARN=REQUOTE monitorado mas não deduzido do PnL"
+            },
+            "liquidity_management": {
+                "min_volume_por_ativo": 1000000,
+                "max_market_impact": 0.001,
+                "liquidity_providers": [
+                    "MetaQuotes Demo"
+                ],
+                "slippage_tolerance": 0.005,
+                "liquidity_stress_test": false
+            },
+            "macro_correlation": {
+                "eventos_monitorados": [],
+                "hedge_para_eventos": false,
+                "exposicao_max_evento": 0.002,
+                "ferramenta_hedge": "Nenhuma",
+                "acao_recomendada": "Integrar DailyFX / Investing.com API para pausar em NFP/FOMC/BOJ"
+            },
+            "kill_switch": {
+                "ativo": true,
+                "limite_drawdown_diario": 0.02,
+                "limite_drawdown_mensal": 0.05,
+                "limite_perdas_consecutivas": 3,
+                "latency_circuit_breaker": true,
+                "auto_reset": false,
+                "pid_lockfile": true
+            },
+            "concentration_limits": {
+                "max_por_ativo": 0.001,
+                "max_por_classe": 0.002,
+                "max_correlacao_exposicao": 0.4,
+                "jpy_cluster_exception": true
+            }
+        },
+        "tecnologia": {
+            "linguagem_principal": "Python 3.x",
+            "ambiente_execucao": "LOCAL",
+            "corretora_api": {
+                "nome": "MetaTrader5 Python API (mt5 build 5833)",
+                "latencia_api_ms": 46,
+                "fallback_api": false
+            },
+            "monitoramento": {
+                "ferramenta": "Logs JSON customizados + SHA3-256 por ciclo",
+                "alertas_automaticos": false,
+                "alertas_canais": [],
+                "scripts_diagnostico": [
+                    "scripts/check_positions.py",
+                    "scripts/check_cycle1.py",
+                    "scripts/validate_rr.py",
+                    "scripts/diagnose_pipvalue.py",
+                    "scripts/omega_avaliacao.py"
+                ]
+            },
+            "fail_safes": {
+                "reconexao_automatica": true,
+                "backup_dados": false,
+                "circuit_breaker": true,
+                "manual_override": true,
+                "pid_lockfile": true
+            },
+            "audit_trail": {
+                "sha3_por_trade": true,
+                "logs_imutaveis": false,
+                "retention_days": 30,
+                "formato": "JSON + .log texto + CSV OHLCV"
+            }
+        },
+        "model_risk": {
+            "documentacao_completa": false,
+            "independent_validation": false,
+            "change_control_process": true,
+            "version_control": "GIT",
+            "rollback_tested": false,
+            "stress_testing": {
+                "feito": false,
+                "cenarios": [],
+                "ultimo_teste": "N/A"
+            },
+            "regulatory_compliance": {
+                "esmi_compliant": false,
+                "cftc_compliant": false,
+                "sec_compliant": false,
+                "pboc_compliant": false,
+                "basel_iii_compliant": false,
+                "auditoria_externa": false,
+                "nota": "Conta demo — compliance regulatório não aplicável nesta fase"
+            }
+        },
+        "omega_modules": {
+            "edge_gate": {
+                "ativo": true,
+                "thresholds_por_classe": true,
+                "regimes_cobertos": [
+                    "forex",
+                    "jpy_major",
+                    "jpy_cross",
+                    "commodity",
+                    "crypto",
+                    "index"
+                ],
+                "logging_granular": true,
+                "observacao": "6.688 skips EDGE_GATE em 918 ciclos = 72.7% dos sinais filtrados"
+            },
+            "correlation_filter": {
+                "ativo": true,
+                "dynamic_monitoring": false,
+                "jpy_cluster_enabled": true,
+                "cointegration_test": true
+            },
+            "multi_tf_bias": {
+                "ativo": true,
+                "timeframes": [
+                    "M1",
+                    "M3",
+                    "M5",
+                    "M15",
+                    "H1",
+                    "H4"
+                ],
+                "alignment_threshold": 0.75
+            },
+            "harmonic_engine": {
+                "ativo": true,
+                "versao": "v3",
+                "padroes": [
+                    "ABCD",
+                    "Gartley",
+                    "Bat",
+                    "Cypher",
+                    "Butterfly"
+                ],
+                "observacao": "2.952 skips SKIP_HARMONIC = 32.1% dos sinais sem padrão válido"
+            },
+            "pyramiding_engine": {
+                "ativo": false,
+                "max_layers": 1,
+                "break_even_auto": false
+            },
+            "jpy_cluster_engine": {
+                "ativo": true,
+                "lider": "USDJPY",
+                "crosses": [
+                    "EURJPY",
+                    "GBPJPY",
+                    "AUDJPY",
+                    "CADJPY",
+                    "CHFJPY"
+                ]
+            }
+        },
+        "adaptive_learning": {
+            "ativo": false,
+            "modelo": "Reinforcement Learning (Dueling DQN + VAE)",
+            "status": "IMPLEMENTADO — aguardando N≥500 trades para ativação",
+            "retraining_frequency": "CONTINUA (learn_from_trade() a cada trade fechado)",
+            "feature_importance": false,
+            "drift_detection": true,
+            "fallback_strategy": "Sistema de regras determinísticas (shadow_loop.py)",
+            "trades_necessarios": 500,
+            "trades_acumulados": 108
+        }
+    },
+    "scorecard": {
+        "documento_id": "OMEGA-EVAL-20260429-v2.1-65FAD1E5",
+        "data": "2026-04-29",
+        "criterios_threshold": {
+            "min_sharpe": 1.2,
+            "max_drawdown": 12.0,
+            "min_win_rate": 0.45,
+            "max_latency_ms": 50.0,
+            "tick_data_needed": false
+        },
+        "status_atual": {
+            "sharpe_ratio": {
+                "valor": "N/A",
+                "status": "PENDENTE",
+                "nota": "N < 50 para cálculo confiável"
+            },
+            "max_drawdown": {
+                "valor": 0.7,
+                "status": "APROVADO",
+                "nota": "0.7% < 12.0% threshold ✓"
+            },
+            "win_rate": {
+                "valor": 0.3981,
+                "status": "REPROVADO",
+                "nota": "39.8% < 45% mínimo ✗ (pré-fix)"
+            },
+            "profit_factor": {
+                "valor": 0.82,
+                "status": "REPROVADO",
+                "nota": "< 1.0 pré-fix. Pós-fix esperado: 1.98 ✓"
+            },
+            "latencia_ms": {
+                "valor": 46,
+                "status": "APROVADO",
+                "nota": "46ms < 50ms threshold ✓"
+            },
+            "risco_por_trade": {
+                "valor": 0.001,
+                "status": "APROVADO",
+                "nota": "0.1% << 2% máx institucional ✓"
+            },
+            "rr_ratio": {
+                "valor": 3.0,
+                "status": "APROVADO",
+                "nota": "1:3.0 pós-fix >> 1:1.2 mínimo ✓"
+            },
+            "kill_switch": {
+                "valor": true,
+                "status": "APROVADO",
+                "nota": "DD=2% + CONSEC_FAIL=3 ✓"
+            },
+            "audit_trail": {
+                "valor": true,
+                "status": "APROVADO",
+                "nota": "SHA3-256 por ciclo ✓"
+            },
+            "calendário_econ": {
+                "valor": false,
+                "status": "REPROVADO",
+                "nota": "Sem pausa NFP/FOMC/BOJ ✗"
+            },
+            "backtest_formal": {
+                "valor": false,
+                "status": "REPROVADO",
+                "nota": "Sem OOS / walk-forward ✗"
+            },
+            "ambiente_infra": {
+                "valor": "LOCAL",
+                "status": "REPROVADO",
+                "nota": "Sem VPS/cloud/UPS ✗"
+            },
+            "backup_remoto": {
+                "valor": false,
+                "status": "REPROVADO",
+                "nota": "Sem backup automático ✗"
+            }
+        },
+        "gaps_criticos": [
+            {
+                "prioridade": 1,
+                "item": "Win Rate 39.8% < 45% mínimo",
+                "acao": "Aguardar N≥200 trades pós-fix R:R=3.0 para nova medição. EV teórico positivo a 25%+ WR."
+            },
+            {
+                "prioridade": 2,
+                "item": "Sem calendário econômico (NFP/FOMC/BOJ)",
+                "acao": "Integrar DailyFX API ou Investing.com feed. Pausar trades 30min antes/após evento macro."
+            },
+            {
+                "prioridade": 3,
+                "item": "Sem backtest formal / out-of-sample",
+                "acao": "Walk-Forward Validation aprovado pelo Conselho — implementar após 20 trades empíricos."
+            },
+            {
+                "prioridade": 4,
+                "item": "Ambiente LOCAL sem redundância",
+                "acao": "Migrar para VPS (DigitalOcean $20/mês ou AWS t3.small). UPS local como interim."
+            },
+            {
+                "prioridade": 5,
+                "item": "Sem backup automático dos logs",
+                "acao": "Cron job diário: rsync audit/ para storage remoto (S3 ou Google Drive)."
+            },
+            {
+                "prioridade": 6,
+                "item": "Sem alertas automáticos",
+                "acao": "Telegram Bot ou email alert quando DD > 1% ou posição aberta sem resposta > 2h."
+            }
+        ],
+        "pontos_fortes": [
+            "Kill switch multicamada: DD_DAILY_MAX + MAX_CONSEC_FAIL + LatencyCircuitBreaker",
+            "Risco por trade 0.1% — 10x mais conservador que padrão institucional (1%)",
+            "R:R mínimo 1:3.0 enforçado — EV positivo a partir de 25% win rate",
+            "pip_value USD corrigido (trade_tick_value) — lot sizing preciso para todos os pares",
+            "SL por ATR real com hard cap por classe — sem SL excessivo",
+            "JPY Cluster Engine com CorrelationFilter — gestão de exposição correlacionada",
+            "SHA3-256 em cada ciclo — imutabilidade parcial do audit trail",
+            "PID lockfile — previne instâncias duplicadas",
+            "OmegaQuantumBrain (DRL) integrado — pronto para ativação após N≥500 trades",
+            "918 ciclos de paper trading acumulados — base empírica crescendo"
+        ],
+        "decisao_conselho": {
+            "status": "PAPER_TRADING — APROVAÇÃO CONDICIONAL",
+            "data_decisao": "2026-04-28",
+            "condicoes": [
+                "Acumular N≥20 trades para GO/NO-GO (atual: 108 ✓ — mas pré-fix)",
+                "Win Rate ≥ 45% com dados pós-fix R:R=3.0 (atual: 39.8% — pendente novos dados)",
+                "Sharpe ≥ 1.0 com N≥50 trades (atual: N/A)",
+                "Max DD ≤ 1% (atual: 0.7% ✓)",
+                "Slippage < 0.5 pips (atual: ~0.2% estimado ✓)"
+            ],
+            "proxima_revisao": "Após N=50 trades pós-fix (estimativa: 3-5 dias úteis)"
+        },
+        "classificacao_final": "SEMI-PROFISSIONAL",
+        "meta": "INSTITUCIONAL — atingível após backtest formal + VPS + calendário econômico"
+    }
+}

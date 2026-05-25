@@ -1,0 +1,20 @@
+[OMEGA] Orquestrador Global inicializado
+[OMEGA] SessÒo atual: OVERLAP
+[OMEGA] Ativos: ['BTCUSD', 'ETHUSD', 'SOLUSD', 'DOGUSD', 'XAUUSD', 'EURUSD']
+[OMEGA] Capital total: $10,000.00
+==============================================================================
+DIAGNOSTIC: C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\logs\agent_ia_phase3\diagnose_hold_20260426_203605.json
+SHA3:      f6f6a3496c5e9ec5553e8a6a96b0c812f269830b2514c9cb919816b4fe8e811a
+SESSION:   OVERLAP
+PRIORITY:  ['US500', 'NAS100', 'BTCUSD', 'ETHUSD', 'XAUUSD', 'SOLUSD', 'DOGUSD']
+MIN_CONF:  0.7
+STRATEGIES:['ADAPTIVE', 'ARBITRAGE', 'MEAN_REVERSION', 'SCALPING', 'MARKET_MAKING']
+------------------------------------------------------------------------------
+asset      g1_pri   g2_md    agent                        raw_action   final_action   reason
+BTCUSD     True     True     ?(0.00)                      -            HOLD           MEAN_REVERSION: Sem condiþ§es de entrada
+ETHUSD     True     True     ?(0.00)                      -            HOLD           Spread 965.0 > mßximo 2.5
+SOLUSD     True     True     ?(0.00)                      -            HOLD           MEAN_REVERSION: Sem condiþ§es de entrada
+DOGUSD     True     True     ?(0.00)                      -            HOLD           MEAN_REVERSION: Sem condiþ§es de entrada
+XAUUSD     True     True     ?(0.00)                      -            HOLD           MEAN_REVERSION: Sem condiþ§es de entrada
+EURUSD     False    True     ?(0.00)                      -            HOLD           Ativo nÒo prioritßrio para sessÒo OVERLAP
+==============================================================================

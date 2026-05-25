@@ -1,0 +1,132 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-29T12:31:56.825512+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 6,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 2,
+    "executed": 2,
+    "skipped": 0,
+    "avg_hit_rate_134": 100.0,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 130.4,
+    "max_latency_ms": 217.7
+  },
+  "results": [
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "SKIP_MIN_CONF_PROFILE",
+      "conf": 0.7,
+      "min_conf": 0.75
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "status": "SKIP_MIN_CONF_PROFILE",
+      "conf": 0.7,
+      "min_conf": 0.75
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H1",
+      "status": "SKIP_MIN_CONF_PROFILE",
+      "conf": 0.7,
+      "min_conf": 0.75
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H4",
+      "status": "SKIP_MIN_CONF_PROFILE",
+      "conf": 0.7,
+      "min_conf": 0.75
+    },
+    {
+      "asset": "USDJPY",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 100.0,
+      "ic_95": "[99.9242%, 100.0000%]",
+      "margin_used": 150.0,
+      "lot": 0.05,
+      "lot_v2": {
+        "vol_f": 1.0,
+        "conf_f": 0.786,
+        "perf_f": 1.0,
+        "kelly_f": 1.0,
+        "base_lot": 0.0039,
+        "risk_usd": 10.0
+      },
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "582cc4ec51bc62e0272c9612"
+    },
+    {
+      "asset": "USDJPY",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 100.0,
+      "ic_95": "[99.9246%, 100.0000%]",
+      "margin_used": 150.0,
+      "lot": 0.03,
+      "lot_v2": {
+        "vol_f": 1.0,
+        "conf_f": 0.786,
+        "perf_f": 1.0,
+        "kelly_f": 1.0,
+        "base_lot": 0.0039,
+        "risk_usd": 10.0
+      },
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "413caf075021500a2e40f25d"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260429_123140.log",
+  "positions_ledger": {
+    "n": 2,
+    "total_pnl": -0.45,
+    "realized_pnl": 0.0,
+    "realized_n": 0,
+    "positions": {
+      "181055972": {
+        "symbol": "USDJPY",
+        "direction": "BUY",
+        "lot": 0.05,
+        "entry_price": 159.883,
+        "sl": 159.815,
+        "tp": 160.005,
+        "entry_deal": 184407734,
+        "entry_time": "2026-04-29T12:31:54.019928+00:00",
+        "last_profit": -0.28,
+        "status": "open",
+        "spread_cost_usd": 45.0,
+        "slippage_pts": 0.0
+      },
+      "181055977": {
+        "symbol": "USDJPY",
+        "direction": "BUY",
+        "lot": 0.03,
+        "entry_price": 159.883,
+        "sl": 159.815,
+        "tp": 160.005,
+        "entry_deal": 184407741,
+        "entry_time": "2026-04-29T12:31:56.811317+00:00",
+        "last_profit": -0.17,
+        "status": "open",
+        "spread_cost_usd": 27.0,
+        "slippage_pts": 0.0
+      }
+    }
+  },
+  "lot_calc_v2": {
+    "perf_n": 0,
+    "perf_f": 1.0,
+    "perf_trend": "flat",
+    "lot_range": "0.05–0.25",
+    "kelly_on": false
+  },
+  "checksum": "848ff8b69757951c1f0c4ec4c61b32cf369d0c563a6555cac10de1ed5b647494"
+}

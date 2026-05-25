@@ -67,11 +67,13 @@ class ProgressivePartialCloseComplete:
     Implementação Tier-0 para OMEGA OS V3.2
     """
     def __init__(self):
+        # CEO 2026-05-14 FIX: TP1 antecipado 1.0→0.7 ATR — fecha 50% mais cedo
+        # Motivo: XAUUSD atingia TP1 mas revertia antes do próximo ciclo (20s polling)
         self.levels = [
-            {"atr": 1.0, "fraction": 0.50, "description": "Pesados", "executed": False},
-            {"atr": 2.0, "fraction": 0.30, "description": "Medios", "executed": False},
-            {"atr": 3.0, "fraction": 0.15, "description": "Leves", "executed": False},
-            {"atr": 5.0, "fraction": 0.05, "description": "Residual", "executed": False}
+            {"atr": 0.7, "fraction": 0.50, "description": "Pesados", "executed": False},
+            {"atr": 1.5, "fraction": 0.30, "description": "Medios", "executed": False},
+            {"atr": 2.5, "fraction": 0.15, "description": "Leves", "executed": False},
+            {"atr": 4.0, "fraction": 0.05, "description": "Residual", "executed": False}
         ]
         self.entry_price: Optional[float] = None
         self.initial_lots: Optional[float] = None
@@ -86,24 +88,52 @@ class ProgressivePartialCloseComplete:
         for level in self.levels:
             level["executed"] = False
     
+    # CEO 2026-05-14 FIX: breakeven autónomo a 0.4× ATR (antes 0.8×)
+    # Motivo: XAUUSD reverte 20pts em 5s; polling 20s não chegava a tempo com 0.8×ATR
+    # Com 0.4× ATR o breakeven dispara 2× mais cedo → protecção antes da reversão
+    BREAKEVEN_ATR_TRIGGER: float = 0.4
+    MIN_LOT: float = 0.01  # mínimo MT5
+
     def check_partials(self, current_price: float, atr_value: float) -> List[Dict]:
         orders = []
         if self.entry_price is None or self.direction == 0:
             return orders
-            
+
         # Calcular movimento em múltiplos de ATR
         if self.direction == 1:
             move_atr = (current_price - self.entry_price) / (atr_value + 1e-10)
         else:
             move_atr = (self.entry_price - current_price) / (atr_value + 1e-10)
-            
+
+        # ── FIX CEO 2026-05-14: BREAKEVEN AUTÓNOMO ──────────────────────────────
+        # Quando move >= BREAKEVEN_ATR_TRIGGER, mover SL para entry mesmo sem partial.
+        # Previne reversão de posição lucrativa para perda sem nenhuma captura de lucro.
+        # Este flag é rastreado no 1º level para não repetir após executado.
+        _breakeven_due = (
+            move_atr >= self.BREAKEVEN_ATR_TRIGGER
+            and not getattr(self, "_breakeven_sent", False)
+        )
+        if _breakeven_due:
+            orders.append({
+                "action": "MOVE_SL_TO_ENTRY",
+                "reason": f"Breakeven autonomo {move_atr:.2f}x ATR (trigger={self.BREAKEVEN_ATR_TRIGGER}x)",
+                "move_atr": move_atr
+            })
+            self._breakeven_sent = True
+
         for level in self.levels:
             if not level["executed"] and move_atr >= level["atr"]:
-                # Calcular lotes a fechar usando a fração dos lotes restantes (como sugeriu o analista superior)
-                close_lots = self.remaining_lots * level["fraction"]
+                close_lots = round(self.remaining_lots * level["fraction"], 2)
                 close_lots = min(close_lots, self.remaining_lots)
-                
-                if close_lots > 0:
+
+                # ── FIX CEO 2026-05-14: verificação lote mínimo ─────────────────
+                # Se close_lots < MIN_LOT, não enviar ordem parcial (MT5 rejeita).
+                # O breakeven autónomo acima ainda protege a posição.
+                # ── FIX CEO BTCUSD/micro-lote: não marcar nível como executado se
+                # não houve fecho — antes consumia o nível e nunca mais tentava.
+                if close_lots < self.MIN_LOT and self.remaining_lots >= self.MIN_LOT:
+                    close_lots = min(self.MIN_LOT, self.remaining_lots)
+                if close_lots >= self.MIN_LOT:
                     orders.append({
                         "action": "CLOSE_PARTIAL",
                         "lots": close_lots,
@@ -111,12 +141,14 @@ class ProgressivePartialCloseComplete:
                         "move_atr": move_atr
                     })
                     self.remaining_lots -= close_lots
-                level["executed"] = True
-                
-        # Move stop to breakeven após a 1a parcial
-        if len(orders) > 0 and any(level["executed"] for level in self.levels[:1]):
-            orders.append({"action": "MOVE_SL_TO_ENTRY", "reason": "Breakeven apos 1a parcial"})
-            
+                    level["executed"] = True
+                # Se ainda < MIN_LOT: não marcar executed — re-tenta no próximo ciclo
+
+        # Move SL para breakeven também após 1ª parcial executada (redundância segura)
+        if any(o["action"] == "CLOSE_PARTIAL" for o in orders):
+            if not any(o["action"] == "MOVE_SL_TO_ENTRY" for o in orders):
+                orders.append({"action": "MOVE_SL_TO_ENTRY", "reason": "Breakeven apos parcial"})
+
         return orders
 
 class EmergencyTailRiskHalt:

@@ -1,0 +1,45 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-26T21:52:29.541209+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 2,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 2,
+    "executed": 2,
+    "skipped": 0,
+    "avg_hit_rate_134": 95.535,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 48.4,
+    "max_latency_ms": 50.2
+  },
+  "results": [
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 98.6,
+      "ic_95": "[97.9732%, 99.0373%]",
+      "margin_used": 150.0,
+      "lot": 0.1,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "8606d8077abe5bfb939cf370"
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 92.47,
+      "ic_95": "[90.9439%, 93.7486%]",
+      "margin_used": 150.0,
+      "lot": 0.1,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "0d5226962c9ebd496e08ad39"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260426_215225.log",
+  "checksum": "b52700ddaacf1398ad635911bc2755b2d67aa938b105ae96e2c883b2d035c1a3"
+}

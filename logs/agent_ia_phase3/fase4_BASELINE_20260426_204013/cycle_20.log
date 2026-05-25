@@ -1,0 +1,49 @@
+2026-04-26 22:43:45,453 | INFO | ========================================================================
+2026-04-26 22:43:45,453 | INFO | OMEGA PAPER LOOP v3.0 | 4 ativos × 2 TFs | equity=USD 10000.00
+2026-04-26 22:43:45,453 | INFO | Risk/trade=0.25% | MaxPos=6 | DD_max=5% | MT5_MAGIC=234001
+2026-04-26 22:43:45,454 | INFO | ========================================================================
+2026-04-26 22:43:45,476 | INFO | MT5 conectado | build=5833 | trade_allowed=True | connected=True
+2026-04-26 22:43:45,478 | INFO | MT5 State Sync: 4 posicoes ativas detectadas.
+2026-04-26 22:43:45,478 | INFO | [TESSERACT] Engine ativado para Multi-Timeframe (H4->M1, H1->M3, e buffer de Confluência M15)
+2026-04-26 22:43:45,479 | INFO | [JOHANSEN] Banco de dados de Cointegração lido com sucesso. (1 anchors)
+2026-04-26 22:43:45,479 | INFO | [FIX5] Scheduler de-bias aplicado | ordem=['DOGUSD', 'SOLUSD', 'ETHUSD', 'BTCUSD']
+2026-04-26 22:43:45,480 | INFO | [DOGUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-26 22:43:47,424 | INFO | [DOGUSD H1] Sentiment: Current=0.09957 | Avg3=0.09924 | DIR: BUY (src=MOMENTUM_MT5)
+2026-04-26 22:43:47,426 | INFO | [DOGUSD H1] filling_mode=3 \u2192 tipo=IOC
+2026-04-26 22:43:47,426 | INFO | order_check OK | margin=23.93 balance=3346.27 equity=3345.41 free_margin=3321.48
+2026-04-26 22:43:47,459 | INFO | [DOGUSD H1] \u2705 ORDER DONE | deal=182359669 price=0.09957 slip=0.00pts lat=33ms
+2026-04-26 22:43:47,459 | INFO | [DOGUSD H1] FASE4 EXEC source=MOMENTUM_MT5 success=True deal=182359669
+2026-04-26 22:43:47,461 | INFO | [DOGUSD H1] MT5_PAPER_EXECUTE | hr134=100.00% IC=[99.8138%, 100.0000%] lot=0.10 slip=0.00 lat=33ms | SHA3=d05091838d298906...
+2026-04-26 22:43:47,462 | INFO | [DOGUSD H4] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-26 22:43:49,405 | INFO | [DOGUSD H4] Sentiment: Current=0.09957 | Avg3=0.09924 | DIR: BUY (src=MOMENTUM_MT5)
+2026-04-26 22:43:49,405 | INFO | [DOGUSD H4] filling_mode=3 \u2192 tipo=IOC
+2026-04-26 22:43:49,406 | INFO | order_check OK | margin=23.98 balance=3346.27 equity=3345.38 free_margin=3321.40
+2026-04-26 22:43:49,467 | INFO | [DOGUSD H4] \u2705 ORDER DONE | deal=182359670 price=0.09957 slip=0.00pts lat=61ms
+2026-04-26 22:43:49,467 | INFO | [DOGUSD H4] FASE4 EXEC source=MOMENTUM_MT5 success=True deal=182359670
+2026-04-26 22:43:49,469 | INFO | [DOGUSD H4] MT5_PAPER_EXECUTE | hr134=100.00% IC=[99.8247%, 100.0000%] lot=0.10 slip=0.00 lat=61ms | SHA3=9de062377ddac2ef...
+2026-04-26 22:43:49,469 | INFO | [SOLUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-26 22:43:49,470 | WARNING | [SOLUSD H1] MAX_POSITIONS=6 atingido.
+2026-04-26 22:43:49,470 | INFO | [SOLUSD H4] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-26 22:43:49,471 | WARNING | [SOLUSD H4] MAX_POSITIONS=6 atingido.
+2026-04-26 22:43:49,471 | INFO | [ETHUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-26 22:43:49,472 | WARNING | [ETHUSD H1] MAX_POSITIONS=6 atingido.
+2026-04-26 22:43:49,472 | INFO | [ETHUSD H4] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-26 22:43:49,472 | WARNING | [ETHUSD H4] MAX_POSITIONS=6 atingido.
+2026-04-26 22:43:49,472 | INFO | [BTCUSD H1] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-26 22:43:49,473 | WARNING | [BTCUSD H1] MAX_POSITIONS=6 atingido.
+2026-04-26 22:43:49,473 | INFO | [BTCUSD H4] \u2500\u2500 Ciclo \u2500\u2500
+2026-04-26 22:43:49,473 | WARNING | [BTCUSD H4] MAX_POSITIONS=6 atingido.
+2026-04-26 22:43:49,473 | INFO | MT5 desconectado.
+2026-04-26 22:43:49,473 | INFO | \u2500\u2500 ESTATÍSTICAS ONLINE \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+2026-04-26 22:43:49,475 | INFO |   total_signals             : 2
+2026-04-26 22:43:49,475 | INFO |   executed                  : 2
+2026-04-26 22:43:49,475 | INFO |   skipped                   : 0
+2026-04-26 22:43:49,475 | INFO |   avg_hit_rate_134          : 100.0
+2026-04-26 22:43:49,475 | INFO |   avg_slippage_pts          : 0.0
+2026-04-26 22:43:49,475 | INFO |   avg_latency_ms            : 47.3
+2026-04-26 22:43:49,475 | INFO |   max_latency_ms            : 61.3
+2026-04-26 22:43:49,475 | INFO | ========================================================================
+2026-04-26 22:43:49,475 | INFO | PAPER LOOP CONCLUÍDO | cycles=2 | KS=False
+2026-04-26 22:43:49,476 | INFO | SHA3 summary: dae335df221d7795ff5081958786b96a17f15ce56fa1b75bd32f58a5bfa3a4be
+2026-04-26 22:43:49,476 | INFO | Artifacts: C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\audit\paper
+2026-04-26 22:43:49,476 | INFO | ========================================================================

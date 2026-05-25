@@ -1,0 +1,88 @@
+{
+  "mission_id": "PAPER-USDJPY-H4-20260430T005539",
+  "asset": "USDJPY",
+  "timeframe": "H4",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-04-30T00:55:39.492555+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "USDJPY",
+    "timeframe": "H4",
+    "tier": "T1",
+    "hit_rate_134": 100.0,
+    "mach": 1.0,
+    "margin_used": 150.0,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 5094,
+    "total": 5094,
+    "p_hat": 1.0,
+    "lower_bound": 0.999246,
+    "upper_bound": 1.0,
+    "interval": "[99.9246%, 100.0000%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 5094,
+          "hits": 5094,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        },
+        "134_stats": {
+          "total_touches": 5094,
+          "hits": 5094,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        }
+      }
+    },
+    "price": {
+      "price": 0.0,
+      "base_price": 0.0,
+      "flash_crash_adjustment": null,
+      "metadata": {}
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 150.0,
+    "tier": "T1"
+  },
+  "execution": {
+    "retcode": 10009,
+    "retcode_str": "DONE",
+    "success": true,
+    "deal": 184824581,
+    "order": 181354639,
+    "fill_price": 160.298,
+    "ask_at_send": 160.298,
+    "sl_price": 160.23,
+    "tp_price": 160.502,
+    "volume_confirmed": 0.12,
+    "slippage_pts": 0.0,
+    "comment": "Request executed",
+    "request_id": 3784671798,
+    "latency_ms": 32.4,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.01,
+    "risk_usd": 10.0,
+    "stop_pts": 300.0,
+    "pip_value_lot": 0.623838,
+    "contract_size": 100000.0,
+    "price_at_calc": 160.298,
+    "sym_vol_min": 0.01
+  },
+  "latency_motor_s": 2.534,
+  "checksum": "f67a619767ffb70b8d722cbfabfc01146c405aa12d66a2f7cd2f1f17e23ae813"
+}

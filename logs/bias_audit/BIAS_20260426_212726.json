@@ -1,0 +1,113 @@
+{
+  "timestamp": "2026-04-26T21:27:26.896101",
+  "regime": "TRADICIONAL",
+  "windows": [
+    [
+      0,
+      24
+    ]
+  ],
+  "hora_atual": 23,
+  "em_janela": true,
+  "symbols_allowed_count": 523,
+  "symbols_blocked_count": 33,
+  "bias_report": [
+    {
+      "symbol": "EURUSD",
+      "buy": 1,
+      "sell": 0,
+      "bias": "SOMENTE_BUY",
+      "statistical_validation": {
+        "total_trades": 1,
+        "buy_proportion": 1.0,
+        "wilson_ci_95": [
+          0.2065,
+          1
+        ],
+        "z_statistic": 1.0,
+        "p_value": 0.317311,
+        "significant": false,
+        "bias_classification": "NOT_SIGNIFICANT",
+        "expected_under_null": 0.5
+      }
+    },
+    {
+      "symbol": "GBPUSD",
+      "buy": 0,
+      "sell": 1,
+      "bias": "SOMENTE_SELL",
+      "statistical_validation": {
+        "total_trades": 1,
+        "buy_proportion": 0.0,
+        "wilson_ci_95": [
+          0,
+          0.7935
+        ],
+        "z_statistic": -1.0,
+        "p_value": 0.317311,
+        "significant": false,
+        "bias_classification": "NOT_SIGNIFICANT",
+        "expected_under_null": 0.5
+      }
+    },
+    {
+      "symbol": "XAUUSD",
+      "buy": 0,
+      "sell": 2,
+      "bias": "SOMENTE_SELL",
+      "statistical_validation": {
+        "total_trades": 2,
+        "buy_proportion": 0.0,
+        "wilson_ci_95": [
+          0,
+          0.6576
+        ],
+        "z_statistic": -1.4142,
+        "p_value": 0.157299,
+        "significant": false,
+        "bias_classification": "NOT_SIGNIFICANT",
+        "expected_under_null": 0.5
+      }
+    }
+  ],
+  "alerts": [
+    {
+      "severity": "WARNING",
+      "type": "ELEVATED_CONCENTRATION",
+      "message": "XAUUSD concentra 50.0% dos trades (warning: 50.0%)",
+      "symbol": "XAUUSD",
+      "concentration": 0.5
+    }
+  ],
+  "cqo_validators": {
+    "crisis_probability": {
+      "status": "PASS",
+      "value": 0.8656850798206673,
+      "risk_level": "CRITICAL",
+      "ci_95": [
+        0.51131,
+        1.0
+      ],
+      "threshold": 0.7,
+      "inputs": {
+        "_comment": "Inputs para CrisisProbabilityValidator — actualizar diariamente",
+        "_updated": "2026-04-26",
+        "DXY_change_pct": -1.8,
+        "XAU_change_pct": 8.5,
+        "Buffett_cash_B": 325.0,
+        "BlackRock_equities_change_pct": -5.2
+      }
+    },
+    "slo_validator": {
+      "status": "PASS",
+      "rtt_ms": 0.24,
+      "adequate": true
+    }
+  },
+  "audit_trail": {
+    "sha3_256": "48e049b64a11f5d0e90bbfecfb196293c3fea7ab6f226f21fc3b52923141fb40",
+    "version": "bias_audit_v2.0_tier0",
+    "validator": "PSA-WIND + CQO"
+  },
+  "audit_id": "BIAS_20260426_212726"
+}

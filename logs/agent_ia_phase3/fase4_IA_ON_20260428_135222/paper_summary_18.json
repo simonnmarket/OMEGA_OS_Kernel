@@ -1,0 +1,93 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-28T14:05:01.137181+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 1,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 1,
+    "executed": 1,
+    "skipped": 0,
+    "avg_hit_rate_134": 99.53,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 34.8,
+    "max_latency_ms": 34.8
+  },
+  "results": [
+    {
+      "asset": "GER40",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 99.53,
+      "ic_95": "[99.2852%, 99.6935%]",
+      "margin_used": 412.3,
+      "lot": 0.01,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "2378bd64e711b9966bbf406a"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260428_140458.log",
+  "positions_ledger": {
+    "n": 5,
+    "total_pnl": 0.97,
+    "positions": {
+      "180604935": {
+        "symbol": "GER40",
+        "direction": "BUY",
+        "lot": 0.01,
+        "entry_price": 24015.0,
+        "sl": 24006.75,
+        "tp": 24023.25,
+        "entry_deal": 183774460,
+        "entry_time": "2026-04-28T14:05:01.117723+00:00",
+        "last_profit": 0.02,
+        "status": "open"
+      },
+      "180604948": {
+        "symbol": "GER40",
+        "direction": "BUY",
+        "lot": 0.01,
+        "entry_price": 24015.0,
+        "sl": 24006.75,
+        "tp": 24023.25,
+        "entry_deal": 183774460,
+        "entry_time": "2026-04-28T14:05:01.117723+00:00",
+        "last_profit": 0.04,
+        "status": "open"
+      },
+      "180605409": {
+        "symbol": "GER40",
+        "direction": "BUY",
+        "lot": 0.01,
+        "entry_price": 24015.0,
+        "sl": 24006.75,
+        "tp": 24023.25,
+        "entry_deal": 183774460,
+        "entry_time": "2026-04-28T14:05:01.117723+00:00",
+        "last_profit": -0.0,
+        "status": "open"
+      },
+      "180604422": {
+        "symbol": "BTCUSD",
+        "direction": "BUY",
+        "lot": 0.01,
+        "entry_price": 76094.67,
+        "entry_time": "2026-04-28T17:03:51+00:00",
+        "last_profit": -0.05,
+        "status": "open"
+      },
+      "180605119": {
+        "symbol": "XAUUSD",
+        "direction": "SELL",
+        "lot": 0.01,
+        "entry_price": 4567.28,
+        "entry_time": "2026-04-28T17:04:44+00:00",
+        "last_profit": 0.96,
+        "status": "open"
+      }
+    }
+  },
+  "checksum": "3d88a49241a559a0f526d9ac793d278c32fd7f62b2febd483efba6e033411c10"
+}

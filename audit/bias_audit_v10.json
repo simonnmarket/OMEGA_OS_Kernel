@@ -1,0 +1,125 @@
+{
+  "audit_type": "V10_BIAS_STRESS",
+  "timestamp": "2026-04-24T20:14:27.094712+00:00",
+  "direction": {
+    "buy": 1,
+    "sell": 4,
+    "total": 5,
+    "pct_buy": 20.0
+  },
+  "symbols": [
+    "EURUSD",
+    "GBPUSD",
+    "XAUUSD"
+  ],
+  "multi_asset": true,
+  "both_sides_active": true,
+  "execution": {
+    "avg_latency_ms": 133.9,
+    "max_latency_ms": 424.5,
+    "avg_slippage_pts": 0.0,
+    "total_pnl": 3.34
+  },
+  "retcodes": {
+    "DONE": 4
+  },
+  "positions": [
+    {
+      "symbol": "XAUUSD",
+      "direction": "SELL",
+      "lot": 0.01,
+      "price_open": 4708.96,
+      "sl": 4713.04,
+      "tp": 4704.88,
+      "profit": 2.54,
+      "magic": 234001,
+      "ticket": 179457210
+    },
+    {
+      "symbol": "GBPUSD",
+      "direction": "SELL",
+      "lot": 0.01,
+      "price_open": 1.35317,
+      "sl": 1.35617,
+      "tp": 1.3501699999999999,
+      "profit": -0.18,
+      "magic": 234001,
+      "ticket": 179457325
+    },
+    {
+      "symbol": "XAUUSD",
+      "direction": "SELL",
+      "lot": 0.01,
+      "price_open": 4706.9,
+      "sl": 4709.9,
+      "tp": 4703.9,
+      "profit": 0.48,
+      "magic": 234001,
+      "ticket": 179458073
+    },
+    {
+      "symbol": "XAUUSD",
+      "direction": "SELL",
+      "lot": 0.01,
+      "price_open": 4706.9,
+      "sl": 4710.98,
+      "tp": 4702.82,
+      "profit": 0.48,
+      "magic": 234001,
+      "ticket": 179458077
+    },
+    {
+      "symbol": "EURUSD",
+      "direction": "BUY",
+      "lot": 0.01,
+      "price_open": 1.17194,
+      "sl": 1.16894,
+      "tp": 1.17494,
+      "profit": 0.02,
+      "magic": 234001,
+      "ticket": 179458150
+    }
+  ],
+  "reports": [
+    {
+      "asset": "EURUSD",
+      "tf": "H1",
+      "action": "MT5_PAPER_EXECUTE",
+      "retcode": 10009,
+      "retcode_str": "DONE",
+      "slippage_pts": 0.0,
+      "latency_ms": 44.5,
+      "fill_price": 1.17194
+    },
+    {
+      "asset": "GBPUSD",
+      "tf": "H1",
+      "action": "MT5_PAPER_EXECUTE",
+      "retcode": 10009,
+      "retcode_str": "DONE",
+      "slippage_pts": 0.0,
+      "latency_ms": 424.5,
+      "fill_price": 1.35317
+    },
+    {
+      "asset": "XAUUSD",
+      "tf": "H1",
+      "action": "MT5_PAPER_EXECUTE",
+      "retcode": 10009,
+      "retcode_str": "DONE",
+      "slippage_pts": 0.0,
+      "latency_ms": 28.7,
+      "fill_price": 4706.9
+    },
+    {
+      "asset": "XAUUSD",
+      "tf": "H4",
+      "action": "MT5_PAPER_EXECUTE",
+      "retcode": 10009,
+      "retcode_str": "DONE",
+      "slippage_pts": 0.0,
+      "latency_ms": 37.8,
+      "fill_price": 4706.9
+    }
+  ]
+}

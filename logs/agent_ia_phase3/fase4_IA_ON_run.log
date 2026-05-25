@@ -1,0 +1,39 @@
+[FASE4] label=IA_ON cycles=30 out_dir=C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\logs\agent_ia_phase3\fase4_IA_ON_20260426_195627
+[CYCLE 01/30] rc=0 executed=2 hit=94.92 lat_max=42.7 closed=2
+[CYCLE 02/30] rc=0 executed=2 hit=94.92 lat_max=89.7 closed=2
+[CYCLE 03/30] rc=0 executed=2 hit=94.92 lat_max=110.2 closed=2
+[CYCLE 04/30] rc=0 executed=2 hit=94.92 lat_max=190.4 closed=2
+[CYCLE 05/30] rc=0 executed=2 hit=94.92 lat_max=85.4 closed=2
+[CYCLE 06/30] rc=0 executed=2 hit=94.92 lat_max=214.1 closed=2
+[CYCLE 07/30] rc=0 executed=2 hit=94.92 lat_max=46.8 closed=2
+[CYCLE 08/30] rc=0 executed=2 hit=94.92 lat_max=36.2 closed=2
+[CYCLE 09/30] rc=0 executed=2 hit=94.92 lat_max=91.9 closed=2
+[CYCLE 10/30] rc=0 executed=2 hit=94.92 lat_max=270.2 closed=2
+[CYCLE 11/30] rc=0 executed=2 hit=94.92 lat_max=107.2 closed=2
+[CYCLE 12/30] rc=0 executed=2 hit=94.92 lat_max=36.4 closed=2
+[CYCLE 13/30] rc=0 executed=2 hit=94.92 lat_max=33.6 closed=2
+[CYCLE 14/30] rc=0 executed=2 hit=94.92 lat_max=139.6 closed=2
+[CYCLE 15/30] rc=0 executed=2 hit=94.92 lat_max=305.1 closed=2
+[CYCLE 16/30] rc=0 executed=2 hit=94.92 lat_max=39.2 closed=2
+[CYCLE 17/30] rc=0 executed=2 hit=94.92 lat_max=211.5 closed=2
+[CYCLE 18/30] rc=0 executed=2 hit=94.92 lat_max=82.3 closed=2
+[CYCLE 19/30] rc=0 executed=2 hit=94.92 lat_max=80.7 closed=2
+[CYCLE 20/30] rc=0 executed=2 hit=94.92 lat_max=35.0 closed=2
+[CYCLE 21/30] rc=0 executed=2 hit=94.92 lat_max=301.3 closed=2
+[CYCLE 22/30] rc=0 executed=2 hit=94.92 lat_max=302.0 closed=2
+[CYCLE 23/30] rc=0 executed=2 hit=94.92 lat_max=71.1 closed=2
+[CYCLE 24/30] rc=0 executed=2 hit=94.92 lat_max=304.3 closed=2
+[CYCLE 25/30] rc=0 executed=2 hit=94.92 lat_max=50.1 closed=2
+[CYCLE 26/30] rc=0 executed=2 hit=94.92 lat_max=33.9 closed=2
+[CYCLE 27/30] rc=0 executed=2 hit=94.92 lat_max=417.2 closed=2
+[CYCLE 28/30] rc=0 executed=2 hit=94.92 lat_max=47.5 closed=2
+[CYCLE 29/30] rc=0 executed=2 hit=94.92 lat_max=54.7 closed=2
+[CYCLE 30/30] rc=0 executed=2 hit=94.92 lat_max=40.1 closed=2
+======================================================================
+[FASE4 IA_ON] AGGREGATE: C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\logs\agent_ia_phase3\fase4_IA_ON_20260426_195627\fase4_IA_ON_aggregate.json
+  cycles=30 total_trades=60 executed=60
+  hit_rate_avg=94.92 latency_p95=305.1ms latency_max=417.2ms
+  ks_triggers=0 max_concentration=100.0% on BTCUSD
+  retcodes={'10009': 60}
+  SHA3=52b67f73981cca4ad3523ee141e9a209781eafdbde8292e13bb9239ea3205b98
+======================================================================

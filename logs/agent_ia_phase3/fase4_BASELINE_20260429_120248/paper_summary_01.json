@@ -1,0 +1,120 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-29T12:03:00.931737+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 4,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 2,
+    "executed": 2,
+    "skipped": 0,
+    "avg_hit_rate_134": 100.0,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 35.9,
+    "max_latency_ms": 39.0
+  },
+  "results": [
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H1",
+      "status": "SKIP_MTF_BIAS",
+      "macro_bias": "SELL",
+      "signal_dir": "BUY",
+      "alignment": 1.0
+    },
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H4",
+      "status": "SKIP_MTF_BIAS",
+      "macro_bias": "SELL",
+      "signal_dir": "BUY",
+      "alignment": 1.0
+    },
+    {
+      "asset": "USDJPY",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 100.0,
+      "ic_95": "[99.9242%, 100.0000%]",
+      "margin_used": 150.0,
+      "lot": 0.05,
+      "lot_v2": {
+        "vol_f": 1.0,
+        "conf_f": 0.786,
+        "perf_f": 1.0,
+        "kelly_f": 1.0,
+        "base_lot": 0.0048,
+        "risk_usd": 10.0
+      },
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "a95099a985e40af55f93a1e9"
+    },
+    {
+      "asset": "USDJPY",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 100.0,
+      "ic_95": "[99.9246%, 100.0000%]",
+      "margin_used": 150.0,
+      "lot": 0.03,
+      "lot_v2": {
+        "vol_f": 1.0,
+        "conf_f": 0.786,
+        "perf_f": 1.0,
+        "kelly_f": 1.0,
+        "base_lot": 0.0048,
+        "risk_usd": 10.0
+      },
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "6f3ea1ecf774ac7b208e1cbb"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260429_120249.log",
+  "positions_ledger": {
+    "n": 2,
+    "total_pnl": -0.53,
+    "realized_pnl": 0.0,
+    "realized_n": 0,
+    "positions": {
+      "181040591": {
+        "symbol": "USDJPY",
+        "direction": "BUY",
+        "lot": 0.05,
+        "entry_price": 159.847,
+        "sl": 159.777,
+        "tp": 159.917,
+        "entry_deal": 184386708,
+        "entry_time": "2026-04-29T12:02:58.196702+00:00",
+        "last_profit": -0.34,
+        "status": "open",
+        "spread_cost_usd": 50.0,
+        "slippage_pts": 0.0
+      },
+      "181040614": {
+        "symbol": "USDJPY",
+        "direction": "BUY",
+        "lot": 0.03,
+        "entry_price": 159.846,
+        "sl": 159.776,
+        "tp": 159.916,
+        "entry_deal": 184386743,
+        "entry_time": "2026-04-29T12:03:00.906114+00:00",
+        "last_profit": -0.19,
+        "status": "open",
+        "spread_cost_usd": 30.0,
+        "slippage_pts": 0.0
+      }
+    }
+  },
+  "lot_calc_v2": {
+    "perf_n": 0,
+    "perf_f": 1.0,
+    "perf_trend": "flat",
+    "lot_range": "0.05–0.25",
+    "kelly_on": false
+  },
+  "checksum": "710e3c65acec2adeb73f00a2f14b99e685fb48067ee7953a57c004af1eebd7c2"
+}

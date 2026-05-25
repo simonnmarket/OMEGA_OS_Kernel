@@ -28,9 +28,9 @@ def parse_cli_args():
     )
     parser.add_argument(
         "--mode",
-        choices=["paper", "live"],
+        choices=["paper", "live", "shadow"],
         default="paper",
-        help="Execution mode (default: paper)",
+        help="Execution mode: paper (demo orders), shadow (signals only), live",
     )
     parser.add_argument(
         "--regime",
@@ -48,6 +48,29 @@ def parse_cli_args():
         "--dry-run",
         action="store_true",
         help="Validar configuração sem executar trades",
+    )
+    parser.add_argument(
+        "--use-shadow-loop",
+        action="store_true",
+        help="Usar shadow_loop.py como pipeline principal (recomendado)",
+    )
+    parser.add_argument(
+        "--ativos",
+        nargs="+",
+        default=None,
+        help="Lista de ativos para shadow loop (ex: XAUUSD GBPUSD)",
+    )
+    parser.add_argument(
+        "--timeframes",
+        nargs="+",
+        default=["H1", "H4"],
+        help="Timeframes para shadow loop (default: H1 H4)",
+    )
+    parser.add_argument(
+        "--equity",
+        type=float,
+        default=10000.0,
+        help="Equity inicial para shadow loop (default: 10000)",
     )
     args, unknown = parser.parse_known_args()
     return args, unknown
@@ -196,6 +219,8 @@ class OmegaKernel:
 
     def execute_mt5_order(self, symbol, action, volume, sl_points, tp_points):
         import MetaTrader5 as mt5
+        from modules.mt5_position_tag import build_v2_order_comment
+
         info = mt5.symbol_info(symbol)
         if not info: return False
         
@@ -220,12 +245,11 @@ class OmegaKernel:
             "sl": sl,
             "tp": tp,
             "deviation": 20,
-            "magic": 999111,
-            "comment": "OMEGA_LIVE_SIG",
+            "comment": build_v2_order_comment("SIG", action),
             "type_time": mt5.ORDER_TIME_GTC,
             "type_filling": mt5.ORDER_FILLING_IOC,
         }
-        
+
         res = mt5.order_send(request)
         if res.retcode != mt5.TRADE_RETCODE_DONE:
             request["type_filling"] = mt5.ORDER_FILLING_RETURN
@@ -245,6 +269,8 @@ class OmegaKernel:
         print("="*60)
         
         import MetaTrader5 as mt5
+        from modules.mt5_position_tag import is_omega_tracked_position
+
         if not mt5.initialize():
             print("[-] Falha ao inicializar o MetaTrader 5:", mt5.last_error())
             return
@@ -386,8 +412,13 @@ class OmegaKernel:
                     if all_positions is None:
                         total_omega_trades = 0
                     else:
-                        # Cada disparo tem 3 tickets (fragmentação). Contamos 1 trade ativo por Símbolo OMEGA
-                        total_omega_trades = len(set(p.symbol for p in all_positions if p.magic and 999111 <= p.magic <= 999115))
+                        total_omega_trades = len(
+                            set(
+                                p.symbol
+                                for p in all_positions
+                                if is_omega_tracked_position(p)
+                            ),
+                        )
                         
                     if total_omega_trades >= 15:
                         print(f"   -> [{sym}] ⛔ TREASURY LOCK: Sistema atingiu Limite de Correlacao Simultanea (Max 15 Posicoes). Entrada Ignorada.")
@@ -489,6 +520,33 @@ class OmegaKernel:
 if __name__ == '__main__':
     def main() -> int:
         kernel = OmegaKernel()
+        if CLI_ARGS.dry_run:
+            print("\n>> [DRY-RUN] Boot concluído com sucesso. Nenhuma operação será executada.")
+            print(f"   Mode: {CLI_ARGS.mode} | Regime: {CLI_ARGS.regime}")
+            print(f"   Strategies loaded: {list(kernel.strategies.keys())}")
+            print(f"   Shadow loop available: {CLI_ARGS.use_shadow_loop}")
+            return 0
+
+        # ── Shadow Loop Pipeline (recomendado pelo Conselho) ──
+        if CLI_ARGS.use_shadow_loop or CLI_ARGS.mode == "shadow":
+            print("\n>> Delegando execução ao SHADOW LOOP ENGINE v3.0...")
+            from core_engines.shadow_loop import run_loop
+            from modules.omega_asset_schedule import resolve_shadow_loop_assets
+
+            mode = "shadow" if CLI_ARGS.mode == "shadow" else "paper"
+            ativos, _sched_meta = resolve_shadow_loop_assets(CLI_ARGS.ativos, PROJ_PATH)
+            if _sched_meta.get("source") == "schedule":
+                print(
+                    f">> [ASSET_SCHEDULE] bucket={_sched_meta.get('bucket')} "
+                    f"class={_sched_meta.get('class')} ativos={ativos} tz={_sched_meta.get('timezone')}"
+                )
+            result = run_loop(ativos, CLI_ARGS.timeframes, mode, CLI_ARGS.equity)
+            if result and result.get("kill_switch"):
+                print("\n>> KILL SWITCH ACTIVADO. Execução terminada.")
+                return 1
+            return 0
+
+        # ── Pipeline Original (main.py run_live) ──
         kernel.run_live()
         return 0
 

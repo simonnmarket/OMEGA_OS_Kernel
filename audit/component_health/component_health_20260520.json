@@ -1,0 +1,205 @@
+{
+  "generated_at_utc": "2026-05-19T20:15:35.580254+00:00",
+  "shadow_loop_flags": {
+    "MICRO_FILTER": true,
+    "ZONE_NAV": true,
+    "ZAK": true,
+    "TESSERACT": true,
+    "MP": true,
+    "KALMAN": true,
+    "USE_AGENT_IA": true,
+    "AGENT_IA_AVAILABLE": true,
+    "RCV_GATE": true
+  },
+  "components": [
+    {
+      "component": "Weis Wave Engine",
+      "source": "modules.weis_wave_tracker (WeisWaveAnalyzer 1+2)",
+      "shadow_flag": "_KERNEL_MODULE_MAP:weis_wave",
+      "module": "modules.weis_wave_tracker",
+      "class": "ComponentEngine",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "Volume Order Flow / Delta",
+      "source": "modules.volume_order_flow",
+      "shadow_flag": "_KERNEL_MODULE_MAP:vof",
+      "module": "modules.volume_order_flow",
+      "class": "ComponentEngine",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "PVSRA",
+      "source": "modules.pvsra_analyzer",
+      "shadow_flag": "_KERNEL_MODULE_MAP:pvsra",
+      "module": "modules.pvsra_analyzer",
+      "class": "ComponentEngine",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "VWAP",
+      "source": "modules.vwap_engine",
+      "shadow_flag": "_KERNEL_MODULE_MAP:vwap",
+      "module": "modules.vwap_engine",
+      "class": "ComponentEngine",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "Volume Footprint",
+      "source": "modules.volume_footprint_engine",
+      "shadow_flag": "_KERNEL_MODULE_MAP:footprint",
+      "module": "modules.volume_footprint_engine",
+      "class": "ComponentEngine",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "STO Institutional Player",
+      "source": "modules.sto_institutional_detector",
+      "shadow_flag": "_KERNEL_MODULE_MAP:sto_inst",
+      "module": "modules.sto_institutional_detector",
+      "class": "ComponentEngine",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "STO Fused Microstructure",
+      "source": "modules.sto_fused_microstructure_engine",
+      "shadow_flag": "_KERNEL_MODULE_MAP:sto_fused",
+      "module": "modules.sto_fused_microstructure_engine",
+      "class": "ComponentEngine",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "Pullback Re-Entry (Kalman)",
+      "source": "modules.kalman_pullback_engine",
+      "shadow_flag": "_KALMAN_ENGINE",
+      "module": "modules.kalman_pullback_engine",
+      "class": "OmegaKalmanPullbackEngine",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "Market Profile (TPO)",
+      "source": "modules.omega_market_profile_engine",
+      "shadow_flag": "_MP_AVAIL / MP-GATE",
+      "module": "modules.omega_market_profile_engine",
+      "class": "ComponentEngine",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "Wyckoff Analyzer",
+      "source": "modules.wyckoff_analyzer + WyckoffMarlin synapse",
+      "shadow_flag": "_KERNEL_MODULE_MAP:wyckoff",
+      "module": "modules.wyckoff_analyzer",
+      "class": "ComponentEngine",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "Liquidity Mining / Absorption",
+      "source": "modules.liquidity_absorption_engine",
+      "shadow_flag": "_KERNEL_MODULE_MAP:liq_abs",
+      "module": "modules.liquidity_absorption_engine",
+      "class": "ComponentEngine",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "Zone Navigator v3",
+      "source": "modules.omega_zone_navigator",
+      "shadow_flag": "_ZONE_NAV_AVAIL",
+      "module": "modules.omega_zone_navigator",
+      "class": "ZoneNavigatorV3",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "Tesseract Sniper (XAUUSD)",
+      "source": "modules.tesseract_sniper",
+      "shadow_flag": "_TESSERACT_AVAIL",
+      "module": "modules.tesseract_sniper",
+      "class": "TesseractSniperV1",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "Micro Entry Filter (M1)",
+      "source": "modules.micro_entry_filter",
+      "shadow_flag": "_MICRO_FILTER_AVAIL",
+      "module": "modules.micro_entry_filter",
+      "class": "MicroEntryFilter",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "ZAK Guardrail",
+      "source": "modules.zak_guardrail",
+      "shadow_flag": "_ZAK_GUARDRAIL_AVAIL",
+      "module": "modules.zak_guardrail",
+      "class": "ZakMirGuardrailV1",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "Agent IA (FASE4)",
+      "source": "agent_ia / OMEGA_USE_AGENT_IA",
+      "shadow_flag": "USE_AGENT_IA",
+      "module": "agent_ia",
+      "class": "",
+      "status": "ACTIVE",
+      "evidence": "USE_AGENT_IA=1 e import OK",
+      "emoji": "\ud83d\udfe2"
+    },
+    {
+      "component": "Sensory Synapse Hub",
+      "source": "modules.omega_sensory_synapse",
+      "shadow_flag": "_KERNEL_MODULE_MAP:synapse",
+      "module": "modules.omega_sensory_synapse",
+      "class": "ComponentEngine",
+      "status": "INTEGRATED",
+      "evidence": "import OK",
+      "emoji": "\ud83d\udfe1"
+    },
+    {
+      "component": "RCV P0 Execution Gates",
+      "source": "shadow_loop.pre_execution_safety_check",
+      "shadow_flag": "Mandatos 1-4 2026-05-20",
+      "module": "core_engines.shadow_loop",
+      "class": "pre_execution_safety_check",
+      "status": "ACTIVE",
+      "evidence": "pre_execution_safety_check + mt5_send_order 10016 guard",
+      "emoji": "\ud83d\udfe2"
+    }
+  ],
+  "telemetry": {
+    "decision_trace_path": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\decision_trace.jsonl",
+    "skip_counts": {},
+    "env": {
+      "OMEGA_DISABLE_MOMENTUM_FALLBACK": null,
+      "OMEGA_DECISION_TRACE": null,
+      "OMEGA_USE_AGENT_IA": null
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "cycles": 15,
+  "total_signals": 30,
+  "total_executed": 30,
+  "total_skipped": 0,
+  "total_trades_per_asset": {
+    "DOGUSD": 4,
+    "BTCUSD": 8,
+    "SOLUSD": 10,
+    "ETHUSD": 8
+  },
+  "total_trades": 30,
+  "by_action": {
+    "MT5_PAPER_EXECUTE": 30
+  },
+  "retcodes": {
+    "10009": 30
+  },
+  "hit_rate_avg": 97.4547,
+  "hit_rate_min": 94.92,
+  "latency_ms_avg": 122.85,
+  "latency_ms_max": 306.4,
+  "latency_ms_p95": 299.9,
+  "slippage_avg_pts": 4.4667,
+  "kill_switch_triggers": 0,
+  "max_concentration_pct": 33.33,
+  "max_concentration_asset": "SOLUSD",
+  "label": "IA_ON",
+  "timestamp_utc": "20260426_212335",
+  "cycles_requested": 15,
+  "closes_per_cycle": [
+    {
+      "cycle": 1,
+      "n_success": 2
+    },
+    {
+      "cycle": 2,
+      "n_success": 2
+    },
+    {
+      "cycle": 3,
+      "n_success": 2
+    },
+    {
+      "cycle": 4,
+      "n_success": 2
+    },
+    {
+      "cycle": 5,
+      "n_success": 2
+    },
+    {
+      "cycle": 6,
+      "n_success": 2
+    },
+    {
+      "cycle": 7,
+      "n_success": 2
+    },
+    {
+      "cycle": 8,
+      "n_success": 2
+    },
+    {
+      "cycle": 9,
+      "n_success": 2
+    },
+    {
+      "cycle": 10,
+      "n_success": 2
+    },
+    {
+      "cycle": 11,
+      "n_success": 2
+    },
+    {
+      "cycle": 12,
+      "n_success": 2
+    },
+    {
+      "cycle": 13,
+      "n_success": 2
+    },
+    {
+      "cycle": 14,
+      "n_success": 2
+    },
+    {
+      "cycle": 15,
+      "n_success": 2
+    }
+  ]
+}

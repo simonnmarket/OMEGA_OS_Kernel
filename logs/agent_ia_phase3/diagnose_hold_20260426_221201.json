@@ -1,0 +1,205 @@
+{
+  "timestamp_utc": "2026-04-26T22:12:01.433375+00:00",
+  "current_session": "CLOSED",
+  "session_config": {
+    "priority_assets": [
+      "BTCUSD",
+      "ETHUSD",
+      "SOLUSD",
+      "DOGUSD"
+    ],
+    "active_strategies": [
+      "MARKET_MAKING",
+      "ADAPTIVE",
+      "MEAN_REVERSION",
+      "SCALPING"
+    ],
+    "min_confidence": 0.75,
+    "max_lot": 0.005,
+    "max_positions": 1,
+    "max_spread_pips": 5.0,
+    "spoof_threshold": 0.5
+  },
+  "by_asset": [
+    {
+      "asset": "BTCUSD",
+      "gate1_in_priority": true,
+      "gate2_market_data_ok": true,
+      "market_data_summary": {
+        "current_price": 78521.05,
+        "ema_50": 77745.2876,
+        "ema_200": 76945.315,
+        "ema_diff_pct": 1.0396638183884255,
+        "adx": 45.6928093046033,
+        "rsi_14": 65.15107495642059,
+        "atr_14": 300.8985714285674,
+        "spread": 800.0,
+        "volume_ratio": 0.727729255278851,
+        "roc_10": 0.8810140282090548,
+        "price_position": 0.72632832010996
+      },
+      "gate3_agent": {
+        "error": "'CompetitiveAgent' object has no attribute 'q_value'"
+      },
+      "final_signal": {
+        "action": "HOLD",
+        "direction": null,
+        "confidence": 0.0,
+        "lot": 0.0,
+        "strategy": null,
+        "agent_id": null,
+        "reason": "MEAN_REVERSION: Sem condi\u00e7\u00f5es de entrada"
+      }
+    },
+    {
+      "asset": "ETHUSD",
+      "gate1_in_priority": true,
+      "gate2_market_data_ok": true,
+      "market_data_summary": {
+        "current_price": 2366.937,
+        "ema_50": 2325.96326,
+        "ema_200": 2329.8795499999997,
+        "ema_diff_pct": -0.16808980532919682,
+        "adx": 28.264649866129783,
+        "rsi_14": 74.11044151319736,
+        "atr_14": 11.048642857142925,
+        "spread": 440.00000000005457,
+        "volume_ratio": 0.2788035311086443,
+        "roc_10": 1.6262347787369995,
+        "price_position": 0.8573977079735662
+      },
+      "gate3_agent": {
+        "error": "'CompetitiveAgent' object has no attribute 'q_value'"
+      },
+      "final_signal": {
+        "action": "HOLD",
+        "direction": null,
+        "confidence": 0.0,
+        "lot": 0.0,
+        "strategy": null,
+        "agent_id": null,
+        "reason": "Confian\u00e7a 0.36 < efetiva 0.38 (base 0.75, trades=0)"
+      }
+    },
+    {
+      "asset": "SOLUSD",
+      "gate1_in_priority": true,
+      "gate2_market_data_ok": true,
+      "market_data_summary": {
+        "current_price": 86.853,
+        "ema_50": 86.29602000000001,
+        "ema_200": 86.00979,
+        "ema_diff_pct": 0.332787697772563,
+        "adx": 14.570685169123795,
+        "rsi_14": 58.51063829787231,
+        "atr_14": 0.40085714285714247,
+        "spread": 93.00000000000352,
+        "volume_ratio": 0.8716216216216216,
+        "roc_10": 0.9179322124490106,
+        "price_position": 0.7909482758620625
+      },
+      "gate3_agent": {
+        "error": "'CompetitiveAgent' object has no attribute 'q_value'"
+      },
+      "final_signal": {
+        "action": "HOLD",
+        "direction": null,
+        "confidence": 0.0,
+        "lot": 0.0,
+        "strategy": null,
+        "agent_id": null,
+        "reason": "MEAN_REVERSION: Sem condi\u00e7\u00f5es de entrada"
+      }
+    },
+    {
+      "asset": "DOGUSD",
+      "gate1_in_priority": true,
+      "gate2_market_data_ok": true,
+      "market_data_summary": {
+        "current_price": 0.0992,
+        "ema_50": 0.0982256,
+        "ema_200": 0.09628819999999999,
+        "ema_diff_pct": 2.0120845544937094,
+        "adx": 5.235602094241332,
+        "rsi_14": 68.10035842293901,
+        "atr_14": 0.0007557142857142861,
+        "spread": 32.999999999999694,
+        "volume_ratio": 0.4026124338624339,
+        "roc_10": 0.6902151847340643,
+        "price_position": 0.7985611510791353
+      },
+      "gate3_agent": {
+        "error": "'CompetitiveAgent' object has no attribute 'q_value'"
+      },
+      "final_signal": {
+        "action": "HOLD",
+        "direction": null,
+        "confidence": 0.0,
+        "lot": 0.0,
+        "strategy": null,
+        "agent_id": null,
+        "reason": "MEAN_REVERSION: Sem condi\u00e7\u00f5es de entrada"
+      }
+    },
+    {
+      "asset": "XAUUSD",
+      "gate1_in_priority": false,
+      "gate2_market_data_ok": true,
+      "market_data_summary": {
+        "current_price": 4684.56,
+        "ema_50": 4708.9622,
+        "ema_200": 4773.7649,
+        "ema_diff_pct": -1.357475731576141,
+        "adx": 11.326338444981767,
+        "rsi_14": 45.88701684836467,
+        "atr_14": 18.829285714285692,
+        "spread": 36.999999999989086,
+        "volume_ratio": 0.2698816003301777,
+        "roc_10": -0.47462236291400367,
+        "price_position": 0.32363988852538617
+      },
+      "gate3_agent": {
+        "error": "'CompetitiveAgent' object has no attribute 'q_value'"
+      },
+      "final_signal": {
+        "action": "HOLD",
+        "direction": null,
+        "confidence": 0.0,
+        "lot": 0.0,
+        "strategy": null,
+        "agent_id": null,
+        "reason": "Ativo n\u00e3o priorit\u00e1rio para sess\u00e3o CLOSED"
+      }
+    },
+    {
+      "asset": "EURUSD",
+      "gate1_in_priority": false,
+      "gate2_market_data_ok": true,
+      "market_data_summary": {
+        "current_price": 1.17057,
+        "ema_50": 1.1698441999999998,
+        "ema_200": 1.1754642000000002,
+        "ema_diff_pct": -0.4781089887722967,
+        "adx": 24.88954344624375,
+        "rsi_14": 59.73236009732348,
+        "atr_14": 0.0012907142857143197,
+        "spread": 8.999999999992347,
+        "volume_ratio": 0.17052833025767208,
+        "roc_10": -0.02647581306366241,
+        "price_position": 0.6586345381526469
+      },
+      "gate3_agent": {
+        "error": "'CompetitiveAgent' object has no attribute 'q_value'"
+      },
+      "final_signal": {
+        "action": "HOLD",
+        "direction": null,
+        "confidence": 0.0,
+        "lot": 0.0,
+        "strategy": null,
+        "agent_id": null,
+        "reason": "Ativo n\u00e3o priorit\u00e1rio para sess\u00e3o CLOSED"
+      }
+    }
+  ]
+}

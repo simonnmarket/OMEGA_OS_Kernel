@@ -1,0 +1,53 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-29T13:52:36.523477+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 0,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 0,
+    "executed": 0,
+    "skipped": 0,
+    "avg_hit_rate_134": 0,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 0.0,
+    "max_latency_ms": 0
+  },
+  "results": [],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260429_135236.log",
+  "positions_ledger": {
+    "n": 2,
+    "total_pnl": 3.12,
+    "realized_pnl": 0.0,
+    "realized_n": 0,
+    "positions": {
+      "181120472": {
+        "symbol": "AUDJPY",
+        "direction": "SELL",
+        "lot": 0.2,
+        "entry_price": 114.187,
+        "entry_time": "2026-04-29T16:48:06+00:00",
+        "last_profit": 2.25,
+        "status": "open"
+      },
+      "181120509": {
+        "symbol": "AUDJPY",
+        "direction": "SELL",
+        "lot": 0.1,
+        "entry_price": 114.183,
+        "entry_time": "2026-04-29T16:48:08+00:00",
+        "last_profit": 0.87,
+        "status": "open"
+      }
+    }
+  },
+  "lot_calc_v2": {
+    "perf_n": 0,
+    "perf_f": 1.0,
+    "perf_trend": "flat",
+    "lot_range": "0.01–0.25",
+    "kelly_on": false
+  },
+  "checksum": "8be03d12efe7ade1f2c2318571a662ae602b6dfb70001aedd799582e6e5e5202"
+}

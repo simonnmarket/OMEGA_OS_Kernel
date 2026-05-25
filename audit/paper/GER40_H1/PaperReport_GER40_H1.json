@@ -1,0 +1,87 @@
+{
+  "mission_id": "PAPER-GER40-H1-20260428T180357",
+  "asset": "GER40",
+  "timeframe": "H1",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-04-28T18:03:57.607267+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "GER40",
+    "timeframe": "H1",
+    "tier": "T1",
+    "hit_rate_134": 99.53,
+    "mach": 1.0,
+    "margin_used": 412.3,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 4464,
+    "total": 4485,
+    "p_hat": 0.995318,
+    "lower_bound": 0.992852,
+    "upper_bound": 0.996935,
+    "interval": "[99.2852%, 99.6935%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 5021,
+          "hits": 4985,
+          "breaks": 36,
+          "hit_rate": 99.28,
+          "break_rate": 0.72
+        },
+        "134_stats": {
+          "total_touches": 4485,
+          "hits": 4464,
+          "breaks": 21,
+          "hit_rate": 99.53,
+          "break_rate": 0.47
+        }
+      }
+    },
+    "price": {
+      "price": 0.0,
+      "base_price": 0.0,
+      "flash_crash_adjustment": null,
+      "metadata": {}
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 412.3,
+    "tier": "T1"
+  },
+  "execution": {
+    "retcode": 10009,
+    "retcode_str": "DONE",
+    "success": true,
+    "deal": 183925807,
+    "order": 180719036,
+    "fill_price": 23977.9,
+    "ask_at_send": 23977.9,
+    "sl_price": 23986.15,
+    "tp_price": 23969.65,
+    "volume_confirmed": 0.01,
+    "slippage_pts": 0.0,
+    "comment": "Request executed",
+    "request_id": 3446639256,
+    "latency_ms": 234.1,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.01,
+    "risk_usd": 10.0,
+    "stop_pts": 824.6,
+    "pip_value_lot": 0.01,
+    "contract_size": 1.0,
+    "price_at_calc": 23978.0
+  },
+  "latency_motor_s": 2.828,
+  "checksum": "e2f7c751d4eb8786eaed6dd65e7ea84dad6b71d85706e01d75aeee0b34e6c549"
+}

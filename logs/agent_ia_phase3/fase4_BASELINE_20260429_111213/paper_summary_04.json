@@ -1,0 +1,132 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-29T11:18:12.501191+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 2,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 2,
+    "executed": 2,
+    "skipped": 0,
+    "avg_hit_rate_134": 100.0,
+    "avg_slippage_pts": 0.5,
+    "avg_latency_ms": 44.4,
+    "max_latency_ms": 47.1
+  },
+  "results": [
+    {
+      "asset": "AUDJPY",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 100.0,
+      "ic_95": "[99.8414%, 100.0000%]",
+      "margin_used": 150.0,
+      "lot": 0.03,
+      "lot_v2": {
+        "vol_f": 1.0,
+        "conf_f": 0.786,
+        "perf_f": 1.0,
+        "kelly_f": 1.0,
+        "base_lot": 0.0036,
+        "risk_usd": 10.0
+      },
+      "retcode": 10009,
+      "slippage_pts": 1.0,
+      "checksum": "449db57c9343d2b3570e123e"
+    },
+    {
+      "asset": "AUDJPY",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 100.0,
+      "ic_95": "[99.8475%, 100.0000%]",
+      "margin_used": 150.0,
+      "lot": 0.03,
+      "lot_v2": {
+        "vol_f": 1.0,
+        "conf_f": 0.786,
+        "perf_f": 1.0,
+        "kelly_f": 1.0,
+        "base_lot": 0.0036,
+        "risk_usd": 10.0
+      },
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "de6dc88254e643685912018a"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260429_111808.log",
+  "positions_ledger": {
+    "n": 4,
+    "total_pnl": -1.24,
+    "realized_pnl": 0.0,
+    "realized_n": 0,
+    "positions": {
+      "181025381": {
+        "symbol": "AUDJPY",
+        "direction": "BUY",
+        "lot": 0.03,
+        "entry_price": 114.429,
+        "sl": 114.278,
+        "tp": 114.578,
+        "entry_deal": 184365464,
+        "entry_time": "2026-04-29T11:18:10.771906+00:00",
+        "last_profit": -0.44,
+        "status": "open",
+        "spread_cost_usd": 51.0,
+        "slippage_pts": 1.0
+      },
+      "181025384": {
+        "symbol": "AUDJPY",
+        "direction": "BUY",
+        "lot": 0.03,
+        "entry_price": 114.429,
+        "sl": 114.278,
+        "tp": 114.578,
+        "entry_deal": 184365464,
+        "entry_time": "2026-04-29T11:18:10.771906+00:00",
+        "last_profit": -0.28,
+        "status": "open",
+        "spread_cost_usd": 51.0,
+        "slippage_pts": 1.0
+      },
+      "181025412": {
+        "symbol": "AUDJPY",
+        "direction": "BUY",
+        "lot": 0.03,
+        "entry_price": 114.428,
+        "sl": 114.278,
+        "tp": 114.578,
+        "entry_deal": 184365484,
+        "entry_time": "2026-04-29T11:18:12.492121+00:00",
+        "last_profit": -0.26,
+        "status": "open",
+        "spread_cost_usd": 42.0,
+        "slippage_pts": 0.0
+      },
+      "181025413": {
+        "symbol": "AUDJPY",
+        "direction": "BUY",
+        "lot": 0.03,
+        "entry_price": 114.428,
+        "sl": 114.278,
+        "tp": 114.578,
+        "entry_deal": 184365484,
+        "entry_time": "2026-04-29T11:18:12.493122+00:00",
+        "last_profit": -0.26,
+        "status": "open",
+        "spread_cost_usd": 42.0,
+        "slippage_pts": 0.0
+      }
+    }
+  },
+  "lot_calc_v2": {
+    "perf_n": 0,
+    "perf_f": 1.0,
+    "perf_trend": "flat",
+    "lot_range": "0.05–0.25",
+    "kelly_on": false
+  },
+  "checksum": "197e909f867e4d9d1ec3e9c62c40dde859d1929957805de2dcbc5cd6483ca4d4"
+}

@@ -1,0 +1,115 @@
+{
+  "validated_at_utc": "2026-05-18T20:46:19.295856+00:00",
+  "package_dir": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\psa_inbound\\PSA_PACOTE_TIER0_20260518_204618Z",
+  "checks": {
+    "required_files_present": {
+      "ok": true,
+      "missing": []
+    },
+    "manifest_sidecar_sha256": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "manifest_package_id": "PSA_PACOTE_TIER0_20260518_204618Z",
+    "artifact_sha256": [
+      {
+        "path": "mt5_deals_raw.csv",
+        "ok": true,
+        "expected": "23b87eb6d9b3dbb213db47803dd4f0c0fb704bad602f26f038da513ef69ed62f",
+        "actual": "23b87eb6d9b3dbb213db47803dd4f0c0fb704bad602f26f038da513ef69ed62f"
+      },
+      {
+        "path": "mt5_orders_raw.csv",
+        "ok": true,
+        "expected": "92621a68d66d831a20b64eced086827e207b8a6a6e777ea56bfd4fa5838bfc8f",
+        "actual": "92621a68d66d831a20b64eced086827e207b8a6a6e777ea56bfd4fa5838bfc8f"
+      },
+      {
+        "path": "runtime_manifest.json",
+        "ok": true,
+        "expected": "aac3e0c36fd98fc0bbb3411cdd9e5d9d89f770635cef2ce798e501851a40401a",
+        "actual": "aac3e0c36fd98fc0bbb3411cdd9e5d9d89f770635cef2ce798e501851a40401a"
+      },
+      {
+        "path": "account_equity_eod.jsonl",
+        "ok": true,
+        "expected": "eec5b6eb2e21247e5ced442c0e423542ae1b9bceba60ff30aecf6eebed9437a0",
+        "actual": "eec5b6eb2e21247e5ced442c0e423542ae1b9bceba60ff30aecf6eebed9437a0"
+      }
+    ],
+    "mt5_deals_raw_csv": {
+      "ok": true,
+      "headers": [
+        "ticket",
+        "order",
+        "time",
+        "time_msc",
+        "type",
+        "entry",
+        "magic",
+        "position_id",
+        "reason",
+        "volume",
+        "price",
+        "commission",
+        "swap",
+        "profit",
+        "fee",
+        "symbol",
+        "comment",
+        "external_id"
+      ],
+      "row_count": 3563,
+      "has_reason_column": true
+    },
+    "mt5_orders_raw_csv": {
+      "ok": true,
+      "headers": [
+        "ticket",
+        "time_setup",
+        "time_setup_msc",
+        "time_done",
+        "time_done_msc",
+        "time_expiration",
+        "type",
+        "type_time",
+        "type_filling",
+        "state",
+        "magic",
+        "position_id",
+        "position_by_id",
+        "reason",
+        "volume_initial",
+        "volume_current",
+        "price_open",
+        "sl",
+        "tp",
+        "price_current",
+        "price_stoplimit",
+        "symbol",
+        "comment",
+        "external_id"
+      ],
+      "row_count": 3562
+    },
+    "runtime_manifest": {
+      "ok": true,
+      "keys_present": [
+        "generated_at_utc",
+        "package_id",
+        "git_head",
+        "mt5_terminal_build",
+        "mt5_account_login",
+        "mt5_server",
+        "mt5_server_timezone",
+        "export_tool"
+      ]
+    },
+    "account_equity_eod_jsonl": {
+      "ok": true,
+      "line_count": 15,
+      "errors": []
+    }
+  },
+  "status": "PASS"
+}

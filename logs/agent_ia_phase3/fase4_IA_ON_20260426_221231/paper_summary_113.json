@@ -1,0 +1,69 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-26T22:57:31.487102+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 4,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 4,
+    "executed": 4,
+    "skipped": 0,
+    "avg_hit_rate_134": 97.46,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 32.8,
+    "max_latency_ms": 37.5
+  },
+  "results": [
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 94.45,
+      "ic_95": "[93.1902%, 95.4908%]",
+      "margin_used": 1757.2,
+      "lot": 0.01,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "db2386efd269b53bb7a70daa"
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 95.39,
+      "ic_95": "[94.2208%, 96.3265%]",
+      "margin_used": 3210.5,
+      "lot": 0.01,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "9f0bf61ac61a8d18462f0ebe"
+    },
+    {
+      "asset": "DOGUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 100.0,
+      "ic_95": "[99.8138%, 100.0000%]",
+      "margin_used": 150.0,
+      "lot": 0.1,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "f03519cc34189c2f614972e2"
+    },
+    {
+      "asset": "DOGUSD",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 100.0,
+      "ic_95": "[99.8247%, 100.0000%]",
+      "margin_used": 150.0,
+      "lot": 0.1,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "c5b99b4ea6839e5c6e9cbf35"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260426_225717.log",
+  "checksum": "c5255632fe3d2bbd7eacc81e61e0bbc427371fd8ed4ac3f5cf84b450cc18fb9c"
+}

@@ -1,0 +1,10 @@
+=== FASE A | IA OFF | CRYPTO ===
+USE_AGENT_IA flag in shadow_loop.py:
+USE_AGENT_IA = False  # ⚠️ MANTER DESLIGADO ATÉ GO DO CONSELHO
+Traceback (most recent call last):
+  File "C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\core_engines\shadow_loop.py", line 37, in <module>
+    from core_engines.integration_gate import OmegaIntegrationGate
+ModuleNotFoundError: No module named 'core_engines'
+RUN_EXIT=1
+SHA3_PAPER_SUMMARY_OFF=
+COPY_OFF=audit\paper\paper_summary_OFF_20260426_190630.json

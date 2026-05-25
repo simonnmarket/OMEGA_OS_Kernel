@@ -1,0 +1,69 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-26T22:18:27.205272+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 4,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 4,
+    "executed": 4,
+    "skipped": 0,
+    "avg_hit_rate_134": 100.0,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 98.4,
+    "max_latency_ms": 253.3
+  },
+  "results": [
+    {
+      "asset": "SOLUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 100.0,
+      "ic_95": "[99.8443%, 100.0000%]",
+      "margin_used": 150.0,
+      "lot": 0.1,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "ab54f1179167d00a5899e03c"
+    },
+    {
+      "asset": "SOLUSD",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 100.0,
+      "ic_95": "[99.8464%, 100.0000%]",
+      "margin_used": 150.0,
+      "lot": 0.1,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "f833d11717d1597afb35dfc8"
+    },
+    {
+      "asset": "DOGUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 100.0,
+      "ic_95": "[99.8138%, 100.0000%]",
+      "margin_used": 150.0,
+      "lot": 0.1,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "ece5396c2d90dcb9f4529e8c"
+    },
+    {
+      "asset": "DOGUSD",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 100.0,
+      "ic_95": "[99.8247%, 100.0000%]",
+      "margin_used": 150.0,
+      "lot": 0.1,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "83cb2679fef30b258742692d"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260426_221818.log",
+  "checksum": "4264d3a35dea5339d7a9f842b7d0399f6eacd72ccf2bbe116583365d16822c13"
+}

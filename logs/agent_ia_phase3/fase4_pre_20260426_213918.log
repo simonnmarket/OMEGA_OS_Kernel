@@ -1,0 +1,158 @@
+=== FASE 4 | PRE-CONDICOES ===
+TS_UTC=2026-04-26T19:39:18.6814010Z
+--- pre-patch shadow_loop SHA256 ---
+SHADOW_LOOP_PRE=CBD6704BB1F93C39F47A663EAFDD2BA97C31B010937F10CB9F1910BD3EC2017D
+--- bias_audit pre-patch ---
+{
+  "timestamp": "2026-04-26T19:39:21.735804",
+  "regime": "TRADICIONAL",
+  "windows": [
+    [
+      0,
+      24
+    ]
+  ],
+  "hora_atual": 21,
+  "em_janela": true,
+  "symbols_allowed_count": 523,
+  "symbols_blocked_count": 33,
+  "bias_report": [
+    {
+      "symbol": "EURUSD",
+      "buy": 1,
+      "sell": 0,
+      "bias": "SOMENTE_BUY",
+      "statistical_validation": {
+        "total_trades": 1,
+        "buy_proportion": 1.0,
+        "wilson_ci_95": [
+          0.2065,
+          1
+        ],
+        "z_statistic": 1.0,
+        "p_value": 0.317311,
+        "significant": false,
+        "bias_classification": "NOT_SIGNIFICANT",
+        "expected_under_null": 0.5
+      }
+    },
+    {
+      "symbol": "GBPUSD",
+      "buy": 0,
+      "sell": 1,
+      "bias": "SOMENTE_SELL",
+      "statistical_validation": {
+        "total_trades": 1,
+        "buy_proportion": 0.0,
+        "wilson_ci_95": [
+          0,
+          0.7935
+        ],
+        "z_statistic": -1.0,
+        "p_value": 0.317311,
+        "significant": false,
+        "bias_classification": "NOT_SIGNIFICANT",
+        "expected_under_null": 0.5
+      }
+    },
+    {
+      "symbol": "XAUUSD",
+      "buy": 0,
+      "sell": 2,
+      "bias": "SOMENTE_SELL",
+      "statistical_validation": {
+        "total_trades": 2,
+        "buy_proportion": 0.0,
+        "wilson_ci_95": [
+          0,
+          0.6576
+        ],
+        "z_statistic": -1.4142,
+        "p_value": 0.157299,
+        "significant": false,
+        "bias_classification": "NOT_SIGNIFICANT",
+        "expected_under_null": 0.5
+      }
+    }
+  ],
+  "alerts": [
+    {
+      "severity": "WARNING",
+      "type": "ELEVATED_CONCENTRATION",
+      "message": "XAUUSD concentra 50.0% dos trades (warning: 50.0%)",
+      "symbol": "XAUUSD",
+      "concentration": 0.5
+    }
+  ],
+  "cqo_validators": {
+    "crisis_probability": {
+      "status": "PASS",
+      "value": 0.8656850798206673,
+      "risk_level": "CRITICAL",
+      "ci_95": [
+        0.51131,
+        1.0
+      ],
+      "threshold": 0.7,
+      "inputs": {
+        "_comment": "Inputs para CrisisProbabilityValidator ù actualizar diariamente",
+        "_updated": "2026-04-26",
+        "DXY_change_pct": -1.8,
+        "XAU_change_pct": 8.5,
+        "Buffett_cash_B": 325.0,
+        "BlackRock_equities_change_pct": -5.2
+      }
+    },
+    "slo_validator": {
+      "status": "PASS",
+      "rtt_ms": 0.36,
+      "adequate": true
+    }
+  },
+  "audit_trail": {
+    "sha3_256": "fec7fe34c7cb216a7767976bf88952ea9bc621d5e7b09445c9802ec670d3d0d8",
+    "version": "bias_audit_v2.0_tier0",
+    "validator": "PSA-WIND + CQO"
+  },
+  "audit_id": "BIAS_20260426_193921",
+  "audit_integration": {
+    "manifest_updated": true,
+    "manifest_path": "logs\\manifest.json"
+  },
+  "audit_files": {
+    "output_json": "logs\\bias_audit\\BIAS_20260426_193921.json",
+    "checksum_sha3": "logs\\bias_audit\\BIAS_20260426_193921.sha3"
+  }
+}
+
+[OK] Checksum SHA3-256: fec7fe34c7cb216a...
+BIAS_PRE_EXIT=0
+--- close FX/XAU (try reopen) ---
+OPEN_POSITIONS 4
+[
+  {
+    "ticket": 179457210,
+    "symbol": "XAUUSD",
+    "retcode": 10018,
+    "comment": "Market closed"
+  },
+  {
+    "ticket": 179457325,
+    "symbol": "GBPUSD",
+    "retcode": 10018,
+    "comment": "Market closed"
+  },
+  {
+    "ticket": 179458077,
+    "symbol": "XAUUSD",
+    "retcode": 10018,
+    "comment": "Market closed"
+  },
+  {
+    "ticket": 179458150,
+    "symbol": "EURUSD",
+    "retcode": 10018,
+    "comment": "Market closed"
+  }
+]
+REMAINING 4
