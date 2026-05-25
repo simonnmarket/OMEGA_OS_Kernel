@@ -1,0 +1,50 @@
+2026-05-25 18:59:29,684 | INFO | [GBPJPY H1] [ZAK] OK — ZAK_MIR_VALIDATED
+2026-05-25 18:59:29,934 | INFO | [GBPJPY H1] [MP-GATE] OK POC=213.60900 VA=ABOVE_VA score=0.350 shark=0.044 resonance=False gap_fill=0.880
+2026-05-25 18:59:29,935 | INFO | [GBPJPY H1] [M1-GATE] BLOCKED — M1_BLOCK:INSUF_M1_CANDLES:1/3 (quality=0.77)
+2026-05-25 18:59:29,936 | INFO | [EURUSD H1] ── Ciclo ──
+2026-05-25 18:59:29,953 | INFO | [EURUSD H1] [FLOW] confluence=46.9 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=37 vof=50 vwap=50 pullback=50 wyckoff=50 elliott=50 liq=50 weis=50
+2026-05-25 18:59:37,117 | INFO | [EURUSD H1] [PSA_FEED] action=HOLD conf=0.500 skill=neutral
+2026-05-25 18:59:37,138 | INFO | [EURUSD H1] FIX6 ai_decision_ms=4321.69
+2026-05-25 18:59:37,139 | INFO | [EURUSD H1] [IA] Sinal rejeitado: action=HOLD
+2026-05-25 18:59:37,162 | INFO | [EURUSD H1] [REGIME_GATE] OK H=0.455 regime=RANDOM_WALK
+2026-05-25 18:59:37,163 | INFO | [EURUSD H1] [KEY_LEVELS] GAP=-211.0pts dir=DOWN fill=1.16411 | PrevDay C=1.16411 H=1.16528 L=1.16297 | PrevWeek H=1.16621 L=1.15763 | POC=1.16033
+2026-05-25 18:59:37,164 | INFO | [EURUSD H1] [FLOW_SIGNAL] NO_TREND — ema_cross=True slope=-0.71 vol_ratio=0.86 — SKIP
+2026-05-25 18:59:37,165 | INFO | [XAUUSD H1] ── Ciclo ──
+2026-05-25 18:59:37,168 | INFO | Synapse sensors initialised [regime=commodity threshold=1.65V]
+2026-05-25 18:59:37,181 | INFO | [XAUUSD H1] [FLOW] confluence=56.0 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=38 vof=50 vwap=100 pullback=50 wyckoff=50 elliott=90 liq=50 weis=50
+2026-05-25 18:59:44,779 | INFO | [XAUUSD H1] [PSA_FEED] action=HOLD conf=0.500 skill=neutral
+2026-05-25 18:59:44,798 | INFO | [XAUUSD H1] FIX6 ai_decision_ms=4197.92
+2026-05-25 18:59:44,798 | INFO | [XAUUSD H1] [IA] Sinal rejeitado: action=HOLD
+2026-05-25 18:59:44,799 | INFO | [XAUUSD H1] [EDGE_GATE] BLOCKED reason=atr_pct=0.044%<0.070%[metal] atr_pct=0.000441 atr/spr=5.312 adx=25.72
+2026-05-25 18:59:44,799 | INFO | [LEDGER] 0 posicoes | realized=0 pnl_realizd=0.0000 | float=0.0000
+2026-05-25 18:59:44,800 | INFO | MT5 desconectado.
+2026-05-25 18:59:44,827 | INFO | ── ESTATÍSTICAS ONLINE ──────────────────────────────────────
+2026-05-25 18:59:44,827 | INFO |   total_signals             : 0
+2026-05-25 18:59:44,827 | INFO |   executed                  : 0
+2026-05-25 18:59:44,828 | INFO |   skipped                   : 0
+2026-05-25 18:59:44,828 | INFO |   avg_hit_rate_134          : 0
+2026-05-25 18:59:44,828 | INFO |   avg_slippage_pts          : 0.0
+2026-05-25 18:59:44,828 | INFO |   avg_latency_ms            : 0.0
+2026-05-25 18:59:44,829 | INFO |   max_latency_ms            : 0
+2026-05-25 18:59:44,833 | INFO | [CYCLE_EXIT] reason=NORMAL_COMPLETION (run concluído sem kill-switch intraday)
+2026-05-25 18:59:44,833 | INFO | [EVAL_CONTEXT] run_end | date=2026-05-25 dow=0 iso_w22/2026 tier=WEEKDAY_CORE weight=1.0
+2026-05-25 18:59:44,833 | INFO | ========================================================================
+2026-05-25 18:59:44,833 | INFO | PAPER LOOP CONCLUÍDO | cycles=3 | KS=False
+2026-05-25 18:59:44,833 | INFO | SHA3 summary: 20eaf26d081a00fd9eb845a69de69a12f57af992cd7177e89080666e40d77f53
+2026-05-25 18:59:44,834 | INFO | Artifacts: C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\audit\paper
+2026-05-25 18:59:44,834 | INFO | ========================================================================
+P2a EXIT: 0
+
+========== Reconcile G3-G5 REG ==========
+============================================================
+ PSA PnL RECONCILIATION � P0-CICC-20260521
+============================================================
+Traceback (most recent call last):
+  File "C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\scripts\psa_position_pnl_reconcile.py", line 185, in <module>
+    main()
+  File "C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\scripts\psa_position_pnl_reconcile.py", line 117, in main
+    print(f"\n[G3] Deals OUT magic\u2260{OMEGA_MAGIC}: {len(magic0)} / {len(mt5_deals)}")
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2260' in position 22: character maps to <undefined>
