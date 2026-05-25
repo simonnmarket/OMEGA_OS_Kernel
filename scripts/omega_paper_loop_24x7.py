@@ -346,6 +346,27 @@ def main() -> int:
         t0 = time.monotonic()
         rc_export = 0
         try:
+            # T-W2 (P0-ABC Fase 0b): re-resolver ativos por ciclo — calendário weekend
+            try:
+                from modules.omega_asset_schedule import resolve_shadow_loop_assets
+
+                _cycle_ativos, _sched_meta = resolve_shadow_loop_assets(None, ROOT)
+                if _cycle_ativos:
+                    ativos = _cycle_ativos
+                    log.info(
+                        "[SCHEDULE] ciclo %d | bucket=%s | ativos=%s",
+                        cycle,
+                        _sched_meta.get("bucket"),
+                        ativos,
+                    )
+            except Exception as _sched_err:
+                log.warning(
+                    "[SCHEDULE] ciclo %d re-resolve falhou: %s — mantendo ativos=%s",
+                    cycle,
+                    _sched_err,
+                    ativos,
+                )
+
             try:
                 from core_engines.omega_evaluation_context import (
                     build_evaluation_context,

@@ -70,6 +70,11 @@ $env:OMEGA_VOL_MIN_CRYPTO_ALT = "0.08"
 # GER40/US30 ATR threshold reduzido (bloqueado a 0.076% < 0.080%)
 $env:OMEGA_EDGE_INDEX_ATR = "0.0005"
 $env:OMEGA_EDGE_INDEX_ADX = "13.0"
+# XAUUSD: sessões de baixa vol (ex. feriado US) — demo precisa passar EDGE_GATE para validar SL H4
+$env:OMEGA_EDGE_METAL_ATR = "0.0005"
+
+# PROIBIDO v2 em produção runner (P0 T-P2b)
+$env:OMEGA_USE_V2 = "0"
 
 # RUNNER SINGLETON: máximo 1 instância simultânea — FIX #5 (CEO 2026-05-14)
 $env:OMEGA_RUNNER_MAX_PARALLEL = "1"
