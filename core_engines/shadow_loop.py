@@ -2598,6 +2598,14 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                 enable_agent_ia=True,
             )
             log.info("[FASE4] Agente IA inicializado (assets=%d, capital=$%.2f)", len(ativos), equity)
+            try:
+                from modules.omega_ecosystem_unified import is_unified_mode, write_ecosystem_manifest
+
+                if is_unified_mode():
+                    _mf = write_ecosystem_manifest(ROOT)
+                    log.info("[ECOSYSTEM_UNIFIED] manifesto=%s", _mf)
+            except Exception as _eco_err:
+                log.warning("[ECOSYSTEM_UNIFIED] manifesto: %s", _eco_err)
         except Exception as _ia_init_err:
             log.error("[FASE4] Falha ao inicializar Agente IA: %s — fallback momentum", _ia_init_err)
             agent_ia = None
@@ -2946,8 +2954,14 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                             # OmegaGlobalOrchestrator. Aqui apenas verificamos action válida,
                             # eliminando o threshold hard-coded que anulava o trabalho do M4.
                             if ia_signal.get('action') in (None, 'HOLD'):
-                                log.info("[%s %s] [IA] Sinal rejeitado: action=%s",
-                                         asset, tf, ia_signal.get('action'))
+                                log.info(
+                                    "[%s %s] [IA] Sinal rejeitado: action=%s | reason=%s | fusion=%s",
+                                    asset,
+                                    tf,
+                                    ia_signal.get('action'),
+                                    (ia_signal.get('reason') or "?")[:220],
+                                    ia_signal.get('signal_fusion_source', "n/a"),
+                                )
                                 ia_signal = None
                             else:
                                 log.info("[%s %s] [IA] Sinal aprovado: action=%s, confidence=%.2f",

@@ -127,6 +127,21 @@ class OmegaAgentIntegration:
         
         if self.enable_agent_ia:
             self._init_agent_ia()
+
+        # Fusão OMEGA M1 + PSA v12 — activa com OMEGA_USE_SIGNAL_FUSION ou OMEGA_ECOSYSTEM_UNIFIED
+        _fusion_env = os.getenv("OMEGA_USE_SIGNAL_FUSION", "").strip().lower()
+        _unified = os.getenv("OMEGA_ECOSYSTEM_UNIFIED", "").strip().lower() in ("1", "true", "yes", "on")
+        self._use_signal_fusion = _fusion_env in ("1", "true", "yes", "on") or _unified
+        self._fusion_policy = None
+        if self._use_signal_fusion:
+            try:
+                from integration.signal_fusion_policy import SignalFusionPolicy, SignalFusionConfig
+
+                self._fusion_policy = SignalFusionPolicy(SignalFusionConfig.from_env())
+                print(" Signal fusion (OMEGA+PSA): ATIVO — PSA_SHADOW_MODE via env PSA_SHADOW_MODE / FUSION_*")
+            except Exception as e:
+                print(f"[AGENT IA] Signal fusion init falhou ({e}) — fusion desativado.")
+                self._use_signal_fusion = False
         
         # Estatísticas
         self.signals_generated: int = 0
@@ -163,7 +178,8 @@ class OmegaAgentIntegration:
     
     def get_signal(self, asset: str, 
                    signature_scores: Dict[str, float] = None,
-                   market_data: Dict[str, Any] = None) -> Dict[str, Any]:
+                   market_data: Dict[str, Any] = None,
+                   psa_decision: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Obtém sinal de trading para um ativo.
         
@@ -173,6 +189,8 @@ class OmegaAgentIntegration:
             asset: Ativo financeiro
             signature_scores: Assinaturas detectadas (spoofing, iceberg, etc.)
             market_data: Dados de mercado (se None, busca do MT5)
+            psa_decision: Dict opcional do PSA v12 (`ForexAgent.predict` / bridge). Só usado se
+                `OMEGA_USE_SIGNAL_FUSION=1` e política `SignalFusionPolicy` inicializada.
             
         Returns:
             Dict com:
@@ -201,6 +219,9 @@ class OmegaAgentIntegration:
             signature_scores=signature_scores,
             current_positions=current_positions
         )
+
+        if self._use_signal_fusion and self._fusion_policy is not None:
+            signal = self._merge_fused_signal(signal, psa_decision)
         
         if signal['action'] != 'HOLD':
             self.signals_executed += 1
@@ -209,6 +230,39 @@ class OmegaAgentIntegration:
         
         return signal
     
+    def _merge_fused_signal(self, signal: Dict[str, Any], psa_decision: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+        """Aplica `SignalFusionPolicy` e mapeia de volta ao dict consumido pelo shadow_loop."""
+        from integration.signal_fusion_policy import fused_decision_to_strategy_signal
+
+        omega_sig = {
+            "action": signal.get("action"),
+            "confidence": signal.get("confidence"),
+            "reason": signal.get("reason", ""),
+            "stop_loss_pips": signal.get("stop_loss_pips"),
+            "take_profit_pips": signal.get("take_profit_pips"),
+        }
+        fused = self._fusion_policy.fuse(omega_sig, psa_decision or {})
+        d_sl = float(signal.get("stop_loss_pips") or 20.0)
+        d_tp = float(signal.get("take_profit_pips") or 40.0)
+        ss = fused_decision_to_strategy_signal(
+            fused,
+            omega_signal=omega_sig,
+            default_sl_pips=d_sl,
+            default_tp_pips=d_tp,
+        )
+        out = dict(signal)
+        out["action"] = ss.action.value
+        out["direction"] = ss.action.value if ss.action.value != "HOLD" else None
+        out["confidence"] = round(ss.confidence, 4)
+        out["stop_loss_pips"] = round(ss.stop_loss_pips, 2)
+        out["take_profit_pips"] = round(ss.take_profit_pips, 2)
+        prev = str(signal.get("reason", ""))[:220]
+        out["reason"] = f"{prev} | FUSION:{ss.reason}"
+        out["signal_fusion_source"] = fused.source.value
+        if ss.action.value == "HOLD":
+            out["lot"] = 0.0
+        return out
+
     def _get_original_signal(self, asset: str) -> Dict[str, Any]:
         """
         Fallback neutro quando o Agente IA está desativado.
@@ -284,6 +338,7 @@ class OmegaAgentIntegration:
         """Retorna status completo da integração."""
         status = {
             'agent_ia_enabled': self.enable_agent_ia,
+            'signal_fusion_enabled': getattr(self, "_use_signal_fusion", False),
             'signals_generated': self.signals_generated,
             'signals_executed': self.signals_executed,
             'signals_skipped': self.signals_skipped,

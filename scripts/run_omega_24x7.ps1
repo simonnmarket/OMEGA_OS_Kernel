@@ -82,7 +82,14 @@ $env:OMEGA_RUNNER_MAX_PARALLEL = "1"
 # ESCALAR LOTES AO TP USD mínimo
 $env:OMEGA_SCALE_LOT_TO_MIN_TP_USD = "1"
 
-# CEO 2026-05-25: portfolio discovery completo (16 símbolos Hantec) via schedule — NÃO usar lista fixa em env
+# CEO 2026-05-25: ecossistema UNIFICADO — um núcleo, portfolio e limites sincronizados
+$env:OMEGA_ECOSYSTEM_UNIFIED = "1"
+$env:OMEGA_USE_SIGNAL_FUSION = "1"
+$env:PSA_SHADOW_MODE = "0"
+$env:FUSION_MIN_CONFIDENCE = "0.55"
+$env:OMEGA_LOOP_PSA_V12 = "1"
+
+# Portfolio discovery (16 símbolos Hantec) via schedule — NÃO usar lista fixa em env
 $env:OMEGA_ASSET_PROFILE = "ceo_discovery_full"
 # P0 T-W1/T-W2: omega_asset_schedule.json + re-resolve por ciclo (sem OMEGA_24X7_ATIVOS)
 

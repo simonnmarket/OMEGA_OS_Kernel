@@ -321,7 +321,15 @@ class SessionConfigCatalog:
             liquidity_level="MINIMUM",
             description="Mercado praticamente fechado. Apenas criptomoedas com precaução extrema."
         )
-    
+
+        # CEO 2026-05-25: ecossistema unificado — mesmo portfolio + max_positions em todas as sessões
+        try:
+            from modules.omega_ecosystem_unified import apply_unified_session_catalog
+
+            apply_unified_session_catalog(self)
+        except Exception:
+            pass
+
     def get_config(self, session: MarketSession) -> SessionConfig:
         """Retorna configuração para uma sessão, com override via env var."""
         cfg = self._configs.get(session, self._configs[MarketSession.CLOSED])
@@ -332,6 +340,15 @@ class SessionConfigCatalog:
                 cfg = dataclasses.replace(cfg, min_confidence=float(_env_conf))
             except Exception:
                 pass
+        try:
+            from modules.omega_ecosystem_unified import is_unified_mode, get_unified_max_positions
+
+            if is_unified_mode():
+                import dataclasses
+
+                cfg = dataclasses.replace(cfg, max_positions=get_unified_max_positions(cfg.max_positions))
+        except Exception:
+            pass
         return cfg
     
     def get_all_configs(self) -> Dict[MarketSession, SessionConfig]:

@@ -232,13 +232,32 @@ class OmegaGlobalOrchestrator:
             # 2. Obter configuração da sessão
             session_config = self.calibrator.get_config(self.current_session)
             
-            # 3. Verificar se ativo é prioritário para esta sessão
-            if asset not in session_config.priority_assets:
+            # 3. Verificar se ativo está no portfolio (unificado = runner 16; legado = lista sessão)
+            try:
+                from modules.omega_ecosystem_unified import is_unified_mode
+
+                _unified = is_unified_mode()
+            except Exception:
+                _unified = False
+            if _unified:
+                if asset not in self.assets:
+                    return self._no_signal(asset, "Ativo fora do portfolio ecossistema unificado")
+            elif asset not in session_config.priority_assets:
                 return self._no_signal(asset, f"Ativo não prioritário para sessão {self.current_session.value}")
-            
-            # 4. Verificar limites de posições
-            if current_positions and len(current_positions) >= session_config.max_positions:
-                return self._no_signal(asset, f"Limite de {session_config.max_positions} posições atingido")
+
+            # 4. Verificar limites de posições (sincronizado com OMEGA_MAX_POSITIONS quando unificado)
+            try:
+                from modules.omega_ecosystem_unified import get_unified_max_positions, is_unified_mode
+
+                _max_pos = (
+                    get_unified_max_positions(session_config.max_positions)
+                    if is_unified_mode()
+                    else session_config.max_positions
+                )
+            except Exception:
+                _max_pos = session_config.max_positions
+            if current_positions and len(current_positions) >= _max_pos:
+                return self._no_signal(asset, f"Limite de {_max_pos} posições atingido (ecossistema)")
             
             # 5. Verificar se já tem posição neste ativo
             if asset in self.open_positions:
