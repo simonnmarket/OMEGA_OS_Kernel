@@ -131,7 +131,6 @@ function Test-Kpi {
         return
     }
     $lines = Get-Content $log -ErrorAction SilentlyContinue
-    $cutoff = (Get-Date).AddHours(-$LogHours)
     # Log lines may not have parseable dates  --  use tail heuristic: last 3000 lines ~ 1h dense
     $sample = $lines | Select-Object -Last 3000
 
