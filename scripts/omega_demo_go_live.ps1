@@ -106,7 +106,6 @@ Log "Logs: $OutDir"
 Log ""
 Log "Se todos os ciclos exit=0 e 0 posicoes orfas: pode arrancar:"
 Log "  & .\scripts\run_omega_24x7.ps1"
-Log ""
-Log "NAO usar restart_full_portfolio.ps1 (lista fixa 16 — conflito T-W1)"
+Log "  ou & .\scripts\restart_full_portfolio.ps1 (delega run_omega_24x7 — pos-2517c8b)"
 
 exit 0
