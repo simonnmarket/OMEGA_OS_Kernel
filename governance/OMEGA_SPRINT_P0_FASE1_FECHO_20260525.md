@@ -56,8 +56,8 @@
 | ID | Item | Responsável | Estado |
 |----|------|-------------|--------|
 | SM-R2 | Re-test SL ≥ $20 XAUUSD H4 (sessão liquidez normal) | CEO ou PSA | Programado |
-| PR-1 | Merge `fix/cicc-remediation-p0-abc-20260522` → `main` | CEO autoriza | Aguarda CEO |
-| PR-2 | Merge `feat/execution-router-atr-20260523` → `main` | CEO autoriza (após SM-R2) | Aguarda |
+| PR-1 | Merge `fix/cicc-remediation-p0-abc-20260522` → `main` | CEO autoriza | [#1](https://github.com/simonnmarket/OMEGA_OS_Kernel/pull/1) — Aguarda CEO |
+| PR-2 | Merge `feat/execution-router-atr-20260523` → `main` | CEO autoriza (após SM-R2) | [#2](https://github.com/simonnmarket/OMEGA_OS_Kernel/pull/2) — Aguarda |
 
 ---
 
