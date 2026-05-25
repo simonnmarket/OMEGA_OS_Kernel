@@ -6,8 +6,25 @@
 | **Data** | 2026-05-23 |
 | **Executor** | PSA (Devin) |
 | **Branch** | `fix/cicc-remediation-p0-abc-20260522` |
-| **Commits hoje** | 4a80b0c, 94bbc64, 860192e, 5865df9, 511e230 |
-| **Status global** | FASE 0 + 0b + Comment fix COMPLETAS | Smoke pendente (ação CEO) |
+| **Commits hoje** | 4a80b0c, 94bbc64, 860192e, 5865df9, 511e230, ae2fe03, ed6452e |
+| **Mandato fecho** | `PSA_MANDATO_FECHO_P0_E_TRANSICAO_LEVEL_20260523.md` (Fase B em curso) |
+| **Status global** | FASE 0 + 0b + Comment fix + Fase B (B1-B6) COMPLETAS | Smoke pendente (ação CEO) |
+
+---
+
+## 0. PRÉ-REQUISITO CEO — Pós-fecho USDJPY
+
+| Item | Estado | Referência |
+|------|--------|------------|
+| Posição órfã USDJPY #189777509 | **FECHADA** (CEO confirmado) | `PSA_MANDATO_FECHO_P0_E_TRANSICAO_LEVEL_20260523.md` Sec. 0 |
+| Conta MT5 limpa para smoke | Assumir SIM — CEO confirmar 0 posições `magic=234001` / `OV2\|` | Pre-check: `python scripts/check_positions_now.py` |
+| Alinhamento AIC ↔ PSA | **CONFIRMADO** | `CEO_DECISAO_ROTEIRO_P0_20260523.md` |
+| D1 `partial_taken` | **FECHADO** — Fase 1 (não bloqueia P0) | CEO Opção A |
+| D2 T-W2 | **FECHADO** — Opcional; T-W3 suficiente | CEO aceite escrito |
+| D3 Inventário 22/05 | **FECHADO** — B4 criou inventário 23/05 | `OMEGA_INVENTARIO_CONSOLIDADO_ABC_20260523.md` |
+| D4 Commit final | **FECHADO** — HEAD `ed6452e` | Branch `fix/cicc-remediation-p0-abc-20260522` |
+
+**Nota:** Fase E (Level 1 Router/ATR) PROIBIDA até AIC emitir `AIC_VALIDACAO_PSA_P0_ABC_20260523.md` com **APROVADO**.
 
 ---
 
@@ -17,11 +34,16 @@
 
 | Documento | Ação | Status |
 |-----------|------|--------|
-| `PSA_RELATORIO_VALIDACAO_P0_ABC_20260522.md` | Atualizado (T-D4b + Fase 0b) | ✅ FINAL |
-| `AIC_PSA_RECONCILIACAO_ALINHAMENTO_20260523.md` | Criado pelo AIC | ✅ FINAL |
+| `PSA_RELATORIO_VALIDACAO_P0_ABC_20260522.md` | Atualizado (T-D4b + Fase 0b + commit final ed6452e) | ✅ FINAL |
+| `AIC_PSA_RECONCILIACAO_ALINHAMENTO_20260523.md` | Criado pelo AIC; D1/D2/D3/D4 → FECHADO (B6) | ✅ FINAL |
 | `INVENTARIO_ALINHAMENTO_20260523.md` | Criado pelo AIC | ✅ FINAL |
 | `OMEGA_MANDATO_UNIFICADO_P0_ROUTER_WEEKEND_20260523.md` | Fornecido pelo CEO | ✅ FINAL |
-| `CHECKLIST_EXECUCAO_20260523.md` | Este documento | ✅ FINAL |
+| `PSA_MANDATO_FECHO_P0_E_TRANSICAO_LEVEL_20260523.md` | Fornecido pelo AIC | ✅ FINAL |
+| `CEO_DECISAO_ROTEIRO_P0_20260523.md` | Fornecido pelo CEO | ✅ FINAL |
+| `OMEGA_INVENTARIO_CONSOLIDADO_ABC_20260523.md` | Criado pelo CEO (B4) | ✅ FINAL |
+| `AIC_VALIDACAO_PSA_P0_ABC_20260523_TEMPLATE.md` | Criado pelo CEO (B5) | ✅ FINAL |
+| `run_p0_smoke_ceo.ps1` | Criado pelo CEO (B2) | ✅ FINAL |
+| `CHECKLIST_EXECUCAO_20260523.md` | Este documento — atualizado (B6) | ✅ FINAL |
 
 ### 1.2 Documentos de Referência (Desktop/Auditoria)
 
@@ -187,14 +209,16 @@
 
 ## 7. DESALINHAMENTOS DOCUMENTAIS IDENTIFICADOS PELO AIC
 
-### 7.1 Desalinhamentos Menores
+### 7.1 Desalinhamentos (todos FECHADOS por CEO 2026-05-23)
 
-| ID | Descrição | Ação necessária |
-|----|-----------|-----------------|
-| D1 | T-D5 partial_taken no ledger | PSA confirmar se implementou flag |
-| D2 | T-W2 não implementado | PSA decidir: implementar, adiar ou aceite CEO |
-| D3 | Inventário ABC 22/05 desactualizado | AIC atualizar ou usar relatório governance |
-| D4 | Commit final após smoke? | PSA confirmar processo |
+| ID | Descrição | Status | Resolução CEO |
+|----|-----------|--------|---------------|
+| D1 | T-D5 partial_taken no ledger | ✅ FECHADO | Opção A — flag → Fase 1 (não bloqueia P0) |
+| D2 | T-W2 não implementado | ✅ FECHADO | Opcional; T-W3 suficiente |
+| D3 | Inventário ABC 22/05 desactualizado | ✅ FECHADO | Inventário 23/05 criado (B4) |
+| D4 | Commit final após smoke? | ✅ FECHADO | HEAD `ed6452e` é commit final |
+
+Ref: `CEO_DECISAO_ROTEIRO_P0_20260523.md`
 
 ### 7.2 Desalinhamento Documental
 
@@ -276,8 +300,12 @@
 |-----------|--------|
 | Relatório PSA | `governance/PSA_RELATORIO_VALIDACAO_P0_ABC_20260522.md` |
 | Mandato Unificado | `governance/OMEGA_MANDATO_UNIFICADO_P0_ROUTER_WEEKEND_20260523.md` |
+| **Mandato Fecho P0 + Level 1** | **`governance/PSA_MANDATO_FECHO_P0_E_TRANSICAO_LEVEL_20260523.md`** |
 | Reconciliação AIC-PSA | `governance/AIC_PSA_RECONCILIACAO_ALINHAMENTO_20260523.md` |
+| Inventário ABC 23/05 | `governance/OMEGA_INVENTARIO_CONSOLIDADO_ABC_20260523.md` |
 | Inventário Alinhamento | `governance/INVENTARIO_ALINHAMENTO_20260523.md` |
+| CEO Decisão Roteiro | `governance/CEO_DECISAO_ROTEIRO_P0_20260523.md` |
+| Template AIC Validação | `governance/AIC_VALIDACAO_PSA_P0_ABC_20260523_TEMPLATE.md` |
 | Mandato P0 v2.0 | `governance/PSA_MANDATO_EXECUCAO_P0_ABC_20260522.md` |
 
 ---

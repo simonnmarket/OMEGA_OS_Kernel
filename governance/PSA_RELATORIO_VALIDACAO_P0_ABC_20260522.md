@@ -30,7 +30,7 @@
 |------|--------|
 | Branch | fix/cicc-remediation-p0-abc-20260522 |
 | Base commit | c5f0f25a64653573f608f598b8181be97730c317 |
-| Commit(s) P0 | (pendente commit final após validação) |
+| Commit(s) P0 | `ed6452e` (HEAD branch — Atualizar relatório PSA comment fix + UT-9; inclui `511e230`, `ae2fe03`, `5865df9`, `860192e`, `94bbc64`, `4a80b0c`) |
 | Ficheiros alterados (lista) | modules/mt5_position_tag.py, core_engines/shadow_loop.py, core_engines/shadow_loop_v2.py, scripts/run_omega_madrugada_pos_p0.ps1, tests/test_p0_abc_20260522.py, tests/test_runner_targets_v1_only.py, state/omega_open_tickets.json |
 
 | Tarefa | Resumo diff (1 linha) |
