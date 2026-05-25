@@ -82,9 +82,9 @@ $env:OMEGA_RUNNER_MAX_PARALLEL = "1"
 # ESCALAR LOTES AO TP USD mínimo
 $env:OMEGA_SCALE_LOT_TO_MIN_TP_USD = "1"
 
-# Portfolio completo: Forex + Metals + Oils + Indices + Crypto
-# P0-ABC 20260522 Fase 0b T-W1: REMOVIDO lista fixa — usa omega_asset_schedule.json
-# $env:OMEGA_24X7_ATIVOS = "EURUSD GBPUSD USDJPY AUDUSD NZDUSD USDCAD USDCHF EURJPY GBPJPY AUDJPY CADJPY CHFJPY XAUUSD XAGUSD UKOIL+ USOIL+ GER40 UK100 US500 US30 BTCUSD ETHUSD SOLUSD BNBUSD LTCUSD XRPUSD ADAUSD AVAXUSD DOGUSD DOTUSD UNIUSD XLMUSD"
+# CEO 2026-05-25: portfolio discovery completo (16 símbolos Hantec) via schedule — NÃO usar lista fixa em env
+$env:OMEGA_ASSET_PROFILE = "ceo_discovery_full"
+# P0 T-W1/T-W2: omega_asset_schedule.json + re-resolve por ciclo (sem OMEGA_24X7_ATIVOS)
 
 # Equity real via MT5 no arranque (P2-A BUG-5) — sem --equity hardcoded
 python -u scripts/omega_paper_loop_24x7.py `

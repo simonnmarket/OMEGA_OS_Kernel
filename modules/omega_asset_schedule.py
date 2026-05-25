@@ -77,7 +77,16 @@ def resolve_shadow_loop_assets(
     tz = str(cfg.get("timezone") or "Europe/Lisbon")
     now = _now_in_tz(tz)
     bucket = _day_bucket(now.weekday())
-    block = (cfg.get("no_cli") or {}).get(bucket) or {}
+
+    profile_name = (os.getenv("OMEGA_ASSET_PROFILE") or "").strip()
+    profiles = cfg.get("profiles") or {}
+    if profile_name and profile_name in profiles:
+        block = profiles[profile_name] or {}
+        meta_profile = profile_name
+    else:
+        block = (cfg.get("no_cli") or {}).get(bucket) or {}
+        meta_profile = bucket
+
     syms = block.get("symbols") or ["XAUUSD"]
     if not isinstance(syms, list) or not all(isinstance(s, str) for s in syms):
         syms = ["XAUUSD"]
@@ -90,6 +99,7 @@ def resolve_shadow_loop_assets(
             "local_iso": now.isoformat(timespec="seconds"),
             "weekday_iso_0_mon": now.weekday(),
             "bucket": bucket,
+            "profile": meta_profile if (profile_name and profile_name in profiles) else None,
             "class": klass,
             "symbols": list(syms),
             "config_path": str(cfg_p),
