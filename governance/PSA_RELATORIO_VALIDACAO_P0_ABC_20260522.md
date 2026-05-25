@@ -172,15 +172,15 @@ python -m pytest tests/test_runner_targets_v1_only.py -v
 
 | Métrica | Valor | Fonte |
 |---------|-------|-------|
-| Balance MT5 pré-smoke | 0,134.88 | MT5 account_info() |
-| Balance MT5 pós-smoke | 0,134.88 | MT5 account_info() |
-| Δ Equity | bash.00 | 0 ordens no smoke |
+| Balance MT5 pré-smoke | 10,134.88 | MT5 account_info() |
+| Balance MT5 pós-smoke | 10,134.88 | MT5 account_info() |
+| Δ Equity | $0.00 | 0 ordens no smoke |
 | Σ deals.profit (MT5) | N/A | 0 ordens smoke; 1 deal hist. USDJPY = CEO |
-| Σ feedback.pnl | bash.00 | 0 feedback rows (sem fechos) |
-| Σ feedback.total_realized_pnl | bash.00 | 0 posições fechadas nesta sessão |
-| Floating PnL | bash.00 | 0 posições abertas |
+| Σ feedback.pnl | $0.00 | 0 feedback rows (sem fechos) |
+| Σ feedback.total_realized_pnl | $0.00 | 0 posições fechadas nesta sessão |
+| Floating PnL | $0.00 | 0 posições abertas |
 
-**Explicação:** Smoke executado em sessão US Memorial Day (2026-05-25, segunda-feira) — liquidez reduzida. Todos os filtros de qualidade (NO_TREND, EDGE_GATE, M1-GATE) funcionaram correctamente: engine não abriu posições por mérito dos filtros. Δ Equity = bash é resultado esperado não resultado de falha de código.
+**Explicação:** Smoke executado em sessão US Memorial Day (2026-05-25, segunda-feira) — liquidez reduzida. Todos os filtros de qualidade (NO_TREND, EDGE_GATE, M1-GATE) funcionaram correctamente: engine não abriu posições por mérito dos filtros. Δ Equity = $0.00 é resultado esperado, não resultado de falha de código.
 
 ---
 
@@ -229,16 +229,16 @@ python -m pytest tests/test_runner_targets_v1_only.py -v
 
 ---
 
-## 9. Espaço AIC (não preencher — AIC preenche após auditoria)
+## 9. Espaço AIC (preenchido 2026-05-25)
 
 | ID | AIC PASS/FAIL | Notas |
 |----|---------------|-------|
-| V1 diff vs mandato | | |
-| V2 UT independente | | |
-| V3 SM independente | | |
-| V4 G3–G5 | | |
-| V5 inventário ABC actualizado | | |
-| **Veredito AIC** | | |
+| V1 diff vs mandato | **PASS** | |
+| V2 UT independente | **PASS** | 29/29 |
+| V3 SM independente | **PASS** | Pacote PSA_ENTREGA_SMOKE_20260525 |
+| V4 G3–G5 | **PASS** | |
+| V5 inventário ABC actualizado | **PASS** | inventário 20260523 |
+| **Veredito AIC** | **APROVADO** | `AIC_VALIDACAO_PSA_P0_ABC_20260525.md` |
 
 ---
 
