@@ -1983,19 +1983,32 @@ def get_key_levels(symbol: str) -> dict:
     return result
 
 
-def get_execution_tf_atr(symbol: str, confidence: float = 0.70) -> dict:
+def get_execution_tf_atr(
+    symbol: str,
+    signal_tf: str,
+    confidence: float = 0.70,
+) -> dict:
     """
-    Seleciona TF de execução (M3 padrão, M1 se confidence >= 0.80).
-    Calcula ATR para SL/TP tight no TF de execução.
-    CQO Spec: M3 reduz ruído 67% vs M1, mantém antecipação de spikes.
-    M1 reservado para sinais de alta confiança (>= 0.80).
+    T-R1 (Fase 1 Router/ATR): Calcula ATR no TF do SINAL para SL/TP alinhado.
+    Regra: ATR para SL/TP usa sempre signal_tf — M1/M3 apenas para timing de entrada.
+    Mapa signal_tf → MT5 constant (mandato OMEGA-MANDATO-UNIFICADO-20260523 Sec. 7.1).
     MULTI-TIMEFRAME: D1 (macro) + H4 (estrutura) + H1 (setup) + M15 (confirmação)
-    EXECUÇÃO: M3/M1 para S/L mais barato, várias entradas, gatilhos reais
+    EXECUÇÃO: distância do stop = ATR do signal_tf (não M1/M3)
     """
     import MetaTrader5 as mt5
     import numpy as np
-    tf_const = mt5.TIMEFRAME_M1 if confidence >= 0.80 else mt5.TIMEFRAME_M3
-    tf_name  = "M1"              if confidence >= 0.80 else "M3"
+    _TF_MAP = {
+        "M1":  mt5.TIMEFRAME_M1,
+        "M3":  mt5.TIMEFRAME_M3,
+        "M5":  mt5.TIMEFRAME_M5,
+        "M15": mt5.TIMEFRAME_M15,
+        "H1":  mt5.TIMEFRAME_H1,
+        "H4":  mt5.TIMEFRAME_H4,
+        "D1":  mt5.TIMEFRAME_D1,
+        "W1":  mt5.TIMEFRAME_W1,
+    }
+    tf_const = _TF_MAP.get(signal_tf, mt5.TIMEFRAME_H1)
+    tf_name  = signal_tf if signal_tf in _TF_MAP else "H1"
     try:
         rates = mt5.copy_rates_from_pos(symbol, tf_const, 0, 40)
         if rates is None or len(rates) < 15:
@@ -2525,6 +2538,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                     "entry_time": datetime.fromtimestamp(_rp.time, tz=timezone.utc).isoformat(),
                     "last_profit": _rp.profit,
                     "status": "open",
+                    "partial_taken": False,  # T-F1a: boot resync
                 }
             # Trailing stop engine
             if _rp_ticket not in _trailing_stop_engines and _TRAILING_STOP_AVAILABLE:
@@ -3162,6 +3176,8 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                     "entry_time": datetime.now(timezone.utc).isoformat(),
                                     "sl_pts": 0,
                                     "risk_usd": 0,
+                                    "signal_tf": tf,  # T-R1b: assume TF do ciclo activo
+                                    "partial_taken": False,  # T-F1a: SYNC_RECOVERY
                                 }
                                 log.info("[LEDGER_SYNC] Ticket %d (%s) recuperado para o ledger",
                                          _live_p.ticket, _live_p.symbol)
@@ -3609,7 +3625,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                            "status": "SKIP_MIN_CONF_PROFILE",
                                            "conf": _conf_score, "min_conf": _prof["min_conf"]})
                             continue
-                        _exec_atr   = get_execution_tf_atr(asset, _conf_score)
+                        _exec_atr   = get_execution_tf_atr(asset, tf, _conf_score)  # T-R1b: signal_tf
                         _atr_avg    = _lot_calc.update_atr(asset, _exec_atr.get("atr_pct", 0.0015))
 
                         # ── SL/TP calculado ANTES do lote (FIX 29/04/2026) ──────────────
@@ -3834,7 +3850,9 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                         _sl_pts_min_prof = float(_prof.get("sl_pts_min", 0.0))
                         if _sl_pts_min_prof > 0:
                             eff_sl = max(eff_sl, _sl_pts_min_prof)
-                        eff_sl, eff_tp = sanitize_sl_tp(eff_sl, eff_tp, _exec_atr.get("atr_pts", 0.0), asset)
+                        # T-R1b: _signal_atr_pts usa ATR do signal_tf (não M1/M3)
+                        _signal_atr_pts = _exec_atr.get("atr_pts", 0.0)
+                        eff_sl, eff_tp = sanitize_sl_tp(eff_sl, eff_tp, _signal_atr_pts, asset)
                         eff_sl, eff_tp = apply_regime_sl_cap(
                             eff_sl,
                             eff_tp,
@@ -4179,7 +4197,8 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                             "tp": exec_result.get("tp_price", 0),
                                             "sl_pts": eff_sl, "tp_pts": eff_tp,
                                             "entry_atr_pts": _exec_atr.get("atr_pts", 0),
-                                            "entry_atr_tf": _exec_atr.get("tf", "M3"),
+                                            "entry_atr_tf": _exec_atr.get("tf", tf),
+                                            "signal_tf": tf,  # T-R1b: TF do sinal para ATR trailing
                                             "entry_deal": deal_id,
                                             "signal_source": signal_source,
                                             "agent_id": (
@@ -4194,6 +4213,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                             "last_profit": _np.profit, "status": "open",
                                             "spread_cost_usd": _spread_cost,
                                             "slippage_pts": exec_result.get("slippage_pts", 0),
+                                            "partial_taken": False,  # T-F1a: flag fecho parcial
                                             # P0-C: Tech Lead G.1 (OIS-DIAG-20260517) — persistir no ledger na abertura
                                             "confluence_score": round(float(_flow_conf), 4),
                                             "components_fired": sorted(
@@ -4243,7 +4263,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                                 if is_omega_tracked_position(p)
                                             ]
                                             _prof_dict = {"profit": float(_np.profit) if hasattr(_np, 'profit') else 0.0}
-                                            _atr_info = get_execution_tf_atr(asset, 0.70)
+                                            _atr_info = get_execution_tf_atr(asset, tf, 0.70)  # T-R1b: signal_tf
                                             _exec_atr_dict = {"atr_pts": _atr_info.get("atr_pts", 0)}
                                             _pyramid_decision = check_pyramid_add(
                                                 symbol=asset,
@@ -4377,7 +4397,8 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                 for _p in _all_open:
                     if _p.ticket in _pos_ledger:
                         _pos_ledger[_p.ticket]["last_profit"] = _p.profit
-                        _atr_info = get_execution_tf_atr(_p.symbol, 0.70)
+                        _fin_signal_tf = _pos_ledger[_p.ticket].get("signal_tf", "H1")  # T-R1b
+                        _atr_info = get_execution_tf_atr(_p.symbol, _fin_signal_tf, 0.70)
                         _current_price = _p.price_current if hasattr(_p, 'price_current') else (_p.bid if _p.type == 1 else _p.ask)
                         _atr_pts_val = _atr_info.get("atr_pts", 0)
                         # Converter ATR de pontos para unidades de preço (trailing stop opera em preço)
@@ -4456,6 +4477,9 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                         _pc_res = mt5_close_partial(
                                             _p.ticket, _p.symbol, _order["lots"], _dir_str_pc)
                                         if _pc_res.get("success"):
+                                            # T-F1a: marcar partial_taken no ledger (primeira saída parcial)
+                                            if _p.ticket in _pos_ledger:
+                                                _pos_ledger[_p.ticket]["partial_taken"] = True
                                             # P0-ABC 20260522 T-D4b: Registrar fecho parcial no PositionManager
                                             try:
                                                 _pnl_est = float(_p.profit) if hasattr(_p, 'profit') else 0.0
@@ -4509,6 +4533,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                             "tp": float(_p.tp) if _p.tp else None,
                             "entry_time": datetime.fromtimestamp(_p.time, tz=timezone.utc).isoformat(),
                             "last_profit": _p.profit, "status": "open",
+                            "partial_taken": False,  # T-F1a: fallback ledger entry
                         }
                 _ledger_pnl = sum(v.get("last_profit", 0) for v in _pos_ledger.values())
                 _ledger_n   = len(_pos_ledger)
