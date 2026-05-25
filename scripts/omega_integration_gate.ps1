@@ -1,4 +1,4 @@
-# OMEGA — Gate integração ecossistema (obrigatório pós-unified)
+﻿# OMEGA  --  Gate integração ecossistema (obrigatório pós-unified)
 # Ref: governance/GATE_INTEGRACAO_ECOSISTEMA_OBRIGATORIO_20260525.md
 #
 # Uso:
@@ -30,12 +30,12 @@ function Log($msg) {
 }
 
 function Fail($id, $msg) {
-    script:failures += "${id}: $msg"
-    Log "FAIL $id — $msg"
+    $script:failures += "${id}: $msg"
+    Log "FAIL $id  --  $msg"
 }
 
 function Pass($id, $msg) {
-    Log "PASS $id — $msg"
+    Log "PASS $id  --  $msg"
 }
 
 Log "=== OMEGA INTEGRATION GATE phase=$Phase ==="
@@ -45,7 +45,7 @@ function Test-Preflight {
     Log "--- PREFLIGHT ---"
     $unifiedPy = Join-Path $Root "modules\omega_ecosystem_unified.py"
     if (-not (Test-Path $unifiedPy)) {
-        Fail "A1" "modules/omega_ecosystem_unified.py ausente — git pull necessario"
+        Fail "A1" "modules/omega_ecosystem_unified.py ausente  --  git pull necessario"
     } else {
         Pass "A1" "omega_ecosystem_unified.py presente"
     }
@@ -59,7 +59,7 @@ function Test-Preflight {
     foreach ($pair in @(
         @("A3", "OMEGA_USE_SIGNAL_FUSION", '"1"'),
         @("A4", "PSA_SHADOW_MODE", '"0"'),
-        @("A5", "OMEGA_ASSET_PROFILE", "ceo_discovery_full")
+        @("A5", "OMEGA_ASSET_PROFILE", '"ceo_discovery_full"')
     )) {
         $id, $name, $needle = $pair
         if ($content -notmatch [regex]::Escape($name)) {
@@ -86,7 +86,7 @@ function Test-Runtime {
     Log "--- RUNTIME ---"
     $manifest = Join-Path $Root "audit\paper\ecosystem_unified_manifest.json"
     if (-not (Test-Path $manifest)) {
-        Fail "B1" "ecosystem_unified_manifest.json ausente — runner reiniciado com unified?"
+        Fail "B1" "ecosystem_unified_manifest.json ausente  --  runner reiniciado com unified?"
     } else {
         Pass "B1" "manifesto existe"
         try {
@@ -132,7 +132,7 @@ function Test-Kpi {
     }
     $lines = Get-Content $log -ErrorAction SilentlyContinue
     $cutoff = (Get-Date).AddHours(-$LogHours)
-    # Log lines may not have parseable dates — use tail heuristic: last 3000 lines ~ 1h dense
+    # Log lines may not have parseable dates  --  use tail heuristic: last 3000 lines ~ 1h dense
     $sample = $lines | Select-Object -Last 3000
 
     $psa = ($sample | Select-String -Pattern 'PSA_FEED').Count
@@ -160,7 +160,7 @@ function Test-Kpi {
     Pass "C-report" "KPI escrito em $kpiFile"
 
     if ($ia -eq 0 -and $mom -gt 0) {
-        Log "WARN C3: execucoes momentum sem linha AGENT_IA na amostra — documentar no relatorio PSA (pode ser gates/mercado)"
+        Log "WARN C3: execucoes momentum sem linha AGENT_IA na amostra  --  documentar no relatorio PSA (pode ser gates/mercado)"
     }
 }
 
