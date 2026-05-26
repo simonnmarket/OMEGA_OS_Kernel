@@ -3681,8 +3681,9 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                     continue
                     else:
                         # RiskBudget activo e slots aprovados — bypass do cap legado
-                        log.debug("[%s %s] [POS_RULE] BYPASS legado (RiskBudget activo, slots=%d)",
-                                  asset, tf, _rb_slots_available)
+                        log.info("[%s %s] [POS_RULE] BYPASS legado (RiskBudget activo, slots=%d) "
+                                 "— cap fixo has_omega_exposure nao aplicado",
+                                 asset, tf, _rb_slots_available)
 
                     # === PSA-WIND FIX 1: ANTI-HEDGE — bloquear BUY+SELL no mesmo ativo ===
                     # P0-ABC 20260522: Anti-hedge QUALQUER posição MT5 (sem filtro OV2)
