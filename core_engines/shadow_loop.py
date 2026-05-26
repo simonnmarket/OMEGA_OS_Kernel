@@ -3642,35 +3642,47 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                         log.warning("[%s %s] [RISK_BUDGET] falha — fallback MAX_POS_PER_ASSET: %s",
                                     asset, tf, _rb_err)
 
-                    # === PSA-WIND Q2: 1 POSIÇÃO POR ATIVO (CEO 2026-05-14 FIX) ===
-                    # Forçar MAX_POS_PER_ASSET=1 — 2ª posição só via check_pyramid_add()
-                    # Previne 3× ordens idênticas mesmo volume; pyramid tem lot progressivo (1.5x)
-                    # P0-ABC 20260522: Usar has_omega_exposure (MT5 + state) para bypass comment cego
-                    _MAX_POS_PER_ASSET = int(os.getenv("OMEGA_MAX_POS_PER_ASSET", "1"))  # 1=padrão; pyramid path tem seu próprio check
-                    try:
-                        from modules.mt5_position_tag import has_omega_exposure
-                        if has_omega_exposure(asset, signal_dir):
-                            log.info("[%s %s] [POS_RULE] SKIP — já tem exposição OMEGA %s em %s (state+MT5)",
-                                     asset, tf, signal_dir, asset)
-                            results.append({"asset": asset, "timeframe": tf,
-                                            "status": "SKIP_ALREADY_POSITIONED",
-                                            "reason": "has_omega_exposure"})
-                            continue
-                    except Exception as _exposure_err:
-                        log.warning("[%s %s] [POS_RULE] falha has_omega_exposure: %s", asset, tf, _exposure_err)
-                        # Fallback para lógica original
-                        _existing_omega_same = [p for p in current_positions if p.get("symbol") == asset]
-                        if _existing_omega_same:
-                            _n_exist = len(_existing_omega_same)
-                            if _n_exist >= _MAX_POS_PER_ASSET:
-                                _pnl_exist = sum(p.get("profit", 0) for p in _existing_omega_same)
-                                log.info("[%s %s] [POS_RULE] SKIP — já tem %d/%d posições OMEGA (pnl=%.2f)",
-                                         asset, tf, _n_exist, _MAX_POS_PER_ASSET, _pnl_exist)
+                    # === PSA-WIND Q2: 1 POSIÇÃO POR ATIVO — LEGACY CAP ===
+                    # HOTFIX CEO 2026-05-27:
+                    # Quando OMEGA_USE_RISK_BUDGET=1 e RiskBudgetManager calculou
+                    # _rb_slots_available > 0 (linhas acima), este bloco legado é
+                    # BYPASSADO. O RiskBudget já contou as posições abertas e é a
+                    # autoridade de slots. Aplicar o cap fixo=1 aqui anularia o
+                    # cálculo dinâmico e impediria o sistema de abrir posições
+                    # mesmo com budget disponível.
+                    # O bloco legado só actua quando RiskBudget está inactivo ou
+                    # falhou (_rb_slots_available is None → fallback seguro).
+                    if _rb_slots_available is None:
+                        # Fallback legacy: RiskBudget inactivo ou com erro
+                        _MAX_POS_PER_ASSET = int(os.getenv("OMEGA_MAX_POS_PER_ASSET", "1"))
+                        try:
+                            from modules.mt5_position_tag import has_omega_exposure
+                            if has_omega_exposure(asset, signal_dir):
+                                log.info("[%s %s] [POS_RULE] SKIP — já tem exposição OMEGA %s em %s (state+MT5)",
+                                         asset, tf, signal_dir, asset)
                                 results.append({"asset": asset, "timeframe": tf,
                                                 "status": "SKIP_ALREADY_POSITIONED",
-                                                "existing_count": _n_exist,
-                                                "existing_pnl": round(_pnl_exist, 2)})
+                                                "reason": "has_omega_exposure"})
                                 continue
+                        except Exception as _exposure_err:
+                            log.warning("[%s %s] [POS_RULE] falha has_omega_exposure: %s", asset, tf, _exposure_err)
+                            # Fallback para lógica original
+                            _existing_omega_same = [p for p in current_positions if p.get("symbol") == asset]
+                            if _existing_omega_same:
+                                _n_exist = len(_existing_omega_same)
+                                if _n_exist >= _MAX_POS_PER_ASSET:
+                                    _pnl_exist = sum(p.get("profit", 0) for p in _existing_omega_same)
+                                    log.info("[%s %s] [POS_RULE] SKIP — já tem %d/%d posições OMEGA (pnl=%.2f)",
+                                             asset, tf, _n_exist, _MAX_POS_PER_ASSET, _pnl_exist)
+                                    results.append({"asset": asset, "timeframe": tf,
+                                                    "status": "SKIP_ALREADY_POSITIONED",
+                                                    "existing_count": _n_exist,
+                                                    "existing_pnl": round(_pnl_exist, 2)})
+                                    continue
+                    else:
+                        # RiskBudget activo e slots aprovados — bypass do cap legado
+                        log.debug("[%s %s] [POS_RULE] BYPASS legado (RiskBudget activo, slots=%d)",
+                                  asset, tf, _rb_slots_available)
 
                     # === PSA-WIND FIX 1: ANTI-HEDGE — bloquear BUY+SELL no mesmo ativo ===
                     # P0-ABC 20260522: Anti-hedge QUALQUER posição MT5 (sem filtro OV2)
