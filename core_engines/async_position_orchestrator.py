@@ -344,7 +344,27 @@ class AsyncPositionOrchestrator:
         return None
 
 
-# ── Singleton global + helper para shadow_loop ──────────────────────────────────
+# ── API pública deste módulo ────────────────────────────────────────────────────
+# PROIBIDO importar _GLOBAL_QUEUE fora deste ficheiro.
+# Qualquer injecção de sinais na fila de produção fora do orchestrador
+# pode disparar fechamentos reais de posições em conta LIVE/PAPER.
+# Use EXCLUSIVAMENTE:
+#   - drain_fastloop_signals()  ← shadow_loop (consumidor, thread principal)
+#   - dedup_signals(lista)      ← testes/validação (função pura, zero estado global)
+#   - start_fastloop()          ← boot do shadow_loop (produtor via _emit interno)
+__all__ = [
+    "AsyncPositionOrchestrator",
+    "FastLoopSignal",
+    "FASTLOOP_ENABLED",
+    "start_fastloop",
+    "stop_fastloop",
+    "drain_fastloop_signals",
+    "dedup_signals",
+    "get_orchestrator",
+    # _GLOBAL_QUEUE e _GLOBAL_ORCHESTRATOR: PRIVADOS — nao constam de __all__
+]
+
+# ── Singleton global (PRIVADO — aceder apenas via funções públicas acima) ───────
 _GLOBAL_ORCHESTRATOR: Optional[AsyncPositionOrchestrator] = None
 _GLOBAL_QUEUE: queue.Queue = queue.Queue(maxsize=256)
 

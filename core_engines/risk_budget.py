@@ -31,6 +31,18 @@ RISK_BUDGET_ENABLED: bool = os.getenv("OMEGA_USE_RISK_BUDGET", "0") == "1"
 _EPSILON = 1e-12
 _MAX_HARD_CAP = int(os.getenv("OMEGA_RISK_BUDGET_HARD_CAP", "8"))  # nunca excede
 
+# ── Limites de sanidade para ATR em PONTOS MT5 ──────────────────────────────────
+# ATR deve estar em PONTOS MT5, nunca em price_diff USD nem em margem USD.
+# Exemplos de ATR em pontos para referência:
+#   EURUSD 5-decimal: ~300-800 pts   (ATR price ~0.003-0.008)
+#   XAUUSD:           ~1500-5000 pts (ATR price ~1.5-5.0)
+#   US500:            ~500-3000 pts  (ATR price ~5-30)
+#   GER40:            ~1000-5000 pts (ATR price ~100-500)
+# Qualquer valor < 1.0 é impossível como ATR em pontos para instrumentos reais
+# e indica que foi passado price_diff (ex: 0.005) em vez de pontos (ex: 500).
+_ATR_GUARD_MIN_POINTS: float = 1.0         # abaixo disto é claramente price_diff ou zero
+_ATR_GUARD_MAX_POINTS: float = 10_000_000.0  # acima disto é claramente erro de unidade
+
 
 @dataclass
 class RiskBudgetConfig:
@@ -124,7 +136,41 @@ class RiskBudgetManager:
         return snapshot.available_slots
 
     def update_atr(self, symbol: str, atr_pts: float) -> None:
-        """Actualiza cache de ATR para um símbolo. Chamado pelo shadow_loop a cada ciclo."""
+        """
+        Actualiza cache de ATR para um símbolo.
+
+        ATENÇÃO — UNIDADE OBRIGATÓRIA: PONTOS MT5 (não price_diff, não USD).
+          Correcto:   update_atr("EURUSD", 500.0)   ← ATR = 500 pontos 5-decimal
+          ERRADO:     update_atr("EURUSD", 0.005)   ← price_diff, nao pontos
+          ERRADO:     update_atr("EURUSD", 130.0)   ← pode ser margem USD
+          (para EURUSD 5-decimal: price_diff × 100_000 = pontos)
+
+        Raises:
+            ValueError: se atr_pts <= 0 ou < _ATR_GUARD_MIN_POINTS (indicativo
+                        de passagem de price_diff ou margem USD em vez de pontos MT5).
+        """
+        if atr_pts <= 0:
+            raise ValueError(
+                f"RiskBudget.update_atr({symbol}): atr_pts={atr_pts} invalido. "
+                f"O valor DEVE estar em PONTOS MT5 (ex: 500.0 para EURUSD), "
+                f"nunca em price_diff (ex: 0.005) nem em margem USD. "
+                f"Use get_execution_tf_atr(asset, tf)[\"atr_pts\"]."
+            )
+        if atr_pts < _ATR_GUARD_MIN_POINTS:
+            raise ValueError(
+                f"RiskBudget.update_atr({symbol}): atr_pts={atr_pts} < {_ATR_GUARD_MIN_POINTS}. "
+                f"Valor impossivel como ATR em PONTOS MT5. "
+                f"Provavelmente foi passado price_diff ({atr_pts}) em vez de PONTOS MT5 "
+                f"({atr_pts / 0.00001:.0f} pts para EURUSD 5-decimal). "
+                f"Corrija a chamada: use get_execution_tf_atr(asset, tf)[\"atr_pts\"]."
+            )
+        if atr_pts > _ATR_GUARD_MAX_POINTS:
+            log.error(
+                "[%s] RiskBudget.update_atr: atr_pts=%.1f > max_guard=%.0f — "
+                "valor suspeito (possivel erro de unidade). Ignorado.",
+                symbol, atr_pts, _ATR_GUARD_MAX_POINTS,
+            )
+            return
         if symbol not in self._atr_cache:
             self._atr_cache[symbol] = []
         self._atr_cache[symbol].append(atr_pts)
