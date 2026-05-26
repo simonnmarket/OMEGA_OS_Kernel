@@ -1,0 +1,6 @@
+OMEGA-PSA-EXEC-20260526 — FASE 0 EVIDENCIA
+Timestamp: 20260527_000925
+Runner PID 32304: STOPPED
+Lock file: REMOVED
+Posicoes orfas (Magic=0): A verificar via MT5 terminal
+Status: FASE 0 COMPLETA — Ambiente isolado

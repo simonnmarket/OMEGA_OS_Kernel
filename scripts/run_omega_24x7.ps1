@@ -36,9 +36,23 @@ $env:OMEGA_DD_DAILY_MAX = "0.10"
 $env:OMEGA_MAX_SAME_DIR_PER_CYCLE = "2"
 $env:OMEGA_MAX_POS_PER_CLASS = "5"
 
-# POR ATIVO: 1 posição por ativo (CEO 2026-05-14 FIX — escalamento via pyramid progressivo)
-# 2ª posição só via check_pyramid_add() com lot 1.5× maior (não mesmo volume)
-$env:OMEGA_MAX_POS_PER_ASSET = "1"
+# POR ATIVO: RiskBudgetManager calcula slots dinamicamente (CEO Mandato 2026-05-26)
+# OMEGA_MAX_POS_PER_ASSET REMOVIDO — substituído por cálculo ATR×equity×risco
+# Activar: OMEGA_USE_RISK_BUDGET=1 | fallback legacy: OMEGA_USE_RISK_BUDGET=0
+$env:OMEGA_USE_RISK_BUDGET = "1"
+$env:OMEGA_RISK_MAX_DD_PCT = "0.02"        # 2% equity total em risco simultâneo
+$env:OMEGA_RISK_PER_POS_PCT = "0.005"      # 0.5% equity por posição
+$env:OMEGA_RISK_BUDGET_HARD_CAP = "8"      # hard cap absoluto de segurança
+# FastLoop assíncrono: peak drawdown + AI exit + timeout (Gate G4 latência ≤5s)
+$env:OMEGA_USE_FASTLOOP = "1"
+$env:OMEGA_FASTLOOP_INTERVAL = "2.0"       # segundos entre checks por posição
+$env:OMEGA_AI_FLIP_CONFIDENCE = "0.75"     # confidence mínima para AI exit/flip
+$env:OMEGA_FASTLOOP_TIMEOUT_MIN = "60.0"   # timeout sideways em minutos
+$env:OMEGA_PEAK_CLOSE_PTS = "500.0"        # retracção total para fechar (pts)
+$env:OMEGA_PEAK_PARTIAL_PTS = "600.0"      # retracção para fechar 50% (pts)
+$env:OMEGA_MIN_PEAK_PTS = "100.0"          # pico mínimo para activar protecção
+# Log em PONTOS (CEO Mandato Gate G2)
+$env:OMEGA_LOG_UNIT = "POINTS"
 $env:OMEGA_PYRAMID_LAYERS = "2"       # max 2 camadas pyramid por ativo
 $env:OMEGA_PYRAMID_LOT_SCALE = "1.5"  # 2ª camada = 1.5× a 1ª
 $env:OMEGA_PYRAMID_ATR = "0.5"        # activar pyramid quando profit >= 0.5×ATR
