@@ -4441,11 +4441,15 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                                 entry_price=_pt_entry,
                                             )
                                             PEAK_REGISTRY.register(_pt_peak)
-                                            # Actualizar ATR no RiskBudgetManager
+                                            # Actualizar ATR real no RiskBudgetManager
                                             if _risk_budget_mgr is not None:
-                                                _atr_for_rb = (guard.get("margin_used") or 0.0)
-                                                if _atr_for_rb > 0:
-                                                    _risk_budget_mgr.update_atr(asset, _atr_for_rb)
+                                                try:
+                                                    _rb_atr_info = get_execution_tf_atr(asset, tf, 0.70)
+                                                    _rb_atr_pts = _rb_atr_info.get("atr_pts", 0.0)
+                                                    if _rb_atr_pts > 0:
+                                                        _risk_budget_mgr.update_atr(asset, _rb_atr_pts)
+                                                except Exception as _rb_atr_err:
+                                                    log.debug("[RISK_BUDGET] ATR update skip: %s", _rb_atr_err)
                                             log.info("[PEAK_TRACKER] %s #%d registado | dir=%+d entry=%.5f",
                                                      asset, _np.ticket, _pt_dir, _pt_entry)
                                         except Exception as _pt_reg_err:

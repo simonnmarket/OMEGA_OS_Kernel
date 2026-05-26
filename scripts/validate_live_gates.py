@@ -122,20 +122,20 @@ def _g3_peak_tracker():
 def _g4_orchestrator():
     import queue as _q
     from core_engines.async_position_orchestrator import (
-        AsyncPositionOrchestrator, FastLoopSignal, drain_fastloop_signals,
-        FASTLOOP_ENABLED, _GLOBAL_QUEUE,
+        AsyncPositionOrchestrator, FastLoopSignal, dedup_signals,
     )
     from core_engines.market_data_cache import MarketDataCache
 
+    # Verificar instância sem tocar em singletons de produção
     cache = MarketDataCache()
     orch = AsyncPositionOrchestrator(
         signal_queue=_q.Queue(maxsize=64),
         market_cache=cache,
     )
-    assert not orch.is_alive(), "orchestrador não devia estar activo sem start()"
+    assert not orch.is_alive(), "orchestrador nao devia estar activo sem start()"
     assert orch.p95_latency() == 0.0
 
-    # Testar dedup via _GLOBAL_QUEUE
+    # Testar dedup_signals — função pura, zero efeitos laterais em produção
     sig_partial = FastLoopSignal(ticket=777, symbol="XAUUSD", action="CLOSE_PARTIAL",
                                   reason="PEAK_PARTIAL", points_context=400.0, partial_pct=0.5)
     sig_full    = FastLoopSignal(ticket=777, symbol="XAUUSD", action="CLOSE_FULL",
@@ -143,16 +143,13 @@ def _g4_orchestrator():
     sig_other   = FastLoopSignal(ticket=888, symbol="EURUSD", action="CLOSE_FULL",
                                   reason="AI_REVERSAL", points_context=200.0)
 
-    for s in [sig_partial, sig_full, sig_other]:
-        _GLOBAL_QUEUE.put_nowait(s)
-
-    deduped = drain_fastloop_signals()
+    deduped = dedup_signals([sig_partial, sig_full, sig_other])
     ticket_map = {s.ticket: s for s in deduped}
 
-    assert 777 in ticket_map, "ticket 777 ausente após dedup"
+    assert 777 in ticket_map, "ticket 777 ausente apos dedup"
     assert ticket_map[777].action == "CLOSE_FULL", \
         f"dedup falhou: {ticket_map[777].action} (esperado CLOSE_FULL)"
-    assert 888 in ticket_map, "ticket 888 ausente após dedup"
+    assert 888 in ticket_map, "ticket 888 ausente apos dedup"
     assert len(deduped) == 2, f"esperado 2 sinais, obtido {len(deduped)}"
 
 

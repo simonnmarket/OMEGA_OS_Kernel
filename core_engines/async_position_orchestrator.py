@@ -397,16 +397,50 @@ def stop_fastloop() -> None:
         _GLOBAL_ORCHESTRATOR = None
 
 
-def drain_fastloop_signals() -> List[FastLoopSignal]:
+def dedup_signals(raw: List[FastLoopSignal]) -> List[FastLoopSignal]:
     """
-    Extrai todos os signals pendentes da queue global com deduplicação.
+    Aplica deduplicação a uma lista de FastLoopSignal.
 
-    Regras de dedup (CEO Finding #6):
+    Regras (CEO Finding #6):
     - Se o mesmo ticket tem CLOSE_PARTIAL + CLOSE_FULL → manter apenas CLOSE_FULL
-    - Se o mesmo ticket tem acção duplicada → manter apenas a primeira ocorrência
+    - Se o mesmo ticket aparece duas vezes com a mesma acção → manter só a primeira
+
+    Função pura: não acede filas nem estado global.
+
+    Args:
+        raw: lista de sinais tal como chegou da queue
 
     Returns:
-        Lista de FastLoopSignal deduplicada (CLOSE_FULL prevalece sobre CLOSE_PARTIAL)
+        Lista deduplicada (CLOSE_FULL prevalece sobre qualquer outro para o mesmo ticket)
+    """
+    if not raw:
+        return raw
+
+    seen: Dict[int, FastLoopSignal] = {}
+    for sig in raw:
+        existing = seen.get(sig.ticket)
+        if existing is None:
+            seen[sig.ticket] = sig
+        elif sig.action == "CLOSE_FULL" and existing.action != "CLOSE_FULL":
+            # CLOSE_FULL sobrepõe CLOSE_PARTIAL ou outro sinal para o mesmo ticket
+            log.debug("[DEDUP] #%d: %s substituído por CLOSE_FULL (%s)",
+                      sig.ticket, existing.action, sig.reason)
+            seen[sig.ticket] = sig
+        # else: manter o primeiro — descartar duplicata
+
+    deduped = list(seen.values())
+    if len(deduped) < len(raw):
+        log.info("[FASTLOOP] Signal dedup: %d raw → %d únicos", len(raw), len(deduped))
+    return deduped
+
+
+def drain_fastloop_signals() -> List[FastLoopSignal]:
+    """
+    Extrai todos os signals pendentes da queue global e aplica deduplicação.
+    Chamado pelo shadow_loop no início de cada ciclo (thread principal).
+
+    Returns:
+        Lista de FastLoopSignal deduplicada, pronta a executar.
     """
     raw: List[FastLoopSignal] = []
     while True:
@@ -414,24 +448,4 @@ def drain_fastloop_signals() -> List[FastLoopSignal]:
             raw.append(_GLOBAL_QUEUE.get_nowait())
         except queue.Empty:
             break
-
-    if not raw:
-        return raw
-
-    # Dedup: agrupar por ticket, CLOSE_FULL tem prioridade absoluta
-    seen: Dict[int, FastLoopSignal] = {}
-    for sig in raw:
-        existing = seen.get(sig.ticket)
-        if existing is None:
-            seen[sig.ticket] = sig
-        elif sig.action == "CLOSE_FULL" and existing.action != "CLOSE_FULL":
-            # CLOSE_FULL supersede CLOSE_PARTIAL ou qualquer outro
-            log.debug("[DEDUP] ticket #%d: %s → substituído por CLOSE_FULL (%s)",
-                      sig.ticket, existing.action, sig.reason)
-            seen[sig.ticket] = sig
-        # caso contrário: manter o primeiro sinal (descarta duplicata)
-
-    deduped = list(seen.values())
-    if len(deduped) < len(raw):
-        log.info("[FASTLOOP] Signal dedup: %d raw → %d únicos", len(raw), len(deduped))
-    return deduped
+    return dedup_signals(raw)
