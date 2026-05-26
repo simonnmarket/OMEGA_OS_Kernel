@@ -39,6 +39,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 from core_engines.peak_tracker import PEAK_REGISTRY, PositionPeak
 from core_engines.point_metrics import PointMetricEngine
+from core_engines.market_data_cache import MARKET_CACHE, MarketDataCache
 
 log = logging.getLogger("OMEGA.FastLoop")
 
@@ -91,18 +92,23 @@ class AsyncPositionOrchestrator:
         check_interval: float = _CHECK_INTERVAL_SEC,
         ai_predict_fn: Optional[Callable] = None,
         mt5_executor: Optional[Any] = None,
+        market_cache: Optional[MarketDataCache] = None,
     ) -> None:
         """
         Args:
             signal_queue: Queue thread-safe para enviar FastLoopSignal ao shadow_loop
             check_interval: Segundos entre iterações por posição (default 2.0)
-            ai_predict_fn: Callable(symbol, data) → {"direction": int, "confidence": float}
-            mt5_executor: Objecto com métodos close(ticket) e partial_close(ticket, pct)
+            ai_predict_fn: Callable(symbol, cached_data) → {"direction": int, "confidence": float}
+                           ATENÇÃO: esta função NÃO deve chamar MT5. Deve usar apenas o
+                           MarketDataCache (snapshot já obtido pelo shadow_loop).
+            mt5_executor: Não usado pelo FastLoop (MT5 só na thread principal)
+            market_cache: Cache de dados de mercado partilhado com shadow_loop (thread-safe)
         """
         self._queue: queue.Queue = signal_queue or queue.Queue()
         self._interval = check_interval
         self._ai_predict = ai_predict_fn
-        self._executor = mt5_executor
+        self._executor = mt5_executor   # reservado — não usar MT5 aqui
+        self._market_cache: MarketDataCache = market_cache or MARKET_CACHE
         self._metrics = PointMetricEngine()
 
         self._running = False
@@ -289,24 +295,27 @@ class AsyncPositionOrchestrator:
 
     def _get_unrealized_pts(self, peak: PositionPeak) -> float:
         """
-        Obtém PnL não realizado em pontos via MT5 ou fallback.
+        Obtém PnL não realizado em pontos do MarketDataCache.
 
-        Se MT5 retorna 0.0 e existe valor conhecido (posição ainda aberta),
-        mantém o último valor para evitar falsos triggers baseados em lag de query.
+        THREAD SAFETY: este método NUNCA chama MT5.
+        O shadow_loop (thread principal) actualiza o MarketDataCache a cada ciclo
+        via MARKET_CACHE.update_unrealized(). O FastLoop apenas lê deste cache.
+
+        Fallback: se o cache não tem dados, usa o último valor conhecido no PeakTracker.
         """
-        try:
-            from core_engines.point_metrics import PointMetricEngine
-            pts = PointMetricEngine.unrealized_points(peak.ticket, peak.symbol, peak.direction)
-            # Fallback: MT5 retornou 0 mas posição tem valor conhecido → manter
-            if pts == 0.0 and peak.current_unrealized_pts != 0.0:
-                return peak.current_unrealized_pts
-            return pts
-        except Exception:
-            return peak.current_unrealized_pts  # usa último valor conhecido
+        cached_pts = self._market_cache.get_unrealized_pts(peak.ticket, peak.symbol)
+        if cached_pts != 0.0:
+            return cached_pts
+        # Fallback: usar último valor registado no PeakTracker
+        return peak.current_unrealized_pts
 
     async def _query_ai(self, peak: PositionPeak) -> Optional[tuple]:
         """
         Consulta motor de IA para sinal de saída/flip.
+
+        THREAD SAFETY: a função ai_predict_fn NÃO deve chamar MT5.
+        Deve usar apenas o snapshot do MarketDataCache (já obtido pelo shadow_loop).
+        A assinatura esperada: ai_predict_fn(symbol, cached_snapshot) → dict
 
         Returns:
             (direction: int, confidence: float) ou None se IA indisponível
@@ -314,10 +323,17 @@ class AsyncPositionOrchestrator:
         if self._ai_predict is None:
             return None
         try:
-            # Executar função síncrona em thread pool para não bloquear event loop
+            # Obter snapshot do cache (zero MT5) para passar à IA.
+            # Se cache ainda vazia (1.º ciclo), passa dict vazio —
+            # AI DEVE operar sem aceder MT5; nunca retorna None por falta de cache.
+            cached_snapshot = self._market_cache.get(peak.symbol) or {}
+            if not cached_snapshot:
+                log.debug("FastLoop AI: cache vazia para %s — snapshot={}", peak.symbol)
+            # Executar IA em thread pool (sem bloquear event loop)
+            # Assinatura: ai_predict_fn(symbol, cached_snapshot) → dict  [ZERO MT5]
             loop = asyncio.get_event_loop()
             result = await loop.run_in_executor(
-                None, self._ai_predict, peak.symbol
+                None, self._ai_predict, peak.symbol, cached_snapshot
             )
             if result and isinstance(result, dict):
                 direction = result.get("direction", 0)
@@ -341,10 +357,16 @@ def get_orchestrator() -> Optional[AsyncPositionOrchestrator]:
 def start_fastloop(
     ai_predict_fn: Optional[Callable] = None,
     mt5_executor: Optional[Any] = None,
+    market_cache=None,
 ) -> Optional[AsyncPositionOrchestrator]:
     """
     Inicia FastLoop global se OMEGA_USE_FASTLOOP=1.
     Chamado pelo shadow_loop.py no boot.
+
+    Args:
+        ai_predict_fn: Callable(symbol, cached_snapshot) → dict  [ZERO MT5]
+        mt5_executor: Não usado pelo FastLoop (MT5 só na thread principal)
+        market_cache: MarketDataCache partilhado (default: singleton MARKET_CACHE)
 
     Returns:
         orchestrador ou None se flag desactivada
@@ -354,12 +376,14 @@ def start_fastloop(
         log.info("FastLoop DISABLED (OMEGA_USE_FASTLOOP not set)")
         return None
     if _GLOBAL_ORCHESTRATOR is not None and _GLOBAL_ORCHESTRATOR.is_alive():
-        log.info("FastLoop já activo")
+        log.info("FastLoop ja activo")
         return _GLOBAL_ORCHESTRATOR
+    from core_engines.market_data_cache import MARKET_CACHE as _MC
     _GLOBAL_ORCHESTRATOR = AsyncPositionOrchestrator(
         signal_queue=_GLOBAL_QUEUE,
         ai_predict_fn=ai_predict_fn,
-        mt5_executor=mt5_executor,
+        mt5_executor=None,    # MT5 proibido no FastLoop
+        market_cache=market_cache or _MC,
     )
     _GLOBAL_ORCHESTRATOR.start()
     return _GLOBAL_ORCHESTRATOR
@@ -375,16 +399,39 @@ def stop_fastloop() -> None:
 
 def drain_fastloop_signals() -> List[FastLoopSignal]:
     """
-    Extrai todos os signals pendentes da queue global.
-    Chamado pelo shadow_loop no início de cada ciclo.
+    Extrai todos os signals pendentes da queue global com deduplicação.
+
+    Regras de dedup (CEO Finding #6):
+    - Se o mesmo ticket tem CLOSE_PARTIAL + CLOSE_FULL → manter apenas CLOSE_FULL
+    - Se o mesmo ticket tem acção duplicada → manter apenas a primeira ocorrência
 
     Returns:
-        Lista de FastLoopSignal para processar
+        Lista de FastLoopSignal deduplicada (CLOSE_FULL prevalece sobre CLOSE_PARTIAL)
     """
-    signals: List[FastLoopSignal] = []
+    raw: List[FastLoopSignal] = []
     while True:
         try:
-            signals.append(_GLOBAL_QUEUE.get_nowait())
+            raw.append(_GLOBAL_QUEUE.get_nowait())
         except queue.Empty:
             break
-    return signals
+
+    if not raw:
+        return raw
+
+    # Dedup: agrupar por ticket, CLOSE_FULL tem prioridade absoluta
+    seen: Dict[int, FastLoopSignal] = {}
+    for sig in raw:
+        existing = seen.get(sig.ticket)
+        if existing is None:
+            seen[sig.ticket] = sig
+        elif sig.action == "CLOSE_FULL" and existing.action != "CLOSE_FULL":
+            # CLOSE_FULL supersede CLOSE_PARTIAL ou qualquer outro
+            log.debug("[DEDUP] ticket #%d: %s → substituído por CLOSE_FULL (%s)",
+                      sig.ticket, existing.action, sig.reason)
+            seen[sig.ticket] = sig
+        # caso contrário: manter o primeiro sinal (descarta duplicata)
+
+    deduped = list(seen.values())
+    if len(deduped) < len(raw):
+        log.info("[FASTLOOP] Signal dedup: %d raw → %d únicos", len(raw), len(deduped))
+    return deduped

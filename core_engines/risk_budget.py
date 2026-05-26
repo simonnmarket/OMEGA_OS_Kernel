@@ -192,7 +192,14 @@ class RiskBudgetManager:
 
         # Hard cap: usa config (permite override por teste/env var)
         hard_cap = self._cfg.hard_cap
-        max_positions = max(self._cfg.min_positions, min(max_by_dd, max_by_pos_budget, hard_cap))
+        raw_max = min(max_by_dd, max_by_pos_budget)
+        if raw_max > hard_cap:
+            log.warning(
+                "[%s] RiskBudget HARD_CAP aplicado: raw=%d → cap=%d "
+                "(equity=%.0f atr=%.1fpts risk/pos=$%.2f)",
+                symbol, raw_max, hard_cap, equity, atr_pts, risk_per_pos_usd,
+            )
+        max_positions = max(self._cfg.min_positions, min(raw_max, hard_cap))
         available = max(0, max_positions - current_positions)
 
         return SymbolRiskSnapshot(

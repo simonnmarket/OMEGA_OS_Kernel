@@ -198,6 +198,23 @@ class PeakTrackerRegistry:
         with self._rlock:
             return [p.to_dict() for p in self._registry.values()]
 
+    def cleanup_closed_positions(self, live_tickets: set) -> None:
+        """
+        Remove posições fechadas do registry.
+
+        Chamado pelo shadow_loop a cada ciclo com o conjunto de tickets ainda abertos.
+        Qualquer ticket registado que não esteja em live_tickets é considerado fechado.
+
+        Args:
+            live_tickets: set de int — tickets activos (ex: {mt5.positions_get()})
+        """
+        with self._rlock:
+            stale = [t for t in list(self._registry.keys()) if t not in live_tickets]
+        for t in stale:
+            self.remove(t)
+        if stale:
+            log.info("[PeakTracker] cleanup: %d tickets stale removidos %s", len(stale), stale)
+
     def __len__(self) -> int:
         with self._rlock:
             return len(self._registry)

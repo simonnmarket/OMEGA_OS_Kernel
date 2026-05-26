@@ -2610,6 +2610,51 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
             log.error("[FASE4] Falha ao inicializar Agente IA: %s — fallback momentum", _ia_init_err)
             agent_ia = None
 
+    # ── CEO MANDATE 2026-05-26: FastLoop + RiskBudget boot ──────────────────────
+    # Ponto de integração 1/4: arrancar FastLoop assíncrono (OMEGA_USE_FASTLOOP=1)
+    # e RiskBudgetManager. Envolvido em try/except — falha não para o shadow_loop.
+    _fastloop_orchestrator = None
+    _risk_budget_mgr = None
+    _ai_calibration_log = None
+    try:
+        from core_engines.async_position_orchestrator import start_fastloop, FASTLOOP_ENABLED
+        from core_engines.market_data_cache import MARKET_CACHE
+        from core_engines.risk_budget import RiskBudgetManager, RISK_BUDGET_ENABLED
+        from core_engines.ai_calibration import AiCalibrationLog
+
+        _risk_budget_mgr = RiskBudgetManager() if RISK_BUDGET_ENABLED else None
+        _ai_calibration_log = AiCalibrationLog()
+
+        if FASTLOOP_ENABLED and mode == "paper" and mt5_connected:
+            _fastloop_orchestrator = start_fastloop(
+                ai_predict_fn=None,   # IA sem MT5: activar via OMEGA_AI_FASTLOOP quando calibrada
+                market_cache=MARKET_CACHE,
+            )
+            log.info("[FASTLOOP] Iniciado — interval=2s | OMEGA_USE_FASTLOOP=1")
+
+            # Warm-start: registar posições já abertas no PeakTracker (herança de estado CEO Q4)
+            try:
+                from core_engines.peak_tracker import PEAK_REGISTRY, PositionPeak
+                _existing = mt5.positions_get() or []
+                for _ep in _existing:
+                    if str(getattr(_ep, "magic", 0)) == str(OMEGA_MAGIC):
+                        _ep_dir = 1 if _ep.type == 0 else -1
+                        _ep_peak = PositionPeak(
+                            ticket=_ep.ticket,
+                            symbol=_ep.symbol,
+                            direction=_ep_dir,
+                            entry_price=_ep.price_open,
+                        )
+                        PEAK_REGISTRY.register(_ep_peak)
+                        log.info("[FASTLOOP] WarmStart: #%d %s dir=%+d registado no PeakTracker",
+                                 _ep.ticket, _ep.symbol, _ep_dir)
+            except Exception as _ws_err:
+                log.warning("[FASTLOOP] WarmStart falhou (nao critico): %s", _ws_err)
+    except Exception as _fl_boot_err:
+        log.warning("[FASTLOOP] Boot falhou — sistema continua sem FastLoop: %s", _fl_boot_err)
+        _fastloop_orchestrator = None
+        _risk_budget_mgr = None
+
     # FIX #5 — Scheduler de-bias: embaralha a ordem dos ativos a cada ciclo
     # com seed determinística por minuto (auditável). Com MAX_POSITIONS>0 o teto
     # de slots podia favorecer o primeiro ativo; shuffle reduz viés. MAX_POSITIONS=0
@@ -2673,6 +2718,74 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                 "evaluation_calendar_run_end": _ev_audit,
                 "omega_audit_issues": _audit_issue_dicts,
             }
+
+        # ── CEO MANDATE 2026-05-26: Ponto 2/4 — Drain FastLoop signals ─────────
+        # Executar ANTES do scan: processar sinais do FastLoop (peak/AI/timeout)
+        # e actualizar MarketDataCache com PnL das posições abertas.
+        try:
+            if _fastloop_orchestrator is not None and mode == "paper" and mt5_connected:
+                from core_engines.async_position_orchestrator import drain_fastloop_signals
+                from core_engines.peak_tracker import PEAK_REGISTRY
+                _fl_signals = drain_fastloop_signals()
+                for _fl_sig in _fl_signals:
+                    try:
+                        log.info("[FASTLOOP] Signal: %s #%d reason=%s pts=%+.1f",
+                                 _fl_sig.action, _fl_sig.ticket,
+                                 _fl_sig.reason, _fl_sig.points_context)
+                        _fl_pos = mt5.positions_get(ticket=_fl_sig.ticket)
+                        if _fl_pos:
+                            _fl_p = _fl_pos[0]
+                            _fl_dir_str = "BUY" if _fl_p.type == 0 else "SELL"
+                            if _fl_sig.action in ("CLOSE_FULL", "AI_REVERSAL"):
+                                _fl_close = mt5_close_partial(
+                                    _fl_p.ticket, _fl_p.symbol, _fl_p.volume, _fl_dir_str)
+                                if _fl_close.get("success"):
+                                    log.info("[FASTLOOP] CLOSE OK #%d reason=%s @ %.1fms",
+                                             _fl_sig.ticket, _fl_sig.reason,
+                                             _fl_close.get("latency_ms", 0))
+                                    PEAK_REGISTRY.remove(_fl_sig.ticket)
+                                    MARKET_CACHE.remove_ticket(_fl_sig.ticket)
+                            elif _fl_sig.action == "CLOSE_PARTIAL":
+                                _fl_lot_partial = round(_fl_p.volume * _fl_sig.partial_pct, 2)
+                                if _fl_lot_partial >= 0.01:
+                                    _fl_pclose = mt5_close_partial(
+                                        _fl_p.ticket, _fl_p.symbol, _fl_lot_partial, _fl_dir_str)
+                                    if _fl_pclose.get("success"):
+                                        log.info("[FASTLOOP] PARTIAL_CLOSE OK #%d %.2f lots",
+                                                 _fl_sig.ticket, _fl_lot_partial)
+                    except Exception as _fl_exec_err:
+                        log.warning("[FASTLOOP] Erro ao executar signal #%d: %s",
+                                    _fl_sig.ticket, _fl_exec_err)
+
+                # Actualizar cache de PnL (producer — thread principal)
+                try:
+                    _all_open_pos = mt5.positions_get() or []
+                    _tick_pts_map: dict = {}
+                    for _op in _all_open_pos:
+                        if str(getattr(_op, "magic", 0)) == str(OMEGA_MAGIC):
+                            _sym_info = mt5.symbol_info(_op.symbol)
+                            if _sym_info:
+                                _pt = max(_sym_info.point, 1e-12)
+                                _dir_op = 1 if _op.type == 0 else -1
+                                _cur_price = getattr(_op, "price_current", 0.0)
+                                if _cur_price > 0:
+                                    _unreal_pts = round((_cur_price - _op.price_open) * _dir_op / _pt, 1)
+                                    _tick_pts_map[_op.ticket] = _unreal_pts
+                    # Batch update no PeakRegistry e MarketDataCache
+                    if _tick_pts_map:
+                        PEAK_REGISTRY.update_all(_tick_pts_map)
+                        for _t, _pts in _tick_pts_map.items():
+                            _op_sym = next((p.symbol for p in _all_open_pos if p.ticket == _t), None)
+                            if _op_sym:
+                                MARKET_CACHE.update_unrealized(_op_sym, {_t: _pts})
+                    # Limpar posições fechadas do PeakRegistry (CEO Mandate Phase C)
+                    _live_set = {p.ticket for p in _all_open_pos
+                                 if str(getattr(p, "magic", 0)) == str(OMEGA_MAGIC)}
+                    PEAK_REGISTRY.cleanup_closed_positions(_live_set)
+                except Exception as _cache_err:
+                    log.debug("[FASTLOOP] cache update error: %s", _cache_err)
+        except Exception as _fl_drain_err:
+            log.warning("[FASTLOOP] drain error (nao critico): %s", _fl_drain_err)
 
         for asset in ativos_scheduled:
             for tf in timeframes:
@@ -3508,6 +3621,27 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                         results.append({"asset": asset, "timeframe": tf,
                                         "status": "SKIP_DEDUP_CYCLE"})
                         continue  # FIX: sem este continue, caía no Q2 e abria posição duplicada
+                    # === CEO MANDATE 2026-05-26: RiskBudgetManager (Ponto 3/4) ============
+                    # Substituiu MAX_POS_PER_ASSET fixo por cálculo dinâmico ATR×equity×risco.
+                    # Se OMEGA_USE_RISK_BUDGET=1 → slots dinâmicos.
+                    # Se falhar → fallback para OMEGA_MAX_POS_PER_ASSET (comportamento legacy).
+                    _rb_slots_available = None
+                    try:
+                        if _risk_budget_mgr is not None:
+                            _n_asset_open = sum(1 for _p in (mt5.positions_get(symbol=asset) or [])
+                                                if str(getattr(_p, "magic", 0)) == str(OMEGA_MAGIC))
+                            _rb_slots_available = _risk_budget_mgr.available_slots(
+                                asset, current_positions=_n_asset_open)
+                            if _rb_slots_available <= 0:
+                                log.info("[%s %s] [RISK_BUDGET] SKIP — 0 slots disponíveis "
+                                         "(ATR-based risk cap atingido)", asset, tf)
+                                results.append({"asset": asset, "timeframe": tf,
+                                                "status": "SKIP_RISK_BUDGET"})
+                                continue
+                    except Exception as _rb_err:
+                        log.warning("[%s %s] [RISK_BUDGET] falha — fallback MAX_POS_PER_ASSET: %s",
+                                    asset, tf, _rb_err)
+
                     # === PSA-WIND Q2: 1 POSIÇÃO POR ATIVO (CEO 2026-05-14 FIX) ===
                     # Forçar MAX_POS_PER_ASSET=1 — 2ª posição só via check_pyramid_add()
                     # Previne 3× ordens idênticas mesmo volume; pyramid tem lot progressivo (1.5x)
@@ -4294,6 +4428,29 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                                          _pyramid_decision.get("lot"), _pyramid_decision.get("reason"))
                                         except Exception as _py_err:
                                             log.warning("[PYRAMID] Erro ao verificar pyramiding: %s", _py_err)
+                                        # === CEO MANDATE 2026-05-26: PeakTracker register (Ponto 4/4) ===
+                                        try:
+                                            from core_engines.peak_tracker import PEAK_REGISTRY, PositionPeak
+                                            from core_engines.market_data_cache import MARKET_CACHE
+                                            _pt_entry = exec_result.get("fill_price", _np.price_open)
+                                            _pt_dir = 1 if signal_dir == "BUY" else -1
+                                            _pt_peak = PositionPeak(
+                                                ticket=_np.ticket,
+                                                symbol=asset,
+                                                direction=_pt_dir,
+                                                entry_price=_pt_entry,
+                                            )
+                                            PEAK_REGISTRY.register(_pt_peak)
+                                            # Actualizar ATR no RiskBudgetManager
+                                            if _risk_budget_mgr is not None:
+                                                _atr_for_rb = (guard.get("margin_used") or 0.0)
+                                                if _atr_for_rb > 0:
+                                                    _risk_budget_mgr.update_atr(asset, _atr_for_rb)
+                                            log.info("[PEAK_TRACKER] %s #%d registado | dir=%+d entry=%.5f",
+                                                     asset, _np.ticket, _pt_dir, _pt_entry)
+                                        except Exception as _pt_reg_err:
+                                            log.warning("[PEAK_TRACKER] falha ao registar #%d: %s",
+                                                        _np.ticket, _pt_reg_err)
                                         # === PARTIAL_CLOSE: inicializar trava de lucro POR POSIÇÃO (PSA-WIND recalibrado) ===
                                         try:
                                             if _PARTIAL_CLOSE_AVAILABLE:

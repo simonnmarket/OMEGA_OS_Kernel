@@ -133,7 +133,8 @@ class TestExitLatency:
         sig_queue: queue.Queue = queue.Queue()
 
         # AI que retorna sinal de inversão com alta confiança
-        def mock_ai_predict(symbol: str) -> dict:
+        # Assinatura Phase A: (symbol, cached_snapshot) — sem MT5
+        def mock_ai_predict(symbol: str, snapshot: dict = None) -> dict:
             return {"direction": -1, "confidence": 0.90}  # inversão BUY→SELL
 
         orch = AsyncPositionOrchestrator(
