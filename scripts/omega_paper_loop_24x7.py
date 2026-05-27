@@ -164,7 +164,7 @@ def _parse_ativos_from_env() -> list[str] | None:
     return [p.strip() for p in parts if p.strip()]
 
 
-def run_export(symbols: list[str], timeframes: list[str], bars: int, env: dict[str, str]) -> int:
+def run_export(symbols: list[str], timeframes: list[str], bars: int, env: dict[str, str], log: "logging.Logger | None" = None) -> int:
     cmd = [
         sys.executable,
         "-u",
@@ -178,7 +178,16 @@ def run_export(symbols: list[str], timeframes: list[str], bars: int, env: dict[s
         "--out-dir",
         str(ROOT / "data" / "ohlcv"),
     ]
-    p = subprocess.run(cmd, cwd=str(ROOT), env=env)
+    # FIX stdout-heranca: capturar stdout/stderr para que o subprocess nao herde
+    # handles quebrados de sessoes anteriores (OSError EINVAL no print do MT5).
+    p = subprocess.run(
+        cmd, cwd=str(ROOT), env=env,
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        text=True, encoding="utf-8", errors="replace",
+    )
+    if p.returncode != 0 and log is not None:
+        out_tail = (p.stdout or "")[-800:]
+        log.warning("[OHLCV] export stderr/stdout: %s", out_tail)
     return int(p.returncode)
 
 
@@ -233,11 +242,12 @@ def _get_mt5_equity() -> float:
     try:
         import MetaTrader5 as mt5
         if mt5.initialize():
-            acct = mt5.account_info()
-            if acct and acct.equity > 0:
-                eq = float(acct.equity)
-                mt5.shutdown()
-                return eq
+            try:
+                acct = mt5.account_info()
+                if acct and acct.equity > 0:
+                    return float(acct.equity)
+            finally:
+                mt5.shutdown()  # garantir shutdown em qualquer caminho — evita handle aberto
     except Exception:
         pass
     return 0.0
@@ -383,7 +393,7 @@ def main() -> int:
                 log.warning("[EVAL_CONTEXT] cycle=%d (skip: %s)", cycle, _ev_err)
             if args.pre_sync_ohlcv:
                 log.info("ciclo %d | export OHLCV MT5…", cycle)
-                rc_export = run_export(ativos, args.timeframes, args.bars, env)
+                rc_export = run_export(ativos, args.timeframes, args.bars, env, log=log)
                 if rc_export != 0:
                     log.warning("ciclo %d | export terminou com código %d", cycle, rc_export)
                     # P1-A C2 FIX: bloquear shadow se export falhou — dados obsoletos proibidos
@@ -396,6 +406,13 @@ def main() -> int:
                     with open(_fail_log, "a") as _f:
                         import datetime as _dt
                         _f.write(f"{_dt.datetime.utcnow().isoformat()} | rc={rc_export} | ativos={ativos}\n")
+                    # FIX backoff: o 'continue' saltava o sleep — ciclos OHLCV-fail corriam
+                    # a ~300ms enchendo o log. Agora aguarda min_interval_sec antes de retry.
+                    elapsed = time.monotonic() - t0
+                    _ohlcv_wait = max(0.0, args.min_interval_sec - elapsed)
+                    if _ohlcv_wait > 0:
+                        log.info("aguardar %.1fs (OHLCV fail backoff)…", _ohlcv_wait)
+                        time.sleep(_ohlcv_wait)
                     continue  # NÃO executar shadow com dados obsoletos
 
             log.info("ciclo %d | shadow_loop…", cycle)
