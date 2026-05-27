@@ -204,6 +204,35 @@ class AsyncPositionOrchestrator:
             current_pts = self._get_unrealized_pts(peak)
             peak.update(current_pts)
 
+            # === PYRAMID EVAL (CEO P0-2C — late import anti circular) ===
+            try:
+                import MetaTrader5 as mt5
+                import core_engines.shadow_loop as sl_module
+                _pos_list = list(mt5.positions_get(symbol=peak.symbol) or [])
+                _dir_str = "BUY" if peak.direction > 0 else "SELL"
+                _atr_i = sl_module.get_execution_tf_atr(peak.symbol, "H1", 0.70)
+                _trigger = float(_atr_i.get("atr_pts", 0) or 0) * 0.5
+                _dec = sl_module.check_pyramid_add(
+                    symbol=peak.symbol,
+                    direction=_dir_str,
+                    open_positions=_pos_list,
+                    pos_ledger={},
+                    prof={"lot_cap": 0.10},
+                    exec_atr={"atr_pts": _atr_i.get("atr_pts", 0)},
+                    equity=0.0,
+                )
+                log.info(
+                    "[PYRAMID_EVAL] %s #%d add=%s reason=%s profit_pts=%s trigger=%.1f",
+                    peak.symbol,
+                    ticket,
+                    _dec.get("add"),
+                    _dec.get("reason"),
+                    _dec.get("profit_pts"),
+                    _trigger,
+                )
+            except Exception as _pe:
+                log.warning("[PYRAMID_EVAL] %s #%d erro: %s", peak.symbol, ticket, _pe)
+
             # ── Check 1: Peak Drawdown Protection ──────────────────────────────
             if peak.is_peak_close_triggered and not peak.peak_close_triggered:
                 peak.mark_close_executed()

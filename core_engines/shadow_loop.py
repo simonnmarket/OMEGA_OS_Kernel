@@ -1040,6 +1040,10 @@ def trade_feedback_append(row: dict) -> None:
     independente de OMEGA_DECISION_TRACE; use para auditar sync opens vs closes.
     """
     r = dict(row)
+    if r.get("event") in ("position_opened", "position_closed"):
+        _src = r.get("signal_source")
+        if _src not in ("MOMENTUM_MT5", "AGENT_IA", "SYNC_RECOVERY"):
+            r["signal_source"] = "MOMENTUM_MT5" if _src in (None, "", "NONE") else _src
     r.setdefault("ts", datetime.now(timezone.utc).isoformat())
     try:
         with open(AUDIT_PAPER / "trade_feedback.jsonl", "a", encoding="utf-8") as tf:
@@ -1924,6 +1928,16 @@ def get_multi_tf_bias(symbol: str) -> dict:
             "n_tfs": len([v for v in detail.values() if v in ("BUY", "SELL")]), "detail": detail}
 
 
+def get_mtf_confluence_score(symbol: str) -> dict:
+    b = get_multi_tf_bias(symbol)
+    return {
+        "mtf_confluence_score": round(float(b.get("alignment", 0)) * 100, 1),
+        "timeframes_aligned": b.get("detail", {}),
+        "macro_bias": b.get("bias", "NEUTRAL"),
+        "n_tfs": b.get("n_tfs", 0),
+    }
+
+
 def get_key_levels(symbol: str) -> dict:
     """
     CEO Order 04/05/2026: Calcula níveis-chave para preparar TP/SL no gráfico menor.
@@ -2176,9 +2190,16 @@ def check_pyramid_add(symbol: str, direction: str, open_positions: list,
     best_pos = max(same_dir, key=lambda p: _attr(p, "profit", _attr(p, "last_profit", 0)))
     atr_pts   = exec_atr.get("atr_pts", 0)
     trigger   = atr_pts * PYRAMID_TRIGGER_ATR
-    _best_profit = _attr(best_pos, "profit", _attr(best_pos, "last_profit", 0))
-    if _best_profit < trigger:
-        return {"add": False, "reason": f"profit={_best_profit:.2f}<trigger={trigger:.1f}pts",
+    import MetaTrader5 as mt5
+    entry_price = float(_attr(best_pos, "price_open", 0) or 0)
+    _tick = mt5.symbol_info_tick(symbol)
+    _si = mt5.symbol_info(symbol)
+    if _tick is None or _si is None or entry_price <= 0:
+        return {"add": False, "reason": "no_tick_or_entry", "layer": current_layers}
+    current_price = float(_tick.bid if direction == "SELL" else _tick.ask)
+    profit_pts = abs(current_price - entry_price) / max(float(_si.point), 1e-12)
+    if profit_pts < trigger:
+        return {"add": False, "reason": f"profit_pts={profit_pts:.1f}<trigger={trigger:.1f}",
                 "layer": current_layers}
     # Verificar tendência forte antes de pyramidar
     ts = get_trend_strength(symbol, direction)
@@ -2206,7 +2227,7 @@ def check_pyramid_add(symbol: str, direction: str, open_positions: list,
         "layer":         current_layers + 1,
         "trend_score":   ts["score"],
         "trigger_pts":   trigger,
-        "profit_pts":    _best_profit,
+        "profit_pts":    profit_pts,
         "reason":        f"pyramid_layer{current_layers+1}_LOT{layer_lot:.2f} score={ts['score']:.2f}",
     }
 
@@ -2849,6 +2870,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
 
                 log.info("[%s %s] ── Ciclo ──", asset, tf)
                 signal_source = None  # preenchido em paper + FASE4; usado em decision_trace
+                _mtf_confluence_score_val = None
 
                 # === FLOW CONFLUENCE: institutional flow scoring (awakened modules) ===
                 # MOVIDO antes de guardrails para sempre logar estado do fluxo
@@ -3278,8 +3300,37 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                             log.info("[%s %s] [MTF_BIAS] ok bias=%s align=%.0f%% %s",
                                      asset, tf, _tf_bias["bias"],
                                      _tf_bias["alignment"] * 100, _tf_bias["detail"])
+                            _mc = get_mtf_confluence_score(asset)
+                            _mtf_confluence_score_val = _mc.get("mtf_confluence_score")
+                            log.info(
+                                "[%s %s] [MTF_CONFLUENCE] score=%.1f bias=%s detail=%s signal=%s",
+                                asset, tf,
+                                float(_mtf_confluence_score_val or 0),
+                                _mc.get("macro_bias"),
+                                _mc.get("timeframes_aligned"),
+                                signal_dir,
+                            )
                         except Exception as _mte:
                             log.warning("[%s %s] [MTF_BIAS] erro (não bloqueia): %s", asset, tf, _mte)
+
+                    # === MTF METAL STRICT (CEO P0-3) ===
+                    if signal_dir and os.getenv("OMEGA_MTF_METAL_STRICT", "1") == "1":
+                        if asset in ("XAUUSD", "XAGUSD"):
+                            try:
+                                _mc2 = get_mtf_confluence_score(asset)
+                                _td = _mc2.get("timeframes_aligned") or {}
+                                if _td.get("W1") == "SELL" and _td.get("D1") == "SELL" and signal_dir == "BUY":
+                                    log.info(
+                                        "[%s %s] [MTF_CONFLUENCE] BLOCK METAL_STRICT W1+D1=SELL signal=BUY score=%.1f",
+                                        asset, tf, float(_mc2.get("mtf_confluence_score", 0)),
+                                    )
+                                    results.append({
+                                        "asset": asset, "timeframe": tf,
+                                        "status": "SKIP_MTF_METAL_STRICT",
+                                    })
+                                    continue
+                            except Exception as _mse:
+                                log.warning("[%s %s] [MTF_CONFLUENCE] metal_strict err: %s", asset, tf, _mse)
 
                     current_positions = []
                     all_open_positions = []
@@ -3548,7 +3599,8 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                                 "position_ticket": int(_tk),
                                                 "symbol": _entry.get("symbol"),
                                                 "timeframe": tf,
-                                                "signal_source": _entry.get("signal_source"),
+                                                "signal_source": _entry.get("signal_source") or "MOMENTUM_MT5",
+                                                "mtf_confluence_score": _entry.get("mtf_confluence_score"),
                                                 "agent_id": _entry.get("agent_id"),
                                                 "pnl": round(float(_entry_pnl), 6),
                                                 "total_realized_pnl": round(float(_realized_pnl), 6),  # P0-ABC 20260522
@@ -4381,6 +4433,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                             "slippage_pts": exec_result.get("slippage_pts", 0),
                                             "partial_taken": False,  # T-F1a: flag fecho parcial
                                             # P0-C: Tech Lead G.1 (OIS-DIAG-20260517) — persistir no ledger na abertura
+                                            "mtf_confluence_score": _mtf_confluence_score_val,
                                             "confluence_score": round(float(_flow_conf), 4),
                                             "components_fired": sorted(
                                                 [k for k, v in (_flow_details or {}).items()
@@ -4393,6 +4446,16 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                                  exec_result.get("slippage_pts", 0))
                                         log.info("[LEDGER] Posicao aberta: %s #%d entry=%.5f",
                                                  asset, _np.ticket, _np.price_open)
+                                        trade_feedback_append({
+                                            "event": "position_opened",
+                                            "position_ticket": int(_np.ticket),
+                                            "symbol": asset,
+                                            "timeframe": tf,
+                                            "signal_source": signal_source or "MOMENTUM_MT5",
+                                            "mtf_confluence_score": _mtf_confluence_score_val,
+                                            "direction": signal_dir,
+                                            "initial_lot": float(eff_lot),
+                                        })
                                         # P0-ABC 20260522 T-D4b: Registrar posição no PositionManager
                                         try:
                                             _position_manager.register_open(
@@ -4441,9 +4504,28 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                                 equity=equity
                                             )
                                             if _pyramid_decision.get("add"):
+                                                _py_layer = int(_pyramid_decision.get("layer", 2))
+                                                _py_lot = float(_pyramid_decision.get("lot", 0.01))
+                                                _led = _pos_ledger.get(_np.ticket, {})
+                                                _py_sl = float(_led.get("sl_pts", 250) or 250)
+                                                _py_tp = float(_led.get("tp_pts", 750) or 750)
                                                 log.info("[PYRAMID] %s %s: ADD LAYER %d | lot=%.2f | reason=%s",
-                                                         asset, tf, _pyramid_decision.get("layer"),
-                                                         _pyramid_decision.get("lot"), _pyramid_decision.get("reason"))
+                                                         asset, tf, _py_layer,
+                                                         _py_lot, _pyramid_decision.get("reason"))
+                                                _pyramid_exec = mt5_send_order(
+                                                    asset, tf, _py_lot,
+                                                    sl_pts=_py_sl,
+                                                    tp_pts=_py_tp,
+                                                    direction=signal_dir,
+                                                )
+                                                if _pyramid_exec.get("success"):
+                                                    log.info("[PYRAMID] %s #%d EXEC OK deal=%s",
+                                                             asset, _np.ticket,
+                                                             _pyramid_exec.get("deal"))
+                                                else:
+                                                    log.warning("[PYRAMID] %s #%d EXEC FAIL %s",
+                                                                asset, _np.ticket,
+                                                                _pyramid_exec.get("retcode_str"))
                                         except Exception as _py_err:
                                             log.warning("[PYRAMID] Erro ao verificar pyramiding: %s", _py_err)
                                         # === CEO MANDATE 2026-05-26: PeakTracker register (Ponto 4/4) ===

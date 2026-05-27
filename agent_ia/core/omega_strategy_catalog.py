@@ -127,12 +127,18 @@ if HAS_PYDANTIC:
         
         class Config:
             extra = "allow"  # Permite campos adicionais para flexibilidade
+
+        def model_dump(self, **kwargs):
+            return self.dict(**kwargs)
 else:
     # Fallback sem Pydantic
     class MarketDataSchema:
         def __init__(self, **kwargs):
             for key, value in kwargs.items():
                 setattr(self, key, value)
+
+        def model_dump(self):
+            return self.__dict__
 
 
 # =============================================================================
