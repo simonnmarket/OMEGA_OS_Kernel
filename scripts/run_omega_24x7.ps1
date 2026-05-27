@@ -60,6 +60,21 @@ $env:OMEGA_PYRAMID_ATR = "0.5"        # activar pyramid quando profit >= 0.5×AT
 # TP/SL RATIO: cap máximo 3:1 (era 8:1) — evita TPs irrealistas como US30 TP=16907pts
 $env:OMEGA_MAX_TP_SL_RATIO = "3.0"
 
+# SL CAPS por regime — calibrados para escala de pontos de cada classe (BUG FIX 2026-05-27)
+#
+# Problema: OMEGA_SL_MAX_<regime> estava em MT5-points mas a escala varia por ativo:
+#   EURUSD: 1pt=$0.00001 → 150pts=15pips (correcto)
+#   XAUUSD: 1pt=$1.00/lot → cap250=$250/lot (ERRADO, ATR H4~$2924/lot)
+#   BTCUSD: 1pt=$0.01/lot → cap1500=$15/lot (ERRADO, ATR H4~$727/lot)
+#   XRPUSD: 1pt=$0.01/lot → cap1500=$15/lot (OK, ATR H4~$15/lot)
+#
+# Fix: METAL→3000 (XAUUSD $30/lot ≈ 1x ATR H4) | CRYPTO→80000 (BTC $800/lot > ATR H4)
+# Trailing stop usará o ATR correcto; lot_size calculado sobre SL real → risco=0.5% target
+$env:OMEGA_SL_MAX_METAL  = "3000"   # XAUUSD/XAGUSD: ponto=0.01, 3000pts=$30/lot
+$env:OMEGA_SL_MAX_FOREX  = "150"    # EURUSD etc: 150pts=15pips
+$env:OMEGA_SL_MAX_INDEX  = "600"    # US500/US100
+$env:OMEGA_SL_MAX_CRYPTO = "80000"  # BTCUSD: ponto=0.01, ATR H4~72656pts; XRP/BNB<<80000 inalterado
+
 # LOT CAP global: 0.50 lotes máximo por ordem (era 0.20)
 $env:OMEGA_LOT_MAX = "0.50"
 
