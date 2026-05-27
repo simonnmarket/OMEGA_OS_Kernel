@@ -1,0 +1,7 @@
+554f4fee1e8e36a0837305acfbe0abf72a995bdee12fdcb254f16f034f3c9b10  audit/paper/omega_24x7_runner.log  (230322653 bytes)
+5c971e37147f613c40eb9c9a95628ff90c331b134d37cfad8a495f92677ee02a  audit/paper/trade_feedback.jsonl  (862441 bytes)
+4c17f82995f493076939d9ec2762b5c4c5fce71f5937cbad7c374f29161a2f04  core_engines/shadow_loop.py  (282872 bytes)
+24a842319816bf716ae8bb447de5654cbb2dbb752621e4273d8b75fd1f09230e  scripts/run_omega_24x7.ps1  (6176 bytes)
+TIMESTAMP_UTC: 2026-05-27T21:33:58Z
+GIT_HEAD: 56a83c20a4d708c70cc8b06f28ea9155c468b699
+BRANCH: feat/execution-router-atr-20260523

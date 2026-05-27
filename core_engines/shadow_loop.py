@@ -2952,6 +2952,11 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                 # Aqui usamos o valor em cache se houver sinal
                 _flow_conf = _flow_state.get(asset, 50.0)
 
+                # FORENSIC-FREEZE: OMEGA_ENTRIES_FROZEN=1 in live_flags.json bloqueia novas entradas
+                # sem parar o runner (FastLoop/trailing continuam activos). CEO-FORENSIC-20260527.
+                if get_flag("OMEGA_ENTRIES_FROZEN", "0") == "1":
+                    log.warning("[%s %s] ENTRIES_FROZEN=1 — sem novas entradas durante auditoria forense.", asset, tf); continue
+
                 if mode == "paper" and MAX_POSITIONS > 0 and open_pos >= MAX_POSITIONS:
                     log.warning("[%s %s] MAX_POSITIONS=%d atingido.", asset, tf, MAX_POSITIONS); continue
 

@@ -1,0 +1,17 @@
+{
+  "prova_2_payload": {
+    "cenario_A_spread_guard": "BLOQUEADO",
+    "cenario_A_gate_status": "SKIP_SPREAD_GUARD",
+    "cenario_A_gate_msg": "EXECUCAO BLOQUEADA: SL (2.0 pts) < 3.0x spread (9.0 pts, spread=3.0)",
+    "cenario_A_order_send_chamado": false,
+    "cenario_B_dict_request": {
+      "magic": "CAMPO_AUSENTE",
+      "sl": 49700.0,
+      "tp": 50700.0,
+      "comment": "OV2|b22b9b|H1|B"
+    },
+    "cenario_B_magic_diagnostico": "FALHA CRITICA — campo 'magic' ausente do request. Broker assign magic=0.",
+    "cenario_B_sl_tp_diagnostico": "OK — SL e TP presentes com valores float reais",
+    "conclusao": "CENARIO A: M2 BLOQUEOU ✅ | CENARIO B: magic=0/AUSENTE ❌ — a correção de magic NÃO foi aplicada em shadow_loop.py"
+  }
+}

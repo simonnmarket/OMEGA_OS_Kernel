@@ -1,0 +1,379 @@
+{
+  "prova_1_importacao": {
+    "status": "FAIL",
+    "import_error": null,
+    "novos_modulos_omega_carregados": 63,
+    "novos_modulos_omega_lista": [
+      {
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py"
+      },
+      {
+        "modulo": "agent_ia.core.omega_agent_ecosystem",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\core\\omega_agent_ecosystem.py"
+      },
+      {
+        "modulo": "agent_ia.core.omega_quantum_brain",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\core\\omega_quantum_brain.py"
+      },
+      {
+        "modulo": "agent_ia.core.omega_strategy_catalog",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\core\\omega_strategy_catalog.py"
+      },
+      {
+        "modulo": "agent_ia.integration.psa_audit_agents_bridge",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\integration\\psa_audit_agents_bridge.py"
+      },
+      {
+        "modulo": "agent_ia.integration.shadow_loop_integration",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\integration\\shadow_loop_integration.py"
+      },
+      {
+        "modulo": "agent_ia.integration.shadow_loop_psa_feed",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\integration\\shadow_loop_psa_feed.py"
+      },
+      {
+        "modulo": "agent_ia.psa_audit_agents_v12",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\psa_audit_agents_v12\\__init__.py"
+      },
+      {
+        "modulo": "agent_ia.psa_audit_agents_v12.agent_base",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\psa_audit_agents_v12\\agent_base.py"
+      },
+      {
+        "modulo": "agent_ia.psa_audit_agents_v12.commodity_agent",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\psa_audit_agents_v12\\commodity_agent.py"
+      },
+      {
+        "modulo": "agent_ia.psa_audit_agents_v12.crypto_agent",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\psa_audit_agents_v12\\crypto_agent.py"
+      },
+      {
+        "modulo": "agent_ia.psa_audit_agents_v12.forex_agent",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\psa_audit_agents_v12\\forex_agent.py"
+      },
+      {
+        "modulo": "agent_ia.psa_audit_agents_v12.stock_agent",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\psa_audit_agents_v12\\stock_agent.py"
+      },
+      {
+        "modulo": "core.omega_agent_ecosystem",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\core\\omega_agent_ecosystem.py"
+      },
+      {
+        "modulo": "core.omega_global_orchestrator",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\core\\omega_global_orchestrator.py"
+      },
+      {
+        "modulo": "core.omega_session_calibrator",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\core\\omega_session_calibrator.py"
+      },
+      {
+        "modulo": "core.omega_strategy_catalog",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\core\\omega_strategy_catalog.py"
+      },
+      {
+        "modulo": "core_engines.integration_gate",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\core_engines\\integration_gate.py"
+      },
+      {
+        "modulo": "core_engines.intra_candle_executor",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\core_engines\\intra_candle_executor.py"
+      },
+      {
+        "modulo": "core_engines.kill_switch_persistent",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\core_engines\\kill_switch_persistent.py"
+      },
+      {
+        "modulo": "core_engines.lot_calculator_v2",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\core_engines\\lot_calculator_v2.py"
+      },
+      {
+        "modulo": "core_engines.omega_evaluation_context",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\core_engines\\omega_evaluation_context.py"
+      },
+      {
+        "modulo": "modules",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\__init__.py"
+      },
+      {
+        "modulo": "modules.anomaly_detector",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\anomaly_detector.py"
+      },
+      {
+        "modulo": "modules.detection",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\detection\\__init__.py"
+      },
+      {
+        "modulo": "modules.detection.spoof_iceberg_detector",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\detection\\spoof_iceberg_detector.py"
+      },
+      {
+        "modulo": "modules.fractal_hurst",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\fractal_hurst.py"
+      },
+      {
+        "modulo": "modules.kalman_pullback_engine",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\kalman_pullback_engine.py"
+      },
+      {
+        "modulo": "modules.micro_entry_filter",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\micro_entry_filter.py"
+      },
+      {
+        "modulo": "modules.momentum_physics",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\momentum_physics.py"
+      },
+      {
+        "modulo": "modules.mt5_position_tag",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\mt5_position_tag.py"
+      },
+      {
+        "modulo": "modules.omega_audit",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\omega_audit\\__init__.py"
+      },
+      {
+        "modulo": "modules.omega_audit.precycle_governor",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\omega_audit\\precycle_governor.py"
+      },
+      {
+        "modulo": "modules.omega_audit.registry",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\omega_audit\\registry.py"
+      },
+      {
+        "modulo": "modules.omega_audit.reporting",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\omega_audit\\reporting.py"
+      },
+      {
+        "modulo": "modules.omega_audit.static_inventory",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\omega_audit\\static_inventory.py"
+      },
+      {
+        "modulo": "modules.omega_integration_gate",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\omega_integration_gate.py"
+      },
+      {
+        "modulo": "modules.omega_market_profile_engine",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\omega_market_profile_engine.py"
+      },
+      {
+        "modulo": "modules.omega_order_lock",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\omega_order_lock.py"
+      },
+      {
+        "modulo": "modules.omega_zone_navigator",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\omega_zone_navigator.py"
+      },
+      {
+        "modulo": "modules.portfolio",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\portfolio\\__init__.py"
+      },
+      {
+        "modulo": "modules.portfolio.correlation_filter",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\portfolio\\correlation_filter.py"
+      },
+      {
+        "modulo": "modules.risk.scale_manager",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\risk\\scale_manager.py"
+      },
+      {
+        "modulo": "modules.risk_circuit_breaker",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\risk_circuit_breaker.py"
+      },
+      {
+        "modulo": "modules.risk_metrics",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\risk_metrics.py"
+      },
+      {
+        "modulo": "modules.risk_valves_v31",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\risk_valves_v31.py"
+      },
+      {
+        "modulo": "modules.tesseract_sniper",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\tesseract_sniper.py"
+      },
+      {
+        "modulo": "modules.v_flow_microstructure",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\v_flow_microstructure.py"
+      },
+      {
+        "modulo": "modules.validation",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\validation\\__init__.py"
+      },
+      {
+        "modulo": "modules.validation.crisis_probability_validator",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\validation\\crisis_probability_validator.py"
+      },
+      {
+        "modulo": "modules.validation.gate_timing_validator",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\validation\\gate_timing_validator.py"
+      },
+      {
+        "modulo": "modules.validation.mfa_engine",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\validation\\mfa_engine.py"
+      },
+      {
+        "modulo": "modules.validation.slo_validator_china",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\validation\\slo_validator_china.py"
+      },
+      {
+        "modulo": "modules.volume_physics",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\volume_physics.py"
+      },
+      {
+        "modulo": "modules.volume_profile",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\volume_profile.py"
+      },
+      {
+        "modulo": "modules.zak_guardrail",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\zak_guardrail.py"
+      },
+      {
+        "modulo": "omega_integration_gate",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\omega_integration_gate.py"
+      },
+      {
+        "modulo": "psa_audit_agents_v12",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\psa_audit_agents_v12\\__init__.py"
+      },
+      {
+        "modulo": "psa_audit_agents_v12.agent_base",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\psa_audit_agents_v12\\agent_base.py"
+      },
+      {
+        "modulo": "psa_audit_agents_v12.commodity_agent",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\psa_audit_agents_v12\\commodity_agent.py"
+      },
+      {
+        "modulo": "psa_audit_agents_v12.crypto_agent",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\psa_audit_agents_v12\\crypto_agent.py"
+      },
+      {
+        "modulo": "psa_audit_agents_v12.forex_agent",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\psa_audit_agents_v12\\forex_agent.py"
+      },
+      {
+        "modulo": "psa_audit_agents_v12.stock_agent",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\agent_ia\\psa_audit_agents_v12\\stock_agent.py"
+      }
+    ],
+    "strings_contaminantes_encontradas": [
+      {
+        "string": "gorila_sacramento",
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+        "origem": "OUTRO"
+      },
+      {
+        "string": "nasa_strategy",
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+        "origem": "OUTRO"
+      },
+      {
+        "string": "apollo11",
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+        "origem": "OUTRO"
+      },
+      {
+        "string": "vasco_mamede",
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+        "origem": "OUTRO"
+      },
+      {
+        "string": "vasco_segunda_falha",
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+        "origem": "OUTRO"
+      },
+      {
+        "string": "raiox_waves",
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+        "origem": "OUTRO"
+      },
+      {
+        "string": "prometheus_guardian",
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+        "origem": "OUTRO"
+      },
+      {
+        "string": "quantum_gap_detector",
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+        "origem": "OUTRO"
+      },
+      {
+        "string": "omega_macro_007",
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+        "origem": "OUTRO"
+      },
+      {
+        "string": "BAU_DO_TESOURO",
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+        "origem": "OUTRO"
+      },
+      {
+        "string": "bau",
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+        "origem": "OUTRO"
+      },
+      {
+        "string": "run_live",
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+        "origem": "OUTRO"
+      },
+      {
+        "string": "kill_switch_threshold",
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+        "origem": "OUTRO"
+      },
+      {
+        "string": "OmegaKernel",
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+        "origem": "OUTRO"
+      },
+      {
+        "string": "bau",
+        "modulo": "platform",
+        "ficheiro": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib\\platform.py",
+        "origem": "OUTRO"
+      },
+      {
+        "string": "bau",
+        "modulo": "unicodedata",
+        "ficheiro": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\DLLs\\unicodedata.pyd",
+        "origem": "OUTRO"
+      }
+    ],
+    "strings_ambiguas_build_v2_order_comment": [
+      {
+        "string": "build_v2_order_comment",
+        "modulo": "__mp_main__",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+        "legítimo": false,
+        "nota": "ORIGEM DESCONHECIDA"
+      },
+      {
+        "string": "build_v2_order_comment",
+        "modulo": "modules.mt5_position_tag",
+        "ficheiro": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\modules\\mt5_position_tag.py",
+        "legítimo": true,
+        "nota": "módulo canónico modules.mt5_position_tag"
+      }
+    ],
+    "main_py_em_sys_modules": false,
+    "bau_em_sys_modules": false,
+    "caminho_do_import_fantasma": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\scripts\\fire_proof_1_dependency_tree.py",
+    "conclusao": "CONTAMINACAO DETECTADA — shadow_loop carrega codigo BAU"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "prova_3_mutex": {
+    "main_lock_path": "C:\\Users\\Lenovo\\AppData\\Local\\Temp\\omega_kernel.lock",
+    "runner_lock_path": "NAO_ENCONTRADO",
+    "locks_sao_o_mesmo_ficheiro": false,
+    "runner_activo_agora": false,
+    "runner_pid_activo": null,
+    "main_lock_estado_actual": "FICHEIRO_NAO_EXISTE (main.py nunca correu ou ja terminou) — lock criavel (main.py PODE iniciar)",
+    "main_conseguiu_iniciar": "SIM (runner inactivo + main lock livre)",
+    "main_conseguiu_enviar_ordem": "SIM (sem impedimento global)",
+    "guardrails_main_py": [
+      "FALHA: main.py NAO verifica omega_runner.lock",
+      "main.py tem mt5.initialize() + lock proprio (omega_kernel.lock)",
+      "FALHA: main.py NAO tem mutex TCP/socket global"
+    ],
+    "conclusao_seguranca": "ESTADO LIMPO — mas mutex global ausente",
+    "recomendacao": "IMPLEMENTAR MUTEX GLOBAL: criar ficheiro de lock partilhado em ROOT/audit/.omega_system.lock ou usar porta TCP 51230 como semáforo exclusivo. Ambos shadow_loop.py e main.py devem tentar adquirir este lock ANTES de mt5.initialize()."
+  }
+}

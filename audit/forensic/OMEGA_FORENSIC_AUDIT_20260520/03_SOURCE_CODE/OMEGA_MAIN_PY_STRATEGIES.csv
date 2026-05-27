@@ -1,0 +1,13 @@
+Ficheiro,Estrategia,Magic,Formato_Comment,Conflito_Com_ShadowLoop,Observacao
+main.py,GorilaSacramento,0 (AUSENTE no dict),build_v2_order_comment(SIG action)=OV2|SIG|BUY,SIM — ativos sobrepostos,Loaded from BAU/04_STRATEGIES dynamically
+main.py,VascoSegundaFalha,0 (AUSENTE no dict),build_v2_order_comment(SIG action)=OV2|SIG|BUY,SIM,Loaded from BAU/04_STRATEGIES dynamically
+main.py,NasaIntegratedStrategy,0 (AUSENTE no dict),build_v2_order_comment(SIG action)=OV2|SIG|BUY,SIM,Loaded from BAU/04_STRATEGIES dynamically
+main.py,RaioXWaveStrategy,0 (AUSENTE no dict),build_v2_order_comment(SIG action)=OV2|SIG|BUY,SIM,Loaded from BAU/04_STRATEGIES dynamically
+main.py,FimatheCoreStrategy,0 (AUSENTE no dict),build_v2_order_comment(SIG action)=OV2|SIG|BUY,SIM,Loaded from BAU/04_STRATEGIES dynamically
+main.py,PullbackDetector,0 (AUSENTE no dict),build_v2_order_comment(SIG action)=OV2|SIG|BUY,SIM,Loaded from BAU/04_STRATEGIES dynamically
+main.py,PrometheusGuardianStrategy,0 (AUSENTE no dict),build_v2_order_comment(SIG action)=OV2|SIG|BUY,SIM — Guardian tem VETO,Loaded from BAU/04_STRATEGIES dynamically
+main.py,Apollo11Agent,0 (AUSENTE no dict),build_v2_order_comment(SIG action)=OV2|SIG|BUY,SIM (XAGUSD only),Loaded from BAU/04_STRATEGIES dynamically
+main.py,QuantumGapDetector,0 (AUSENTE no dict),build_v2_order_comment(SIG action)=OV2|SIG|BUY,SIM,Loaded from BAU/04_STRATEGIES dynamically
+main.py,OmegaMacroAgent007,0 (AUSENTE no dict),N/A (context only),NAO — apenas scan intermarket,Loaded from root omega_macro_007
+main.py,FALLBACK_LINE_509,0 (AUSENTE no dict),N/A,SIM — fallback sem guardrail,execute_mt5_order(sym winner_action 0.01 50 100) sem magic=campo
+shadow_loop.py,OMEGA_SHADOW_LOOP_v3,234001 (legacy) / 999111-999130 (scale),OV2|hash|TF|SL=...,N/A (canonico),Pipeline 9 camadas com M1-M4 activos

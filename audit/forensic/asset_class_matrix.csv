@@ -1,0 +1,6 @@
+asset_class,total_signals,correct_dir,wrong_dir_late,pyramid_active,agent_ia_source,momentum_source,pyramid_status
+crypto,525,6,519,0,1,165,INATIVO
+forex,443,0,443,0,1,7,INATIVO
+indices,112,6,106,0,0,35,INATIVO
+metals,175,1,174,0,0,21,INATIVO
+other,66,0,66,0,0,0,INATIVO

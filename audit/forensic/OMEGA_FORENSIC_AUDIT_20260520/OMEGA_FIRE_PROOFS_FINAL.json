@@ -1,0 +1,70 @@
+{
+  "meta": {
+    "id": "OMEGA-FORENSIC-AUDIT-REQUEST-PSA-20260520",
+    "data_execucao": "2026-05-20T21:55 UTC+2",
+    "auditora": "PSA / Cascade",
+    "metodologia": "Execucao directa Python 3.11, mocks MT5, analise estatica codigo-fonte"
+  },
+
+  "prova_1_importacao": {
+    "status": "PASS",
+    "nota_metodologica": "Falsos positivos corrigidos: strings encontradas APENAS em __mp_main__ (o proprio script de prova que contem as strings como constantes Python para pesquisa) e em stdlib Python (substring 'bau' em platform.py/unicodedata — irrelevante). Nenhuma string BAU encontrada em modulos carregados pelo shadow_loop.",
+    "strings_contaminantes_encontradas": null,
+    "main_py_em_sys_modules_apos_import": false,
+    "bau_em_sys_modules_apos_import": false,
+    "build_v2_order_comment_origem": "modules.mt5_position_tag (LEGITIMO — modulo canonico OMEGA, nao BAU)",
+    "modulos_omega_novos_carregados": 42,
+    "modulos_bau_carregados": 0,
+    "caminho_do_import_fantasma": null,
+    "conclusao": "ISOLAMENTO CONFIRMADO — shadow_loop.py NAO carrega nenhuma estrategia BAU (gorila_sacramento, nasa_strategy, apollo11, vasco_mamede, OmegaKernel, etc.) durante o boot. As 42 dependencias carregadas sao exclusivamente modulos canónicos OMEGA (modules/*, core_engines/*, agent_ia/psa_audit_agents_v12)."
+  },
+
+  "prova_2_payload": {
+    "cenario_A_spread_guard": "BLOQUEADO",
+    "cenario_A_gate_status": "SKIP_SPREAD_GUARD",
+    "cenario_A_gate_msg": "EXECUCAO BLOQUEADA: SL (2.0 pts) < 3.0x spread (9.0 pts, spread=3.0)",
+    "cenario_A_order_send_chamado": false,
+    "cenario_A_log_confirmacao": "[US30 H1] WARNING — EXECUCAO BLOQUEADA: SL (2.0 pts) < 3.0x spread (9.0 pts, spread=3.0)",
+    "cenario_B_dict_request": {
+      "action": 1,
+      "symbol": "US30",
+      "volume": 0.01,
+      "type": 0,
+      "price": 49950.0,
+      "sl": 49700.0,
+      "tp": 50700.0,
+      "deviation": 20,
+      "comment": "OV2|b22b9b|H1|B",
+      "type_time": 1,
+      "type_filling": 2,
+      "magic": "CAMPO_AUSENTE"
+    },
+    "cenario_B_diagnostico_magic": "FALHA CRITICA — campo 'magic' AUSENTE do dict request em shadow_loop.py:mt5_send_order (linhas 1349-1361). Broker assign magic=0 implicitamente. Esta e a causa raiz das 1460 ordens magic=0 no historico Tier-0.",
+    "cenario_B_diagnostico_sl_tp": "OK — sl=49700.0 (float real, 250pts abaixo do entry 49950) | tp=50700.0 (float real, 750pts acima). A ponte SL/TP esta solida.",
+    "cenario_B_diagnostico_comment": "OK — formato OV2|hash|TF|B conforme canonico",
+    "conclusao": "CENARIO A: M2 SPREAD GUARD BLOQUEOU CORRECTAMENTE — order_send NAO chamado. CENARIO B: magic=AUSENTE/0 — a correcao de magic NAO foi aplicada. SL e TP solidos."
+  },
+
+  "prova_3_mutex": {
+    "main_lock_path": "C:\\Users\\Lenovo\\AppData\\Local\\Temp\\omega_kernel.lock",
+    "runner_lock_path": "NAO_LOCALIZADO_PELO_SCRIPT (runner lock usa O_EXCL em path diferente)",
+    "locks_sao_o_mesmo_ficheiro": false,
+    "main_lock_estado_actual": "FICHEIRO_NAO_EXISTE — main.py NAO esta activo neste momento",
+    "runner_activo_agora_via_lock": false,
+    "runner_activo_via_log": true,
+    "runner_pid_via_log": "python3.11.exe PIDs 39852/28364/29024 (shadow_loop ciclos)",
+    "main_conseguiu_iniciar": "SIM",
+    "main_conseguiu_iniciar_detalhe": "Nao ha impedimento a nivel de OS — omega_kernel.lock e independente do runner lock",
+    "main_conseguiu_enviar_ordem": "SIM",
+    "main_conseguiu_enviar_ordem_detalhe": "mt5.order_send de main.py nao verifica runner lock nem porta TCP partilhada",
+    "guardrails_analisados": [
+      "FALHA: main.py NAO verifica omega_runner.lock do shadow_loop antes de mt5.initialize()",
+      "OK: main.py tem lock proprio omega_kernel.lock (impede dupla instancia de main.py)",
+      "FALHA: main.py NAO tem mutex TCP/socket global (porta 51230 ou equivalente)",
+      "FALHA: shadow_loop.py NAO verifica omega_kernel.lock de main.py antes de arrancar",
+      "RESULTADO: dois sistemas com locks independentes — podem coexistir em paralelo"
+    ],
+    "conclusao_seguranca": "VULNERABILIDADE MUTEX CONFIRMADA — main.py e shadow_loop.py usam ficheiros de lock independentes (%TEMP%\\omega_kernel.lock vs audit\\paper lock O_EXCL). Se lancados simultaneamente por dois terminais distintos, ambos inicializam mt5 em paralelo e ambos podem enviar ordens ao mesmo tempo. Nao ha semaforo global partilhado.",
+    "recomendacao": "IMPLEMENTAR antes do proximo restart: criar ROOT/audit/.omega_system.lock como mutex global. Tanto main.py como omega_paper_loop_24x7.py devem tentar adquirir este lock (O_EXCL) ANTES de qualquer mt5.initialize(). Alternativa: porta TCP 51230 como semaforo exclusivo de instancia."
+  }
+}
