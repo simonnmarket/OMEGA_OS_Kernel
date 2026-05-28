@@ -33,7 +33,7 @@ $env:OMEGA_MIN_CONFLUENCE = "35"
 $env:OMEGA_DD_DAILY_MAX = "0.10"
 
 # DIVERSIFICAÇÃO: 2 ordens por direção por ciclo (era 1), 5 por classe (era 2)
-$env:OMEGA_MAX_SAME_DIR_PER_CYCLE = "2"
+$env:OMEGA_MAX_SAME_DIR_PER_CYCLE = "1"  # P0-REMEDIAÇÃO-8Q: default 2→1 (bloqueia duplicação direção/ciclo)
 $env:OMEGA_MAX_POS_PER_CLASS = "5"
 
 # POR ATIVO: RiskBudgetManager calcula slots dinamicamente (CEO Mandato 2026-05-26)
@@ -59,6 +59,10 @@ $env:OMEGA_PYRAMID_ATR = "0.5"        # activar pyramid quando profit >= 0.5×AT
 
 # TP/SL RATIO: cap máximo 3:1 (era 8:1) — evita TPs irrealistas como US30 TP=16907pts
 $env:OMEGA_MAX_TP_SL_RATIO = "3.0"
+# P0-REMEDIAÇÃO-8Q: índices merecem R:R maior (ex: US500 2647 pts vs TP $3.15)
+$env:OMEGA_MAX_TP_SL_RATIO_INDEX = "10.0"
+# P0-REMEDIAÇÃO-8Q: bloqueia duplicação por ativo (default 0→1)
+$env:OMEGA_MAX_POS_PER_ASSET = "1"
 
 # SL CAPS por regime — calibrados para escala de pontos de cada classe (BUG FIX 2026-05-27)
 #
