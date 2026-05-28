@@ -1,0 +1,93 @@
+# Relatório Horário §5 — CEO MANDATO C+A 2026-05-29
+
+## 1. IDENTIFICAÇÃO
+
+| Campo | Valor |
+|-------|-------|
+| Documento | PSA_P0_REMEDIACAO_8Q_RELATORIO_HORARIO_S5_20260529.md |
+| Branch | hotfix/forensic-remediation-20260527 |
+| Commit | `b151087` |
+| Runner reinício | 2026-05-29 00:03 UTC (log local 01:03) |
+| Gate T+30 | 2026-05-29 00:33 UTC |
+| PSA executor | Devin CLI |
+
+## 2. GATE T+30 — RESULTADO
+
+### 2.1 Contagens (00:03–00:33 UTC)
+
+| Métrica | Valor | Gate |
+|---------|-------|------|
+| executed | 82 | — |
+| skipped | 82 | — |
+| position_opened | 0 | PENDING |
+| position_closed | 0 | — |
+| entries_frozen_1 | 0 | **PASS** |
+| model_dump_errors | 0 | **PASS** |
+| mtf_confluence | 0 | CHECK (mercado calmo) |
+| ger40_lines | 1688 | **PASS** |
+| ukoil_lines | 1687 | **PASS** |
+| xagusd_lines | 1687 | **PASS** |
+| trade_feedback opened | 0 | PENDING |
+| trade_feedback swap | 0 | PENDING |
+
+### 2.2 Top Skip Reasons
+
+Nenhuma razão de skip detetada no padrão de regex (formato de log pode variar).
+
+### 2.3 Amostras Asset
+
+**GER40:**
+```
+[GER40 H1] [FLOW] confluence=46.9 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=39 vof=50 vwap=50 pullback=50 wyckoff=50 elliott=50 liq=50 weis=50
+```
+
+**UKOIL+:**
+```
+[UKOIL+ H1] [FLOW] confluence=43.2 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=40 vof=50 vwap=0 pullback=50 wyckoff=50 elliott=50 liq=50 weis=50
+```
+
+**XAGUSD:**
+```
+[XAGUSD H1] [FLOW] confluence=49.8 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=40 vof=50 vwap=100 pullback=50 wyckoff=50 elliott=50 liq=50 weis=50
+```
+
+### 2.4 Observações
+
+- Mercado overnight (00:00–01:30 UTC): sessão asiática fraca → poucos sinais
+- Últimos ciclos (01:14–01:18): total_signals=0, executed=0, skipped=0
+- Runner está saudável; MT5 conectado; 8 posições existentes em trailing
+
+## 3. CONFIGURAÇÃO APLICADA (CEO-MANDATO-C+A)
+
+| Variável | Valor | Origem |
+|----------|-------|--------|
+| OMEGA_MIN_CONFIDENCE | 0.62 | shadow_loop.py L488 + run_omega_24x7.ps1 |
+| OMEGA_MAX_SAME_DIR_PER_CYCLE | 1 | run_omega_24x7.ps1 L36 |
+| OMEGA_MAX_TP_SL_RATIO_INDEX | 10.0 | run_omega_24x7.ps1 L63 |
+| OMEGA_MAX_POS_PER_ASSET | 1 | run_omega_24x7.ps1 L65 |
+| OMEGA_DECISION_TRACE | 1 | run_omega_24x7.ps1 L13 |
+| ENTRIES_FROZEN | 0 | live_flags.json (cache .pyc stale resolvido) |
+
+## 4. CHECKLIST §5
+
+- [x] Gate T+30 executado
+- [x] model_dump=0
+- [x] ENTRIES_FROZEN=0
+- [x] GER40/UKOIL+/XAGUSD no portfolio e avaliados
+- [ ] swap JSONL com position_opened (PENDING — mercado calmo)
+- [ ] Duplicatas (PENDING — nenhuma entrada nova)
+- [ ] USFE auditoria (agendada amanhã 2026-05-30)
+
+## 5. ESTADO RUNNER
+
+| Item | Valor |
+|------|-------|
+| Status | Activo, ciclo contínuo |
+| MT5 | terminal64.exe PID 25220 |
+| Python PIDs | 10560 (runner), 35080 (OHLCV export) |
+| Equity | $11,019.50 |
+| Posições abertas | 8 (ETHUSD, BNBUSD, GBPUSD, etc.) |
+| Janela visível | PowerShell (Start-Process) |
+
+---
+*Relatório gerado por PSA. Gate T+30: `audit/forensic/PSA_P0_REMEDIACAO_8Q_GATE_T30_20260529.txt`*
