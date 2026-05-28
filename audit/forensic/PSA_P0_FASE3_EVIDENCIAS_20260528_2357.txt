@@ -1,0 +1,20 @@
+=== PSA P0 FASE 3 FINAL ===
+Data: 2026-05-28 23:57:41
+Branch: hotfix/forensic-remediation-20260527
+Commit: 0d7f28c fix(shadow_loop): get_flag -> _get_flag (correcao NameError runtime)
+ENTRIES_FROZEN:   "OMEGA_ENTRIES_FROZEN": "0",
+--- pip pydantic ---
+Name: pydantic
+Version: 1.10.26
+Summary: Data validation and settings management using python type hints
+Home-page: https://github.com/pydantic/pydantic
+Author: 
+Author-email: Samuel Colvin <s@muelcolvin.com>
+--- Gates T+0 / T+30 / T+60 ---
+model_dump_errors=0 PYRAMID_EVAL=3620 MTF_CONFLUENCE=51 ENTRIES_FROZEN=0 FastLoop=ativo LEDGER_new=7
+--- tail trade_feedback 5 linhas ---
+{"event": "position_opened", "position_ticket": 191649132, "symbol": "ETHUSD", "timeframe": "H4", "signal_source": "MOMENTUM_MT5", "mtf_confluence_score": 50.0, "direction": "SELL", "initial_lot": 0.1, "ts": "2026-05-28T21:09:05.242105+00:00"}
+{"event": "position_opened", "position_ticket": 191649979, "symbol": "GBPUSD", "timeframe": "H1", "signal_source": "AGENT_IA", "mtf_confluence_score": 25.0, "direction": "BUY", "initial_lot": 0.01, "ts": "2026-05-28T21:10:36.121497+00:00"}
+{"event": "position_opened", "position_ticket": 191652024, "symbol": "ETHUSD", "timeframe": "H4", "signal_source": "MOMENTUM_MT5", "mtf_confluence_score": 50.0, "direction": "SELL", "initial_lot": 0.09, "ts": "2026-05-28T21:14:51.244369+00:00"}
+{"event": "position_opened", "position_ticket": 191653839, "symbol": "BNBUSD", "timeframe": "H4", "signal_source": "MOMENTUM_MT5", "mtf_confluence_score": 50.0, "direction": "SELL", "initial_lot": 0.12, "ts": "2026-05-28T21:18:31.009279+00:00"}
+{"event": "position_opened", "position_ticket": 191655169, "symbol": "ETHUSD", "timeframe": "H4", "signal_source": "MOMENTUM_MT5", "mtf_confluence_score": 50.0, "direction": "SELL", "initial_lot": 0.08, "ts": "2026-05-28T21:20:54.999927+00:00"}

@@ -5,7 +5,7 @@
 
   "OMEGA_DISABLE_MOMENTUM_FALLBACK": "0",
   "OMEGA_USE_AGENT_IA": "1",
-  "OMEGA_ENTRIES_FROZEN": "1",
+  "OMEGA_ENTRIES_FROZEN": "0",
   "_freeze_reason": "CEO-FORENSIC-INTEGRITY-20260527 — auditoria MTF/Pyramiding em curso",
   "_freeze_ts": "2026-05-27T20:40:00Z"
 }
