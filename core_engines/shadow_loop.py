@@ -546,11 +546,12 @@ RISK_PER_TRADE_PCT = float(os.getenv("OMEGA_RISK_PER_TRADE", "0.0100"))  # CEO 2
 MIN_LOT_OVERRIDE   = float(os.getenv("OMEGA_MIN_LOT", "0.0"))            # CEO: lote mínimo (0=auto)
 # 0 = sem limite (paper/testes). N>=1 = no máximo N posições OMEGA rastreadas (comment/mark).
 MAX_POSITIONS      = int(os.getenv("OMEGA_MAX_POSITIONS", "0"))
-MAX_POS_PER_ASSET  = int(os.getenv("OMEGA_MAX_POS_PER_ASSET", "0"))  # 0=ilimitado; 1=bloqueia duplicação por ativo
+MAX_POS_PER_ASSET  = int(os.getenv("OMEGA_MAX_POS_PER_ASSET", "1"))  # P0-REMEDIAÇÃO-8Q: default 0→1 (bloqueia duplicação por ativo)
 DD_DAILY_MAX       = float(os.getenv("OMEGA_DD_DAILY_MAX", "0.10"))       # CEO 2026-05-14: 0.01→0.10 (1%→10% DEMO AGRESSIVO)
 CONCENTRATION_MAX  = float(os.getenv("OMEGA_CONCENTRATION_MAX", "0.40"))   # CQO/COO: max por ativo
 MAX_CONSEC_FAIL    = 3
-MAX_TP_SL_RATIO    = float(os.getenv("OMEGA_MAX_TP_SL_RATIO", "3.0"))  # C3 FIX: cap R:R máximo (era 59:1) | CEO 2026-05-14: 8.0→3.0 (US30 TP irrealista corrigido)
+MAX_TP_SL_RATIO       = float(os.getenv("OMEGA_MAX_TP_SL_RATIO", "3.0"))  # C3 FIX: cap R:R máximo (era 59:1) | CEO 2026-05-14: 8.0→3.0 (US30 TP irrealista corrigido)
+MAX_TP_SL_RATIO_INDEX = float(os.getenv("OMEGA_MAX_TP_SL_RATIO_INDEX", "10.0"))  # P0-REMEDIAÇÃO-8Q: índices merecem R:R maior (ex: US500 2647 pts vs TP $3.15)
 MIN_SL_ATR_MULT    = float(os.getenv("OMEGA_MIN_SL_ATR_MULT",  "1.0"))  # C3 FIX: SL mínimo em ATR
 
 # ─── Perfis por Ativo (CQO 28/04/2026) ──────────────────────────────────────
@@ -631,11 +632,13 @@ def sanitize_sl_tp(sl_pts: float, tp_pts: float, atr_pts: float, asset: str) -> 
     """
     _sl_pts_min_atr = atr_pts * MIN_SL_ATR_MULT if atr_pts > 0 else sl_pts
     eff_sl = max(sl_pts, _sl_pts_min_atr)
-    max_tp = eff_sl * MAX_TP_SL_RATIO
+    _regime = ASSET_PROFILES.get(asset, {}).get("regime", "")
+    _ratio  = MAX_TP_SL_RATIO_INDEX if _regime == "index" else MAX_TP_SL_RATIO
+    max_tp = eff_sl * _ratio
     eff_tp = min(tp_pts, max_tp)
     if tp_pts > max_tp:
-        log.warning("[%s] TP CAP: harmónico %.0f → limitado a %.0f (R:R %.1f:1)",
-                    asset, tp_pts, eff_tp, MAX_TP_SL_RATIO)
+        log.warning("[%s] TP CAP: harmónico %.0f → limitado a %.0f (R:R %.1f:1) [regime=%s]",
+                    asset, tp_pts, eff_tp, _ratio, _regime)
     if sl_pts < eff_sl and atr_pts > 0:
         log.warning("[%s] SL FLOOR: original %.0f → elevado a %.0f (min %.1fx ATR)",
                     asset, sl_pts, eff_sl, MIN_SL_ATR_MULT)
@@ -3359,6 +3362,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                     "entry_time": datetime.now(timezone.utc).isoformat(),
                                     "sl_pts": 0,
                                     "risk_usd": 0,
+                                    "swap_cost_est_usd": 0.0,
                                     "signal_tf": tf,  # T-R1b: assume TF do ciclo activo
                                     "partial_taken": False,  # T-F1a: SYNC_RECOVERY
                                 }
@@ -3525,6 +3529,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                 # last_profit era o floating P&L da última leitura (não o realizado)
                                 # → TP hits eram registados como LOSS pois floating podia ser negativo
                                 _entry_pnl    = _entry.get("last_profit", 0.0)  # fallback
+                                _swap_real    = 0.0
                                 _exit_reason  = "UNKNOWN"
                                 try:
                                     # P1-A (OIS-DIAG-20260517): janela configurável via OMEGA_EXIT_REASON_HISTORY_MIN
@@ -3539,6 +3544,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                         # DEAL_ENTRY_OUT = 1 — fecho de posição
                                         if _hd.position_id == _tk and _hd.entry == 1:
                                             _entry_pnl   = _hd.profit
+                                            _swap_real   = round(float(getattr(_hd, 'swap', 0.0)), 4)
                                             if   _hd.reason == 4:   # DEAL_REASON_TP
                                                 _exit_reason = "TP"
                                             elif _hd.reason == 5:   # DEAL_REASON_SL
@@ -3553,6 +3559,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                 if _exit_reason == "UNKNOWN":
                                     _exit_reason = "BROKER_CLOSE"  # P0-7: nunca UNKNOWN em fechos novos
                                 _entry["exit_reason"] = _exit_reason
+                                _entry["swap_cost_real_usd"] = _swap_real
                                 _entry_sl   = _entry.get("sl_pts", 0)
                                 _entry_risk = _entry.get("risk_usd", 0)
                                 if _entry_risk > 0:
@@ -3613,6 +3620,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                                 "sl_pts": _entry.get("sl_pts"),
                                                 "tp_pts": _entry.get("tp_pts"),
                                                 "slippage_pts": _entry.get("slippage_pts"),
+                                                "swap_cost_real_usd": _entry.get("swap_cost_real_usd"),
                                                 "detected_at_utc": datetime.now(timezone.utc).isoformat(),
                                                 # schema v1.2 (Auditoria IA 2026-05-09)
                                                 "exit_reason":      _entry.get("exit_reason"),
@@ -3762,7 +3770,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                         log.warning("[%s %s] [ANTI_HEDGE] falha MT5 positions_get: %s", asset, tf, _anti_hedge_err)
 
                     # === PACING & DIVERSIFICATION — CEO 2026-05-12 ========================
-                    _MAX_DIR_CYCLE = int(os.getenv("OMEGA_MAX_SAME_DIR_PER_CYCLE", "2"))   # CEO 2026-05-14: 1→2
+                    _MAX_DIR_CYCLE = int(os.getenv("OMEGA_MAX_SAME_DIR_PER_CYCLE", "1"))   # P0-REMEDIAÇÃO-8Q: default 2→1 (bloqueia duplicação direção/ciclo)
                     _MAX_PER_CLASS = int(os.getenv("OMEGA_MAX_POS_PER_CLASS", "5"))        # CEO 2026-05-14: 2→5
                     # Guardrail 1: limitar ordens na mesma direção por ciclo
                     if _cycle_dir_count.get(signal_dir, 0) >= _MAX_DIR_CYCLE:
@@ -4406,8 +4414,12 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                             _spr = (_tick_i.ask - _tick_i.bid) if _tick_i else 0
                                             _cs  = _sym_i.trade_contract_size if _sym_i else 1
                                             _spread_cost = round(_spr * _cs * eff_lot, 4)
+                                            # P0-REMEDIAÇÃO-8Q: estimativa swap (swap diário × lote)
+                                            _swap_raw = (_sym_i.swap_long if signal_dir == "LONG" else _sym_i.swap_short) if _sym_i else 0
+                                            _swap_cost_est = round(abs(float(_swap_raw)) * eff_lot, 4)
                                         except Exception:
                                             _spread_cost = 0.0
+                                            _swap_cost_est = 0.0
                                         _pos_ledger[_np.ticket] = {
                                             "symbol": asset, "direction": signal_dir,
                                             "lot": eff_lot, "entry_price": exec_result.get("fill_price", 0),
@@ -4430,6 +4442,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                             "entry_time": datetime.now(timezone.utc).isoformat(),
                                             "last_profit": _np.profit, "status": "open",
                                             "spread_cost_usd": _spread_cost,
+                                            "swap_cost_est_usd": _swap_cost_est,
                                             "slippage_pts": exec_result.get("slippage_pts", 0),
                                             "partial_taken": False,  # T-F1a: flag fecho parcial
                                             # P0-C: Tech Lead G.1 (OIS-DIAG-20260517) — persistir no ledger na abertura
@@ -4455,6 +4468,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                             "mtf_confluence_score": _mtf_confluence_score_val,
                                             "direction": signal_dir,
                                             "initial_lot": float(eff_lot),
+                                            "swap_cost_est_usd": _swap_cost_est,
                                         })
                                         # P0-ABC 20260522 T-D4b: Registrar posição no PositionManager
                                         try:
@@ -4808,6 +4822,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                             "tp": float(_p.tp) if _p.tp else None,
                             "entry_time": datetime.fromtimestamp(_p.time, tz=timezone.utc).isoformat(),
                             "last_profit": _p.profit, "status": "open",
+                            "swap_cost_est_usd": 0.0,
                             "partial_taken": False,  # T-F1a: fallback ledger entry
                         }
                 _ledger_pnl = sum(v.get("last_profit", 0) for v in _pos_ledger.values())

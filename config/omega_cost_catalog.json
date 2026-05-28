@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "description": "Catálogo de custos OMEGA por ativo — swap, spread, comissão, funding. Usado para estimar custo total de posição e evitar que swap coma lucro (Queixa #4 CEO).",
+  "broker": "Hantec",
+  "updated": "2026-05-29T00:30:00Z",
+  "cost_types": {
+    "spread": {"unit": "points", "source": "tick_ask-bid", "frequency": "per_entry"},
+    "swap":   {"unit": "USD_per_lot_per_day", "source": "MT5_symbol_info.swap_long/swap_short", "frequency": "daily", "note": "3x na quarta-feira"},
+    "commission": {"unit": "USD_per_lot", "source": "broker", "frequency": "per_trade"},
+    "slippage": {"unit": "points", "source": "exec_result.slippage_pts", "frequency": "per_entry"}
+  },
+  "assets": {
+    "EURUSD": {"spread_pts_avg": 3, "swap_long_usd": -3.5, "swap_short_usd": -1.2, "commission_usd": 0.0},
+    "GBPUSD": {"spread_pts_avg": 5, "swap_long_usd": -4.0, "swap_short_usd": -1.5, "commission_usd": 0.0},
+    "USDJPY": {"spread_pts_avg": 3, "swap_long_usd":  1.5, "swap_short_usd": -4.5, "commission_usd": 0.0},
+    "AUDUSD": {"spread_pts_avg": 5, "swap_long_usd": -2.0, "swap_short_usd": -1.0, "commission_usd": 0.0},
+    "USDCAD": {"spread_pts_avg": 5, "swap_long_usd": -1.5, "swap_short_usd": -2.5, "commission_usd": 0.0},
+    "XAUUSD": {"spread_pts_avg": 30, "swap_long_usd": -15.0, "swap_short_usd": 5.0, "commission_usd": 0.0},
+    "XAGUSD": {"spread_pts_avg": 20, "swap_long_usd": -8.0, "swap_short_usd": 2.0, "commission_usd": 0.0},
+    "US500":  {"spread_pts_avg": 10, "swap_long_usd": -2.0, "swap_short_usd": -2.0, "commission_usd": 0.0},
+    "US100":  {"spread_pts_avg": 15, "swap_long_usd": -2.5, "swap_short_usd": -2.5, "commission_usd": 0.0},
+    "GER40":  {"spread_pts_avg": 10, "swap_long_usd": -2.0, "swap_short_usd": -2.0, "commission_usd": 0.0},
+    "UKOIL+": {"spread_pts_avg": 30, "swap_long_usd": -5.0, "swap_short_usd": -3.0, "commission_usd": 0.0},
+    "BTCUSD": {"spread_pts_avg": 100, "swap_long_usd": -50.0, "swap_short_usd": -30.0, "commission_usd": 0.0},
+    "ETHUSD": {"spread_pts_avg": 50, "swap_long_usd": -25.0, "swap_short_usd": -15.0, "commission_usd": 0.0},
+    "SOLUSD": {"spread_pts_avg": 30, "swap_long_usd": -10.0, "swap_short_usd": -8.0, "commission_usd": 0.0},
+    "XRPUSD": {"spread_pts_avg": 35, "swap_long_usd": -5.0, "swap_short_usd": -3.0, "commission_usd": 0.0},
+    "ADAUSD": {"spread_pts_avg": 45, "swap_long_usd": -5.0, "swap_short_usd": -3.0, "commission_usd": 0.0},
+    "BNBUSD": {"spread_pts_avg": 80, "swap_long_usd": -15.0, "swap_short_usd": -10.0, "commission_usd": 0.0},
+    "LTCUSD": {"spread_pts_avg": 60, "swap_long_usd": -10.0, "swap_short_usd": -7.0, "commission_usd": 0.0}
+  },
+  "notes": [
+    "Valores swap são estimativas conservadoras (USD por lote de 1.0). Broker real pode variar.",
+    "O sistema usa MT5 symbol_info.swap_long/swap_short em tempo real; este catálogo serve para projeção offline.",
+    "Comissão zero = spread-only broker (Hantec standard). Se comissão for introduzida, actualizar este ficheiro."
+  ]
+}

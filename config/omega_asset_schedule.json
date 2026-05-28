@@ -7,7 +7,7 @@
       "class": "discovery_full",
       "symbols": [
         "EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD",
-        "XAUUSD", "US500", "US100",
+        "XAUUSD", "US500", "US100", "GER40", "UKOIL+", "XAGUSD",
         "BTCUSD", "ETHUSD", "SOLUSD", "XRPUSD", "AVAXUSD", "ADAUSD", "LTCUSD", "BNBUSD"
       ]
     }
@@ -17,7 +17,7 @@
       "class": "discovery_full",
       "symbols": [
         "EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD",
-        "XAUUSD", "US500", "US100",
+        "XAUUSD", "US500", "US100", "GER40", "UKOIL+", "XAGUSD",
         "BTCUSD", "ETHUSD", "SOLUSD", "XRPUSD", "AVAXUSD", "ADAUSD", "LTCUSD", "BNBUSD"
       ]
     },
