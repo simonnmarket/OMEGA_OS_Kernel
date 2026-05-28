@@ -28,6 +28,8 @@ $env:OMEGA_MAX_POSITIONS = "8"
 $env:OMEGA_SPREAD_GUARD_MULT = "2.0"
 $env:OMEGA_M1_MIN_CONFIRMED = "1"
 $env:OMEGA_MIN_CONFLUENCE = "35"
+# CEO-MANDATO-C+A: MIN_CONFIDENCE=0.62 efectivo (era 0.65 hardcoded)
+$env:OMEGA_MIN_CONFIDENCE = "0.62"
 
 # DRAWDOWN: 10% diário (era 2%) — espaço operacional para 15 posições de risco 1%
 $env:OMEGA_DD_DAILY_MAX = "0.10"

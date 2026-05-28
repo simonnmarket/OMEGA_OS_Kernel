@@ -485,7 +485,7 @@ def get_regime_config():
     if not hasattr(_regime_local, 'config'):
         _regime_env = os.getenv("OMEGA_REGIME", "TRADICIONAL")
         regime = ExecutionRegime(_regime_env)
-        MAX_LOT = 0.01; MIN_CONFIDENCE = 0.65; CAPITAL_ALLOCATION = 0.01; REGIME_CONFIG = None
+        MAX_LOT = 0.01; MIN_CONFIDENCE = float(os.getenv("OMEGA_MIN_CONFIDENCE", "0.62")); CAPITAL_ALLOCATION = 0.01; REGIME_CONFIG = None
         if regime == ExecutionRegime.HUNTER:
             CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "regimes" / "hunter.json"
             if CONFIG_PATH.exists():
