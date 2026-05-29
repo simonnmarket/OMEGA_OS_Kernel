@@ -5,7 +5,9 @@
 
   "OMEGA_DISABLE_MOMENTUM_FALLBACK": "0",
   "OMEGA_USE_AGENT_IA": "1",
-  "OMEGA_ENTRIES_FROZEN": "0",
-  "_freeze_reason": "CEO-FORENSIC-INTEGRITY-20260527 — auditoria MTF/Pyramiding em curso",
-  "_freeze_ts": "2026-05-27T20:40:00Z"
+  "OMEGA_ENTRIES_FROZEN": "1",
+  "_freeze_reason": "CEO-B1-PNL-WEEKEND-20260529 — PnL 7D -223.81, cumul -977.67",
+  "_freeze_ts": "2026-05-29T17:05:00Z",
+  "_freeze_until": "2026-06-02T07:00:00Z",
+  "_last_updated": "2026-05-29"
 }
