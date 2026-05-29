@@ -1,0 +1,27 @@
+TS_UTC=2026-05-29T17:01:52Z
+EQUITY=11035.13
+POS_N=8
+PNL_FLOAT=15.69
+REALIZED_PNL=0.0
+SYMBOLS_OPEN=['AUDUSD', 'BNBUSD', 'ETHUSD', 'GER40', 'UKOIL+', 'US100', 'US500', 'USDCAD']
+FREEZE=0
+MODEL_DUMP=0
+TOP_SKIP_1=N/A
+THRESH_HIT_RATE=PASS
+FLOW_FOREX=2026-05-29 19:01:46,542 | INFO | [EURUSD H4] [FLOW] confluence=48.2 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=40 vof=50 vwap=8 pullback=50 wyckoff=50 elliott=91 liq=50 weis=50
+FLOW_CRYPTO=2026-05-29 19:01:46,416 | INFO | [ETHUSD H4] [FLOW] confluence=45.2 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=35 vof=50 vwap=100 pullback=50 wyckoff=50 elliott=20 liq=50 weis=50
+LOG_EXEC_SKIP=2026-05-29 19:01:09,502 | INFO |   executed                  : 0
+LOG_SKIPPED=2026-05-29 19:01:09,503 | INFO |   skipped                   : 0
+
+--- PYTHON PROOF ---
+# Python G4 Proof (CEO-ORDEM-THRESH-20260529)
+# last_restart: 2026-05-29T12:03:54
+# skip_62: 0
+# skip_65: 0
+# executed_gt0: 24
+# entries_frozen: 0
+# model_dump: 0
+# G4: PASS
+
+--- ALERTS ---
+Nenhum
