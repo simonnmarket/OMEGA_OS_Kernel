@@ -1,0 +1,23 @@
+TS_UTC=2026-05-29T10:08:16Z
+EQUITY=11035.13
+POS_N=8
+PNL_FLOAT=13.49
+FREEZE=0
+MODEL_DUMP=0
+TOP_SKIP_1=N/A
+THRESH_HIT_RATE=PASS CONDICIONAL (sem SKIP 65% pós-reinício; zero sinais gerados em FRIDAY_ROLLOVER)
+FLOW_FOREX=2026-05-29 12:07:59,617 | INFO | [GBPUSD H4] [FLOW] confluence=50.2 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=39 vof=50 vwap=50 pullback=50 wyckoff=50 elliott=91 liq=50 weis=100
+FLOW_CRYPTO=2026-05-29 12:07:59,556 | INFO | [BTCUSD H4] [FLOW] confluence=50.2 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=40 vof=50 vwap=50 pullback=50 wyckoff=50 elliott=80 liq=50 weis=50
+LOG_EXEC_SKIP=2026-05-29 12:07:26,977 | INFO |   executed                  : 0
+
+--- PROVA PYTHON G4 (CEO-ORDEM-THRESH-20260529) ---
+# Script: scripts/gate_t30_monitor.py (adaptado para OPS)
+# Marker: 2026-05-29 11:56 UTC (reinício runner)
+# Resultado: 0 SKIP (pre) pós-reinício, 0 ENTRIES_FROZEN=1, 0 model_dump
+# Último SKIP histórico: hit_rate_134=63.39% < 65.0% (ANTES do reinício)
+# G4 verdict: PASS CONDICIONAL (sem SKIP 65% novo)
+
+--- MANDATO CEO-PSA-OPS-20260530 ---
+Próximo snapshot: 12:00 UTC
+Sábado: foco ledger + snapshots
+Validação forte: segunda (Londres)
