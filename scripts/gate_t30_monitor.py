@@ -20,7 +20,7 @@ def run_gate():
         "ger40_lines": 0, "ukoil_lines": 0, "xagusd_lines": 0,
     }
     skip_reasons = Counter()
-    samples = {"ger40": None, "ukoil+": None, "xagusd": None}
+    samples = {"ger40": None, "ukoil+": None, "xagusd": None, "forex": None, "crypto": None}
     last_swap = None
 
     with open(LOG_PATH, "r", encoding="utf-8", errors="ignore") as f:
@@ -52,12 +52,18 @@ def run_gate():
                 counts["xagusd_lines"] += 1
                 if samples["xagusd"] is None and "FLOW" in line:
                     samples["xagusd"] = line.strip()[:250]
+            if "EURUSD" in line or "GBPUSD" in line or "USDJPY" in line:
+                if samples["forex"] is None and "FLOW" in line:
+                    samples["forex"] = line.strip()[:250]
+            if "BTCUSD" in line or "ETHUSD" in line:
+                if samples["crypto"] is None and "FLOW" in line:
+                    samples["crypto"] = line.strip()[:250]
             if "executed" in line and "total_signals" not in line:
                 counts["executed"] += 1
             if "skipped" in line and "total_signals" not in line:
                 counts["skipped"] += 1
-                sr = re.search(r"SKIP.*?\[(.*?)\]", line)
-                if sr:
+                sr = re.search(r"\['(.*?)'\]", line)
+                if sr and "SKIP" in line:
                     skip_reasons[sr.group(1)[:80]] += 1
             if "position_opened" in line:
                 counts["position_opened"] += 1

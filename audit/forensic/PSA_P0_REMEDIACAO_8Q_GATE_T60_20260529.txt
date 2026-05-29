@@ -1,0 +1,48 @@
+============================================================
+GATE T+60 — CEO MANDATO C+A 2026-05-29
+Timestamp: 2026-05-29T09:42:00+00:00
+Marker: 2026-05-29T00:03:00 (reinicio runner)
+============================================================
+
+[CONTAGENS T+60 (00:03 – 09:42 UTC)]
+  executed: 679
+  skipped: 679
+  position_opened: 0
+  position_closed: 0
+  entries_frozen_1: 0
+  model_dump_errors: 0
+  mtf_confluence: 117
+  ger40_lines: 9582
+  ukoil_lines: 13922
+  xagusd_lines: 9515
+  trade_feedback position_opened: 0
+  trade_feedback swap_presente: 0
+
+[TOP SKIP REASONS]
+  6689x | hit_rate_134=63.39% < 65.0%
+
+[AMOSTRAS ASSET — FOREX]
+  GBPUSD H1: [FLOW] confluence=55.8 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=39 vof=50 vwap=100 pullback=50 wyckoff=50 elliott=87 liq=50 weis=0
+
+[AMOSTRAS ASSET — CRYPTO]
+  ETHUSD H1: [FLOW] confluence=46.1 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=40 vof=50 vwap=50 pullback=50 wyckoff=50 elliott=50 liq=50 weis=0
+
+[AMOSTRAS ASSET — ÍNDICE/COMMODITY]
+  GER40 H1: [FLOW] confluence=46.9 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=39 vof=50 vwap=50 pullback=50 wyckoff=50 elliott=50 liq=50 weis=50
+  UKOIL+ H1: [FLOW] confluence=43.2 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=40 vof=50 vwap=0 pullback=50 wyckoff=50 elliott=50 liq=50 weis=50
+  XAGUSD H1: [FLOW] confluence=49.8 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=40 vof=50 vwap=100 pullback=50 wyckoff=50 elliott=50 liq=50 weis=50
+
+[SWAP SAMPLE]
+  N/A (nenhuma position_opened apos reinicio)
+
+[GATES]
+  model_dump_errors: PASS (0)
+  ENTRIES_FROZEN=1: PASS (0)
+  MTF_CONFLUENCE: PASS (117)
+  GER40 eval: PASS (9582)
+  UKOIL+ eval: PASS (13922)
+  XAGUSD eval: PASS (9515)
+  FOREX eval: PASS (GBPUSD FLOW capturado)
+  CRYPTO eval: PASS (ETHUSD FLOW capturado)
+  swap JSONL: PENDING (0/0)
+============================================================
