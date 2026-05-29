@@ -1,0 +1,24 @@
+TS_UTC=2026-05-29T17:10:43Z
+EQUITY=11035.13
+POS_N=8
+PNL_FLOAT=12.82
+REALIZED_PNL=0.0
+SYMBOLS_OPEN=['AUDUSD', 'BNBUSD', 'ETHUSD', 'GER40', 'UKOIL+', 'US100', 'US500', 'USDCAD']
+FREEZE=285
+MODEL_DUMP=0
+NOVAS_ENTRADAS_HOJE=35
+FECHADAS_HOJE=13
+SWAP_PRESENT=35
+TOP_SKIP_1=N/A (freeze activo)
+THRESH_HIT_RATE=PASS (freeze B1)
+FLOW_FOREX=N/A
+FLOW_CRYPTO=N/A
+LOG_EXEC_SKIP=N/A
+LOG_SKIPPED=N/A
+
+--- CEO-B1-PNL-WEEKEND-20260529 ---
+FREEZE: ENTRIES_FROZEN=1 ate 2026-06-02T07:00:00Z
+Motivo: PnL 7D -223.81, cumul -977.67
+Novas entradas hoje: 35 (abertas), 13 (fechadas)
+Swap tracking: 35/35 novas entradas com swap_cost_est_usd
+Gestao 8 posicoes existente continua (trailing/SL/TP)
