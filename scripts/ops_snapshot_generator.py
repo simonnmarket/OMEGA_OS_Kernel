@@ -172,6 +172,7 @@ def run_snapshot():
     symbols_open = get_symbols_open()
     realized_pnl = get_realized_pnl()
 
+    alerts_text = '\n'.join(alerts) if alerts else 'Nenhum'
     ts = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
     report = f"""TS_UTC={ts}
@@ -192,7 +193,7 @@ LOG_SKIPPED={last_skipped}
 --- PYTHON PROOF ---
 {python_proof}
 --- ALERTS ---
-{'\n'.join(alerts) if alerts else 'Nenhum'}
+{alerts_text}
 """
 
     print(report)
