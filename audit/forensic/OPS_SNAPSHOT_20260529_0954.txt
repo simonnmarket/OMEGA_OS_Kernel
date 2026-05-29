@@ -1,0 +1,11 @@
+TS_UTC=2026-05-29T09:54:30Z
+EQUITY=11038.8
+POS_N=8
+PNL_FLOAT=15.68
+FREEZE=0
+MODEL_DUMP=0
+TOP_SKIP_1=hit_rate_134=63.39% < 65.0%
+THRESH_HIT_RATE=65.0 (FAIL)
+FLOW_FOREX=2026-05-29 11:54:18,105 | INFO | [GBPUSD H4] [FLOW] confluence=51.3 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=39 vof=50 vwap=50 pullback=50 wyckoff=50 elliott=91 liq=50 weis=50
+FLOW_CRYPTO=2026-05-29 11:54:18,299 | INFO | [BTCUSD H4] [FLOW] confluence=48.2 | legacy: v_flow=50 vol_phy=50 | new: sto_fused=40 vof=50 vwap=50 pullback=50 wyckoff=50 elliott=80 liq=50 weis=50
+LOG_EXEC_SKIP=2026-05-29 11:54:19,222 | INFO |   executed                  : 0
