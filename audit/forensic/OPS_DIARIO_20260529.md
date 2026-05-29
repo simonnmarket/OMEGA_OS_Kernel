@@ -8,6 +8,7 @@
 | 10:08 | OPS_SNAPSHOT_20260529_1000.txt | 11035.13 | 8 | 13.49 | 0.0 | 0 | PASS CONDICIONAL | — |
 | 16:54 | OPS_SNAPSHOT_20260529_1654.txt | 11035.13 | 8 | 14.14 | 0.0 | 0 | PASS | 8 símbolos |
 | 17:01 | OPS_SNAPSHOT_20260529_1701.txt | 11035.13 | 8 | 15.69 | 0.0 | 0 | PASS | 8 símbolos |
+| 20:00 | OPS_SNAPSHOT_20260529_2000.txt | 11035.13 | 8 | 12.82 | 0.0 | **285** | PASS (freeze B1) | 8 símbolos |
 
 ## PnL REALIZED (trade_feedback.jsonl)
 
@@ -25,28 +26,29 @@
 | 2 | US500 | #192026692 | -0.68 |
 | 3 | XRPUSD | #192009009 | -0.63 |
 
-## Todas Fechadas Hoje (2026-05-29)
+## NOVAS ENTRADAS / FECHADAS / SWAP HOJE
 
-| Ativo | Ticket | PnL (USD) |
-|-------|--------|-----------|
-| XAGUSD | #192064150 | -57.40 |
-| US500 | #192026692 | -0.68 |
-| XRPUSD | #192009009 | -0.63 |
-| XRPUSD | #192075495 | -0.63 |
-| BNBUSD | #192084259 | -0.27 |
-| US100 | #192087104 | -0.21 |
-| SOLUSD | #192078775 | -0.05 |
-| SOLUSD | #192099309 | -0.05 |
-| US100 | #192067598 | +0.01 |
-| US100 | #192083807 | +0.20 |
-| US100 | #192078911 | +0.92 |
-| AUDUSD | #191997524 | +2.05 |
-| US100 | #192006939 | +9.75 |
+| Métrica | Valor |
+|---------|-------|
+| Novas entradas hoje | 35 |
+| Fechadas hoje | 13 |
+| Swap presente (novas entradas) | 35/35 (100%) |
+
+## CEO-B1 FREEZE (2026-05-29 17:05 UTC)
+
+| Campo | Valor |
+|-------|-------|
+| **ENTRIES_FROZEN** | **1** (ativo) |
+| **Freeze until** | 2026-06-02T07:00:00Z |
+| **Motivo** | PnL 7D -223.81, cumul -977.67 |
+| **Runner** | Continua activo (gestão 8 posições existentes) |
+| **Novas entradas** | BLOQUEADAS até segunda 07:00 UTC |
+| **Gestão existente** | Trailing / SL / TP continua |
 
 ## Riscos (3 bullets)
 
-1. **XAGUSD -57.40 é a maior perda isolada do dia** — representa 122% do PnL negativo total (-46.99). CEO avalia freeze entradas novas até segunda.
-2. **8 posições abertas em trailing** — requer monitorização contínua de SL/TP (especialmente GER40/UKOIL+ novos).
+1. **XAGUSD -57.40 é a maior perda isolada do dia** — representa 122% do PnL negativo total (-46.99). CEO-B1 freeze activo.
+2. **8 posições abertas em trailing** — gestão continua durante freeze (SL/TP/trailing activos).
 3. **PnL cumulativo -977.67** — tendência negativa persistente; CEO proíbe alterar thresholds para "recuperar".
 
 ## Estado Runner
@@ -56,27 +58,31 @@
 - DECISION_TRACE: =1 (mantido)
 - Cache .pyc: limpo após reinício
 - Último reinício: 12:03 UTC
+- **FREEZE: ENTRIES_FROZEN=1 (CEO-B1-PNL-WEEKEND-20260529)**
 
 ## Decisões CEO Pendentes
 
 | # | Decisão | Status |
 |---|---------|--------|
-| B1 | FREEZE entradas novas até segunda? | **Aguardar ordem CEO** |
+| B1 | FREEZE entradas novas até segunda? | **ACTIVO — até 2026-06-02 07:00 UTC** |
 | B2 | Alterar thresholds? | **PROIBIDO** (mandato CEO) |
 | B3 | Ação sobre XAGUSD -57.40? | **Aguardar ordem CEO** |
+| B4 | Desfreeze segunda 07:00? | **CEO decide — PSA não descongela sozinho** |
 
 ## Checklist Fim de Turno PSA
 
 - [x] Reinício via run_omega_24x7.ps1 feito
 - [x] G4 PASS reportado (executed_gt0=24 post-reinício)
-- [x] ≥4 OPS_SNAPSHOT no dia (meta ≥4)
+- [x] ≥5 OPS_SNAPSHOT no dia (meta ≥4)
 - [x] SYMBOLS_OPEN + REALIZED_PNL em cada snapshot
 - [x] PnL REALIZED_HOJE/7D/CUMUL do trade_feedback.jsonl incluído
 - [x] TOP3 perdas de hoje listadas
+- [x] NOVAS_ENTRADAS/FECHADAS/SWAP incluído
+- [x] CEO-B1 FREEZE activo (ENTRIES_FROZEN=1, 285 ocorrências confirmadas)
 - [x] Nenhum commit fora de hotfix/forensic
 - [x] USFE: NÃO iniciado (AIC domingo/timebox)
-- [x] Sem alertas (freeze=0, model_dump=0, pos≤12, runner alive)
 - [x] PROIBIDO alterar thresholds para "recuperar" perdas
+- [x] PSA não descongela sozinho — aguardar ordem CEO segunda 07:00
 
 ---
-*OPS_DIARIO gerado por PSA. Mandato: CEO-PSA-OPS-20260530 + CEO-ORDEM-PnL-20260529.*
+*OPS_DIARIO gerado por PSA. Mandato: CEO-PSA-OPS-20260530 + CEO-ORDEM-PnL-20260529 + CEO-B1-PNL-WEEKEND-20260529.*
