@@ -1029,6 +1029,56 @@ def _load_trade_economics() -> dict:
     return {}
 
 
+_PIP_VALUE_CACHE: Dict[str, float] = {}
+
+
+def _load_pip_value_cache() -> Dict[str, float]:
+    global _PIP_VALUE_CACHE
+    if _PIP_VALUE_CACHE:
+        return _PIP_VALUE_CACHE
+    p = Path(__file__).parent.parent / "config" / "pip_value_cache.json"
+    if p.exists():
+        try:
+            raw = json.loads(p.read_text(encoding="utf-8"))
+            _PIP_VALUE_CACHE = {
+                str(k).upper(): float(v)
+                for k, v in (raw.get("pip_value_lot") or raw).items()
+                if isinstance(v, (int, float))
+            }
+        except Exception:
+            pass
+    return _PIP_VALUE_CACHE
+
+
+def pip_value_per_lot_mt5(asset: str, sym=None, price: float = 0.0) -> float:
+    """USD por ponto MT5 por 1.0 lote — fonte: cache PSA ou order_calc_profit."""
+    import MetaTrader5 as mt5
+
+    cached = _load_pip_value_cache().get((asset or "").upper())
+    if cached and cached > 0:
+        return cached
+    if sym is None:
+        sym = mt5.symbol_info(asset)
+    if sym is None:
+        return 0.01
+    if price <= 0:
+        tick = mt5.symbol_info_tick(asset)
+        price = float(tick.ask if tick and tick.ask > 0 else (tick.bid if tick else 0))
+    pt = float(sym.point) if sym.point else 0.0
+    if pt <= 0 or price <= 0:
+        return 0.01
+    profit = mt5.order_calc_profit(0, asset, 1.0, price, price + 100.0 * pt)
+    if profit is not None and abs(profit) > 1e-12:
+        # P1-FIX 20260601: formula correta = profit/100 (USD por ponto por lote).
+        # BUG anterior: /(100*pt) inflava valores 100-100000x para forex/crypto.
+        return abs(float(profit)) / 100.0
+    tick_size = sym.trade_tick_size if sym.trade_tick_size > 0 else pt
+    pip_legacy = sym.trade_tick_value * (pt / tick_size)
+    if pip_legacy > 0:
+        return float(pip_legacy)
+    return max(pt * (sym.trade_contract_size or 1.0), 0.01)
+
+
 def min_expected_tp_usd_threshold(asset: str) -> float:
     """
     Lucro esperado minimo (moeda da conta, tipicamente USD) se o TP for atingido.
@@ -1797,10 +1847,7 @@ def calc_lot(equity: float, margin_pts: float, asset: str) -> Dict:
     # Para XAUUSD: pip_value = point × contract_size (em USD já)
     # FIX 29/04/2026: point*contract_size retorna em moeda-cotacao (JPY para pares JPY),
     # nao em USD. Usar trade_tick_value do MT5 que ja esta em moeda da conta (USD).
-    tick_size = sym.trade_tick_size if sym.trade_tick_size > 0 else point
-    pip_value_per_lot = sym.trade_tick_value * (point / tick_size)
-    if pip_value_per_lot <= 0:  # fallback de seguranca
-        pip_value_per_lot = point * contract_size
+    pip_value_per_lot = pip_value_per_lot_mt5(asset, sym, price)
 
     risk_usd = equity * RISK_PER_TRADE_PCT
     stop_pts = 2.0 * margin_pts
@@ -4107,6 +4154,25 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                     }
                                 )
                                 continue
+                        _tp_usd_log = eff_tp * _pip_val * (eff_lot or 0.01)
+                        _net_edge_log = _tp_usd_log - _cost_total
+                        log.info(
+                            "[%s %s] [ECON_OPEN] lot=%.4f SL=%.0fpts($%.2f) TP=%.0fpts($%.2f) "
+                            "spread=$%.2f swap_est=$%.2f comm=$%.2f net_edge=$%.2f pip_val=%.6f conf=%.2f",
+                            asset,
+                            tf,
+                            eff_lot or 0,
+                            eff_sl,
+                            _risk_usd_eff,
+                            eff_tp,
+                            _tp_usd_log,
+                            _spread_est * (eff_lot or 0.01),
+                            abs(_swap_est) * (eff_lot or 0.01),
+                            _comm * (eff_lot or 0.01),
+                            _net_edge_log,
+                            _pip_val,
+                            _conf_score,
+                        )
                         log.info("[%s %s] [%s] lot=%.2f execTF=%s atr=%.1f SL=%.0fpts($%.2f) TP=%.0fpts RR=1:%.2f conf=%.2f",
                                  asset, tf, _prof["regime"].upper(), eff_lot,
                                  _exec_atr["tf"], _exec_atr.get("atr_pts", 0),

@@ -43,8 +43,9 @@ def main() -> int:
         price = info.ask if info.ask > 0 else info.bid
         # Simula: comprar 1.0 lot, fechar a +100 pontos
         profit = mt5.order_calc_profit(0, sym, 1.0, price, price + 100 * pt)
-        # pip_value_lot = profit / (100 * point) = USD por ponto por lote
-        pip_val = profit / (100 * pt) if pt > 0 and profit is not None else 0.0
+        # P1-FIX 20260601: USD por ponto por lote = profit / 100
+        # NOTA: formula anterior /(100*pt) dava valores 100-100000x inflados
+        pip_val = profit / 100.0 if profit is not None else 0.0
         results.append({
             "symbol": sym,
             "status": "OK" if profit is not None else "FAIL",
