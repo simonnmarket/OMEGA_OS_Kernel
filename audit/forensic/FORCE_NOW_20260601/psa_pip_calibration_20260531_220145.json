@@ -1,0 +1,195 @@
+{
+  "component": "psa_pip_calibration",
+  "utc": "2026-05-31T22:01:45.535807+00:00",
+  "results": [
+    {
+      "symbol": "EURUSD",
+      "status": "OK",
+      "point": 1e-05,
+      "price": 1.16555,
+      "profit_100pts_1lot": 100.0,
+      "pip_value_lot": 100000.0,
+      "class": "AssetClass.FOREX"
+    },
+    {
+      "symbol": "GBPUSD",
+      "status": "OK",
+      "point": 1e-05,
+      "price": 1.34517,
+      "profit_100pts_1lot": 100.0,
+      "pip_value_lot": 100000.0,
+      "class": "AssetClass.FOREX"
+    },
+    {
+      "symbol": "USDJPY",
+      "status": "OK",
+      "point": 0.001,
+      "price": 159.386,
+      "profit_100pts_1lot": 62.7,
+      "pip_value_lot": 627.0,
+      "class": "AssetClass.FOREX"
+    },
+    {
+      "symbol": "AUDUSD",
+      "status": "OK",
+      "point": 1e-05,
+      "price": 0.71776,
+      "profit_100pts_1lot": 100.0,
+      "pip_value_lot": 100000.0,
+      "class": "AssetClass.FOREX"
+    },
+    {
+      "symbol": "USDCAD",
+      "status": "OK",
+      "point": 1e-05,
+      "price": 1.38012,
+      "profit_100pts_1lot": 72.41,
+      "pip_value_lot": 72410.0,
+      "class": "AssetClass.FOREX"
+    },
+    {
+      "symbol": "XAUUSD",
+      "status": "OK",
+      "point": 0.01,
+      "price": 4521.95,
+      "profit_100pts_1lot": 100.0,
+      "pip_value_lot": 100.0,
+      "class": "AssetClass.COMMODITY"
+    },
+    {
+      "symbol": "XAGUSD",
+      "status": "OK",
+      "point": 0.001,
+      "price": 74.438,
+      "profit_100pts_1lot": 500.0,
+      "pip_value_lot": 5000.0,
+      "class": "AssetClass.COMMODITY"
+    },
+    {
+      "symbol": "US500",
+      "status": "OK",
+      "point": 0.01,
+      "price": 7583.15,
+      "profit_100pts_1lot": 1.0,
+      "pip_value_lot": 1.0,
+      "class": "AssetClass.INDEX"
+    },
+    {
+      "symbol": "US100",
+      "status": "OK",
+      "point": 0.01,
+      "price": 30360.88,
+      "profit_100pts_1lot": 1.0,
+      "pip_value_lot": 1.0,
+      "class": "AssetClass.INDEX"
+    },
+    {
+      "symbol": "US30",
+      "status": "OK",
+      "point": 0.01,
+      "price": 50985.85,
+      "profit_100pts_1lot": 1.0,
+      "pip_value_lot": 1.0,
+      "class": "AssetClass.INDEX"
+    },
+    {
+      "symbol": "GER40",
+      "status": "OK",
+      "point": 0.01,
+      "price": 25050.45,
+      "profit_100pts_1lot": 1.17,
+      "pip_value_lot": 1.17,
+      "class": "AssetClass.INDEX"
+    },
+    {
+      "symbol": "UKOIL+",
+      "status": "OK",
+      "point": 0.01,
+      "price": 91.14,
+      "profit_100pts_1lot": 100.0,
+      "pip_value_lot": 100.0,
+      "class": "AssetClass.ENERGY"
+    },
+    {
+      "symbol": "BTCUSD",
+      "status": "OK",
+      "point": 0.01,
+      "price": 73838.06,
+      "profit_100pts_1lot": 1.0,
+      "pip_value_lot": 1.0,
+      "class": "AssetClass.CRYPTO"
+    },
+    {
+      "symbol": "ETHUSD",
+      "status": "OK",
+      "point": 0.001,
+      "price": 2010.804,
+      "profit_100pts_1lot": 0.1,
+      "pip_value_lot": 1.0,
+      "class": "AssetClass.CRYPTO"
+    },
+    {
+      "symbol": "SOLUSD",
+      "status": "OK",
+      "point": 0.001,
+      "price": 82.313,
+      "profit_100pts_1lot": 0.1,
+      "pip_value_lot": 1.0,
+      "class": "AssetClass.CRYPTO"
+    },
+    {
+      "symbol": "XRPUSD",
+      "status": "OK",
+      "point": 1e-05,
+      "price": 1.3357,
+      "profit_100pts_1lot": 1.0,
+      "pip_value_lot": 1000.0,
+      "class": "AssetClass.CRYPTO"
+    },
+    {
+      "symbol": "ADAUSD",
+      "status": "OK",
+      "point": 0.0001,
+      "price": 0.2366,
+      "profit_100pts_1lot": 1.0,
+      "pip_value_lot": 100.0,
+      "class": "AssetClass.CRYPTO"
+    },
+    {
+      "symbol": "LTCUSD",
+      "status": "OK",
+      "point": 0.001,
+      "price": 52.08,
+      "profit_100pts_1lot": 0.1,
+      "pip_value_lot": 1.0,
+      "class": "AssetClass.CRYPTO"
+    },
+    {
+      "symbol": "AVAXUSD",
+      "status": "OK",
+      "point": 0.001,
+      "price": 8.973,
+      "profit_100pts_1lot": 0.1,
+      "pip_value_lot": 1.0,
+      "class": "AssetClass.CRYPTO"
+    },
+    {
+      "symbol": "BNBUSD",
+      "status": "OK",
+      "point": 0.01,
+      "price": 711.04,
+      "profit_100pts_1lot": 1.0,
+      "pip_value_lot": 1.0,
+      "class": "AssetClass.CRYPTO"
+    },
+    {
+      "symbol": "DOGUSD",
+      "status": "OK",
+      "point": 1e-05,
+      "price": 0.10063,
+      "profit_100pts_1lot": 1.0,
+      "pip_value_lot": 1000.0,
+      "class": "AssetClass.CRYPTO"
+    }
+  ]
+}

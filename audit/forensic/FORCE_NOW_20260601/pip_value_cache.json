@@ -1,0 +1,26 @@
+{
+  "_from": "psa_pip_calibration_20260531_220145.json",
+  "pip_value_lot": {
+    "EURUSD": 100000.0,
+    "GBPUSD": 100000.0,
+    "USDJPY": 627.0,
+    "AUDUSD": 100000.0,
+    "USDCAD": 72410.0,
+    "XAUUSD": 100.0,
+    "XAGUSD": 5000.0,
+    "US500": 1.0,
+    "US100": 1.0,
+    "US30": 1.0,
+    "GER40": 1.17,
+    "UKOIL+": 100.0,
+    "BTCUSD": 1.0,
+    "ETHUSD": 1.0,
+    "SOLUSD": 1.0,
+    "XRPUSD": 1000.0,
+    "ADAUSD": 100.0,
+    "LTCUSD": 1.0,
+    "AVAXUSD": 1.0,
+    "BNBUSD": 1.0,
+    "DOGUSD": 1000.0
+  }
+}
