@@ -230,6 +230,7 @@ from typing import Dict, List, Optional, Tuple
 # ── OMEGA KERNEL v2.4.8 — ANALYSIS MODULES (compute_from_bars interface) ─────
 import importlib as _importlib
 _NEW_MODULE_ENGINES: Dict[str, Dict] = {}  # regime → {name: engine_instance}
+_USFE_ENGINES: Dict[str, object] = {}  # symbol → ComponentEngine (per-symbol)
 
 _KERNEL_MODULE_MAP = [
     ("vof",        "modules.volume_order_flow"),
@@ -270,7 +271,7 @@ def _asset_regime(symbol: str) -> str:
         return "commodity"
     if any(c in s for c in ("BTC", "ETH", "SOL", "DOG", "ADA", "XRP", "LTC", "BNB")):
         return "crypto"
-    if any(c in s for c in ("US500", "NAS", "GER", "UK100", "JPN", "SP5", "DOW", "DAX")):
+    if any(c in s for c in ("US500", "US100", "US30", "NAS", "GER", "UK100", "JPN", "SP5", "DOW", "DAX")):
         return "index"
     return "forex"
 
@@ -382,11 +383,12 @@ def compute_flow_confluence(bar: Dict, symbol: str, direction: int, df=None) -> 
         regime = _asset_regime(symbol)
         engines = _get_analysis_engines(regime)
         _new_weights = {
-            "vof":       0.10, "footprint": 0.09,
-            "sto_inst":  0.06, "sto_fused": 0.14, "pvsra":    0.05,
-            "vwap":      0.11, "pullback":  0.08, "wyckoff":  0.05,
-            "liq_abs":   0.09, "elliott":  0.15, "synapse":  0.08,
-        }  # soma = 1.00
+            "vof":       0.095, "footprint": 0.0855,
+            "sto_inst":  0.057, "sto_fused": 0.133, "pvsra":    0.0475,
+            "vwap":      0.1045, "pullback":  0.076, "wyckoff":  0.0475,
+            "liq_abs":   0.0855, "elliott":  0.1425, "synapse":  0.076,
+            "usfe":      0.05,
+        }  # soma = 1.00 (×0.95 legado + usfe 0.05)
         for key, eng in engines.items():
             if eng is None:
                 scores[key] = 50.0
@@ -401,6 +403,35 @@ def compute_flow_confluence(bar: Dict, symbol: str, direction: int, df=None) -> 
                     scores[key] = max(0.0, min(100.0, base))
             except Exception:
                 scores[key] = 50.0
+        if _get_flag("OMEGA_USFE_ENABLED", "0") == "1":
+            try:
+                if symbol not in _USFE_ENGINES:
+                    from modules.omega_usfe_engine import ComponentEngine as _USFEEngine
+                    _USFE_ENGINES[symbol] = _USFEEngine.from_config(
+                        regime=regime, symbol=symbol
+                    )
+                _st_usfe = _USFE_ENGINES[symbol].compute_from_bars(_df_bars)
+                _meta = getattr(_st_usfe, "usfe", None) or {}
+                scores["usfe_alignment"] = float(_meta.get("alignment_score", 0.0))
+                scores["usfe_confidence"] = float(_meta.get("confidence", 0.0))
+                scores["usfe_bias"] = str(_meta.get("trade_bias", "NEUTRAL"))
+                scores["usfe_regime"] = str(_meta.get("macro_regime", "NEUTRAL"))
+                if not _st_usfe.is_valid:
+                    scores["usfe"] = 50.0
+                else:
+                    _dir_u = float(getattr(_st_usfe, "direction", 0))
+                    _align = scores["usfe_alignment"]
+                    scores["usfe"] = max(
+                        0.0, min(100.0, 50.0 + _align * 50.0 * _dir_u)
+                    )
+            except Exception:
+                scores["usfe"] = 50.0
+                scores["usfe_alignment"] = 0.0
+                scores["usfe_confidence"] = 0.0
+                scores["usfe_bias"] = "NEUTRAL"
+                scores["usfe_regime"] = "NEUTRAL"
+        else:
+            scores["usfe"] = 50.0
         new_conf = sum(scores[k] * _new_weights.get(k, 0.0) for k in _new_weights)
         # Blend: 30% módulos legados + 70% novos módulos
         confluence = 0.30 * confluence_legacy + 0.70 * new_conf
@@ -546,7 +577,7 @@ RISK_PER_TRADE_PCT = float(os.getenv("OMEGA_RISK_PER_TRADE", "0.0100"))  # CEO 2
 MIN_LOT_OVERRIDE   = float(os.getenv("OMEGA_MIN_LOT", "0.0"))            # CEO: lote mínimo (0=auto)
 # 0 = sem limite (paper/testes). N>=1 = no máximo N posições OMEGA rastreadas (comment/mark).
 MAX_POSITIONS      = int(os.getenv("OMEGA_MAX_POSITIONS", "0"))
-MAX_POS_PER_ASSET  = int(os.getenv("OMEGA_MAX_POS_PER_ASSET", "1"))  # P0-REMEDIAÇÃO-8Q: default 0→1 (bloqueia duplicação por ativo)
+MAX_POS_PER_ASSET  = int(os.getenv("OMEGA_MAX_POS_PER_ASSET", "0"))  # 0=RiskBudget autoridade; 1=legacy cap fixo
 DD_DAILY_MAX       = float(os.getenv("OMEGA_DD_DAILY_MAX", "0.10"))       # CEO 2026-05-14: 0.01→0.10 (1%→10% DEMO AGRESSIVO)
 CONCENTRATION_MAX  = float(os.getenv("OMEGA_CONCENTRATION_MAX", "0.40"))   # CQO/COO: max por ativo
 MAX_CONSEC_FAIL    = 3
@@ -988,21 +1019,44 @@ def classify_asset(symbol: str) -> str:
     return "forex"
 
 
+def _load_trade_economics() -> dict:
+    p = Path(__file__).parent.parent / "config" / "omega_trade_economics.json"
+    if p.exists():
+        try:
+            return json.loads(p.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return {}
+
+
 def min_expected_tp_usd_threshold(asset: str) -> float:
     """
-    Lucro esperado mínimo (moeda da conta, tipicamente USD) se o TP for atingido,
-    estimado linearmente como: TP_pts × pip_value_per_lot × lot (igual ao uso de _risk_usd_eff).
+    Lucro esperado minimo (moeda da conta, tipicamente USD) se o TP for atingido.
+    Le pisos do JSON + env override (env vence se maior).
     0 = filtro desligado para essa camada.
-
-    Defaults (2026-05): crypto_alt = 1.25 USD — evita cenário “6000 pts = $0.58” em CFD alts.
-    Desligar: OMEGA_MIN_TP_USD_CRYPTO_ALT=0
     """
-    g = float(os.getenv("OMEGA_MIN_TP_USD", "0") or 0)
+    eco = _load_trade_economics()
+    mins = eco.get("min_tp_usd", {})
     cls = classify_asset(asset)
-    if cls == "crypto_alt":
-        g = max(g, float(os.getenv("OMEGA_MIN_TP_USD_CRYPTO_ALT", "1.25") or 0))
-    elif cls == "crypto":
-        g = max(g, float(os.getenv("OMEGA_MIN_TP_USD_CRYPTO", "0") or 0))
+    key_map = {
+        "index": "index", "forex": "forex", "jpy_major": "forex",
+        "commodity": "commodity", "metal": "metal",
+        "crypto": "crypto", "crypto_alt": "crypto_alt",
+    }
+    json_key = key_map.get(cls, "forex")
+    g = float(mins.get(json_key, 0) or 0)
+    env_k = {
+        "index": "OMEGA_MIN_TP_USD_INDEX",
+        "forex": "OMEGA_MIN_TP_USD_FOREX",
+        "jpy_major": "OMEGA_MIN_TP_USD_FOREX",
+        "commodity": "OMEGA_MIN_TP_USD_METAL",
+        "metal": "OMEGA_MIN_TP_USD_METAL",
+        "crypto": "OMEGA_MIN_TP_USD_CRYPTO",
+        "crypto_alt": "OMEGA_MIN_TP_USD_CRYPTO_ALT",
+    }.get(cls)
+    if env_k:
+        g = max(g, float(os.getenv(env_k, "0") or 0))
+    g = max(g, float(os.getenv("OMEGA_MIN_TP_USD", "0") or 0))
     return float(g)
 
 
@@ -2811,6 +2865,35 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
         except Exception as _fl_drain_err:
             log.warning("[FASTLOOP] drain error (nao critico): %s", _fl_drain_err)
 
+        # === MANDATO 20260601 — STALE EXIT: posicoes presas horas com lucro < custo ===
+        try:
+            _stale_profit = float(os.getenv("OMEGA_STALE_PROFIT_USD", "2.0") or "2.0")
+            _stale_hours = float(os.getenv("OMEGA_STALE_HOURS", "4") or "4")
+            _stale_action = str(os.getenv("OMEGA_STALE_ACTION", "LOG") or "LOG").upper()
+            if _stale_action in ("CLOSE", "BE_ONLY") and mode == "paper" and mt5_connected:
+                _now_stale = time.time()
+                for _st_ticket, _st_ledger in _pos_ledger.items():
+                    _st_profit = float(_st_ledger.get("last_profit", 0.0))
+                    _st_swap = float(_st_ledger.get("swap_cost_est_usd", 0.0))
+                    _st_age = (_now_stale - float(_st_ledger.get("open_ts", _now_stale))) / 3600.0
+                    if _st_age > _stale_hours and (_st_profit + _st_swap) < _stale_profit:
+                        log.warning("[%s] [STALE_EXIT] #%d profit=$%.2f swap=$%.2f age=%.1fh < action=%s",
+                                    _st_ledger.get("symbol", "?"), _st_ticket,
+                                    _st_profit, _st_swap, _st_age, _stale_action)
+                        if _stale_action == "CLOSE":
+                            try:
+                                _st_pos = mt5.positions_get(ticket=_st_ticket)
+                                if _st_pos:
+                                    _st_p = _st_pos[0]
+                                    _st_dir_str = "SELL" if _st_p.type == 0 else "BUY"
+                                    _st_close = mt5_close_partial(_st_ticket, _st_p.symbol, _st_p.volume, _st_dir_str)
+                                    if _st_close.get("success"):
+                                        log.info("[STALE_EXIT] CLOSE OK #%d", _st_ticket)
+                            except Exception as _st_err:
+                                log.warning("[STALE_EXIT] erro #%d: %s", _st_ticket, _st_err)
+        except Exception as _stale_outer:
+            log.debug("[STALE_EXIT] verificacao falhou: %s", _stale_outer)
+
         for asset in ativos_scheduled:
             for tf in timeframes:
                 # ── BUG-2: SL Cooldown Gate ──────────────────────────────────
@@ -2917,6 +3000,16 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                             _flow_details.get("liq_abs", 50),
                             _flow_details.get("weis_wave", 50),
                         )
+                        if _get_flag("OMEGA_USFE_ENABLED", "0") == "1":
+                            log.info(
+                                "[%s %s] [USFE] bias=%s align=%.4f conf=%.4f regime=%s",
+                                asset,
+                                tf,
+                                _flow_details.get("usfe_bias", "NEUTRAL"),
+                                float(_flow_details.get("usfe_alignment", 0.0)),
+                                float(_flow_details.get("usfe_confidence", 0.0)),
+                                _flow_details.get("usfe_regime", "NEUTRAL"),
+                            )
                     else:
                         log.warning("[%s %s] [FLOW] sem dados M1", asset, tf)
                 except Exception as _flow_err:
@@ -2985,8 +3078,13 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                 if mode == "paper" and MAX_POSITIONS > 0 and open_pos >= MAX_POSITIONS:
                     log.warning("[%s %s] MAX_POSITIONS=%d atingido.", asset, tf, MAX_POSITIONS); continue
 
-                # FIX-DUPL: gate por ativo — bloqueia 2ª posição no mesmo ativo
-                if MAX_POS_PER_ASSET > 0 and mode == "paper":
+                # FIX-DUPL (legacy): só quando RiskBudget OFF — com RB=1 o cap fixo=1 anula slots dinâmicos
+                _use_risk_budget_early = os.getenv("OMEGA_USE_RISK_BUDGET", "0").strip() == "1"
+                if (
+                    not _use_risk_budget_early
+                    and MAX_POS_PER_ASSET > 0
+                    and mode == "paper"
+                ):
                     _asset_cnt = sum(1 for _p in real_pos if _p.symbol == asset)
                     if _asset_cnt >= MAX_POS_PER_ASSET:
                         log.warning("[%s %s] MAX_POS_PER_ASSET=%d atingido — bloqueia duplicação.",
@@ -3719,7 +3817,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                     # falhou (_rb_slots_available is None → fallback seguro).
                     if _rb_slots_available is None:
                         # Fallback legacy: RiskBudget inactivo ou com erro
-                        _MAX_POS_PER_ASSET = int(os.getenv("OMEGA_MAX_POS_PER_ASSET", "1"))
+                        _MAX_POS_PER_ASSET = int(os.getenv("OMEGA_MAX_POS_PER_ASSET", "0"))
                         try:
                             from modules.mt5_position_tag import has_omega_exposure
                             if has_omega_exposure(asset, signal_dir):
@@ -3980,29 +4078,32 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
 
                         # Risco efetivo em USD para log / agregados
                         _risk_usd_eff = eff_sl * _pip_val * (eff_lot or 0.01)
+                        _eco = _load_trade_economics()
+                        _comm = float(_eco.get("commission_per_lot_round_turn_usd", {}).get(asset, 0))
+                        _spread_est = float(_eco.get("spread_avg_usd_per_lot", {}).get(asset, 0))
+                        _swap_est = float(_eco.get("swap_per_lot_night_usd", {}).get(asset, 0))
+                        _cost_total = (_comm + _spread_est + abs(_swap_est)) * (eff_lot or 0.01)
+                        _mult = float(_eco.get("min_net_edge_mult", 1.35))
                         if _thr_tp_usd > 0:
                             _tp_usd_est = eff_tp * _pip_val * (eff_lot or 0.01)
-                            if _tp_usd_est < _thr_tp_usd:
+                            _tp_net_min = max(_thr_tp_usd, _cost_total * _mult)
+                            if _tp_usd_est < _tp_net_min:
                                 log.info(
-                                    "[%s %s] [ECON_GATE] SKIP — TP_estimado=$%.2f < min=$%.2f "
-                                    "(TP=%.0fpts lot=%.4f pip_val/lot=%.6f). "
-                                    "Aumente OMEGA_LOT_MAX / lot_cap do ativo, ative "
-                                    "OMEGA_SCALE_LOT_TO_MIN_TP_USD=1, ou baixe OMEGA_MIN_TP_USD_CRYPTO_ALT.",
-                                    asset,
-                                    tf,
-                                    _tp_usd_est,
-                                    _thr_tp_usd,
-                                    eff_tp,
-                                    eff_lot or 0,
-                                    _pip_val,
+                                    "[%s %s] [ECON_GATE] SKIP — TP_est=$%.2f < net_min=$%.2f "
+                                    "(thr=$%.2f cost=$%.2f mult=%.2f) "
+                                    "lot=%.4f pip_val=%.6f",
+                                    asset, tf, _tp_usd_est, _tp_net_min,
+                                    _thr_tp_usd, _cost_total, _mult,
+                                    eff_lot or 0, _pip_val,
                                 )
                                 results.append(
                                     {
                                         "asset": asset,
                                         "timeframe": tf,
-                                        "status": "SKIP_MIN_TP_USD",
+                                        "status": "SKIP_NET_EDGE",
                                         "tp_usd_est": round(_tp_usd_est, 4),
-                                        "min_tp_usd": _thr_tp_usd,
+                                        "net_min_usd": round(_tp_net_min, 4),
+                                        "cost_total": round(_cost_total, 4),
                                     }
                                 )
                                 continue
@@ -4621,6 +4722,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                 report = build_report(asset, tf, mode, harmonic, 
                                       {"price": a_price, "base_price": b_price, "metadata": {}}, 
                                       guard, exec_result, lot_info)
+                out_f = None
                 # P0-ABC 20260522: Não salvar PaperReport EXEC se ghost order (fill=0)
                 if exec_result and not exec_result.get("success", True):
                     _ghost_reason = exec_result.get("retcode_str", "UNKNOWN")
@@ -4674,7 +4776,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                         "signal_source": signal_source,
                         "flow_confluence": _flow_details if _flow_details else None,
                         "retcode": (exec_result or {}).get("retcode"),
-                        "report_path": str(out_f),
+                        "report_path": str(out_f) if out_f is not None else "",
                     }
                 )
     finally:

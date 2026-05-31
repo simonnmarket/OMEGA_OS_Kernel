@@ -63,8 +63,9 @@ $env:OMEGA_PYRAMID_ATR = "0.5"        # activar pyramid quando profit >= 0.5×AT
 $env:OMEGA_MAX_TP_SL_RATIO = "3.0"
 # P0-REMEDIAÇÃO-8Q: índices merecem R:R maior (ex: US500 2647 pts vs TP $3.15)
 $env:OMEGA_MAX_TP_SL_RATIO_INDEX = "10.0"
-# P0-REMEDIAÇÃO-8Q: bloqueia duplicação por ativo (default 0→1)
-$env:OMEGA_MAX_POS_PER_ASSET = "1"
+# CEO MANDATE 2026-05-27: slots por ativo via RiskBudget (ATR×equity) — NÃO cap fixo=1
+# (cap=1 prendia ordem micro-lucro e bloqueava o dia inteiro — ver RELATORIO_CONSELHO_CEO_MANDATE_20260527)
+# Legacy fallback só se OMEGA_USE_RISK_BUDGET=0: $env:OMEGA_MAX_POS_PER_ASSET = "0"
 
 # SL CAPS por regime — calibrados para escala de pontos de cada classe (BUG FIX 2026-05-27)
 #
@@ -123,6 +124,23 @@ $env:OMEGA_USE_SIGNAL_FUSION = "1"
 $env:PSA_SHADOW_MODE = "0"
 $env:FUSION_MIN_CONFIDENCE = "0.55"
 $env:OMEGA_LOOP_PSA_V12 = "1"
+
+# USFE v1.1.2 — L6 observação (peso 0.05 em confluência; alignment principal)
+$env:OMEGA_USFE_ENABLED = "1"
+$env:OMEGA_USFE_BLOCK = "0"
+
+# MANDATO 20260601 — pisos TP/USD por classe (economia de fundo, não migalhas)
+$env:OMEGA_MIN_TP_USD_INDEX = "20"
+$env:OMEGA_MIN_TP_USD_FOREX = "8"
+$env:OMEGA_MIN_TP_USD_METAL = "15"
+$env:OMEGA_MIN_TP_USD_CRYPTO = "12"
+$env:OMEGA_MIN_TP_USD_CRYPTO_ALT = "5"
+$env:OMEGA_SCALE_LOT_TO_MIN_TP_USD = "1"
+
+# MANDATO 20260601 — stale exit (posições presas horas com lucro < custo)
+$env:OMEGA_STALE_PROFIT_USD = "2.0"
+$env:OMEGA_STALE_HOURS = "4"
+$env:OMEGA_STALE_ACTION = "CLOSE"
 
 # Portfolio discovery (16 símbolos Hantec) via schedule — NÃO usar lista fixa em env
 $env:OMEGA_ASSET_PROFILE = "ceo_discovery_full"
