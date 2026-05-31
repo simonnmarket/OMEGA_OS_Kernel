@@ -1,5 +1,17 @@
 {
-  "tickets": [],
-  "reason": "Preencher pelo PSA após snapshot — CEO aprova antes de executar psa_close_positions.py",
-  "approved_by": ""
+  "closed_by_psa": [
+    {"ticket": 192074499, "symbol": "US500", "retcode": 10009, "comment": "Request executed", "timestamp": "2026-06-01T00:22Z", "method": "position_param_V3"},
+    {"ticket": 192105887, "symbol": "GER40", "retcode": 10009, "comment": "Request executed", "timestamp": "2026-06-01T00:22Z", "method": "position_param_V3"},
+    {"ticket": 192250049, "symbol": "US500", "retcode": 10009, "comment": "Request executed", "timestamp": "2026-06-01T00:22Z", "method": "position_param_V3", "note": "ghost_position_from_V2_close"},
+    {"ticket": 192250050, "symbol": "GER40", "retcode": 10009, "comment": "Request executed", "timestamp": "2026-06-01T00:22Z", "method": "position_param_V3", "note": "ghost_position_from_V2_close"}
+  ],
+  "pending_close": [
+    {"ticket": 191908751, "symbol": "UKOIL+", "reason": "market_closed_retcode_10018", "retry": " quando mercado abrir"}
+  ],
+  "remaining_legacy": [
+    {"ticket": 192068976, "symbol": "USDCAD", "note": "FASE2 CEO decide"},
+    {"ticket": 192243746, "symbol": "AUDUSD", "note": "FASE2 CEO decide"},
+    {"ticket": 192243914, "symbol": "USDJPY", "note": "FASE2 CEO decide"},
+    {"ticket": 192244227, "symbol": "USDJPY", "note": "FASE2 CEO decide"}
+  ]
 }
