@@ -1,0 +1,40 @@
+======================================================================
+MT5 SNAPSHOT — FORCE NOW 4H (textual)
+UTC: 2026-05-31T22:24:21.127858+00:00
+======================================================================
+
+--- ACCOUNT INFO ---
+Login: 510075151 | Server: HantecMarketsMU-MT5 | Currency: USD
+Balance: $10917.31 | Equity: $10916.27
+Margin: $35.97 | Free: $10880.30
+
+--- OPEN POSITIONS: 6 ---
+Ticket     Symbol   Type   Vol    Open       Price      SL         TP         Profit     Swap    
+------------------------------------------------------------------------------------------
+191908751  UKOIL+   SELL   0.06   92.20000   91.14000   92.28000   88.20000   6.36       -3.69   
+  -> Deal #198976750 order=191908751 vol=0.08 price=92.20000 profit=0.00 swap=0.00 comm=0.00 comment=OV2|a41edf|H1|S
+  -> Deal #199226460 order=192096206 vol=0.02 price=89.78000 profit=4.84 swap=0.00 comm=0.00 comment=OV2|PARTIAL|1919
+192068976  USDCAD   SELL   0.01   1.37912    1.37979    1.38067    1.37592    -0.49      -0.08   
+  -> Deal #199187681 order=192068976 vol=0.01 price=1.37912 profit=0.00 swap=0.00 comm=0.00 comment=OV2|a1d374|M15|S
+192243746  AUDUSD   SELL   0.17   0.71764    0.71785    0.71867    0.71530    -3.57      0.00    
+  -> Deal #199410998 order=192243746 vol=0.17 price=0.71764 profit=0.00 swap=0.00 comm=0.00 comment=OV2|12329f|M15|S
+192243914  USDJPY   BUY    0.01   159.35100  159.38500  159.33800  159.60900  0.21       0.00    
+  -> Deal #199411203 order=192243914 vol=0.01 price=159.35100 profit=0.00 swap=0.00 comm=0.00 comment=OV2|0e3133|M15|B
+192244227  USDJPY   BUY    0.01   159.35000  159.38500  159.33700  159.60800  0.22       0.00    
+  -> Deal #199411592 order=192244227 vol=0.01 price=159.35000 profit=0.00 swap=0.00 comm=0.00 comment=OV2|5310f3|M15|B
+192253446  SOLUSD   BUY    0.10   82.22600   82.23800   81.99000   82.93400   0.00       0.00    
+  -> Deal #199424298 order=192253446 vol=0.10 price=82.22600 profit=0.00 swap=0.00 comm=0.00 comment=OV2|3b21a1|M15|B
+
+--- HISTORY ORDERS (today): 0 ---
+
+======================================================================
+F6 IMPEDIMENTO: Screenshots GUI
+======================================================================
+Ambiente: Terminal/bash headless (sem GUI)
+MT5 GUI: Disponivel no Windows desktop do CEO
+Acao: CEO captura 3 screenshots manualmente quando voltar:
+  1. Tab Trade — lista posicoes apos 4h
+  2. Ordem indice com TP >= $25 em USD
+  3. History — ultimos 10 deals com profit column
+Estado: NAO BLOQUEIA PASS se F4/F5 + snapshot textual OK
+======================================================================

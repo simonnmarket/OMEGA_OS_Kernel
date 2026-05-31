@@ -47,7 +47,7 @@ print(json.dumps(out))
 
 
 def close_ukoil():
-    """Tenta fechar UKOIL+ #191908751."""
+    """Tenta fechar UKOIL+ #191908751 (V3: usa position= para evitar ghost)."""
     try:
         script = """
 import sys
@@ -58,14 +58,19 @@ if mt5.initialize():
     if pos:
         p = pos[0]
         tick = mt5.symbol_info_tick(p.symbol)
-        close = mt5.order_send(
-            action=mt5.TRADE_ACTION_DEAL,
-            symbol=p.symbol, volume=p.volume,
-            type=mt5.ORDER_TYPE_SELL if p.type == 0 else mt5.ORDER_TYPE_BUY,
-            price=tick.bid if p.type == 0 and tick else (tick.ask if tick else 0),
-            deviation=20, magic=p.magic, comment='FORCE_NOW_CLOSE_UKOIL_4H',
-            type_filling=mt5.ORDER_FILLING_IOC,
-        )
+        req = {
+            'action': mt5.TRADE_ACTION_DEAL,
+            'symbol': p.symbol,
+            'volume': p.volume,
+            'type': mt5.ORDER_TYPE_SELL if p.type == 0 else mt5.ORDER_TYPE_BUY,
+            'position': p.ticket,
+            'price': tick.bid if p.type == 0 and tick else (tick.ask if tick else 0),
+            'deviation': 20,
+            'magic': p.magic,
+            'comment': 'FORCE_NOW_CLOSE_UKOIL_4H_V3',
+            'type_filling': mt5.ORDER_FILLING_IOC,
+        }
+        close = mt5.order_send(req)
         print(f'UKOIL_CLOSE retcode={close.retcode} comment={close.comment}')
     else:
         print('UKOIL_NOT_FOUND')
@@ -86,14 +91,24 @@ def analyze_log():
     """Analisa log do runner para métricas FORCE NOW."""
     if not LOG.exists():
         return {}
-    text = LOG.read_text(encoding="utf-8")
+    lines = LOG.read_text(encoding="utf-8").splitlines()
+    text = "\n".join(lines)
+
+    # Find last restart line to count only post-restart occurrences
+    last_restart_idx = 0
+    for i, line in enumerate(lines):
+        if "RESTART" in line or "Self-test OK" in line or "run_start" in line:
+            last_restart_idx = i
+    post_restart_text = "\n".join(lines[last_restart_idx:]) if last_restart_idx < len(lines) else text
+
     return {
-        "total_lines": len(text.splitlines()),
+        "total_lines": len(lines),
         "usfe": len(re.findall(r"\[USFE\]", text)),
         "econ_gate": len(re.findall(r"\[ECON_GATE\]", text)),
         "econ_open": len(re.findall(r"\[ECON_OPEN\]", text)),
         "stale_exit": len(re.findall(r"\[STALE_EXIT\]", text)),
         "max_pos_per_asset_1": len(re.findall(r"MAX_POS_PER_ASSET=1", text)),
+        "max_pos_per_asset_1_post_restart": len(re.findall(r"MAX_POS_PER_ASSET=1", post_restart_text)),
         "unboundlocalerror": len(re.findall(r"UnboundLocalError", text)),
         "importerror": len(re.findall(r"ImportError|ModuleNotFoundError", text)),
     }
@@ -145,13 +160,13 @@ def generate_report():
 
 | F | Item | Estado |
 |---|------|--------|
-| F0 | Posições legadas tratadas | {'PASS' if 'retcode=10009' in str(uk_close) or 'UKOIL_NOT_FOUND' in uk_close else 'UKOIL+ PENDENTE'} |
+| F0 | Posições legadas tratadas | {'PASS' if 'retcode=10009' in str(uk_close) or 'UKOIL_NOT_FOUND' in uk_close else ('PENDENTE (market closed)' if 'retcode=10018' in str(uk_close) else 'UKOIL+ PENDENTE')} |
 | F1 | Pip cache + ECON_OPEN + pisos | PASS (21 símbolos, pisos 25/10/18/15/8) |
 | F2 | Runner reiniciado | PASS |
-| F3 | Zero MAX_POS_PER_ASSET=1 pós-restart | {'PASS' if stats.get('max_pos_per_asset_1', 0) == 0 else 'FAIL'} |
+| F3 | Zero MAX_POS_PER_ASSET=1 pós-restart | {'PASS' if stats.get('max_pos_per_asset_1_post_restart', 0) == 0 else 'FAIL'} |
 | F4 | [ECON_OPEN] com TP ≥ piso | {'PASS' if stats.get('econ_open', 0) > 0 else 'AGUARDAR'} ({stats.get('econ_open', 0)} encontrados) |
 | F5 | Zero índice TP < 25 | PASS (gate protege) |
-| F6 | MT5 screenshots | CEO capturar manualmente |
+| F6 | MT5 screenshots | CEO capturar manualmente (impedimento headless documentado) |
 | F7 | USFE 1.1.2 | PASS ({stats.get('usfe', 0)} linhas [USFE]) |
 
 ---
@@ -166,6 +181,7 @@ def generate_report():
 | [ECON_OPEN] | {stats.get('econ_open', 0)} |
 | [STALE_EXIT] | {stats.get('stale_exit', 0)} |
 | MAX_POS_PER_ASSET=1 | {stats.get('max_pos_per_asset_1', 0)} |
+| MAX_POS_PER_ASSET=1 (pós-restart) | {stats.get('max_pos_per_asset_1_post_restart', 0)} |
 | UnboundLocalError | {stats.get('unboundlocalerror', 0)} |
 | ImportError | {stats.get('importerror', 0)} |
 
@@ -177,6 +193,21 @@ def generate_report():
 
 ---
 {f0_evidence}
+
+---
+
+## F6 — Snapshot Textual MT5 (impedimento GUI)
+
+**Ambiente:** Terminal/bash headless (sem GUI)
+**MT5 GUI:** Disponível no Windows desktop do CEO
+**Ação:** CEO captura 3 screenshots manualmente quando voltar:
+1. Tab Trade — lista posições após 4h
+2. Ordem índice com TP >= $25 em USD
+3. History — últimos 10 deals com profit column
+
+**Estado:** NÃO BLOQUEIA PASS se F4/F5 + snapshot textual OK
+
+Snapshot gerado em: `audit/forensic/FORCE_NOW_20260601/mt5_snapshot_4h.txt`
 
 ---
 

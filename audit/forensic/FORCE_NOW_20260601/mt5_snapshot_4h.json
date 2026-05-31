@@ -1,0 +1,178 @@
+{
+  "timestamp_utc": "2026-05-31T22:22:55.854472+00:00",
+  "positions": [
+    {
+      "ticket": 191908751,
+      "symbol": "UKOIL+",
+      "type": "SELL",
+      "volume": 0.06,
+      "open_price": 92.2,
+      "current_price": 91.14,
+      "sl": 92.28,
+      "tp": 88.2,
+      "profit": 6.36,
+      "swap": -3.69,
+      "comment": "OV2|PARTIAL|1919",
+      "magic": 234001,
+      "time": "1780051577",
+      "deal_history": [
+        {
+          "ticket": 198976750,
+          "order": 191908751,
+          "symbol": "UKOIL+",
+          "type": "SELL",
+          "volume": 0.08,
+          "price": 92.2,
+          "profit": 0.0,
+          "swap": 0.0,
+          "commission": 0.0,
+          "comment": "OV2|a41edf|H1|S",
+          "time": "1780051577"
+        },
+        {
+          "ticket": 199226460,
+          "order": 192096206,
+          "symbol": "UKOIL+",
+          "type": "BUY",
+          "volume": 0.02,
+          "price": 89.78,
+          "profit": 4.84,
+          "swap": 0.0,
+          "commission": 0.0,
+          "comment": "OV2|PARTIAL|1919",
+          "time": "1780078515"
+        }
+      ]
+    },
+    {
+      "ticket": 192068976,
+      "symbol": "USDCAD",
+      "type": "SELL",
+      "volume": 0.01,
+      "open_price": 1.37912,
+      "current_price": 1.37979,
+      "sl": 1.38067,
+      "tp": 1.37592,
+      "profit": -0.49,
+      "swap": -0.08,
+      "comment": "OV2|a1d374|M15|S",
+      "magic": 234001,
+      "time": "1780077154",
+      "deal_history": [
+        {
+          "ticket": 199187681,
+          "order": 192068976,
+          "symbol": "USDCAD",
+          "type": "SELL",
+          "volume": 0.01,
+          "price": 1.37912,
+          "profit": 0.0,
+          "swap": 0.0,
+          "commission": 0.0,
+          "comment": "OV2|a1d374|M15|S",
+          "time": "1780077154"
+        }
+      ]
+    },
+    {
+      "ticket": 192243746,
+      "symbol": "AUDUSD",
+      "type": "SELL",
+      "volume": 0.17,
+      "open_price": 0.71764,
+      "current_price": 0.71785,
+      "sl": 0.71867,
+      "tp": 0.7153,
+      "profit": -3.57,
+      "swap": 0.0,
+      "comment": "OV2|12329f|M15|S",
+      "magic": 234001,
+      "time": "1780274548",
+      "deal_history": [
+        {
+          "ticket": 199410998,
+          "order": 192243746,
+          "symbol": "AUDUSD",
+          "type": "SELL",
+          "volume": 0.17,
+          "price": 0.71764,
+          "profit": 0.0,
+          "swap": 0.0,
+          "commission": 0.0,
+          "comment": "OV2|12329f|M15|S",
+          "time": "1780274548"
+        }
+      ]
+    },
+    {
+      "ticket": 192243914,
+      "symbol": "USDJPY",
+      "type": "BUY",
+      "volume": 0.01,
+      "open_price": 159.351,
+      "current_price": 159.382,
+      "sl": 159.338,
+      "tp": 159.609,
+      "profit": 0.19,
+      "swap": 0.0,
+      "comment": "OV2|0e3133|M15|B",
+      "magic": 234001,
+      "time": "1780274638",
+      "deal_history": [
+        {
+          "ticket": 199411203,
+          "order": 192243914,
+          "symbol": "USDJPY",
+          "type": "BUY",
+          "volume": 0.01,
+          "price": 159.351,
+          "profit": 0.0,
+          "swap": 0.0,
+          "commission": 0.0,
+          "comment": "OV2|0e3133|M15|B",
+          "time": "1780274638"
+        }
+      ]
+    },
+    {
+      "ticket": 192244227,
+      "symbol": "USDJPY",
+      "type": "BUY",
+      "volume": 0.01,
+      "open_price": 159.35,
+      "current_price": 159.382,
+      "sl": 159.337,
+      "tp": 159.608,
+      "profit": 0.2,
+      "swap": 0.0,
+      "comment": "OV2|5310f3|M15|B",
+      "magic": 234001,
+      "time": "1780274766",
+      "deal_history": [
+        {
+          "ticket": 199411592,
+          "order": 192244227,
+          "symbol": "USDJPY",
+          "type": "BUY",
+          "volume": 0.01,
+          "price": 159.35,
+          "profit": 0.0,
+          "swap": 0.0,
+          "commission": 0.0,
+          "comment": "OV2|5310f3|M15|B",
+          "time": "1780274766"
+        }
+      ]
+    }
+  ],
+  "history_deals": [],
+  "account_info": {
+    "login": 510075151,
+    "server": "HantecMarketsMU-MT5",
+    "currency": "USD",
+    "balance": 10917.31,
+    "equity": 10916.23,
+    "margin": 35.93,
+    "margin_free": 10880.3
+  }
+}
