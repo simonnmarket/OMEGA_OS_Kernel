@@ -197,6 +197,13 @@ class UnifiedFieldResult:
     score_components: int = 0
     is_valid: bool = True
     n_bars: int = 0
+    # SEL Grupo A (CKO 2026-06-01) — gate paralelo, não peso confluência
+    sel_rupture_probability: float = 0.0
+    sel_rupture_readiness: float = 0.0
+    sel_leakage_norm: float = 0.0
+    sel_impact_tp_pts: float = 0.0
+    sel_audit_veto: bool = False
+    sel_poc_price: float = 0.0
 
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
@@ -528,6 +535,7 @@ class UnifiedStructuralFieldEngine:
         df: pd.DataFrame,
         external_macro: Optional[Dict[str, float]] = None,
         signal_direction: Optional[str] = None,
+        timeframe: str = "H1",
     ) -> UnifiedFieldResult:
         """
         signal_direction: 'BUY' | 'SELL' | None — usado para trade_bias vs macro.
@@ -689,6 +697,28 @@ class UnifiedStructuralFieldEngine:
         )
         confidence = max(0.0, min(1.0, confidence * w))
 
+        sel_rp = 0.0
+        sel_ready = 0.0
+        sel_leak_n = 0.0
+        sel_impact_tp = 0.0
+        sel_audit_veto = False
+        sel_poc = poc_price
+        try:
+            from modules.sel_core import SELCore
+
+            _sel = SELCore(self.symbol, self.asset_class).compute(
+                raw, timeframe=timeframe, signal_direction=signal_direction
+            )
+            if _sel.is_valid:
+                sel_rp = _sel.rupture_probability
+                sel_ready = _sel.rupture_readiness
+                sel_leak_n = _sel.leakage_norm
+                sel_impact_tp = _sel.impact_tp_pts
+                sel_audit_veto = _sel.audit_veto
+                sel_poc = _sel.poc_price
+        except Exception as _sel_err:
+            log.debug("SEL compute skip %s: %s", self.symbol, _sel_err)
+
         return UnifiedFieldResult(
             symbol=self.symbol,
             asset_class=self.asset_class.value,
@@ -727,6 +757,12 @@ class UnifiedStructuralFieldEngine:
             score_components=score,
             is_valid=True,
             n_bars=n,
+            sel_rupture_probability=sel_rp,
+            sel_rupture_readiness=sel_ready,
+            sel_leakage_norm=sel_leak_n,
+            sel_impact_tp_pts=sel_impact_tp,
+            sel_audit_veto=sel_audit_veto,
+            sel_poc_price=sel_poc,
         )
 
 
@@ -755,8 +791,15 @@ class ComponentEngine:
         sym = kwargs.get("symbol", symbol)
         return cls(ComponentConfig(regime=regime, symbol=sym))
 
-    def compute_from_bars(self, df: pd.DataFrame, signal_direction: Optional[str] = None) -> ComponentState:
-        res = self._inner.process(df, signal_direction=signal_direction)
+    def compute_from_bars(
+        self,
+        df: pd.DataFrame,
+        signal_direction: Optional[str] = None,
+        timeframe: str = "H1",
+    ) -> ComponentState:
+        res = self._inner.process(
+            df, signal_direction=signal_direction, timeframe=timeframe
+        )
         d = 0
         if res.trade_bias == TradeBias.ALLOW_LONG.value:
             d = 1

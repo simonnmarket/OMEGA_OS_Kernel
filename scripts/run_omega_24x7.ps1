@@ -15,8 +15,13 @@ $env:OMEGA_DECISION_TRACE = "1"
 # Intervalo entre ciclos (segundos) — reduzido para capturar mais oportunidades
 $env:OMEGA_LOOP_INTERVAL_SEC = "20"
 
-# paper | shadow
+# paper | shadow — CKO P0: obrigatorio; omega_paper_loop aborta se ausente
 $env:OMEGA_24X7_MODE = "paper"
+
+# SEL — gate paralelo (RUPTURE_CAPTURE=0 até dia 13+ CKO; logs [SEL] sempre)
+$env:OMEGA_SEL_ENABLED = "1"
+$env:OMEGA_RUPTURE_CAPTURE = "0"
+$env:OMEGA_SEL_SLOT_RP = "0.8"
 
 # ─── DEMO TESTE: risco moderado (conta demo — CEO autoriza teste real) ───────
 $env:OMEGA_RISK_PER_TRADE = "0.005"
@@ -129,17 +134,18 @@ $env:OMEGA_LOOP_PSA_V12 = "1"
 $env:OMEGA_USFE_ENABLED = "1"
 $env:OMEGA_USFE_BLOCK = "0"
 
-# MANDATO 20260601 — pisos TP/USD por classe (economia de fundo, não migalhas)
-$env:OMEGA_MIN_TP_USD_INDEX = "20"
-$env:OMEGA_MIN_TP_USD_FOREX = "8"
-$env:OMEGA_MIN_TP_USD_METAL = "15"
-$env:OMEGA_MIN_TP_USD_CRYPTO = "12"
-$env:OMEGA_MIN_TP_USD_CRYPTO_ALT = "5"
+# FORCE NOW 20260601 — pisos TP/USD fundo (não migalhas)
+$env:OMEGA_MIN_TP_USD_INDEX = "25"
+$env:OMEGA_MIN_TP_USD_FOREX = "10"
+$env:OMEGA_MIN_TP_USD_METAL = "18"
+$env:OMEGA_MIN_TP_USD_CRYPTO = "15"
+$env:OMEGA_MIN_TP_USD_CRYPTO_ALT = "8"
 $env:OMEGA_SCALE_LOT_TO_MIN_TP_USD = "1"
+$env:OMEGA_FORCE_HIGH_PERFORMANCE = "1"
 
-# MANDATO 20260601 — stale exit (posições presas horas com lucro < custo)
-$env:OMEGA_STALE_PROFIT_USD = "2.0"
-$env:OMEGA_STALE_HOURS = "4"
+# FORCE NOW — stale exit acelerado (posições presas)
+$env:OMEGA_STALE_PROFIT_USD = "3.0"
+$env:OMEGA_STALE_HOURS = "2"
 $env:OMEGA_STALE_ACTION = "CLOSE"
 
 # Portfolio discovery (16 símbolos Hantec) via schedule — NÃO usar lista fixa em env

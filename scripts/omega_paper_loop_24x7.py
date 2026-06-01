@@ -255,10 +255,16 @@ def _get_mt5_equity() -> float:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="OMEGA 24/7 — shadow_loop com retentativas e sync OHLCV")
+    _mode_env = os.getenv("OMEGA_24X7_MODE", "").strip().lower()
+    if _mode_env not in ("paper", "shadow"):
+        raise SystemExit(
+            "CKO P0: OMEGA_24X7_MODE obrigatorio (paper ou shadow). "
+            "Default shadow proibido — runner abortado."
+        )
     ap.add_argument(
         "--mode",
         choices=["shadow", "paper"],
-        default=os.getenv("OMEGA_24X7_MODE", "shadow").strip().lower() or "shadow",
+        default=_mode_env,
     )
     ap.add_argument("--ativos", nargs="+", default=None, help="Ou defina OMEGA_24X7_ATIVOS")
     ap.add_argument("--timeframes", nargs="+", default=["H1", "M15", "H4"])

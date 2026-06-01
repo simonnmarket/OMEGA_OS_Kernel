@@ -231,6 +231,7 @@ from typing import Dict, List, Optional, Tuple
 import importlib as _importlib
 _NEW_MODULE_ENGINES: Dict[str, Dict] = {}  # regime → {name: engine_instance}
 _USFE_ENGINES: Dict[str, object] = {}  # symbol → ComponentEngine (per-symbol)
+_SEL_SNAPSHOT: Dict[str, Dict] = {}  # symbol → último estado SEL (gate paralelo CKO)
 
 _KERNEL_MODULE_MAP = [
     ("vof",        "modules.volume_order_flow"),
@@ -276,7 +277,39 @@ def _asset_regime(symbol: str) -> str:
     return "forex"
 
 # ─── Flow Confluence Scorer ───────────────────────────────────────────────────
-def compute_flow_confluence(bar: Dict, symbol: str, direction: int, df=None) -> Tuple[float, Dict]:
+def _try_sel_slot_overwrite(target_asset: str, rupture_probability: float, real_pos: list) -> bool:
+    """CKO P0: RP alto → fecha pior posição legada (menor profit) para libertar slot."""
+    rp_thr = float(os.getenv("OMEGA_SEL_SLOT_RP", "0.8") or "0.8")
+    if rupture_probability < rp_thr or not real_pos:
+        return False
+    try:
+        import MetaTrader5 as mt5
+
+        candidates = [p for p in real_pos if getattr(p, "symbol", "") != target_asset]
+        if not candidates:
+            candidates = list(real_pos)
+        worst = min(candidates, key=lambda p: float(getattr(p, "profit", 0.0)))
+        side = "BUY" if worst.type == 0 else "SELL"
+        res = mt5_close_partial(int(worst.ticket), worst.symbol, float(worst.volume), side)
+        if res.get("success"):
+            log.warning(
+                "[SEL_SLOT_OVERWRITE] fechado #%d %s profit=$%.2f RP=%.2f → slot para %s",
+                worst.ticket,
+                worst.symbol,
+                float(worst.profit),
+                rupture_probability,
+                target_asset,
+            )
+            return True
+        log.warning("[SEL_SLOT_OVERWRITE] falha #%d %s: %s", worst.ticket, worst.symbol, res)
+    except Exception as err:
+        log.warning("[SEL_SLOT_OVERWRITE] erro: %s", err)
+    return False
+
+
+def compute_flow_confluence(
+    bar: Dict, symbol: str, direction: int, df=None, timeframe: str = "H1"
+) -> Tuple[float, Dict]:
     """
     Combina sinais dos 5 módulos de fluxo institucional em um score 0-100.
     Retorna (confluence_score, details_dict).
@@ -382,13 +415,14 @@ def compute_flow_confluence(bar: Dict, symbol: str, direction: int, df=None) -> 
             _df_bars["is_buyer_maker"] = _df_bars["close"] >= _df_bars["open"]  # buyer bar = close >= open
         regime = _asset_regime(symbol)
         engines = _get_analysis_engines(regime)
+        # CKO 2026-06-01: USFE/SEL fora da roleta — gate paralelo (peso 0 aqui)
         _new_weights = {
-            "vof":       0.095, "footprint": 0.0855,
-            "sto_inst":  0.057, "sto_fused": 0.133, "pvsra":    0.0475,
-            "vwap":      0.1045, "pullback":  0.076, "wyckoff":  0.0475,
-            "liq_abs":   0.0855, "elliott":  0.1425, "synapse":  0.076,
-            "usfe":      0.05,
-        }  # soma = 1.00 (×0.95 legado + usfe 0.05)
+            "vof": 0.10, "footprint": 0.09,
+            "sto_inst": 0.06, "sto_fused": 0.14, "pvsra": 0.05,
+            "vwap": 0.11, "pullback": 0.08, "wyckoff": 0.05,
+            "liq_abs": 0.09, "elliott": 0.15, "synapse": 0.08,
+            "usfe": 0.0,
+        }
         for key, eng in engines.items():
             if eng is None:
                 scores[key] = 50.0
@@ -410,12 +444,24 @@ def compute_flow_confluence(bar: Dict, symbol: str, direction: int, df=None) -> 
                     _USFE_ENGINES[symbol] = _USFEEngine.from_config(
                         regime=regime, symbol=symbol
                     )
-                _st_usfe = _USFE_ENGINES[symbol].compute_from_bars(_df_bars)
+                _st_usfe = _USFE_ENGINES[symbol].compute_from_bars(
+                    _df_bars, timeframe=timeframe
+                )
                 _meta = getattr(_st_usfe, "usfe", None) or {}
                 scores["usfe_alignment"] = float(_meta.get("alignment_score", 0.0))
                 scores["usfe_confidence"] = float(_meta.get("confidence", 0.0))
                 scores["usfe_bias"] = str(_meta.get("trade_bias", "NEUTRAL"))
                 scores["usfe_regime"] = str(_meta.get("macro_regime", "NEUTRAL"))
+                scores["sel_rupture_probability"] = float(
+                    _meta.get("sel_rupture_probability", 0.0)
+                )
+                scores["sel_rupture_readiness"] = float(
+                    _meta.get("sel_rupture_readiness", 0.0)
+                )
+                scores["sel_leakage_norm"] = float(_meta.get("sel_leakage_norm", 0.0))
+                scores["sel_impact_tp_pts"] = float(_meta.get("sel_impact_tp_pts", 0.0))
+                scores["sel_audit_veto"] = bool(_meta.get("sel_audit_veto", False))
+                _SEL_SNAPSHOT[symbol] = dict(_meta)
                 if not _st_usfe.is_valid:
                     scores["usfe"] = 50.0
                 else:
@@ -2922,7 +2968,16 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                 for _st_ticket, _st_ledger in _pos_ledger.items():
                     _st_profit = float(_st_ledger.get("last_profit", 0.0))
                     _st_swap = float(_st_ledger.get("swap_cost_est_usd", 0.0))
-                    _st_age = (_now_stale - float(_st_ledger.get("open_ts", _now_stale))) / 3600.0
+                    # P1b-FIX 20260601: suporta "open_ts" (Unix) E "entry_time" (ISO) do ledger
+                    _st_ts_raw = _st_ledger.get("open_ts") or _st_ledger.get("entry_time")
+                    try:
+                        from datetime import datetime as _dt, timezone as _tz
+                        _st_ts_f = (_dt.fromisoformat(str(_st_ts_raw).replace("Z", "+00:00")).timestamp()
+                                    if _st_ts_raw and not str(_st_ts_raw).replace(".", "").isdigit()
+                                    else float(_st_ts_raw or _now_stale))
+                    except Exception:
+                        _st_ts_f = _now_stale
+                    _st_age = (_now_stale - _st_ts_f) / 3600.0
                     if _st_age > _stale_hours and (_st_profit + _st_swap) < _stale_profit:
                         log.warning("[%s] [STALE_EXIT] #%d profit=$%.2f swap=$%.2f age=%.1fh < action=%s",
                                     _st_ledger.get("symbol", "?"), _st_ticket,
@@ -3029,7 +3084,9 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                             "volume": float(_rates_flow[0]["tick_volume"])
                         }
                         # Usar direção neutra (0) para scoring sem viés
-                        _flow_conf, _flow_details = compute_flow_confluence(_bar_flow, asset, 0, df=_df_flow)
+                        _flow_conf, _flow_details = compute_flow_confluence(
+                            _bar_flow, asset, 0, df=_df_flow, timeframe=tf
+                        )
                         _flow_state[asset] = _flow_conf
                         log.info(
                             "[%s %s] [FLOW] confluence=%.1f | legacy: v_flow=%.0f vol_phy=%.0f "
@@ -3056,6 +3113,16 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                 float(_flow_details.get("usfe_alignment", 0.0)),
                                 float(_flow_details.get("usfe_confidence", 0.0)),
                                 _flow_details.get("usfe_regime", "NEUTRAL"),
+                            )
+                            log.info(
+                                "[%s %s] [SEL] RP=%.3f ready=%.3f leak=%.3f impact_tp=%.0fpts veto=%s",
+                                asset,
+                                tf,
+                                float(_flow_details.get("sel_rupture_probability", 0.0)),
+                                float(_flow_details.get("sel_rupture_readiness", 0.0)),
+                                float(_flow_details.get("sel_leakage_norm", 0.0)),
+                                float(_flow_details.get("sel_impact_tp_pts", 0.0)),
+                                _flow_details.get("sel_audit_veto", False),
                             )
                     else:
                         log.warning("[%s %s] [FLOW] sem dados M1", asset, tf)
@@ -3122,8 +3189,20 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                 if _get_flag("OMEGA_ENTRIES_FROZEN", "0") == "1":
                     log.warning("[%s %s] ENTRIES_FROZEN=1 — sem novas entradas durante auditoria forense.", asset, tf); continue
 
+                _sel_rp_slot = float(_flow_details.get("sel_rupture_probability", 0.0) or 0.0)
                 if mode == "paper" and MAX_POSITIONS > 0 and open_pos >= MAX_POSITIONS:
-                    log.warning("[%s %s] MAX_POSITIONS=%d atingido.", asset, tf, MAX_POSITIONS); continue
+                    if _try_sel_slot_overwrite(asset, _sel_rp_slot, real_pos):
+                        real_pos = [
+                            p for p in (mt5.positions_get() or [])
+                            if is_omega_tracked_position(p)
+                        ]
+                        open_pos = len(real_pos)
+                    if open_pos >= MAX_POSITIONS:
+                        log.warning(
+                            "[%s %s] MAX_POSITIONS=%d atingido (RP=%.2f).",
+                            asset, tf, MAX_POSITIONS, _sel_rp_slot,
+                        )
+                        continue
 
                 # FIX-DUPL (legacy): só quando RiskBudget OFF — com RB=1 o cap fixo=1 anula slots dinâmicos
                 _use_risk_budget_early = os.getenv("OMEGA_USE_RISK_BUDGET", "0").strip() == "1"
@@ -3914,11 +3993,44 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                     except Exception as _anti_hedge_err:
                         log.warning("[%s %s] [ANTI_HEDGE] falha MT5 positions_get: %s", asset, tf, _anti_hedge_err)
 
+                    # === SEL RUPTURE_CAPTURE_GATE (CKO — bypass só com OMEGA_RUPTURE_CAPTURE=1) ===
+                    _sel_meta = _SEL_SNAPSHOT.get(asset, _flow_details)
+                    _sel_rp = float(_sel_meta.get("sel_rupture_probability", 0.0) or 0.0)
+                    _sel_leak = float(_sel_meta.get("sel_leakage_norm", 1.0) or 1.0)
+                    _sel_veto = bool(_sel_meta.get("sel_audit_veto", False))
+                    _rupture_capture = os.getenv("OMEGA_RUPTURE_CAPTURE", "0").strip() == "1"
+                    _ia_dir = (ia_signal.get("direction") or ia_signal.get("action") or "").upper()
+                    _sel_aligned = (
+                        signal_dir
+                        and _ia_dir
+                        and (
+                            (signal_dir == "BUY" and _ia_dir in ("BUY", "LONG"))
+                            or (signal_dir == "SELL" and _ia_dir in ("SELL", "SHORT"))
+                        )
+                    )
+                    _rupture_fire = (
+                        _rupture_capture
+                        and _sel_rp > 0.75
+                        and _sel_leak < 0.2
+                        and _sel_aligned
+                        and not _sel_veto
+                    )
+                    if _rupture_fire:
+                        log.warning(
+                            "[%s %s] [RUPTURE_CAPTURE] RP=%.3f leak=%.3f — bypass pacing/cooldown",
+                            asset, tf, _sel_rp, _sel_leak,
+                        )
+                    elif _sel_rp > 0.75:
+                        log.info(
+                            "[%s %s] [RUPTURE_WATCH] RP=%.3f (capture OFF — set OMEGA_RUPTURE_CAPTURE=1)",
+                            asset, tf, _sel_rp,
+                        )
+
                     # === PACING & DIVERSIFICATION — CEO 2026-05-12 ========================
                     _MAX_DIR_CYCLE = int(os.getenv("OMEGA_MAX_SAME_DIR_PER_CYCLE", "1"))   # P0-REMEDIAÇÃO-8Q: default 2→1 (bloqueia duplicação direção/ciclo)
                     _MAX_PER_CLASS = int(os.getenv("OMEGA_MAX_POS_PER_CLASS", "5"))        # CEO 2026-05-14: 2→5
                     # Guardrail 1: limitar ordens na mesma direção por ciclo
-                    if _cycle_dir_count.get(signal_dir, 0) >= _MAX_DIR_CYCLE:
+                    if not _rupture_fire and _cycle_dir_count.get(signal_dir, 0) >= _MAX_DIR_CYCLE:
                         log.info("[%s %s] [P&D] SKIP — %s já abriu %d/%d neste ciclo",
                                  asset, tf, signal_dir,
                                  _cycle_dir_count.get(signal_dir, 0), _MAX_DIR_CYCLE)
@@ -3932,7 +4044,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                         1 for _p in current_positions
                         if ASSET_PROFILES.get(_p.get("symbol", ""), {}).get("regime") == _asset_class
                     )
-                    if _class_count >= _MAX_PER_CLASS:
+                    if not _rupture_fire and _class_count >= _MAX_PER_CLASS:
                         log.info("[%s %s] [P&D] SKIP — classe '%s' já tem %d/%d posições",
                                  asset, tf, _asset_class, _class_count, _MAX_PER_CLASS)
                         results.append({"asset": asset, "timeframe": tf,
