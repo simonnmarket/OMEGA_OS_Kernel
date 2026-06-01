@@ -29,8 +29,8 @@ Legenda **Resolvido:** SIM = código + UT; smoke CEO pode estar pendente.
 | W-03 | is_market_open fechos | T-W3 | SIM | 94bbc64 |
 | W-COM | MT5 comment ≤31 | comment fix | SIM | UT-9, 511e230 |
 | D-05 | Partial TP 50% engine | T-D5 | SIM | UT-6 |
-| D-05b | partial_taken ledger flag | T-F1a | NÃO | Fase 1 (CEO Opção A) |
-| F-A | ATR M1 vs signal H4 | T-R1 | NÃO | Fase 1 Router |
+| D-05b | partial_taken ledger flag | T-F1a | SIM | 37ec0b4 UT-R3 |
+| F-A | ATR M1 vs signal H4 | T-R1 | SIM* | 37ec0b4 UT-R1; SM-R2 vivo pendente |
 | F-B | Cascata MTF | T-R2 | NÃO | Fase 2 |
 | F-C | M1-GATE delay | T-R2 | NÃO | Fase 2 |
 | F-D | v2 hard-coded SL | T-R3 | NÃO | Fase 3 |

@@ -14,8 +14,9 @@ $env:OMEGA_MAGIC_NUMBER = "234001"
 $env:OMEGA_DECISION_TRACE = "1"
 $env:OMEGA_LOOP_INTERVAL_SEC = "30"
 $env:OMEGA_24X7_MODE = "paper"
-# Portfolio gate do runner exige XAU+BTC; forex foco + obrigatórios
-$env:OMEGA_24X7_ATIVOS = "EURUSD GBPUSD USDJPY XAUUSD BTCUSD"
+# T-W1 (P0-ABC): sem lista fixa — usa config/omega_asset_schedule.json
+# Para override pontual: $env:OMEGA_24X7_ATIVOS = "EURUSD XAUUSD BTCUSD"
+# $env:OMEGA_24X7_ATIVOS = "EURUSD GBPUSD USDJPY XAUUSD BTCUSD"
 
 Write-Host "[OMEGA] Modo diagnostico CICC - madrugada. Log: audit/paper/omega_24x7_runner.log"
 python -u scripts/omega_paper_loop_24x7.py --timeframes H1 M15 --pre-sync-ohlcv

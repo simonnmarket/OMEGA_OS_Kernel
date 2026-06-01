@@ -1,46 +1,46 @@
 {
-  "mission_id": "PAPER-BTCUSD-H4-20260430T081447",
+  "mission_id": "PAPER-BTCUSD-H4-20260601T060148",
   "asset": "BTCUSD",
   "timeframe": "H4",
   "status": "COMPLETED",
-  "mode": "paper",
-  "created_at": "2026-04-30T08:14:47.037699+00:00",
+  "mode": "shadow",
+  "created_at": "2026-06-01T06:01:48.819301+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
     "asset": "BTCUSD",
     "timeframe": "H4",
     "tier": "T1",
-    "hit_rate_134": 96.5,
+    "hit_rate_134": 97.3,
     "mach": 1.0,
     "margin_used": 3210.5,
     "skip": false,
     "skip_reasons": []
   },
   "binomial_ic_95": {
-    "hits": 3223,
-    "total": 3340,
-    "p_hat": 0.96497,
-    "lower_bound": 0.958181,
-    "upper_bound": 0.97069,
-    "interval": "[95.8181%, 97.0690%]"
+    "hits": 4224,
+    "total": 4341,
+    "p_hat": 0.973048,
+    "lower_bound": 0.967796,
+    "upper_bound": 0.977463,
+    "interval": "[96.7796%, 97.7463%]"
   },
   "engines": {
     "harmonic": {
       "metrics": {
         "34_stats": {
-          "total_touches": 4572,
-          "hits": 4367,
+          "total_touches": 5592,
+          "hits": 5387,
           "breaks": 205,
-          "hit_rate": 95.52,
-          "break_rate": 4.48
+          "hit_rate": 96.33,
+          "break_rate": 3.67
         },
         "134_stats": {
-          "total_touches": 3340,
-          "hits": 3223,
+          "total_touches": 4341,
+          "hits": 4224,
           "breaks": 117,
-          "hit_rate": 96.5,
-          "break_rate": 3.5
+          "hit_rate": 97.3,
+          "break_rate": 2.7
         }
       }
     },
@@ -52,37 +52,13 @@
     }
   },
   "signal": {
-    "action": "MT5_PAPER_EXECUTE",
+    "action": "MONITOR",
     "skip_reasons": [],
     "margin_used": 3210.5,
     "tier": "T1"
   },
-  "execution": {
-    "retcode": 10009,
-    "retcode_str": "DONE",
-    "success": true,
-    "deal": 185054090,
-    "order": 181515949,
-    "fill_price": 76058.77,
-    "ask_at_send": 76058.68,
-    "sl_price": 76042.18,
-    "tp_price": 76597.62,
-    "volume_confirmed": 0.25,
-    "slippage_pts": 9.0,
-    "comment": "Request executed",
-    "request_id": 1899992561,
-    "latency_ms": 308.6,
-    "mode": "MT5_DEMO_REAL"
-  },
-  "lot_info": {
-    "lot": 0.01,
-    "risk_usd": 10.0,
-    "stop_pts": 6421.0,
-    "pip_value_lot": 0.01,
-    "contract_size": 1.0,
-    "price_at_calc": 76058.68,
-    "sym_vol_min": 0.01
-  },
-  "latency_motor_s": 5.048,
-  "checksum": "293723974a193b2290110ad22d039fe14cd804ada1951281d8d757b256f73660"
+  "execution": null,
+  "lot_info": null,
+  "latency_motor_s": 2.498,
+  "checksum": "5ae1205988a7c63575c2c99689212b656de62ae33deed77dea307585056dd7a4"
 }

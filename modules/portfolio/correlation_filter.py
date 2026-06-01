@@ -104,7 +104,7 @@ class CorrelationFilter:
         Args:
             asset:          Simbolo do ativo a ser negociado.
             open_positions: Lista de posicoes abertas (dicts _asdict() do MT5).
-                            DEVE conter TODAS as posicoes OMEGA abertas (magic=234001),
+                            DEVE conter TODAS as posicoes OMEGA rastreadas (modules.mt5_position_tag),
                             nao apenas as do ativo atual.
             direction:      'BUY' ou 'SELL' — direcao proposta para o novo trade.
 

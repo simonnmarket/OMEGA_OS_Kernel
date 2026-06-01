@@ -1,4 +1,4 @@
-﻿# =============================================================================
+# =============================================================================
 # OMEGA STRESS TEST - 48 HORAS - PORTFOLIO COMPLETO
 # =============================================================================
 
@@ -8,6 +8,10 @@ param(
 )
 
 $ErrorActionPreference = "Continue"
+$RepoRoot = Split-Path -Parent $PSScriptRoot
+$env:PYTHONPATH = $RepoRoot
+Push-Location $RepoRoot
+
 $startTime = Get-Date
 $endTime = $startTime.AddHours($DurationHours)
 
@@ -62,3 +66,5 @@ Write-Host " Total ciclos  : $cycleCount" -ForegroundColor White
 Write-Host " Sucessos      : $successCount" -ForegroundColor Green
 Write-Host " Falhas        : $failCount" -ForegroundColor $(if ($failCount -gt 0) { "Yellow" } else { "White" })
 Write-Host "============================================================================" -ForegroundColor Red
+
+Pop-Location

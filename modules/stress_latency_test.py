@@ -49,7 +49,7 @@ class LatencyStressTester:
         self.measurements = []
 
     def run_test(self) -> LatencyReport:
-        logger.info(f"🚀 Iniciando Stress de Latência: {self.iterations} iterações...")
+        logger.info(f"Iniciando Stress de Latencia: {self.iterations} iteracoes...")
         
         for i in range(self.iterations):
             # Simulação de latência de rede/processamento realística (HFT)
@@ -104,8 +104,9 @@ if __name__ == "__main__":
     tester = LatencyStressTester(iterations=1000)
     report = tester.run_test()
     
-    print("\n" + "="*80)
-    print(f"📊 RESULTADO P-02 (LATENCY): {'✅ PASSED' if report.overall_passed else '❌ FAILED'}")
+    print("\n" + "=" * 80)
+    status = "PASSED" if report.overall_passed else "FAILED"
+    print(f"RESULTADO P-02 (LATENCY): {status}")
     print(f"   Redis p95: {report.redis_p95_ms:.2f}ms (Target: <50ms)")
     print(f"   MT5 p95:   {report.mt5_p95_ms:.2f}ms (Target: <100ms)")
     print("="*80 + "\n")

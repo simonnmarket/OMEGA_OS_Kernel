@@ -1,6 +1,8 @@
 """Coleta métricas ao vivo para relatório do Conselho."""
 import sys, json
 sys.path.insert(0, ".")
+
+from modules.mt5_position_tag import human_tag_line
 import core_engines.shadow_loop as sl
 
 modules = {
@@ -29,7 +31,7 @@ print(f"  REGIME_GATE         = BLOCK if STRONG_MEAN_REVERTING")
 print(f"  RISK_GATE_SHARPE    = BLOCK if Sharpe < 0.3 (N >= 30)")
 print(f"  KALMAN              = LOG-ONLY (not blocking)")
 print(f"  MAX_POSITIONS       = {sl.MAX_POSITIONS}")
-print(f"  OMEGA_MAGIC         = {sl.OMEGA_MAGIC}")
+print(f"  MT5_TRACKING_TAG    = {human_tag_line()}")
 
 print("\n=== GATE EXECUTION ORDER ===")
 gates = [

@@ -1,16 +1,16 @@
 {
-  "mission_id": "PAPER-SOLUSD-H4-20260426T225547",
+  "mission_id": "PAPER-SOLUSD-H4-20260601T060133",
   "asset": "SOLUSD",
   "timeframe": "H4",
   "status": "COMPLETED",
-  "mode": "paper",
-  "created_at": "2026-04-26T22:55:47.994111+00:00",
+  "mode": "shadow",
+  "created_at": "2026-06-01T06:01:33.097286+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
     "asset": "SOLUSD",
     "timeframe": "H4",
-    "tier": "T2",
+    "tier": "T1",
     "hit_rate_134": 100.0,
     "mach": 1.0,
     "margin_used": 150.0,
@@ -18,26 +18,26 @@
     "skip_reasons": []
   },
   "binomial_ic_95": {
-    "hits": 2498,
-    "total": 2498,
+    "hits": 3818,
+    "total": 3818,
     "p_hat": 1.0,
-    "lower_bound": 0.998464,
+    "lower_bound": 0.998995,
     "upper_bound": 1.0,
-    "interval": "[99.8464%, 100.0000%]"
+    "interval": "[99.8995%, 100.0000%]"
   },
   "engines": {
     "harmonic": {
       "metrics": {
         "34_stats": {
-          "total_touches": 2498,
-          "hits": 2498,
+          "total_touches": 3818,
+          "hits": 3818,
           "breaks": 0,
           "hit_rate": 100.0,
           "break_rate": 0.0
         },
         "134_stats": {
-          "total_touches": 2498,
-          "hits": 2498,
+          "total_touches": 3818,
+          "hits": 3818,
           "breaks": 0,
           "hit_rate": 100.0,
           "break_rate": 0.0
@@ -52,36 +52,13 @@
     }
   },
   "signal": {
-    "action": "MT5_PAPER_EXECUTE",
+    "action": "MONITOR",
     "skip_reasons": [],
     "margin_used": 150.0,
-    "tier": "T2"
+    "tier": "T1"
   },
-  "execution": {
-    "retcode": 10009,
-    "retcode_str": "DONE",
-    "success": true,
-    "deal": 182393589,
-    "order": 179578332,
-    "fill_price": 86.756,
-    "ask_at_send": 86.756,
-    "sl_price": 86.456,
-    "tp_price": 87.056,
-    "volume_confirmed": 0.1,
-    "slippage_pts": 0.0,
-    "comment": "Request executed",
-    "request_id": 2189354484,
-    "latency_ms": 42.9,
-    "mode": "MT5_DEMO_REAL"
-  },
-  "lot_info": {
-    "lot": 0.1,
-    "risk_usd": 25.0,
-    "stop_pts": 300.0,
-    "pip_value_lot": 0.001,
-    "contract_size": 1.0,
-    "price_at_calc": 86.756
-  },
-  "latency_motor_s": 3.918,
-  "checksum": "f84ea3510d87a0a4fe82e76481499379a82b53c4527bc3373dc8e6934f6c855c"
+  "execution": null,
+  "lot_info": null,
+  "latency_motor_s": 2.098,
+  "checksum": "f9ad4e31fda1d31357d7b5c07ee58e3793909961dbdd2fbd2b89ff3bf328e24d"
 }

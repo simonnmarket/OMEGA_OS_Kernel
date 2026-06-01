@@ -37,8 +37,6 @@ log = logging.getLogger(__name__)
 # =============================================================================
 # CONFIGURAÇÕES
 # =============================================================================
-OMEGA_MAGIC = 234001
-CRYPTO_SYMBOLS = ["BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD"]
 FOREX_SYMBOLS  = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD"]
 INDEX_SYMBOLS  = ["US500", "NAS100"]
 XAU_SYMBOLS    = ["XAUUSD"]

@@ -6,7 +6,7 @@
 | **Data** | 2026-05-25 |
 | **Classificação** | Incidente de governança + gap de integração (não regressão P0 isolada) |
 | **Severidade** | Alta — decisão DEMO desalinhada com objectivo CEO (IA como bússola) |
-| **Estado** | Mitigação em código **implementada**; validação runtime **pendente PSA** |
+| **Estado** | **FECHADO** — INTEGRAÇÃO PASS (PSA 2026-05-25, HEAD `f51b087`) |
 | **Responsável fecho** | PSA + CEO (reinício runner + gate integração) |
 
 ---
@@ -88,8 +88,8 @@ O sistema **corria** (runner saudável, 2 ordens crypto, magic correcto), mas co
 | CA-2 | Script `scripts/omega_integration_gate.ps1` | AIC | Implementado |
 | CA-3 | Comando PSA definitivo (reinício + validação 1h) | AIC | `PSA_COMANDO_DEFINITIVO_ECOSISTEMA_20260525.md` |
 | CA-4 | Separar vereditos: **Sprint P0 FECHADO** ≠ **Integração FECHADA** | AIC+PSA | Esta acta |
-| CA-5 | PSA reiniciar runner com HEAD ≥ pacote unified | PSA | **Pendente** |
-| CA-6 | Relatório 1h pós-reinício com KPIs decisão | PSA | **Pendente** |
+| CA-5 | PSA reiniciar runner com HEAD ≥ pacote unified | PSA | **Concluído** |
+| CA-6 | Relatório 1h pós-reinício com KPIs decisão | PSA | **Concluído** — `PSA_RELATORIO_INTEGRACAO_ECOSISTEMA_20260525.md` |
 
 ---
 
@@ -105,15 +105,15 @@ O sistema **corria** (runner saudável, 2 ordens crypto, magic correcto), mas co
 
 ## 7. Critério de fecho do incidente
 
-Incidente **FECHADO** apenas quando PSA entregar relatório com **todos** PASS:
+Incidente **FECHADO** — checklist cumprido (2026-05-25):
 
-- [ ] `git pull` — ficheiro `modules/omega_ecosystem_unified.py` presente  
-- [ ] Runner reiniciado via `scripts/run_omega_24x7.ps1` (não processo antigo)  
-- [ ] `omega_integration_gate.ps1` → PASS (manifest + env)  
-- [ ] Log: linha `[ECOSYSTEM_UNIFIED] manifesto=`  
-- [ ] `ecosystem_unified_manifest.json`: 16 ativos, `max_positions`: 8  
-- [ ] Amostra 1h log: documentado `% HOLD / EDGE / MOMENTUM / AGENT_IA`  
-- [ ] Registo em `governance/PSA_RELATORIO_INTEGRACAO_ECOSISTEMA_20260525.md`
+- [x] `git pull` — `modules/omega_ecosystem_unified.py` presente  
+- [x] Runner reiniciado via `scripts/run_omega_24x7.ps1`  
+- [x] `omega_integration_gate.ps1` → PASS (preflight + runtime + kpi)  
+- [x] Log: `[ECOSYSTEM_UNIFIED] manifesto=` @ 23:33:30  
+- [x] Manifesto: 16 ativos, `max_positions`: 8  
+- [x] KPI amostra: PSA_FEED 232, AGENT_IA 46, MOMENTUM 60, EDGE 106  
+- [x] `governance/PSA_RELATORIO_INTEGRACAO_ECOSISTEMA_20260525.md`
 
 ---
 

@@ -1,22 +1,33 @@
 """P&L FORENSE — Auditoria das 480 operações do overnight N=120.
 Coleta history MT5 da janela 2026-04-26 22:12 → 23:00 UTC+02 (= 20:12-21:00 UTC).
 """
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 import MetaTrader5 as mt5
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 import json
 from collections import defaultdict
 import statistics as st
 
+from modules.mt5_position_tag import omega_tracked_history_deals, human_tag_line
+
 if not mt5.initialize():
     raise SystemExit(f"MT5 init failed: {mt5.last_error()}")
+
+print(human_tag_line())
 
 # Janela ampla cobrindo overnight (UTC). Wrapper iniciou 22:12 local UTC+02 = 20:12 UTC.
 t_from = datetime(2026, 4, 26, 19, 0, tzinfo=timezone.utc)
 t_to   = datetime(2026, 4, 27, 12, 0, tzinfo=timezone.utc)
 
-deals = mt5.history_deals_get(t_from, t_to)
-deals = [d for d in (deals or []) if d.magic == 234001]
-print(f"[INFO] Deals MAGIC=234001 na janela: {len(deals)}")
+_raw = mt5.history_deals_get(t_from, t_to) or []
+deals = omega_tracked_history_deals(list(_raw))
+print(f"[INFO] Deals OMEGA tracked na janela: {len(deals)} (raw={len(_raw)})")
 
 # Agrupar por position_id (entry+exit)
 positions = defaultdict(list)

@@ -1,46 +1,46 @@
 {
-  "mission_id": "PAPER-XAUUSD-H4-20260430T081646",
+  "mission_id": "PAPER-XAUUSD-H4-20260601T060100",
   "asset": "XAUUSD",
   "timeframe": "H4",
   "status": "COMPLETED",
-  "mode": "paper",
-  "created_at": "2026-04-30T08:16:46.888443+00:00",
+  "mode": "shadow",
+  "created_at": "2026-06-01T06:01:00.574310+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
     "asset": "XAUUSD",
     "timeframe": "H4",
     "tier": "T1",
-    "hit_rate_134": 99.96,
+    "hit_rate_134": 99.97,
     "mach": 1.0,
     "margin_used": 203.9,
     "skip": false,
     "skip_reasons": []
   },
   "binomial_ic_95": {
-    "hits": 4837,
-    "total": 4839,
-    "p_hat": 0.999587,
-    "lower_bound": 0.998494,
-    "upper_bound": 0.999887,
-    "interval": "[99.8494%, 99.9887%]"
+    "hits": 5792,
+    "total": 5794,
+    "p_hat": 0.999655,
+    "lower_bound": 0.998742,
+    "upper_bound": 0.999905,
+    "interval": "[99.8742%, 99.9905%]"
   },
   "engines": {
     "harmonic": {
       "metrics": {
         "34_stats": {
-          "total_touches": 4951,
-          "hits": 4945,
+          "total_touches": 5906,
+          "hits": 5900,
           "breaks": 6,
-          "hit_rate": 99.88,
-          "break_rate": 0.12
+          "hit_rate": 99.9,
+          "break_rate": 0.1
         },
         "134_stats": {
-          "total_touches": 4839,
-          "hits": 4837,
+          "total_touches": 5794,
+          "hits": 5792,
           "breaks": 2,
-          "hit_rate": 99.96,
-          "break_rate": 0.04
+          "hit_rate": 99.97,
+          "break_rate": 0.03
         }
       }
     },
@@ -52,37 +52,13 @@
     }
   },
   "signal": {
-    "action": "MT5_PAPER_EXECUTE",
+    "action": "MONITOR",
     "skip_reasons": [],
     "margin_used": 203.9,
     "tier": "T1"
   },
-  "execution": {
-    "retcode": 10009,
-    "retcode_str": "DONE",
-    "success": true,
-    "deal": 185055000,
-    "order": 181516701,
-    "fill_price": 4618.82,
-    "ask_at_send": 4618.82,
-    "sl_price": 4616.32,
-    "tp_price": 4651.97,
-    "volume_confirmed": 0.05,
-    "slippage_pts": 0.0,
-    "comment": "Request executed",
-    "request_id": 1899992563,
-    "latency_ms": 36.4,
-    "mode": "MT5_DEMO_REAL"
-  },
-  "lot_info": {
-    "lot": 0.01,
-    "risk_usd": 10.0,
-    "stop_pts": 407.8,
-    "pip_value_lot": 1.0,
-    "contract_size": 100.0,
-    "price_at_calc": 4618.82,
-    "sym_vol_min": 0.01
-  },
-  "latency_motor_s": 8.427,
-  "checksum": "b90192fc1482ee838f0a1cf44af28526bea06d309fc05647d6b704b2220f4095"
+  "execution": null,
+  "lot_info": null,
+  "latency_motor_s": 2.736,
+  "checksum": "0ec2ce3addf3ebb87123670ed96c4f6c4862391665bac813d82bce3d0c9dfc5f"
 }

@@ -105,7 +105,6 @@ class OmegaScaleManager:
                 "sl": sl,
                 "tp": tp,
                 "deviation": 20,
-                "magic": 999111 + i, # Magicos separados para gestão
                 "comment": f"OMEGA_SCALE_{i+1}",
                 "type_time": mt5.ORDER_TIME_GTC,
                 "type_filling": filling_type,

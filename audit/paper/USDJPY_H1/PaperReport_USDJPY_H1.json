@@ -1,10 +1,10 @@
 {
-  "mission_id": "PAPER-USDJPY-H1-20260430T005536",
+  "mission_id": "PAPER-USDJPY-H1-20260601T060151",
   "asset": "USDJPY",
   "timeframe": "H1",
   "status": "COMPLETED",
-  "mode": "paper",
-  "created_at": "2026-04-30T00:55:36.888429+00:00",
+  "mode": "shadow",
+  "created_at": "2026-06-01T06:01:51.514430+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
@@ -18,26 +18,26 @@
     "skip_reasons": []
   },
   "binomial_ic_95": {
-    "hits": 5067,
-    "total": 5067,
+    "hits": 6052,
+    "total": 6052,
     "p_hat": 1.0,
-    "lower_bound": 0.999242,
+    "lower_bound": 0.999366,
     "upper_bound": 1.0,
-    "interval": "[99.9242%, 100.0000%]"
+    "interval": "[99.9366%, 100.0000%]"
   },
   "engines": {
     "harmonic": {
       "metrics": {
         "34_stats": {
-          "total_touches": 5067,
-          "hits": 5067,
+          "total_touches": 6052,
+          "hits": 6052,
           "breaks": 0,
           "hit_rate": 100.0,
           "break_rate": 0.0
         },
         "134_stats": {
-          "total_touches": 5067,
-          "hits": 5067,
+          "total_touches": 6052,
+          "hits": 6052,
           "breaks": 0,
           "hit_rate": 100.0,
           "break_rate": 0.0
@@ -52,37 +52,13 @@
     }
   },
   "signal": {
-    "action": "MT5_PAPER_EXECUTE",
+    "action": "MONITOR",
     "skip_reasons": [],
     "margin_used": 150.0,
     "tier": "T1"
   },
-  "execution": {
-    "retcode": 10009,
-    "retcode_str": "DONE",
-    "success": true,
-    "deal": 184824568,
-    "order": 181354617,
-    "fill_price": 160.288,
-    "ask_at_send": 160.288,
-    "sl_price": 160.22,
-    "tp_price": 160.492,
-    "volume_confirmed": 0.25,
-    "slippage_pts": 0.0,
-    "comment": "Request executed",
-    "request_id": 3784671797,
-    "latency_ms": 35.2,
-    "mode": "MT5_DEMO_REAL"
-  },
-  "lot_info": {
-    "lot": 0.01,
-    "risk_usd": 10.0,
-    "stop_pts": 300.0,
-    "pip_value_lot": 0.623877,
-    "contract_size": 100000.0,
-    "price_at_calc": 160.288,
-    "sym_vol_min": 0.01
-  },
-  "latency_motor_s": 2.563,
-  "checksum": "769ef233d800fffe23c8a4c36d24274d28d816ec265bdfa01120ee4743d05fc6"
+  "execution": null,
+  "lot_info": null,
+  "latency_motor_s": 2.665,
+  "checksum": "4c71a45d673340a102b3265d23b1547b379d932a23508de845b87fb411866df8"
 }

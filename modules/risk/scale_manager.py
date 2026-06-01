@@ -105,7 +105,6 @@ class OmegaScaleManager:
                 "sl": sl,
                 "tp": tp,
                 "deviation": 20,
-                "magic": 999111 + i, # Magicos separados para gestão
                 "comment": f"OMEGA_SCALE_{i+1}",
                 "type_time": mt5.ORDER_TIME_GTC,
                 "type_filling": filling_type,
@@ -125,10 +124,7 @@ class OmegaScaleManager:
                 
         return tickets_abertos
 
-class OmegaScaleManager:
-    def __init__(self):
-        import logging
-        self.log = logging.getLogger('SCALE_MANAGER')
-    def calculate_lot(self, asset, risk):
-        self.log.info(f'scale_manager calculando lote adaptativo para {asset}')
+    def calculate_lot(self, asset: str, risk: float) -> float:
+        """Compat: lote mínimo institucional antes de ATR/Kernel (legado)."""
+        log.info("[SCALE] calculando lote adaptativo para %s risk=%s", asset, risk)
         return 0.01

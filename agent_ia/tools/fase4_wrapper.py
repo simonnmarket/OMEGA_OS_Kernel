@@ -33,9 +33,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List
 
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 import MetaTrader5 as mt5
 
-ROOT = Path(__file__).resolve().parents[2]
+from modules.mt5_position_tag import is_omega_tracked_position, omega_tracked_history_deals
 SHADOW_LOOP = ROOT / "core_engines" / "shadow_loop.py"
 SHADOW_LOOP_V2 = ROOT / "core_engines" / "shadow_loop_v2.py"
 AUDIT_PAPER = ROOT / "audit" / "paper"
@@ -52,10 +56,12 @@ LOCKFILE = ROOT / "OMEGA_FASE4.lock"
 # Se não definido ou "false", usa shadow_loop.py original
 USE_V2 = os.environ.get("OMEGA_USE_V2", "").lower() == "true"
 
-OMEGA_MAGIC = 234001
-CRYPTO_SYMBOLS = ["BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD"]
+CRYPTO_SYMBOLS = [
+    "BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD",
+    "AVAXUSD", "LTCUSD", "BNBUSD", "ADAUSD", "XRPUSD",
+]
 FOREX_SYMBOLS  = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD"]
-INDEX_SYMBOLS  = ["US500", "NAS100"]
+INDEX_SYMBOLS  = ["US500", "US100"]  # US100 = NAS100 no broker HantecMarkets
 XAU_SYMBOLS    = ["XAUUSD"]
 ALL_SYMBOLS    = FOREX_SYMBOLS + XAU_SYMBOLS + INDEX_SYMBOLS + CRYPTO_SYMBOLS
 TIMEFRAMES = ["H1", "H4"]  # Motor harmonic treinado/testado para H1/H4. M5 requer treinamento do motor.
@@ -83,7 +89,7 @@ def _acquire_lock() -> None:
             else:
                 print(f"[FASE4] Lockfile orfao detectado (PID={old_pid} morto). Removendo.")
     LOCKFILE.write_text(str(os.getpid()))
-    print(f"[FASE4] Lock adquirido (PID={os.getpid()}) → {LOCKFILE}")
+    print(f"[FASE4] Lock adquirido (PID={os.getpid()}) -> {LOCKFILE}")
 
 
 def _release_lock() -> None:
@@ -262,7 +268,9 @@ def close_crypto_omega(label: str, symbols: List[str] = None) -> List[Dict[str, 
         results = []
         now = int(time.time())
         for p in positions:
-            if p.magic != OMEGA_MAGIC or p.symbol not in target_symbols:
+            if not is_omega_tracked_position(p):
+                continue
+            if p.symbol not in target_symbols:
                 continue
             age = now - int(p.time)
             if CLOSE_MODE == "ttl" and age < CLOSE_TTL_SEC:
@@ -287,7 +295,6 @@ def close_crypto_omega(label: str, symbols: List[str] = None) -> List[Dict[str, 
                 "type": order_type,
                 "price": price,
                 "deviation": 100,
-                "magic": OMEGA_MAGIC,
                 "comment": f"FASE4_CLOSE_{label}",
                 "type_time": mt5.ORDER_TIME_GTC,
                 "type_filling": mt5.ORDER_FILLING_IOC,
@@ -313,7 +320,10 @@ def collect_pnl_from_positions() -> Dict[str, Any]:
         return {"error": "mt5_init_failed"}
     try:
         pos = mt5.positions_get() or []
-        omega = [p for p in pos if p.magic == OMEGA_MAGIC and p.symbol in set(ALL_SYMBOLS)]
+        omega = [
+            p for p in pos
+            if is_omega_tracked_position(p) and p.symbol in set(ALL_SYMBOLS)
+        ]
         if not omega:
             return {"open_positions": 0, "floating_pnl": 0.0, "symbols": {}}
         symbols: Dict[str, Dict] = {}
@@ -340,7 +350,8 @@ def collect_pnl_window(t_from_unix: int, t_to_unix: int) -> Dict[str, Any]:
         deals = mt5.history_deals_get(_dt.fromtimestamp(t_from_unix),
                                        _dt.fromtimestamp(t_to_unix)) or []
         _target = set(ALL_SYMBOLS)
-        deals = [d for d in deals if d.magic == OMEGA_MAGIC and d.symbol in _target]
+        sym_deals = [d for d in deals if d.symbol in _target]
+        deals = omega_tracked_history_deals(sym_deals)
         # Agrupar por position_id e somar profit+swap+commission
         positions: Dict[int, Dict[str, Any]] = {}
         for d in deals:
@@ -641,6 +652,10 @@ def main() -> int:
     ap.add_argument("--symbols", nargs="+", default=ALL_SYMBOLS,
                     help="Lista de símbolos (default: todos 11 ativos)")
     args = ap.parse_args()
+    
+    # Fazer split por vírgula se símbolos passados como string única
+    if len(args.symbols) == 1 and "," in args.symbols[0]:
+        args.symbols = args.symbols[0].split(",")
 
     _acquire_lock()
 

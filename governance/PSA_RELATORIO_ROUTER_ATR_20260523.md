@@ -113,16 +113,16 @@ Condicional: SM-R2 (SL ≥ $20 em ordem real) pendente de sessão com liquidez. 
 
 ---
 
-## 6. Espaço AIC (preencher após SM-R re-test)
+## 6. Espaço AIC (preenchido 2026-05-25)
 
 | ID | AIC PASS/FAIL | Notas |
 |----|---------------|-------|
-| V1 T-F1a wiring | | |
-| V2 T-R1 assinatura + mapa | | |
-| V3 UT-R1..R5 independente | | |
-| V4 SM-R1 exit 0 | | |
-| V5 SM-R2 SL ≥ $20 (re-test) | | |
-| **Veredito AIC Fase 1 completo** | **PENDENTE SM-R2** | |
+| V1 T-F1a wiring | **PASS** | |
+| V2 T-R1 assinatura + mapa | **PASS** | |
+| V3 UT-R1..R5 independente | **PASS** | 34/34 |
+| V4 SM-R1 exit 0 | **PASS** | H4 ciclo OK |
+| V5 SM-R2 SL ≥ $20 (re-test) | **CONDICIONAL** | N/A EDGE_GATE; OP-3 |
+| **Veredito AIC Fase 1** | **APROVADO CONDICIONAL** | `AIC_VALIDACAO_CHAVE_OURO_SPRINT_20260525.md` |
 
 ---
 

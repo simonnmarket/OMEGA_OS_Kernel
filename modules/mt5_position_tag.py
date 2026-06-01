@@ -10,12 +10,16 @@ Padrão único OMEGA: identificar operações pelo campo `comment` (marca config
 
 Pedidos novos devem usar `build_v2_order_comment` ou comentários explicitamente cobertos
 por `is_omega_managed_comment` — não é obrigatório enviar `magic` ao broker.
-"""
-from __future__ import annotations
 
+P0-ABC 20260522: Fallback paper mode — se comment="Request executed" e ticket em state,
+considerar posição como OMEGA tracked (bypass bug comment cego).
+"""
+
+import json
 import os
 import uuid
-from typing import Any, List, Optional
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 def position_mark() -> str:
@@ -83,9 +87,23 @@ def is_omega_tracked_position(position: Any) -> bool:
     if isinstance(position, dict):
         cm = position.get("comment")
         mg = position.get("magic")
+        ticket = position.get("ticket")
     else:
         cm = getattr(position, "comment", None)
         mg = getattr(position, "magic", None)
+        ticket = getattr(position, "ticket", None)
+    
+    # P0-ABC 20260522: Fallback paper mode — check state file
+    if ticket and cm == "Request executed":
+        state_file = Path("state/omega_open_tickets.json")
+        if state_file.exists():
+            try:
+                state = json.loads(state_file.read_text(encoding="utf-8", errors="replace"))
+                if str(ticket) in state:
+                    return True
+            except Exception:
+                pass
+    
     return is_omega_tracked_comment_magic(
         cm if isinstance(cm, str) else None,
         mg,
@@ -137,3 +155,66 @@ def human_tag_line() -> str:
         f"comment_mark={position_mark()!r} legacy_magic={leg} "
         f"scale_magic_range={lo}..{hi}"
     )
+
+
+def load_open_tickets() -> Dict[str, Dict]:
+    """Carrega state de tickets abertos (P0-ABC)."""
+    state_file = Path("state/omega_open_tickets.json")
+    if state_file.exists():
+        try:
+            return json.loads(state_file.read_text(encoding="utf-8", errors="replace"))
+        except Exception:
+            return {}
+    return {}
+
+
+def save_open_ticket(ticket: int, symbol: str, direction: str, entry_deal: Optional[int] = None) -> None:
+    """Persiste ticket aberto no state (P0-ABC)."""
+    state_file = Path("state/omega_open_tickets.json")
+    state = load_open_tickets()
+    from datetime import datetime
+    state[str(ticket)] = {
+        "symbol": symbol,
+        "direction": direction,
+        "opened_at_utc": datetime.utcnow().isoformat(),
+        "entry_deal": entry_deal,
+    }
+    state_file.parent.mkdir(parents=True, exist_ok=True)
+    state_file.write_text(json.dumps(state, indent=2), encoding="utf-8")
+
+
+def remove_closed_ticket(ticket: int) -> None:
+    """Remove ticket do state quando posição fechada (P0-ABC)."""
+    state_file = Path("state/omega_open_tickets.json")
+    state = load_open_tickets()
+    if str(ticket) in state:
+        del state[str(ticket)]
+        state_file.write_text(json.dumps(state, indent=2), encoding="utf-8")
+
+
+def has_omega_exposure(symbol: str, direction: str) -> bool:
+    """
+    Verifica se há exposição OMEGA no ativo+direção (P0-ABC).
+    Combina MT5 positions + state file.
+    """
+    import MetaTrader5 as mt5
+    
+    # Check state file
+    state = load_open_tickets()
+    for ticket_str, info in state.items():
+        if info.get("symbol") == symbol and info.get("direction") == direction:
+            return True
+    
+    # Check MT5 positions
+    try:
+        positions = mt5.positions_get()
+        if positions:
+            for p in positions:
+                if p.symbol == symbol:
+                    pos_dir = "BUY" if p.type == 0 else "SELL"
+                    if pos_dir == direction and is_omega_tracked_position(p):
+                        return True
+    except Exception:
+        pass
+    
+    return False

@@ -1,10 +1,10 @@
 {
-  "mission_id": "PAPER-CADJPY-H1-20260430T075259",
+  "mission_id": "PAPER-CADJPY-H1-20260522T145852",
   "asset": "CADJPY",
   "timeframe": "H1",
   "status": "COMPLETED",
   "mode": "paper",
-  "created_at": "2026-04-30T07:52:59.864520+00:00",
+  "created_at": "2026-05-22T14:58:52.113251+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
@@ -18,26 +18,26 @@
     "skip_reasons": []
   },
   "binomial_ic_95": {
-    "hits": 2434,
-    "total": 2434,
+    "hits": 5861,
+    "total": 5861,
     "p_hat": 1.0,
-    "lower_bound": 0.998424,
+    "lower_bound": 0.999345,
     "upper_bound": 1.0,
-    "interval": "[99.8424%, 100.0000%]"
+    "interval": "[99.9345%, 100.0000%]"
   },
   "engines": {
     "harmonic": {
       "metrics": {
         "34_stats": {
-          "total_touches": 2434,
-          "hits": 2434,
+          "total_touches": 5861,
+          "hits": 5861,
           "breaks": 0,
           "hit_rate": 100.0,
           "break_rate": 0.0
         },
         "134_stats": {
-          "total_touches": 2434,
-          "hits": 2434,
+          "total_touches": 5861,
+          "hits": 5861,
           "breaks": 0,
           "hit_rate": 100.0,
           "break_rate": 0.0
@@ -61,28 +61,30 @@
     "retcode": 10009,
     "retcode_str": "DONE",
     "success": true,
-    "deal": 185027068,
-    "order": 181497483,
-    "fill_price": 117.492,
-    "ask_at_send": 117.492,
-    "sl_price": 117.408,
-    "tp_price": 117.744,
-    "volume_confirmed": 0.22,
+    "deal": 196127075,
+    "order": 189706596,
+    "fill_price": 115.138,
+    "ask_at_send": 115.138,
+    "sl_price": 115.218,
+    "tp_price": 114.898,
+    "volume_confirmed": 0.25,
     "slippage_pts": 0.0,
     "comment": "Request executed",
-    "request_id": 1899992540,
-    "latency_ms": 44.9,
+    "request_id": 1196415085,
+    "latency_ms": 36.9,
     "mode": "MT5_DEMO_REAL"
   },
   "lot_info": {
     "lot": 0.01,
-    "risk_usd": 10.0,
+    "risk_usd": 33.2,
     "stop_pts": 300.0,
-    "pip_value_lot": 0.622712,
+    "pip_value_lot": 0.6285,
     "contract_size": 100000.0,
-    "price_at_calc": 117.492,
-    "sym_vol_min": 0.01
+    "price_at_calc": 115.158,
+    "sym_vol_min": 0.01,
+    "sym_vol_max": 50.0,
+    "sym_vol_step": 0.01
   },
-  "latency_motor_s": 2.249,
-  "checksum": "f8af947958302c91972e663b8aa3350bea78b5468bac6ae57a964be900f591ae"
+  "latency_motor_s": 3.027,
+  "checksum": "e0213c1cc25a780c2177cd78e8d57e48cca8a75e7e4d357242c7dbcb0d441ac6"
 }

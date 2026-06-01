@@ -301,7 +301,7 @@ Select-String -Path audit\paper\omega_24x7_runner.log -Pattern "\[SEL\]|\[RUPTUR
 PSA — Li e aceito responsabilidade pelo SOURCE_CODE.
 
 Data: 2026-06-01T11:33 UTC
-Commit HEAD após sync SEL/P0: [a preencher após commit feat(cko-sel)]
+Commit HEAD após sync SEL/P0: c73e4ff
 Última linha log mode=paper confirmada: SIM — verificado após arranque run_omega_24x7.ps1
 Push origin hotfix/forensic-remediation-20260527: SIM
 

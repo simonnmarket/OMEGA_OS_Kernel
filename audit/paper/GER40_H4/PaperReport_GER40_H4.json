@@ -1,46 +1,46 @@
 {
-  "mission_id": "PAPER-GER40-H4-20260428T141409",
+  "mission_id": "PAPER-GER40-H4-20260601T060140",
   "asset": "GER40",
   "timeframe": "H4",
   "status": "COMPLETED",
-  "mode": "paper",
-  "created_at": "2026-04-28T14:14:09.693263+00:00",
+  "mode": "shadow",
+  "created_at": "2026-06-01T06:01:40.912699+00:00",
   "agent_version": "shadow_loop_v3.0",
   "omega_integration": true,
   "guardrail": {
     "asset": "GER40",
     "timeframe": "H4",
     "tier": "T1",
-    "hit_rate_134": 98.69,
+    "hit_rate_134": 98.61,
     "mach": 1.0,
     "margin_used": 548.0,
     "skip": false,
     "skip_reasons": []
   },
   "binomial_ic_95": {
-    "hits": 3763,
-    "total": 3813,
-    "p_hat": 0.986887,
-    "lower_bound": 0.982755,
-    "upper_bound": 0.990039,
-    "interval": "[98.2755%, 99.0039%]"
+    "hits": 3820,
+    "total": 3874,
+    "p_hat": 0.986061,
+    "lower_bound": 0.981858,
+    "upper_bound": 0.989301,
+    "interval": "[98.1858%, 98.9301%]"
   },
   "engines": {
     "harmonic": {
       "metrics": {
         "34_stats": {
-          "total_touches": 4734,
-          "hits": 4647,
-          "breaks": 87,
-          "hit_rate": 98.16,
-          "break_rate": 1.84
+          "total_touches": 4811,
+          "hits": 4720,
+          "breaks": 91,
+          "hit_rate": 98.11,
+          "break_rate": 1.89
         },
         "134_stats": {
-          "total_touches": 3813,
-          "hits": 3763,
-          "breaks": 50,
-          "hit_rate": 98.69,
-          "break_rate": 1.31
+          "total_touches": 3874,
+          "hits": 3820,
+          "breaks": 54,
+          "hit_rate": 98.61,
+          "break_rate": 1.39
         }
       }
     },
@@ -52,36 +52,13 @@
     }
   },
   "signal": {
-    "action": "MT5_PAPER_EXECUTE",
+    "action": "MONITOR",
     "skip_reasons": [],
     "margin_used": 548.0,
     "tier": "T1"
   },
-  "execution": {
-    "retcode": 10009,
-    "retcode_str": "DONE",
-    "success": true,
-    "deal": 183782110,
-    "order": 180610923,
-    "fill_price": 24009.4,
-    "ask_at_send": 24009.4,
-    "sl_price": 24020.36,
-    "tp_price": 23998.44,
-    "volume_confirmed": 0.01,
-    "slippage_pts": 0.0,
-    "comment": "Request executed",
-    "request_id": 3446639251,
-    "latency_ms": 45.3,
-    "mode": "MT5_DEMO_REAL"
-  },
-  "lot_info": {
-    "lot": 0.01,
-    "risk_usd": 10.0,
-    "stop_pts": 1096.0,
-    "pip_value_lot": 0.01,
-    "contract_size": 1.0,
-    "price_at_calc": 24009.5
-  },
-  "latency_motor_s": 2.931,
-  "checksum": "ace629a9783a01c3b5f9710f022e051ae007c09ec885e5a6dbba02b28ded8039"
+  "execution": null,
+  "lot_info": null,
+  "latency_motor_s": 2.177,
+  "checksum": "b4482e6c59b176f79ccb62526897c8d6b2f8d77409837e62bd2623fe45817431"
 }

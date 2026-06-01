@@ -18,6 +18,24 @@ import time
 import json
 import logging
 from datetime import datetime, timezone, timedelta
+
+# Configuração de slope threshold (override via env var OMEGA_MIN_SLOPE)
+MIN_SLOPE = float(os.getenv("OMEGA_MIN_SLOPE", "0.5"))  # default: 0.5 (antes: 1.0) - ajustado para destravar
+# Confluência EMA opcional (evita remover EMA cross, mas não bloqueia momentum forte)
+USE_EMA_CONFLUENCE = os.getenv("OMEGA_USE_EMA_CONFLUENCE", "true").lower() == "true"
+EMA_SLOPE_FACTOR = float(os.getenv("OMEGA_EMA_SLOPE_FACTOR", "1.5"))  # se divergente, libera se |slope| >= MIN_SLOPE * fator
+
+# Retornos MT5 (order_send / order_check)
+RETCODE_OK = {10009, 10010}  # DONE, PLACED
+RETCODE_WARN = {10004}  # REQUOTE
+RETCODE_DESC = {
+    10004: "REQUOTE", 10006: "REJECT",
+    10007: "CANCEL", 10009: "DONE",
+    10010: "PLACED", 10013: "INVALID_REQUEST",
+    10016: "INVALID_STOPS", 10018: "NO_MONEY",
+    10019: "NO_CHANGES", 10030: "LIMIT_ORDERS",
+    10014: "TOO_MANY_REQ",
+}
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
 from collections import defaultdict
@@ -28,12 +46,19 @@ log = logging.getLogger(__name__)
 # =============================================================================
 # CONSTANTES (mesmas configs do v1 via env vars)
 # =============================================================================
-OMEGA_MAGIC = 234001
-MAX_POSITIONS = int(os.getenv("OMEGA_MAX_POSITIONS", "2"))  # CONSELHO 29/04/2026: default=2
+# 0 = sem limite. N>=1 = máximo N posições OMEGA (comment/mark).
+MAX_POSITIONS = int(os.getenv("OMEGA_MAX_POSITIONS", "0"))
 DD_DAILY_MAX = float(os.getenv("OMEGA_DD_DAILY_MAX", "0.01"))  # CONSELHO 29/04/2026: default=1%
 RISK_PER_TRADE_PCT = float(os.getenv("OMEGA_RISK_PER_TRADE", "0.0025"))
 DEMO_WINDOW = (0, 24)  # 24/5 sem restrição
 ROOT = Path(__file__).parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from modules.mt5_position_tag import (
+    build_v2_order_comment,
+    is_omega_tracked_position,
+)
 
 # Classificação de ativos (CTO spec)
 _CRYPTO_ASSETS = ["BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD"]
@@ -218,41 +243,49 @@ def get_m5_flow_signal(symbol: str) -> dict:
         vol_avg = np.mean(volumes)
         vol_ratio = vol_recent / max(vol_avg, 1.0)
 
-        # Confirmação de slope mínimo (mesmo threshold do v1: > 1.0)
-        slope_ok = abs(slope) > 1.0
+        # Confirmação de slope mínimo (configurável via OMEGA_MIN_SLOPE)
+        slope_ok = abs(slope) > MIN_SLOPE
 
-        # EMA cross
+        # EMA cross e direção por EMA
         ema_cross = ema8[-1] > ema21[-1]
+        ema_dir = "BUY" if ema_cross else "SELL"
 
-        if slope_ok:
-            if ema_cross and slope > 1.0:
-                signal_dir = "BUY"
-            elif not ema_cross and slope < -1.0:
-                signal_dir = "SELL"
-            else:
-                return {
-                    "valid": False,
-                    "reason": "no_trend",
-                    "slope": slope,
-                    "ema_cross": ema_cross
-                }
-
-            return {
-                "valid": True,
-                "signal_dir": signal_dir,
-                "slope": slope,
-                "vol_imb": vol_ratio,
-                "ema8": ema8[-1],
-                "ema21": ema21[-1],
-                "ema_cross": ema_cross
-            }
-        else:
+        if not slope_ok:
             return {
                 "valid": False,
                 "reason": "slope_too_small",
                 "slope": slope,
-                "min_slope": 1.0
+                "min_slope": MIN_SLOPE
             }
+
+        # Direção primária pelo slope
+        signal_dir = "BUY" if slope > 0 else "SELL"
+
+        # Confluência EMA opcional; permite override por momentum forte
+        if USE_EMA_CONFLUENCE and signal_dir != ema_dir:
+            if abs(slope) < MIN_SLOPE * EMA_SLOPE_FACTOR:
+                return {
+                    "valid": False,
+                    "reason": "ema_divergence",
+                    "slope": slope,
+                    "min_slope": MIN_SLOPE,
+                    "ema8": ema8[-1],
+                    "ema21": ema21[-1],
+                    "ema_dir": ema_dir,
+                    "slope_dir": signal_dir,
+                    "min_slope_factor": EMA_SLOPE_FACTOR,
+                }
+            # Se momentum for suficientemente forte, segue pelo slope mesmo divergente
+
+        return {
+            "valid": True,
+            "signal_dir": signal_dir,
+            "slope": slope,
+            "vol_imb": vol_ratio,
+            "ema8": ema8[-1],
+            "ema21": ema21[-1],
+            "ema_cross": ema_cross
+        }
     except Exception as e:
         log.error("[%s] M5 Flow Signal erro: %s", symbol, e)
         return {"valid": False, "reason": str(e)}
@@ -334,6 +367,125 @@ def is_market_open(symbol: str) -> bool:
     if info is None:
         return False
     return info.visible
+
+
+# =============================================================================
+# FUNÇÃO MT5 - ENVIAR ORDEM
+# =============================================================================
+def mt5_send_order(asset: str, tf: str, lot: float,
+                   sl_pts: float, tp_pts: float, direction: str = "BUY") -> Dict:
+    """
+    Envia ordem de execução a mercado via mt5.order_send().
+    Usa TRADE_ACTION_DEAL + ORDER_TYPE (BUY/SELL) Dinâmico!
+    Retorna dict com retcode, deal, price, slippage, latência.
+    """
+    import MetaTrader5 as mt5
+
+    tick = mt5.symbol_info_tick(asset)
+    sym  = mt5.symbol_info(asset)
+    if tick is None or sym is None:
+        log.error("[%s] symbol_info_tick falhou", asset)
+        return {"retcode": -1, "retcode_str": "NO_TICK", "error": "symbol_info_tick returned None"}
+
+    price    = tick.ask if direction == "BUY" else tick.bid
+    point    = sym.point
+    digits   = sym.digits
+    min_dist = max(getattr(sym, 'trade_stops_level', 0), getattr(sym, 'spread', 0) * 2)
+    final_sl_pts = max(sl_pts, min_dist + 50)          # Safe buffer para SL
+    final_tp_pts = max(tp_pts, min_dist + 50)          # Distância mínima para TP
+    final_tp_pts = max(final_tp_pts, final_sl_pts * 3.0)  # R:R mínimo 1:3.0
+    
+    if direction == "BUY":
+        sl_price = round(price - final_sl_pts * point, digits)
+        tp_price = round(price + final_tp_pts * point, digits)
+        order_type_mt5 = mt5.ORDER_TYPE_BUY
+    else:
+        sl_price = round(price + final_sl_pts * point, digits)
+        tp_price = round(price - final_tp_pts * point, digits)
+        order_type_mt5 = mt5.ORDER_TYPE_SELL
+
+    # Selecionar filling mode suportado pelo broker (bit 0=FOK, bit 1=IOC, bit 2=RETURN)
+    fm = sym.filling_mode if sym else 3
+    if fm & 2:    filling = mt5.ORDER_FILLING_IOC     # IOC — preferido para demo
+    elif fm & 1:  filling = mt5.ORDER_FILLING_FOK     # FOK — alternativa
+    else:         filling = mt5.ORDER_FILLING_RETURN  # RETURN — fallback
+
+    request = {
+        "action":       mt5.TRADE_ACTION_DEAL,
+        "symbol":       asset,
+        "volume":       lot,
+        "type":         order_type_mt5,
+        "price":        price,
+        "sl":           sl_price,
+        "tp":           tp_price,
+        "deviation":    20,
+        "comment":      build_v2_order_comment(tf, direction),
+        "type_time":    mt5.ORDER_TIME_GTC,
+        "type_filling": filling,
+    }
+    log.info("[%s %s] filling_mode=%d → tipo=%s", asset, tf, fm,
+             {mt5.ORDER_FILLING_IOC: "IOC", mt5.ORDER_FILLING_FOK: "FOK",
+              mt5.ORDER_FILLING_RETURN: "RETURN"}.get(filling, str(filling)))
+
+    # Pre-check
+    check = mt5.order_check(request)
+    if check and check.retcode not in (0, 10009):
+        log.warning("[%s %s] order_check retcode=%d — enviando mesmo assim (demo)",
+                    asset, tf, check.retcode)
+
+    t0     = time.perf_counter()
+    result = mt5.order_send(request)
+    lat_ms = round((time.perf_counter() - t0) * 1000, 1)
+
+    if result is None:
+        err = mt5.last_error()
+        log.error("[%s %s] order_send retornou None: %s", asset, tf, err)
+        return {"retcode": -1, "retcode_str": "NULL_RESULT", "error": str(err),
+                "latency_ms": lat_ms}
+
+    r = result._asdict()
+    retcode     = r.get("retcode", -1)
+    retcode_str = RETCODE_DESC.get(retcode, f"UNKNOWN_{retcode}")
+    _fill = r.get("price", price) if retcode in RETCODE_OK else price  # sem slippage em falhas
+    slippage    = round(abs(_fill - price) / point, 2) if retcode in RETCODE_OK else 0.0
+
+    out = {
+        "retcode":          retcode,
+        "retcode_str":      retcode_str,
+        "success":          retcode in RETCODE_OK,
+        "deal":             r.get("deal", 0),
+        "order":            r.get("order", 0),
+        "fill_price":       r.get("price", price),
+        "ask_at_send":      price,
+        "sl_price":         sl_price,
+        "tp_price":         tp_price,
+        "volume_confirmed": r.get("volume", lot),
+        "slippage_pts":     slippage,
+        "comment":          r.get("comment", ""),
+        "request_id":       r.get("request_id", 0),
+        "latency_ms":       lat_ms,
+        "mode":             "MT5_DEMO_REAL",
+    }
+    
+    # P0-ABC 20260522: Ghost orders — validar fill>0 e ticket>0 (espelho D3)
+    if out["success"]:
+        if out["fill_price"] <= 0 or out["deal"] <= 0 or out["order"] <= 0:
+            out["success"] = False
+            out["retcode_str"] = "FILL_ZERO_OR_NO_TICKET"
+            log.error("[%s %s] [GHOST_ORDER] success=False fill=%.5f deal=%d order=%d",
+                     asset, tf, out["fill_price"], out["deal"], out["order"])
+
+    if out["success"]:
+        log.info("[%s %s] ✅ ORDER DONE | deal=%d price=%.5f slip=%.2fpts lat=%dms",
+                 asset, tf, out["deal"], out["fill_price"], out["slippage_pts"], lat_ms)
+    elif retcode in RETCODE_WARN:
+        log.warning("[%s %s] ⚠️ REQUOTE | bid=%.5f ask=%.5f", asset, tf,
+                    r.get("bid", 0), r.get("ask", 0))
+    else:
+        log.error("[%s %s] ❌ ORDER FAIL | retcode=%d (%s) | %s",
+                  asset, tf, retcode, retcode_str, out["comment"])
+
+    return out
 
 
 # =============================================================================
@@ -425,18 +577,36 @@ def execute_asset_once(asset: str, mode: str, equity: float,
         result["reason_for_skip"] = "dedup_cycle"
         log.info("[%s %s] [SKIP] dedup - já abriu ordem neste ciclo", asset, tf)
         return result
-    
-    # === 6. 1POS_RULE (já tem posição OMEGA?) ===
-    existing_omega = [p for p in current_positions if p.get("magic") == OMEGA_MAGIC]
-    if existing_omega:
-        result["reason_for_skip"] = "already_positioned"
-        log.info("[%s %s] [SKIP] 1pos_rule - já tem %d posição(ões) OMEGA",
-                 asset, tf, len(existing_omega))
+
+    omega_managed = [
+        p for p in current_positions
+        if is_omega_tracked_position(p)
+    ]
+    # === 5b. Limite global de posições gerenciadas por comment (desligado se MAX_POSITIONS=0) ===
+    if MAX_POSITIONS > 0 and len(omega_managed) >= MAX_POSITIONS:
+        result["reason_for_skip"] = "max_positions"
+        log.warning(
+            "[%s %s] [SKIP] max_positions - %d >= %d (OMEGA_COMMENT)",
+            asset, tf, len(omega_managed), MAX_POSITIONS,
+        )
         return result
     
-    # === 7. Anti-Hedge (posição oposta?) ===
+    # === 6. 1POS_RULE (já tem posição OMEGA neste mesmo ativo?) ===
+    managed_same_asset = [
+        p for p in current_positions
+        if p.get("symbol") == asset and is_omega_tracked_position(p)
+    ]
+    if managed_same_asset:
+        result["reason_for_skip"] = "already_positioned"
+        log.info("[%s %s] [SKIP] 1pos_rule - já tem %d posição(ões) OMEGA em %s",
+                 asset, tf, len(managed_same_asset), asset)
+        return result
+    
+    # === 7. Anti-Hedge (posição oposta no mesmo símbolo — qualquer origem) ===
     has_opposite = False
     for pos in current_positions:
+        if pos.get("symbol") != asset:
+            continue
         pos_dir = "BUY" if pos.get("type") == 0 else "SELL"
         if pos_dir != signal_dir:
             has_opposite = True
@@ -453,14 +623,30 @@ def execute_asset_once(asset: str, mode: str, equity: float,
         log.warning("[%s %s] [SKIP] market_closed - MERCADO FECHADO", asset, tf)
         return result
     
-    # === 9. Execução (placeholder por enquanto) ===
-    # TODO: Implementar execução MT5 completa
-    result["decision"] = "EXEC"
-    result["signal_dir"] = signal_dir
-    result["reason_for_skip"] = None
+    # === 9. Execução MT5 (implementação real) ===
+    # Calcular lot e SL/TP (valores padrão por enquanto)
+    lot = 0.01  # lot mínimo padrão
+    sl_pts = 500  # 500 pontos SL
+    tp_pts = 1500  # 1500 pontos TP (R:R 1:3)
     
-    log.info("[%s %s] [EXEC_READY] signal=%s - todos filtros passaram",
-             asset, tf, signal_dir)
+    # Enviar ordem MT5
+    order_result = mt5_send_order(asset, tf, lot, sl_pts, tp_pts, signal_dir)
+    
+    if order_result.get("success"):
+        result["decision"] = "EXEC"
+        result["signal_dir"] = signal_dir
+        result["reason_for_skip"] = None
+        result["order_ids"] = [order_result.get("deal", 0)]
+        log.info("[%s %s] [EXEC_DONE] deal=%d price=%.5f lat=%dms",
+                 asset, tf, order_result.get("deal", 0),
+                 order_result.get("fill_price", 0),
+                 order_result.get("latency_ms", 0))
+    else:
+        result["decision"] = "SKIP"
+        result["reason_for_skip"] = f"order_fail_{order_result.get('retcode_str', 'UNKNOWN')}"
+        log.error("[%s %s] [EXEC_FAIL] retcode=%d (%s)",
+                  asset, tf, order_result.get("retcode", -1),
+                  order_result.get("retcode_str", "UNKNOWN"))
     
     return result
 
@@ -498,6 +684,7 @@ def run_loop_v2(ativos: List[str], mode: str, equity: float) -> Dict:
                     "symbol": p.symbol,
                     "type": p.type,
                     "magic": p.magic,
+                    "comment": getattr(p, "comment", "") or "",
                     "profit": p.profit
                 })
     except Exception as e:
@@ -540,7 +727,7 @@ def run_loop_v2(ativos: List[str], mode: str, equity: float) -> Dict:
             exec_count += 1
             # Marcar asset como aberto neste ciclo
             cycle_opened_assets.add(asset)
-            # TODO: Executar ordem MT5
+            # Ordem já foi enviada via mt5_send_order em execute_asset_once
         else:
             skip_count += 1
             log.info("[%s] SKIP - reason: %s", asset, result["reason_for_skip"])
@@ -607,12 +794,30 @@ def run_loop_v2(ativos: List[str], mode: str, equity: float) -> Dict:
     
     # SHA3 checksum
     import hashlib
-    sb = json.dumps(summary, indent=2).encode("utf-8")
+    # Converter numpy tipos para Python tipos nativos para serialização JSON
+    def convert_numpy_types(obj):
+        import numpy as np
+        if isinstance(obj, np.bool_):
+            return bool(obj)
+        elif isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, dict):
+            return {k: convert_numpy_types(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [convert_numpy_types(v) for v in obj]
+        return obj
+    
+    summary_clean = convert_numpy_types(summary)
+    sb = json.dumps(summary_clean, indent=2).encode("utf-8")
     summary["checksum"] = hashlib.sha3_256(sb).hexdigest()
     
     summary_file = audit_paper / "paper_summary.json"
     with open(summary_file, "w", encoding="utf-8") as f:
-        json.dump(summary, f, indent=2, ensure_ascii=False)
+        json.dump(summary_clean, f, indent=2, ensure_ascii=False)
     
     log.info("paper_summary.json escrito em: %s", summary_file)
     

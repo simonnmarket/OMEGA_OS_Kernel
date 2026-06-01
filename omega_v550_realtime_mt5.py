@@ -8,7 +8,14 @@ import logging
 import socket
 import argparse
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+
+_REPO = Path(__file__).resolve().parent
+if str(_REPO) not in sys.path:
+    sys.path.insert(0, str(_REPO))
+
+from modules.mt5_position_tag import is_omega_managed_comment
 
 # Importar Módulos da Blindagem V5.5.0
 from cost_oracle_v550 import CostOracle, CostSnapshot
@@ -102,8 +109,12 @@ class AtomicExecutorV550:
 
     def get_my_positions(self):
         pos = mt5.positions_get(symbol=self.cfg['SYMBOL'])
-        if pos is None: return []
-        return [p for p in pos if p.magic == self.cfg['MAGIC']]
+        if pos is None:
+            return []
+        return [
+            p for p in pos
+            if is_omega_managed_comment(getattr(p, "comment", "") or "")
+        ]
 
     def evaluate_exit(self, position, score: float, z_price: float, duration_s: float) -> Tuple[bool, str]:
         raw_pnl_usd = position.profit
@@ -159,7 +170,6 @@ class AtomicExecutorV550:
             "price": price,
             "sl": sl,
             "tp": tp,
-            "magic": self.cfg['MAGIC'],
             "comment": f"OE_V5_{self.cfg['TIMEFRAME_STR']}_{direction.upper()}",
             "type_time": mt5.ORDER_TIME_GTC,
             "type_filling": mt5.ORDER_FILLING_IOC,
@@ -195,7 +205,6 @@ class AtomicExecutorV550:
             "position": position.ticket,
             "price": price,
             "deviation": 20,
-            "magic": self.cfg['MAGIC'],
             "comment": f"OE_V5_EXIT_{self.cfg['TIMEFRAME_STR']}",
             "type_time": mt5.ORDER_TIME_GTC,
             "type_filling": mt5.ORDER_FILLING_IOC,

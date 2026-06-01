@@ -3,13 +3,13 @@
   "_updated": "2026-06-01",
   "_doc": "Custos e pisos USD por classe -- fonte: symbol_info + historico deals (Hantec)",
   "min_tp_usd": {
-    "index": 20.0,
-    "forex": 8.0,
-    "jpy_major": 8.0,
-    "commodity": 15.0,
-    "metal": 15.0,
-    "crypto": 12.0,
-    "crypto_alt": 5.0
+    "index": 25.0,
+    "forex": 10.0,
+    "jpy_major": 10.0,
+    "commodity": 18.0,
+    "metal": 18.0,
+    "crypto": 15.0,
+    "crypto_alt": 8.0
   },
   "min_net_edge_mult": 1.35,
   "commission_per_lot_round_turn_usd": {

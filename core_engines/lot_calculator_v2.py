@@ -7,7 +7,7 @@ Fórmula:
     lot = base_lot × vol_factor × confidence_factor × performance_factor × kelly_factor
     base_lot = (equity × RISK_PCT) / (expected_pts × pip_value_per_lot)
 
-Limites CQO: base=0.10, min=0.05, max=0.25
+Limites CQO: base=0.10, min=0.05, max=0.10 (crypto CFD: muitos brokers rejeitam >0.10; forex: OMEGA_LOT_MAX)
 Cost barrier: skip trade se expected_pts < OMEGA_COST_PTS (default 19).
 """
 from __future__ import annotations
@@ -24,7 +24,7 @@ log = logging.getLogger("OMEGA.LotCalcV2")
 class LotCfgV2:
     base_lot:         float = float(os.getenv("OMEGA_LOT_BASE",  "0.10"))
     min_lot:          float = float(os.getenv("OMEGA_LOT_MIN",   "0.05"))
-    max_lot:          float = float(os.getenv("OMEGA_LOT_MAX",   "0.25"))
+    max_lot:          float = float(os.getenv("OMEGA_LOT_MAX",   "0.10"))
     risk_pct:         float = float(os.getenv("OMEGA_RISK_PER_TRADE", "0.001"))
     vol_dampening:    float = 0.5          # CQO: √ raíz para suavizar
     atr_target_pct:   float = 0.0015      # 0.15% ref — vol neutral point

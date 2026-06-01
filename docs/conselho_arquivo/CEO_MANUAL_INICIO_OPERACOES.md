@@ -78,7 +78,8 @@ Get-Content "C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\audit\paper\omega_24x7_runner.log"
 | Linha no log | Significado |
 | --- | --- |
 | `[EQUITY] Equity MT5 real: $1250.xx` | Equity real (sem bug 10k) |
-| `[MOMENTUM_FALLBACK] DISABLED` | Fallback desligado |
+| `[MOMENTUM_FALLBACK] DISABLED` | Modo diagnóstico silencioso (fallback OFF) |
+| `FASE4 DECISION=AGENT_IA` ou momentum + `ORDER DONE` | Modo **demo teste** (fallback ON) |
 | (opcional) `SKIP_SPREAD_GUARD` / `SKIP_ROLLOVER_BLACKOUT` | Gates P0 activos |
 
 **Se NÃO aparecer `[EQUITY] Equity MT5 real`:** parar (Ctrl+C na janela do runner), MT5 fechado/desligado — corrigir antes de continuar.
