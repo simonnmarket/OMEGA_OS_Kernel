@@ -3999,7 +3999,8 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                     _sel_leak = float(_sel_meta.get("sel_leakage_norm", 1.0) or 1.0)
                     _sel_veto = bool(_sel_meta.get("sel_audit_veto", False))
                     _rupture_capture = os.getenv("OMEGA_RUPTURE_CAPTURE", "0").strip() == "1"
-                    _ia_dir = (ia_signal.get("direction") or ia_signal.get("action") or "").upper()
+                    _ia_sig = ia_signal or {}  # P1c-FIX: ia_signal pode ser None aqui
+                    _ia_dir = (_ia_sig.get("direction") or _ia_sig.get("action") or "").upper()
                     _sel_aligned = (
                         signal_dir
                         and _ia_dir
