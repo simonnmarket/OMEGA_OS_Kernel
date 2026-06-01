@@ -18,8 +18,11 @@ $env:OMEGA_LOOP_INTERVAL_SEC = "20"
 # paper | shadow — CKO P0: obrigatorio; omega_paper_loop aborta se ausente
 $env:OMEGA_24X7_MODE = "paper"
 
-# SEL — gate paralelo (RUPTURE_CAPTURE=0 até dia 13+ CKO; logs [SEL] sempre)
+# SEL/USFE — CKO 20260601: toggles activos + enforcement em pre_execution_safety_check
 $env:OMEGA_SEL_ENABLED = "1"
+$env:OMEGA_ENFORCE_SEL_USFE_GATE = "1"
+$env:OMEGA_USFE_BLOCK = "1"
+$env:OMEGA_SKIP_SEL_USFE_ENFORCE = "0"
 $env:OMEGA_RUPTURE_CAPTURE = "0"
 $env:OMEGA_SEL_SLOT_RP = "0.8"
 
@@ -130,9 +133,8 @@ $env:PSA_SHADOW_MODE = "0"
 $env:FUSION_MIN_CONFIDENCE = "0.55"
 $env:OMEGA_LOOP_PSA_V12 = "1"
 
-# USFE v1.1.2 — L6 observação (peso 0.05 em confluência; alignment principal)
+# USFE v1.1.2 — L6 + gate paralelo (peso 0 em confluência; block via OMEGA_USFE_BLOCK)
 $env:OMEGA_USFE_ENABLED = "1"
-$env:OMEGA_USFE_BLOCK = "0"
 
 # FORCE NOW 20260601 — pisos TP/USD fundo (não migalhas)
 $env:OMEGA_MIN_TP_USD_INDEX = "25"

@@ -36,10 +36,8 @@ import sys
 
 import time
 import traceback
-from core_engines.integration_gate import OmegaIntegrationGate
-from modules.risk.scale_manager import OmegaScaleManager
-from modules.validation.mfa_engine import OmegaMFAEngine
 from core_engines.lot_calculator_v2 import LotCalculatorV2, LotCfgV2
+from core_engines.sel_usfe_gate import evaluate_sel_usfe_gate
 from core_engines.kill_switch_persistent import PersistentKillSwitch
 from core_engines.position_manager import PositionManager
 
@@ -1363,12 +1361,24 @@ def pre_execution_safety_check(
     signal_source: Optional[str],
     entry_price: float,
     sl_price: float,
+    *,
+    sel_audit_veto: bool = False,
+    usfe_bias: str = "NEUTRAL",
 ) -> Tuple[bool, str, str]:
     """
   Mandatos CKO OMEGA-RCV-20260520-P0 antes de mt5_send_order.
   Retorna (ok, status_skip, mensagem).
     """
     import MetaTrader5 as mt5
+
+    _sel_ok, _sel_st, _sel_msg = evaluate_sel_usfe_gate(
+        sel_audit_veto=sel_audit_veto,
+        usfe_bias=usfe_bias,
+        live_flags=_live_flags,
+    )
+    if not _sel_ok:
+        log.warning("[%s %s] [SEL-USFE-GATE] %s — %s", asset, tf, _sel_st, _sel_msg)
+        return False, _sel_st, _sel_msg
 
     # Mandato 3 — blackout rollover 23:55–00:10 UTC
     _now = datetime.now(timezone.utc)
@@ -2607,6 +2617,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
     ks       = KillSwitch(equity)
     stats    = OnlineStats()
     _pos_ledger: dict = {}  # ticket -> {entry details + last_known_profit}
+    _stale_close_fail: dict = {}  # ticket -> consecutive STALE close failures (10013 purge)
     _realized_pnl: float = 0.0
     _realized_n:   int   = 0
     _trade_feedback_n: int = 0  # linhas append em trade_feedback.jsonl (fechos)
@@ -2791,10 +2802,10 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
         from core_engines.async_position_orchestrator import start_fastloop, FASTLOOP_ENABLED
         from core_engines.market_data_cache import MARKET_CACHE
         from core_engines.risk_budget import RiskBudgetManager, RISK_BUDGET_ENABLED
-        from core_engines.ai_calibration import AiCalibrationLog
-
         _risk_budget_mgr = RiskBudgetManager() if RISK_BUDGET_ENABLED else None
-        _ai_calibration_log = AiCalibrationLog()
+        if os.getenv("OMEGA_AI_CALIB_ENABLED", "0").strip() == "1":
+            from core_engines.ai_calibration import AiCalibrationLog
+            _ai_calibration_log = AiCalibrationLog()
 
         if FASTLOOP_ENABLED and mode == "paper" and mt5_connected:
             _fastloop_orchestrator = start_fastloop(
@@ -2988,9 +2999,22 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                 if _st_pos:
                                     _st_p = _st_pos[0]
                                     _st_dir_str = "SELL" if _st_p.type == 0 else "BUY"
-                                    _st_close = mt5_close_partial(_st_ticket, _st_p.symbol, _st_p.volume, _st_dir_str)
+                                    _st_close = mt5_close_partial(
+                                        _st_ticket, _st_p.symbol, _st_p.volume, _st_dir_str
+                                    )
                                     if _st_close.get("success"):
                                         log.info("[STALE_EXIT] CLOSE OK #%d", _st_ticket)
+                                        _stale_close_fail.pop(int(_st_ticket), None)
+                                    else:
+                                        _rc = int(_st_close.get("retcode") or 0)
+                                        _nf = _stale_close_fail.get(int(_st_ticket), 0) + 1
+                                        _stale_close_fail[int(_st_ticket)] = _nf
+                                        if _rc == 10013 and _nf >= 3:
+                                            _pos_ledger.pop(int(_st_ticket), None)
+                                            log.warning(
+                                                "[STALE_PURGE] #%d removido do ledger após %d× retcode=10013",
+                                                _st_ticket, _nf,
+                                            )
                             except Exception as _st_err:
                                 log.warning("[STALE_EXIT] erro #%d: %s", _st_ticket, _st_err)
         except Exception as _stale_outer:
@@ -4634,8 +4658,20 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                             _entry_px - eff_sl * _pt_gate if signal_dir == "BUY"
                             else _entry_px + eff_sl * _pt_gate
                         )
+                        _gate_sel_meta = _SEL_SNAPSHOT.get(asset, _flow_details)
+                        _gate_sel_veto = bool(
+                            _gate_sel_meta.get("sel_audit_veto", False)
+                            or _flow_details.get("sel_audit_veto", False)
+                        )
+                        _gate_usfe_bias = str(
+                            _gate_sel_meta.get("trade_bias")
+                            or _gate_sel_meta.get("usfe_bias")
+                            or _flow_details.get("usfe_bias", "NEUTRAL")
+                        )
                         _gate_ok, _gate_st, _gate_msg = pre_execution_safety_check(
                             asset, tf, signal_source, _entry_px, _sl_px_gate,
+                            sel_audit_veto=_gate_sel_veto,
+                            usfe_bias=_gate_usfe_bias,
                         )
                         if not _gate_ok:
                             log.warning("[%s %s] %s — %s", asset, tf, _gate_st, _gate_msg)

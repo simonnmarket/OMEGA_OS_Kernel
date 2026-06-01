@@ -221,15 +221,28 @@ class AsyncPositionOrchestrator:
                     exec_atr={"atr_pts": _atr_i.get("atr_pts", 0)},
                     equity=0.0,
                 )
-                log.info(
-                    "[PYRAMID_EVAL] %s #%d add=%s reason=%s profit_pts=%s trigger=%.1f",
-                    peak.symbol,
-                    ticket,
-                    _dec.get("add"),
-                    _dec.get("reason"),
-                    _dec.get("profit_pts"),
-                    _trigger,
-                )
+                _add = bool(_dec.get("add"))
+                _reason = str(_dec.get("reason", ""))
+                _state_key = (peak.symbol, int(ticket))
+                _prev = getattr(self, "_pyramid_log_last", {}).get(_state_key)
+                _n = getattr(self, "_pyramid_log_n", {}).get(_state_key, 0) + 1
+                if not hasattr(self, "_pyramid_log_last"):
+                    self._pyramid_log_last = {}
+                if not hasattr(self, "_pyramid_log_n"):
+                    self._pyramid_log_n = {}
+                self._pyramid_log_n[_state_key] = _n
+                _log_pyramid = _add or _reason != _prev or (_n % 30 == 0)
+                if _log_pyramid:
+                    self._pyramid_log_last[_state_key] = _reason
+                    log.info(
+                        "[PYRAMID_EVAL] %s #%d add=%s reason=%s profit_pts=%s trigger=%.1f",
+                        peak.symbol,
+                        ticket,
+                        _add,
+                        _reason,
+                        _dec.get("profit_pts"),
+                        _trigger,
+                    )
             except Exception as _pe:
                 log.warning("[PYRAMID_EVAL] %s #%d erro: %s", peak.symbol, ticket, _pe)
 

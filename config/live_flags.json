@@ -10,5 +10,7 @@
   "_freeze_ts": "2026-05-29T17:05:00Z",
   "_freeze_until": "2026-06-02T07:00:00Z",
   "OMEGA_USFE_ENABLED": "1",
-  "OMEGA_USFE_BLOCK": "0"
+  "OMEGA_USFE_BLOCK": "1",
+  "OMEGA_SEL_ENABLED": "1",
+  "OMEGA_ENFORCE_SEL_USFE_GATE": "1"
 }
