@@ -171,6 +171,13 @@ _PARTIAL_CLOSE_LEVELS_PSA = [
     {"atr": 7.0, "fraction": 0.15, "description": "TP4-7ATR",    "executed": False},  # P1-2: 6.0→7.0
     # 10% residual sobrevive até TP final
 ]
+# CEO 2026-06-03: partial cedo em metais — 0.3×ATR liberta runner para escalar
+_PARTIAL_CLOSE_LEVELS_METAL_CEO = [
+    {"atr": 0.3, "fraction": 0.25, "description": "TP1-0.3ATR",  "executed": False},
+    {"atr": 1.5, "fraction": 0.25, "description": "TP2-1.5ATR",  "executed": False},
+    {"atr": 2.5, "fraction": 0.25, "description": "TP3-2.5ATR",  "executed": False},
+    {"atr": 4.0, "fraction": 0.15, "description": "TP4-4ATR",    "executed": False},
+]
 
 # ── TRAILING STOP: geométrico por posição (PSA-WIND 30/04/2026) ──────────────
 try:
@@ -413,13 +420,14 @@ def compute_flow_confluence(
             _df_bars["is_buyer_maker"] = _df_bars["close"] >= _df_bars["open"]  # buyer bar = close >= open
         regime = _asset_regime(symbol)
         engines = _get_analysis_engines(regime)
-        # CKO 2026-06-01: USFE/SEL fora da roleta — gate paralelo (peso 0 aqui)
+        # CKO default usfe=0; CEO test harness: OMEGA_USFE_CONFLUENCE_WEIGHT (ex. 0.05)
+        _usfe_w = _usfe_confluence_weight()
         _new_weights = {
             "vof": 0.10, "footprint": 0.09,
             "sto_inst": 0.06, "sto_fused": 0.14, "pvsra": 0.05,
             "vwap": 0.11, "pullback": 0.08, "wyckoff": 0.05,
             "liq_abs": 0.09, "elliott": 0.15, "synapse": 0.08,
-            "usfe": 0.0,
+            "usfe": _usfe_w,
         }
         for key, eng in engines.items():
             if eng is None:
@@ -504,6 +512,57 @@ if _LIVE_FLAGS_PATH.exists():
 def _get_flag(key: str, default: str = "0") -> str:
     """Lê flag: env var tem precedência; live_flags.json é fallback persistente."""
     return os.getenv(key) or _live_flags.get(key, default)
+
+
+def _parse_csv_env(key: str) -> set:
+    raw = os.getenv(key, "").strip()
+    if not raw:
+        return set()
+    return {x.strip() for x in raw.split(",") if x.strip()}
+
+
+def _symbol_blocklist() -> set:
+    return _parse_csv_env("OMEGA_SYMBOL_BLOCKLIST")
+
+
+def _usfe_confluence_weight() -> float:
+    raw = os.getenv("OMEGA_USFE_CONFLUENCE_WEIGHT")
+    if raw is None or not str(raw).strip():
+        raw = _get_flag("OMEGA_USFE_CONFLUENCE_WEIGHT", "0")
+    try:
+        return max(0.0, min(1.0, float(raw)))
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def _log_test_harness_status() -> None:
+    if os.getenv("OMEGA_TEST_HARNESS", "0").strip() != "1":
+        return
+    expires = os.getenv("OMEGA_TEST_HARNESS_EXPIRES_UTC", "").strip()
+    if not expires:
+        log.warning("[TEST_HARNESS] ACTIVO | expires=N/A")
+        return
+    from datetime import datetime, timezone
+
+    try:
+        exp = datetime.fromisoformat(expires.replace("Z", "+00:00"))
+        if exp.tzinfo is None:
+            exp = exp.replace(tzinfo=timezone.utc)
+        now = datetime.now(timezone.utc)
+        if now >= exp:
+            log.warning(
+                "[TEST_HARNESS] EXPIROU UTC=%s — reiniciar runner sem harness para restaurar flags",
+                expires,
+            )
+        else:
+            log.info(
+                "[TEST_HARNESS] ACTIVO | expires=%s | usfe_w=%.3f | rupture=%s",
+                expires,
+                _usfe_confluence_weight(),
+                os.getenv("OMEGA_RUPTURE_CAPTURE", "0"),
+            )
+    except Exception as err:
+        log.warning("[TEST_HARNESS] ACTIVO | expires=%s | parse_err=%s", expires, err)
 
 USE_AGENT_IA = _get_flag("OMEGA_USE_AGENT_IA", "0").strip() == "1"  # Habilitar: OMEGA_USE_AGENT_IA=1
 if USE_AGENT_IA:
@@ -1162,6 +1221,141 @@ def min_lot_floor_for_regime(regime: str) -> float:
     if r == "crypto":
         return float(os.getenv("OMEGA_MIN_LOT_CRYPTO", "0") or 0)
     return 0.0
+
+
+def partial_close_levels_for(symbol: str) -> list:
+    """Níveis de partial close por classe — metais usam 0.3×ATR no 1º nível (CEO 2026-06-03)."""
+    import copy as _copy_mod
+    if str(symbol or "").upper() in _METAL_ASSETS:
+        return _copy_mod.deepcopy(_PARTIAL_CLOSE_LEVELS_METAL_CEO)
+    return _copy_mod.deepcopy(_PARTIAL_CLOSE_LEVELS_PSA)
+
+
+def pyramid_min_score_for(symbol: str, profit_pts: float, trigger_pts: float) -> float:
+    """Limiar pyramid: 0.35 em XAU/XAG quando profit >= trigger (CEO 2026-06-03)."""
+    default = float(os.getenv("OMEGA_PYRAMID_MIN_SCORE", "0.60"))
+    if str(symbol or "").upper() in _METAL_ASSETS and profit_pts >= trigger_pts:
+        return float(os.getenv("OMEGA_PYRAMID_MIN_SCORE_METAL", "0.35"))
+    return default
+
+
+def exec_min_lot_floor(asset: str, regime: str) -> float:
+    """Piso de lote — CEO 2026-06-03: 0.05 apenas XAU/XAG; restantes = LotCalc (sem piso global)."""
+    if str(asset or "").upper() in _METAL_ASSETS:
+        return float(os.getenv("OMEGA_MIN_LOT_METAL", "0.05") or 0)
+    return min_lot_floor_for_regime(regime)
+
+
+def get_omega_winner_on_symbol(symbol: str, direction: str | None = None) -> dict | None:
+    """Posição OMEGA lucrativa no símbolo (opcionalmente mesma direção)."""
+    try:
+        import MetaTrader5 as mt5
+        best = None
+        for p in mt5.positions_get(symbol=symbol) or []:
+            if not is_omega_tracked_position(p):
+                continue
+            profit = float(getattr(p, "profit", 0) or 0)
+            if profit <= 0:
+                continue
+            d = "BUY" if getattr(p, "type", 0) == 0 else "SELL"
+            if direction and d != direction:
+                continue
+            row = {
+                "ticket": int(p.ticket),
+                "profit": profit,
+                "direction": d,
+                "volume": float(getattr(p, "volume", 0) or 0),
+            }
+            if best is None or profit > best["profit"]:
+                best = row
+        return best
+    except Exception:
+        return None
+
+
+def _read_last_sel_impact_from_trace(symbol: str) -> float:
+    """Último sel_impact_tp_pts>0 em decision_trace para o símbolo."""
+    trace_f = AUDIT_PAPER / "decision_trace.jsonl"
+    if not trace_f.exists():
+        return 0.0
+    try:
+        with open(trace_f, encoding="utf-8") as tf:
+            lines = tf.readlines()
+        for line in reversed(lines[-5000:]):
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if row.get("asset") != symbol:
+                continue
+            fc = row.get("flow_confluence") or {}
+            v = float(fc.get("sel_impact_tp_pts", 0) or 0)
+            if v > 0:
+                return v
+    except OSError:
+        pass
+    return 0.0
+
+
+def resolve_sel_impact_tp_pts(symbol: str) -> float:
+    """Impacto SEL/USFE para TP — snapshot, trace ou 0."""
+    snap = _SEL_SNAPSHOT.get(symbol, {})
+    v = float(snap.get("sel_impact_tp_pts", 0) or 0)
+    if v > 0:
+        return v
+    return _read_last_sel_impact_from_trace(symbol)
+
+
+def resync_impact_tp_for_position(pos, pos_ledger: dict | None = None) -> dict:
+    """
+    P0 CEO: aplicar TP dinâmico (SEL impact) a posição já aberta no MT5.
+    Só altera se TP actual estiver claramente no modo ATR legado (>> impact).
+    """
+    if os.getenv("OMEGA_USE_SEL_IMPACT_TP", "1").strip().lower() not in ("1", "true", "yes", "on"):
+        return {"applied": False, "reason": "IMPACT_TP disabled"}
+    import MetaTrader5 as mt5
+    symbol = str(getattr(pos, "symbol", "") or "")
+    ticket = int(getattr(pos, "ticket", 0) or 0)
+    ledger = pos_ledger or {}
+    if not symbol or not ticket:
+        return {"applied": False, "reason": "invalid position"}
+    impact_pts = float(ledger.get(ticket, {}).get("sel_impact_tp_pts", 0) or 0)
+    if impact_pts <= 0:
+        impact_pts = resolve_sel_impact_tp_pts(symbol)
+    if impact_pts <= 0:
+        log.info("[IMPACT_TP] [RESYNC] %s #%d skip — sel_impact_tp_pts indisponível", symbol, ticket)
+        return {"applied": False, "reason": "no sel_impact_tp_pts"}
+    si = mt5.symbol_info(symbol)
+    if si is None:
+        return {"applied": False, "reason": "symbol_info None"}
+    pt = max(float(si.point), 1e-12)
+    entry = float(getattr(pos, "price_open", 0) or 0)
+    cur_tp = float(getattr(pos, "tp", 0) or 0)
+    direction = "BUY" if getattr(pos, "type", 0) == 0 else "SELL"
+    cur_tp_pts = abs(entry - cur_tp) / pt if cur_tp > 0 else 99999.0
+    if cur_tp_pts <= impact_pts * 2.0:
+        log.info(
+            "[IMPACT_TP] [RESYNC] %s #%d TP já alinhado (actual=%.0fpts impact=%.0fpts)",
+            symbol, ticket, cur_tp_pts, impact_pts,
+        )
+        return {"applied": False, "reason": "already_aligned", "cur_tp_pts": cur_tp_pts}
+    if direction == "SELL":
+        new_tp = entry - impact_pts * pt
+    else:
+        new_tp = entry + impact_pts * pt
+    cur_sl = float(getattr(pos, "sl", 0) or 0)
+    mod = mt5_modify_position_sl(ticket, symbol, cur_sl, new_tp)
+    if mod.get("success"):
+        log.info(
+            "[IMPACT_TP] [RESYNC] %s #%d TP %.0fpts→%.0fpts price=%.5f retcode=%s",
+            symbol, ticket, cur_tp_pts, impact_pts, new_tp, mod.get("retcode_str", mod.get("retcode")),
+        )
+        return {"applied": True, "old_tp_pts": cur_tp_pts, "impact_pts": impact_pts, "new_tp": new_tp}
+    log.warning(
+        "[IMPACT_TP] [RESYNC] %s #%d falhou: %s",
+        symbol, ticket, mod.get("error", mod.get("retcode_str")),
+    )
+    return {"applied": False, "reason": mod.get("error", "modify failed")}
 
 
 def decision_trace_enabled() -> bool:
@@ -2363,14 +2557,17 @@ def check_pyramid_add(symbol: str, direction: str, open_positions: list,
                 "layer": current_layers}
     # Verificar tendência forte antes de pyramidar
     ts = get_trend_strength(symbol, direction)
-    if not ts.get("pyramid_ok"):
-        return {"add": False, "reason": f"trend_score={ts['score']:.2f}<min", "layer": current_layers}
-    # Lote PROGRESSIVO: cada camada é PYRAMID_LOT_SCALE × a anterior (CEO 2026-05-14)
-    # Antes: 0.75^layer (regressivo — camadas menores = ineficiente)
-    # Agora: 1.5^layer (progressivo — confirmação direcional → maior exposição)
-    # Teto: lot_cap do activo para não ultrapassar limite de risco
-    base_lot = prof.get("lot_cap", 0.10)
-    layer_lot = round(base_lot * (PYRAMID_LOT_SCALE ** current_layers), 2)
+    # CEO 2026-06-04: metais com profit>=trigger — pyramid executa independente de trend_score
+    _metal_profit_proven = (
+        str(symbol or "").upper() in _METAL_ASSETS and profit_pts >= trigger
+    )
+    if not _metal_profit_proven and ts.get("score", 0) < _min_py_score:
+        return {"add": False, "reason": f"trend_score={ts['score']:.2f}<min={_min_py_score:.2f}",
+                "layer": current_layers}
+    # Lote PROGRESSIVO a partir do volume da posição âncora (não lot_cap cego)
+    anchor_vol = float(_attr(same_dir[0], "volume", 0.02) or 0.02)
+    base_lot = min(float(prof.get("lot_cap", 0.10) or 0.10), max(anchor_vol, 0.01))
+    layer_lot = round(base_lot * (PYRAMID_LOT_SCALE ** max(current_layers - 1, 0)), 2)
     sym_info  = None
     try:
         import MetaTrader5 as mt5
@@ -2381,6 +2578,10 @@ def check_pyramid_add(symbol: str, direction: str, open_positions: list,
     max_lot = sym_info.volume_max if sym_info else base_lot * 3
     # Clampar entre min_lot e lot_cap (não exceder teto de risco do activo)
     layer_lot = max(min_lot, min(layer_lot, base_lot, max_lot))
+    _py_floor = exec_min_lot_floor(symbol, str(prof.get("regime", "") or ""))
+    if _py_floor > 0:
+        layer_lot = max(layer_lot, _py_floor)
+        layer_lot = min(layer_lot, max_lot)
     return {
         "add":           True,
         "lot":           layer_lot,
@@ -2388,8 +2589,79 @@ def check_pyramid_add(symbol: str, direction: str, open_positions: list,
         "trend_score":   ts["score"],
         "trigger_pts":   trigger,
         "profit_pts":    profit_pts,
+        "sl_pts":        float(prof.get("cost_pts", 250) or 250),
+        "tp_pts":        float(atr_pts) * 2.0 if atr_pts else 750.0,
         "reason":        f"pyramid_layer{current_layers+1}_LOT{layer_lot:.2f} score={ts['score']:.2f}",
     }
+
+
+def dispatch_pyramid_broker(
+    parent_ticket: int,
+    symbol: str,
+    direction: str,
+    layer: int,
+    lot: float,
+    sl_pts: float,
+    tp_pts: float,
+    signal_tf: str,
+    reason: str,
+    pyramid_layers_sent: set,
+    source: str = "MT5_THREAD",
+) -> dict:
+    """CEO 2026-06-04 — execução pyramid na thread MT5 com logs de batimento cardíaco."""
+    sent_key = (symbol, int(layer))
+    if sent_key in pyramid_layers_sent:
+        return {"success": False, "skipped": True, "reason": "layer_already_sent"}
+    log.info(
+        "[PYRAMID_DISPATCH] Attempting to pass Order to MT5 Thread... "
+        "parent=#%d symbol=%s layer=%d lot=%.2f source=%s",
+        parent_ticket,
+        symbol,
+        layer,
+        lot,
+        source,
+    )
+    log.info(
+        "[MT5_ORDERSEND] pyramid parent=#%d %s %s lot=%.2f sl_pts=%.0f tp_pts=%.0f | %s",
+        parent_ticket,
+        symbol,
+        direction,
+        lot,
+        sl_pts,
+        tp_pts,
+        reason,
+    )
+    _py_exec = mt5_send_order(
+        symbol,
+        signal_tf,
+        lot,
+        sl_pts=sl_pts,
+        tp_pts=tp_pts,
+        direction=direction,
+    )
+    if _py_exec.get("success"):
+        pyramid_layers_sent.add(sent_key)
+        log.info(
+            "[PYRAMID] %s EXEC OK parent=#%d layer=%d lot=%.2f order=%s deal=%s retcode=%s",
+            symbol,
+            parent_ticket,
+            layer,
+            lot,
+            _py_exec.get("order"),
+            _py_exec.get("deal"),
+            _py_exec.get("retcode_str"),
+        )
+    else:
+        log.warning(
+            "[PYRAMID] %s EXEC FAIL parent=#%d layer=%d lot=%.2f retcode=%s err=%s",
+            symbol,
+            parent_ticket,
+            layer,
+            lot,
+            _py_exec.get("retcode_str"),
+            _py_exec.get("error"),
+        )
+    return _py_exec
 
 
 # ─── Build AnalysisReport ────────────────────────────────────────────────────────────
@@ -2564,6 +2836,8 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
              RISK_PER_TRADE_PCT * 100, MAX_POSITIONS, DD_DAILY_MAX * 100, human_tag_line())
     log.info("=" * 72)
 
+    _log_test_harness_status()
+
     mt5_connected = False
     if mode == "paper":
         mt5_connected = mt5_init()
@@ -2634,6 +2908,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
     _SL_COOL = int(os.getenv("OMEGA_SL_COOLDOWN_CYCLES", "5"))   # ciclos de espera (~45s cada)
     _flow_state: dict = {}        # symbol → flow confluence score (0-100)
     _partial_close_engines: dict = {}  # ticket → ProgressivePartialCloseComplete (1 engine por posição)
+    _pyramid_layers_sent: set = set()  # (symbol, layer) — evita re-envio broker
     _trailing_stop_engines: dict = {}  # ticket → HardVolatilityTrailingStopGeometric (1 engine por posição)
     # P0-ABC 20260522 T-D4b: PositionManager wiring
     _position_manager = PositionManager(feedback_path=str(AUDIT_PAPER / "trade_feedback.jsonl"))
@@ -2722,6 +2997,11 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                     "status": "open",
                     "partial_taken": False,  # T-F1a: boot resync
                 }
+            _led = _pos_ledger.get(_rp_ticket, {})
+            if not float(_led.get("sel_impact_tp_pts", 0) or 0):
+                _imp_boot = _read_last_sel_impact_from_trace(_rp.symbol)
+                if _imp_boot > 0:
+                    _pos_ledger[_rp_ticket]["sel_impact_tp_pts"] = _imp_boot
             # Trailing stop engine
             if _rp_ticket not in _trailing_stop_engines and _TRAILING_STOP_AVAILABLE:
                 try:
@@ -2741,7 +3021,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
             if _rp_ticket not in _partial_close_engines and _PARTIAL_CLOSE_AVAILABLE:
                 try:
                     _pc_eng_boot = _ProgressivePartialCloseCompleteCls()
-                    _pc_eng_boot.levels = _copy_mod_boot.deepcopy(_PARTIAL_CLOSE_LEVELS_PSA)
+                    _pc_eng_boot.levels = partial_close_levels_for(_rp.symbol)
                     _rp_dir_int = 1 if _rp.type == 0 else -1
                     _pc_eng_boot.initialize_position(
                         entry_price=_rp.price_open,
@@ -2755,6 +3035,11 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                              "BUY" if _rp.type == 0 else "SELL")
                 except Exception as _pc_boot_err:
                     log.warning("[PARTIAL_CLOSE] [RESYNC] Erro #%d: %s", _rp_ticket, _pc_boot_err)
+            # P0 CEO: TP dinâmico retroativo para posições legadas (ex. #193126680)
+            try:
+                resync_impact_tp_for_position(_rp, _pos_ledger)
+            except Exception as _tp_resync_err:
+                log.warning("[IMPACT_TP] [RESYNC] Erro #%d: %s", _rp_ticket, _tp_resync_err)
         if open_pos > 0:
             log.info("[FIX1] Engines re-sincronizados | trailing=%d partial=%d | %d posicoes",
                      _resynced_ts, _resynced_pc, open_pos)
@@ -2935,6 +3220,28 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                     if _fl_pclose.get("success"):
                                         log.info("[FASTLOOP] PARTIAL_CLOSE OK #%d %.2f lots",
                                                  _fl_sig.ticket, _fl_lot_partial)
+                            elif _fl_sig.action == "PYRAMID_ADD":
+                                _py_tf = _fl_sig.signal_tf or _pos_ledger.get(
+                                    _fl_sig.ticket, {}
+                                ).get("signal_tf", "H1")
+                                dispatch_pyramid_broker(
+                                    parent_ticket=int(_fl_sig.ticket),
+                                    symbol=_fl_sig.symbol,
+                                    direction=_fl_dir_str,
+                                    layer=int(_fl_sig.pyramid_layer or 1),
+                                    lot=float(_fl_sig.pyramid_lot or 0.05),
+                                    sl_pts=float(_fl_sig.pyramid_sl_pts or 250),
+                                    tp_pts=float(_fl_sig.pyramid_tp_pts or 500),
+                                    signal_tf=str(_py_tf),
+                                    reason=str(_fl_sig.reason or "FASTLOOP"),
+                                    pyramid_layers_sent=_pyramid_layers_sent,
+                                    source="FASTLOOP_DRAIN",
+                                )
+                        elif _fl_sig.action == "PYRAMID_ADD":
+                            log.warning(
+                                "[PYRAMID_DISPATCH] parent=#%d not found on MT5 — signal dropped",
+                                _fl_sig.ticket,
+                            )
                     except Exception as _fl_exec_err:
                         log.warning("[FASTLOOP] Erro ao executar signal #%d: %s",
                                     _fl_sig.ticket, _fl_exec_err)
@@ -3020,7 +3327,11 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
         except Exception as _stale_outer:
             log.debug("[STALE_EXIT] verificacao falhou: %s", _stale_outer)
 
+        _blocked_symbols = _symbol_blocklist()
         for asset in ativos_scheduled:
+            if asset in _blocked_symbols:
+                log.info("[%s] SKIP_SYMBOL_BLOCKLIST (OMEGA_SYMBOL_BLOCKLIST)", asset)
+                continue
             for tf in timeframes:
                 # ── BUG-2: SL Cooldown Gate ──────────────────────────────────
                 _cd = _sl_consec.get((asset, tf), {})
@@ -3388,6 +3699,22 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                         # Bloquear fallback momentum quando ATR/spread/ADX
                         # indicarem que não há edge matemático suficiente.
                         edge_ok, edge_m = has_edge_for_momentum(asset)
+                        if (
+                            not edge_ok
+                            and os.getenv("OMEGA_EDGE_BYPASS_WINNER", "1").strip().lower()
+                            in ("1", "true", "yes", "on")
+                        ):
+                            _edge_winner = get_omega_winner_on_symbol(asset)
+                            if _edge_winner:
+                                log.info(
+                                    "[%s %s] [EDGE_GATE] BYPASS — posição vencedora #%d profit=%.2f dir=%s",
+                                    asset,
+                                    tf,
+                                    _edge_winner["ticket"],
+                                    _edge_winner["profit"],
+                                    _edge_winner["direction"],
+                                )
+                                edge_ok = True
                         if not edge_ok:
                             log.info("[%s %s] [EDGE_GATE] BLOCKED reason=%s atr_pct=%s atr/spr=%s adx=%s",
                                      asset, tf, edge_m.get("reason", "?"),
@@ -3926,14 +4253,21 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                         "direction": signal_dir})
                         continue
 
-                    # === PSA-WIND Q1: DEDUP — apenas 1 ordem por ativo por ciclo ===
-                    # H1 e H4 geram sinais idênticos (mesmo M5 EMA) → duplicata
-                    if asset in _cycle_opened_assets:
+                    # === PSA-WIND Q1: DEDUP — 1 ordem por ativo por ciclo (bypass scale-entry) ===
+                    _scale_entry_ok = False
+                    if os.getenv("OMEGA_ALLOW_SCALE_ENTRIES", "1").strip().lower() in (
+                        "1", "true", "yes", "on",
+                    ):
+                        _scale_entry_ok = get_omega_winner_on_symbol(asset, signal_dir) is not None
+                    if asset in _cycle_opened_assets and not _scale_entry_ok:
                         log.info("[%s %s] [DEDUP] SKIP — já abriu ordem para %s neste ciclo",
                                  asset, tf, asset)
                         results.append({"asset": asset, "timeframe": tf,
                                         "status": "SKIP_DEDUP_CYCLE"})
                         continue  # FIX: sem este continue, caía no Q2 e abria posição duplicada
+                    if asset in _cycle_opened_assets and _scale_entry_ok:
+                        log.info("[%s %s] [DEDUP] BYPASS scale-entry — posição vencedora dir=%s",
+                                 asset, tf, signal_dir)
                     # === CEO MANDATE 2026-05-26: RiskBudgetManager (Ponto 3/4) ============
                     # Substituiu MAX_POS_PER_ASSET fixo por cálculo dinâmico ATR×equity×risco.
                     # Se OMEGA_USE_RISK_BUDGET=1 → slots dinâmicos.
@@ -4023,6 +4357,12 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                     _sel_leak = float(_sel_meta.get("sel_leakage_norm", 1.0) or 1.0)
                     _sel_veto = bool(_sel_meta.get("sel_audit_veto", False))
                     _rupture_capture = os.getenv("OMEGA_RUPTURE_CAPTURE", "0").strip() == "1"
+                    _rupture_syms = _parse_csv_env("OMEGA_RUPTURE_CAPTURE_SYMBOLS")
+                    _rupture_tfs = _parse_csv_env("OMEGA_RUPTURE_CAPTURE_TFS")
+                    if _rupture_capture and _rupture_syms and asset not in _rupture_syms:
+                        _rupture_capture = False
+                    if _rupture_capture and _rupture_tfs and tf not in _rupture_tfs:
+                        _rupture_capture = False
                     _ia_sig = ia_signal or {}  # P1c-FIX: ia_signal pode ser None aqui
                     _ia_dir = (_ia_sig.get("direction") or _ia_sig.get("action") or "").upper()
                     _sel_aligned = (
@@ -4204,7 +4544,37 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                         else:
                             eff_sl = float(_pre_sl)
                         _tp_rr_floor = eff_sl * (_tp_mult_pre / max(_sl_mult_pre, 0.01))
-                        if ia_tp_pts is not None:
+                        _use_sel_impact_tp = False
+                        _sel_impact_tp = float((_flow_details or {}).get("sel_impact_tp_pts", 0) or 0)
+                        if (
+                            _sel_impact_tp > 0
+                            and os.getenv("OMEGA_USE_SEL_IMPACT_TP", "1").strip().lower()
+                            in ("1", "true", "yes", "on")
+                        ):
+                            _floor_applied = _sel_impact_tp < float(_min_pts_pre)
+                            eff_tp = max(_sel_impact_tp, float(_min_pts_pre))
+                            _use_sel_impact_tp = True
+                            if _floor_applied:
+                                log.info(
+                                    "[%s %s] [IMPACT_TP] SEL impact=%.1fpts -> FLOOR APPLIED -> "
+                                    "eff_tp=%.0f (min_pts=%.0f ATR_tp=%.0f)",
+                                    asset,
+                                    tf,
+                                    _sel_impact_tp,
+                                    eff_tp,
+                                    float(_min_pts_pre),
+                                    _pre_tp,
+                                )
+                            else:
+                                log.info(
+                                    "[%s %s] [IMPACT_TP] SEL impact=%.0fpts → eff_tp=%.0f (ATR_tp=%.0f)",
+                                    asset,
+                                    tf,
+                                    _sel_impact_tp,
+                                    eff_tp,
+                                    _pre_tp,
+                                )
+                        elif ia_tp_pts is not None:
                             eff_tp = max(float(ia_tp_pts), _tp_rr_floor)
                         else:
                             eff_tp = max(_pre_tp, _tp_rr_floor)
@@ -4213,8 +4583,11 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                         _reg_lot = str(_prof.get("regime", "") or "")
                         _smax = float(lot_info.get("sym_vol_max", 999.0) or 999.0)
                         _smin = float(lot_info.get("sym_vol_min", 0.01) or 0.01)
+                        _floor = exec_min_lot_floor(asset, _reg_lot)
+                        _global_lot_max = float(os.getenv("OMEGA_LOT_MAX", "0") or 0)
                         _lcap = float(_prof.get("lot_cap", 0.1))
-                        _floor = min_lot_floor_for_regime(_reg_lot)
+                        if _global_lot_max > 0:
+                            _lcap = min(_lcap, _global_lot_max)
                         if _floor > 0:
                             eff_lot = max(float(eff_lot or 0), _floor)
                         eff_lot = min(float(eff_lot or 0), _lcap, _smax)
@@ -4382,7 +4755,18 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                             eff_sl = max(eff_sl, _sl_pts_min_prof)
                         # T-R1b: _signal_atr_pts usa ATR do signal_tf (não M1/M3)
                         _signal_atr_pts = _exec_atr.get("atr_pts", 0.0)
-                        eff_sl, eff_tp = sanitize_sl_tp(eff_sl, eff_tp, _signal_atr_pts, asset)
+                        if _use_sel_impact_tp:
+                            if _sl_pts_min_prof > 0:
+                                eff_sl = max(eff_sl, _sl_pts_min_prof)
+                            if _signal_atr_pts > 0:
+                                eff_sl = max(eff_sl, _signal_atr_pts * MIN_SL_ATR_MULT)
+                            log.info(
+                                "[%s %s] [IMPACT_TP] TP=%.0fpts preservado (sem cap R:R ATR)",
+                                asset, tf, eff_tp,
+                            )
+                        else:
+                            eff_sl, eff_tp = sanitize_sl_tp(eff_sl, eff_tp, _signal_atr_pts, asset)
+                        _impact_tp_locked = eff_tp if _use_sel_impact_tp else None
                         eff_sl, eff_tp = apply_regime_sl_cap(
                             eff_sl,
                             eff_tp,
@@ -4392,6 +4776,8 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                             asset=asset,
                             tf=tf,
                         )
+                        if _impact_tp_locked is not None:
+                            eff_tp = _impact_tp_locked
 
                         # ── ZONE NAVIGATOR GATE (CEO 2026-05-14) ──────────────────────
                         # Camada 1: regime filter — bloqueia BUFFER e lateralidade
@@ -4742,6 +5128,9 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                             "sl": exec_result.get("sl_price", 0),
                                             "tp": exec_result.get("tp_price", 0),
                                             "sl_pts": eff_sl, "tp_pts": eff_tp,
+                                            "sel_impact_tp_pts": float(
+                                                (_flow_details or {}).get("sel_impact_tp_pts", 0) or 0
+                                            ),
                                             "entry_atr_pts": _exec_atr.get("atr_pts", 0),
                                             "entry_atr_tf": _exec_atr.get("tf", tf),
                                             "signal_tf": tf,  # T-R1b: TF do sinal para ATR trailing
@@ -4891,9 +5280,9 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                                 _entry_price = exec_result.get("fill_price", _np.price_open)
                                                 _pc_engine = _ProgressivePartialCloseCompleteCls()
                                                 _dir_int = 1 if signal_dir == "BUY" else -1
-                                                # PSA-WIND FIX 4: sobrescrever níveis agressivos por conservadores
                                                 import copy as _copy_mod
-                                                _pc_engine.levels = _copy_mod.deepcopy(_PARTIAL_CLOSE_LEVELS_PSA)
+                                                _pc_levels = partial_close_levels_for(asset)
+                                                _pc_engine.levels = _pc_levels
                                                 _pc_engine.initialize_position(
                                                     entry_price=_entry_price,
                                                     lots=eff_lot,
@@ -4901,8 +5290,13 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                                                 )
                                                 _partial_close_engines[_np.ticket] = _pc_engine
                                                 _pos_ledger[_np.ticket]["partial_close"] = True
-                                                log.info("[PARTIAL_CLOSE] %s #%d inicializado PSA-WIND | entry=%.5f lot=%.2f dir=%s levels=[0.7/1.5/2.5/4.0]ATR",
-                                                         asset, _np.ticket, _entry_price, eff_lot, signal_dir)
+                                                _lvl_desc = "/".join(
+                                                    f"{lv.get('atr', '?')}ATR" for lv in _pc_levels[:4]
+                                                )
+                                                log.info(
+                                                    "[PARTIAL_CLOSE] %s #%d inicializado CEO-CAPTURE | entry=%.5f lot=%.2f dir=%s levels=[%s]",
+                                                    asset, _np.ticket, _entry_price, eff_lot, signal_dir, _lvl_desc,
+                                                )
                                         except Exception as _pc_err:
                                             log.warning("[PARTIAL_CLOSE] Erro ao inicializar: %s", _pc_err)
                                         # === PSA-WIND FIX 3: TRAILING STOP geométrico POR POSIÇÃO ===
@@ -5001,137 +5395,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                 _rack_fin = mt5.positions_get() or []
                 _all_open = filter_omega_tracked_positions(list(_rack_fin))
                 for _p in _all_open:
-                    if _p.ticket in _pos_ledger:
-                        _pos_ledger[_p.ticket]["last_profit"] = _p.profit
-                        _fin_signal_tf = _pos_ledger[_p.ticket].get("signal_tf", "H1")  # T-R1b
-                        _atr_info = get_execution_tf_atr(_p.symbol, _fin_signal_tf, 0.70)
-                        _current_price = _p.price_current if hasattr(_p, 'price_current') else (_p.bid if _p.type == 1 else _p.ask)
-                        _atr_pts_val = _atr_info.get("atr_pts", 0)
-                        # Converter ATR de pontos para unidades de preço (trailing stop opera em preço)
-                        try:
-                            _sym_point = mt5.symbol_info(_p.symbol).point if mt5.symbol_info(_p.symbol) else 0.0001
-                        except Exception:
-                            _sym_point = 0.0001
-                        _atr_price = _atr_pts_val * _sym_point
-                        # === PSA-WIND: TRAILING STOP — atualizar SL broker + fechar no EXIT_TRIGGER ===
-                        try:
-                            _ts_eng = _trailing_stop_engines.get(_p.ticket)
-                            if _ts_eng is not None and _atr_price > 0:
-                                _dir_int_ts = 1 if _p.type == 0 else -1
-                                _new_sl_val, _exit_trigger = _ts_eng.update(_current_price, _atr_price, _dir_int_ts)
-                                if _new_sl_val is not None:
-                                    _old_sl = _pos_ledger[_p.ticket].get("trailing_sl")
-                                    _sl_moved = (_old_sl is None or
-                                                 abs(_new_sl_val - _old_sl) > _atr_pts_val * 0.01)
-                                    if _sl_moved:
-                                        _pos_ledger[_p.ticket]["trailing_sl"] = _new_sl_val
-                                        log.info("[TRAILING] %s #%d | price=%.5f peak=%.5f trail_SL=%.5f exit=%s",
-                                                 _p.symbol, _p.ticket, _current_price,
-                                                 _ts_eng._peak_price, _new_sl_val, _exit_trigger)
-                                        # WIRING BUG-4: Mover SL no broker via TRADE_ACTION_SLTP
-                                        _cur_tp_ts = float(_p.tp) if _p.tp else 0.0
-                                        _sl_mod = mt5_modify_position_sl(
-                                            _p.ticket, _p.symbol, _new_sl_val, _cur_tp_ts)
-                                        if not _sl_mod.get("success"):
-                                            log.warning("[TRAILING] %s #%d SL broker modify falhou: %s",
-                                                        _p.symbol, _p.ticket, _sl_mod.get("error"))
-                                if _exit_trigger:
-                                    log.warning("[TRAILING] %s #%d EXIT TRIGGER — trailing stop atingido price=%.5f SL=%.5f",
-                                                _p.symbol, _p.ticket, _current_price, _new_sl_val)
-                                    # WIRING BUG-4: Fechar posição completa quando trailing dispara
-                                    _dir_str_ts = "BUY" if _p.type == 0 else "SELL"
-                                    _ts_close = mt5_close_partial(
-                                        _p.ticket, _p.symbol, _p.volume, _dir_str_ts)
-                                    if _ts_close.get("success"):
-                                        log.info("[TRAILING] %s #%d ✅ FECHADA trailing @ %.5f (%.1fms)",
-                                                 _p.symbol, _p.ticket,
-                                                 _ts_close.get("fill_price", 0), _ts_close.get("latency_ms", 0))
-                                        # P0-ABC 20260522 T-D4b: Registrar fecho no PositionManager
-                                        try:
-                                            _pnl_est = float(_p.profit) if hasattr(_p, 'profit') else 0.0
-                                            _position_manager.register_close(
-                                                position_ticket=int(_p.ticket),
-                                                deal_ticket=int(_ts_close.get("retcode", 0)),  # usar order como deal proxy
-                                                lot=float(_ts_close.get("volume", _p.volume)),
-                                                price=float(_ts_close.get("fill_price", 0)),
-                                                pnl=_pnl_est,
-                                                reason="TRAILING_STOP",
-                                            )
-                                            log.debug("[PositionManager] CLOSE registrado: %s #%d", _p.symbol, _p.ticket)
-                                        except Exception as _pm_err:
-                                            log.warning("[PositionManager] falha registrar CLOSE: %s", _pm_err)
-                                    else:
-                                        log.error("[TRAILING] %s #%d ❌ close falhou: %s — SL broker já actualizado",
-                                                  _p.symbol, _p.ticket, _ts_close.get("error"))
-                        except Exception as _ts_check_err:
-                            log.debug("[TRAILING] Erro ao verificar: %s", _ts_check_err)
-                        # === PARTIAL_CLOSE: fechar parcialmente + breakeven via MT5 (BUG-4 FIX) ===
-                        try:
-                            _pc_eng = _partial_close_engines.get(_p.ticket)
-                            if _pc_eng is not None and _atr_price > 0:
-                                _dir_str_pc = "BUY" if _p.type == 0 else "SELL"
-                                _partial_orders = _pc_eng.check_partials(
-                                    current_price=_current_price,
-                                    atr_value=_atr_price
-                                )
-                                for _order in _partial_orders:
-                                    if _order["action"] == "CLOSE_PARTIAL":
-                                        log.info("[PARTIAL_CLOSE] %s #%d: %.2f lotes | %s | move_atr=%.2f",
-                                                 _p.symbol, _p.ticket, _order["lots"],
-                                                 _order["reason"], _order.get("move_atr", 0))
-                                        # WIRING BUG-4: Executar fecho parcial real via MT5
-                                        _pc_res = mt5_close_partial(
-                                            _p.ticket, _p.symbol, _order["lots"], _dir_str_pc)
-                                        if _pc_res.get("success"):
-                                            # T-F1a: marcar partial_taken no ledger (primeira saída parcial)
-                                            if _p.ticket in _pos_ledger:
-                                                _pos_ledger[_p.ticket]["partial_taken"] = True
-                                            # P0-ABC 20260522 T-D4b: Registrar fecho parcial no PositionManager
-                                            try:
-                                                _pnl_est = float(_p.profit) if hasattr(_p, 'profit') else 0.0
-                                                _position_manager.register_partial(
-                                                    position_ticket=int(_p.ticket),
-                                                    deal_ticket=int(_pc_res.get("retcode", 0)),  # usar order como deal proxy
-                                                    lot=float(_pc_res.get("volume", _order["lots"])),
-                                                    price=float(_pc_res.get("fill_price", 0)),
-                                                    pnl=_pnl_est,
-                                                    reason=_order.get("reason", "PARTIAL"),
-                                                )
-                                                log.debug("[PositionManager] PARTIAL registrado: %s #%d", _p.symbol, _p.ticket)
-                                            except Exception as _pm_err:
-                                                log.warning("[PositionManager] falha registrar PARTIAL: %s", _pm_err)
-                                        else:
-                                            log.error("[PARTIAL_CLOSE] %s #%d ❌ fecho parcial falhou: %s",
-                                                      _p.symbol, _p.ticket, _pc_res.get("error"))
-                                    elif _order["action"] == "MOVE_SL_TO_ENTRY":
-                                        log.info("[PARTIAL_CLOSE] %s #%d: SL moved to breakeven | %s",
-                                                 _p.symbol, _p.ticket, _order["reason"])
-                                        # P0-ABC 20260522: Breakeven com buffer 1.5x spread
-                                        _entry_be = float(
-                                            _pos_ledger[_p.ticket].get("entry_price", _p.price_open))
-                                        _sym_info = mt5.symbol_info(_p.symbol)
-                                        _spread_pts = getattr(_sym_info, "spread", 0) if _sym_info else 0
-                                        _point = getattr(_sym_info, "point", 0.0001) if _sym_info else 0.0001
-                                        _buffer_pts = max(_spread_pts * 1.5, 2.0)  # min 2 pts
-                                        _buffer_price = _buffer_pts * _point
-                                        
-                                        if _p.type == 0:  # BUY
-                                            _sl_new = _entry_be - _buffer_price
-                                        else:  # SELL
-                                            _sl_new = _entry_be + _buffer_price
-                                        
-                                        _cur_tp_be = float(_p.tp) if _p.tp else 0.0
-                                        _be_res = mt5_modify_position_sl(
-                                            _p.ticket, _p.symbol, _sl_new, _cur_tp_be)
-                                        if not _be_res.get("success"):
-                                            log.error("[PARTIAL_CLOSE] %s #%d ❌ breakeven SL falhou: %s",
-                                                      _p.symbol, _p.ticket, _be_res.get("error"))
-                                        else:
-                                            log.info("[BREAKEVEN] %s #%d SL entry=%.5f -> %.5f (buffer=%.2fpts)",
-                                                     _p.symbol, _p.ticket, _entry_be, _sl_new, _buffer_pts)
-                        except Exception as _pc_check_err:
-                            log.warning("[PARTIAL_CLOSE] Erro ao verificar: %s", _pc_check_err)
-                    else:
+                    if _p.ticket not in _pos_ledger:
                         _pos_ledger[_p.ticket] = {
                             "symbol": _p.symbol, "direction": "BUY" if _p.type == 0 else "SELL",
                             "lot": _p.volume, "entry_price": _p.price_open,
@@ -5140,8 +5404,180 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                             "entry_time": datetime.fromtimestamp(_p.time, tz=timezone.utc).isoformat(),
                             "last_profit": _p.profit, "status": "open",
                             "swap_cost_est_usd": 0.0,
-                            "partial_taken": False,  # T-F1a: fallback ledger entry
+                            "partial_taken": False,
+                            "signal_tf": "H1",
                         }
+                    if not float(_pos_ledger[_p.ticket].get("sel_impact_tp_pts", 0) or 0):
+                        _imp_cycle = _read_last_sel_impact_from_trace(_p.symbol)
+                        if _imp_cycle > 0:
+                            _pos_ledger[_p.ticket]["sel_impact_tp_pts"] = _imp_cycle
+                    _pos_ledger[_p.ticket]["last_profit"] = _p.profit
+                    _fin_signal_tf = _pos_ledger[_p.ticket].get("signal_tf", "H1")  # T-R1b
+                    _atr_info = get_execution_tf_atr(_p.symbol, _fin_signal_tf, 0.70)
+                    _current_price = _p.price_current if hasattr(_p, 'price_current') else (_p.bid if _p.type == 1 else _p.ask)
+                    _atr_pts_val = _atr_info.get("atr_pts", 0)
+                    try:
+                        resync_impact_tp_for_position(_p, _pos_ledger)
+                    except Exception as _tp_cycle_err:
+                        log.warning("[IMPACT_TP] ciclo #%d: %s", _p.ticket, _tp_cycle_err)
+                    # Converter ATR de pontos para unidades de preço (trailing stop opera em preço)
+                    try:
+                        _sym_point = mt5.symbol_info(_p.symbol).point if mt5.symbol_info(_p.symbol) else 0.0001
+                    except Exception:
+                        _sym_point = 0.0001
+                    _atr_price = _atr_pts_val * _sym_point
+                    # === PSA-WIND: TRAILING STOP — atualizar SL broker + fechar no EXIT_TRIGGER ===
+                    try:
+                        _ts_eng = _trailing_stop_engines.get(_p.ticket)
+                        if _ts_eng is not None and _atr_price > 0:
+                            _dir_int_ts = 1 if _p.type == 0 else -1
+                            _new_sl_val, _exit_trigger = _ts_eng.update(_current_price, _atr_price, _dir_int_ts)
+                            if _new_sl_val is not None:
+                                _old_sl = _pos_ledger[_p.ticket].get("trailing_sl")
+                                _sl_moved = (_old_sl is None or
+                                             abs(_new_sl_val - _old_sl) > _atr_pts_val * 0.01)
+                                if _sl_moved:
+                                    _pos_ledger[_p.ticket]["trailing_sl"] = _new_sl_val
+                                    log.info("[TRAILING] %s #%d | price=%.5f peak=%.5f trail_SL=%.5f exit=%s",
+                                             _p.symbol, _p.ticket, _current_price,
+                                             _ts_eng._peak_price, _new_sl_val, _exit_trigger)
+                                    _cur_tp_ts = float(_p.tp) if _p.tp else 0.0
+                                    _sl_mod = mt5_modify_position_sl(
+                                        _p.ticket, _p.symbol, _new_sl_val, _cur_tp_ts)
+                                    if not _sl_mod.get("success"):
+                                        log.warning("[TRAILING] %s #%d SL broker modify falhou: %s",
+                                                    _p.symbol, _p.ticket, _sl_mod.get("error"))
+                            if _exit_trigger:
+                                log.warning("[TRAILING] %s #%d EXIT TRIGGER — trailing stop atingido price=%.5f SL=%.5f",
+                                            _p.symbol, _p.ticket, _current_price, _new_sl_val)
+                                _dir_str_ts = "BUY" if _p.type == 0 else "SELL"
+                                _ts_close = mt5_close_partial(
+                                    _p.ticket, _p.symbol, _p.volume, _dir_str_ts)
+                                if _ts_close.get("success"):
+                                    log.info("[TRAILING] %s #%d ✅ FECHADA trailing @ %.5f (%.1fms)",
+                                             _p.symbol, _p.ticket,
+                                             _ts_close.get("fill_price", 0), _ts_close.get("latency_ms", 0))
+                                    try:
+                                        _pnl_est = float(_p.profit) if hasattr(_p, 'profit') else 0.0
+                                        _position_manager.register_close(
+                                            position_ticket=int(_p.ticket),
+                                            deal_ticket=int(_ts_close.get("retcode", 0)),
+                                            lot=float(_ts_close.get("volume", _p.volume)),
+                                            price=float(_ts_close.get("fill_price", 0)),
+                                            pnl=_pnl_est,
+                                            reason="TRAILING_STOP",
+                                        )
+                                    except Exception as _pm_err:
+                                        log.warning("[PositionManager] falha registrar CLOSE: %s", _pm_err)
+                                else:
+                                    log.error("[TRAILING] %s #%d ❌ close falhou: %s — SL broker já actualizado",
+                                              _p.symbol, _p.ticket, _ts_close.get("error"))
+                    except Exception as _ts_check_err:
+                        log.debug("[TRAILING] Erro ao verificar: %s", _ts_check_err)
+                    # === PARTIAL_CLOSE: fechar parcialmente + breakeven via MT5 (BUG-4 FIX) ===
+                    try:
+                        _pc_eng = _partial_close_engines.get(_p.ticket)
+                        if _pc_eng is not None and _atr_price > 0:
+                            _dir_str_pc = "BUY" if _p.type == 0 else "SELL"
+                            _partial_orders = _pc_eng.check_partials(
+                                current_price=_current_price,
+                                atr_value=_atr_price
+                            )
+                            for _order in _partial_orders:
+                                if _order["action"] == "CLOSE_PARTIAL":
+                                    log.info("[PARTIAL_CLOSE] %s #%d: %.2f lotes | %s | move_atr=%.2f",
+                                             _p.symbol, _p.ticket, _order["lots"],
+                                             _order["reason"], _order.get("move_atr", 0))
+                                    # WIRING BUG-4: Executar fecho parcial real via MT5
+                                    _pc_res = mt5_close_partial(
+                                        _p.ticket, _p.symbol, _order["lots"], _dir_str_pc)
+                                    if _pc_res.get("success"):
+                                        # T-F1a: marcar partial_taken no ledger (primeira saída parcial)
+                                        if _p.ticket in _pos_ledger:
+                                            _pos_ledger[_p.ticket]["partial_taken"] = True
+                                        # P0-ABC 20260522 T-D4b: Registrar fecho parcial no PositionManager
+                                        try:
+                                            _pnl_est = float(_p.profit) if hasattr(_p, 'profit') else 0.0
+                                            _position_manager.register_partial(
+                                                position_ticket=int(_p.ticket),
+                                                deal_ticket=int(_pc_res.get("retcode", 0)),  # usar order como deal proxy
+                                                lot=float(_pc_res.get("volume", _order["lots"])),
+                                                price=float(_pc_res.get("fill_price", 0)),
+                                                pnl=_pnl_est,
+                                                reason=_order.get("reason", "PARTIAL"),
+                                            )
+                                            log.debug("[PositionManager] PARTIAL registrado: %s #%d", _p.symbol, _p.ticket)
+                                        except Exception as _pm_err:
+                                            log.warning("[PositionManager] falha registrar PARTIAL: %s", _pm_err)
+                                    else:
+                                        log.error("[PARTIAL_CLOSE] %s #%d ❌ fecho parcial falhou: %s",
+                                                  _p.symbol, _p.ticket, _pc_res.get("error"))
+                                elif _order["action"] == "MOVE_SL_TO_ENTRY":
+                                    log.info("[PARTIAL_CLOSE] %s #%d: SL moved to breakeven | %s",
+                                             _p.symbol, _p.ticket, _order["reason"])
+                                    # P0-ABC 20260522: Breakeven com buffer 1.5x spread
+                                    _entry_be = float(
+                                        _pos_ledger[_p.ticket].get("entry_price", _p.price_open))
+                                    _sym_info = mt5.symbol_info(_p.symbol)
+                                    _spread_pts = getattr(_sym_info, "spread", 0) if _sym_info else 0
+                                    _point = getattr(_sym_info, "point", 0.0001) if _sym_info else 0.0001
+                                    _buffer_pts = max(_spread_pts * 1.5, 2.0)  # min 2 pts
+                                    _buffer_price = _buffer_pts * _point
+                                    
+                                    if _p.type == 0:  # BUY
+                                        _sl_new = _entry_be - _buffer_price
+                                    else:  # SELL
+                                        _sl_new = _entry_be + _buffer_price
+                                    
+                                    _cur_tp_be = float(_p.tp) if _p.tp else 0.0
+                                    _be_res = mt5_modify_position_sl(
+                                        _p.ticket, _p.symbol, _sl_new, _cur_tp_be)
+                                    if not _be_res.get("success"):
+                                        log.error("[PARTIAL_CLOSE] %s #%d ❌ breakeven SL falhou: %s",
+                                                  _p.symbol, _p.ticket, _be_res.get("error"))
+                                    else:
+                                        log.info("[BREAKEVEN] %s #%d SL entry=%.5f -> %.5f (buffer=%.2fpts)",
+                                                 _p.symbol, _p.ticket, _entry_be, _sl_new, _buffer_pts)
+                    except Exception as _pc_check_err:
+                        log.warning("[PARTIAL_CLOSE] Erro ao verificar: %s", _pc_check_err)
+                    # === PYRAMID BROKER EXEC (CEO 2026-06-03 — FastLoop só avalia) ===
+                    try:
+                        _dir_str_py = "BUY" if _p.type == 0 else "SELL"
+                        _prof_py = ASSET_PROFILES.get(_p.symbol, _PROFILE_DEFAULT)
+                        _open_py = [x for x in _all_open if x.symbol == _p.symbol]
+                        _py_dec = check_pyramid_add(
+                            symbol=_p.symbol,
+                            direction=_dir_str_py,
+                            open_positions=_open_py,
+                            pos_ledger=_pos_ledger,
+                            prof=_prof_py,
+                            exec_atr={"atr_pts": _atr_pts_val},
+                            equity=equity,
+                        )
+                        if _py_dec.get("add"):
+                            _py_layer = int(_py_dec.get("layer", 0))
+                            _sent_key = (_p.symbol, _py_layer)
+                            if _sent_key not in _pyramid_layers_sent:
+                                _py_lot = float(_py_dec.get("lot", 0.05))
+                                _led_py = _pos_ledger.get(_p.ticket, {})
+                                _py_sl = float(_led_py.get("sl_pts", _prof_py.get("cost_pts", 250)) or 250)
+                                _impact_py = resolve_sel_impact_tp_pts(_p.symbol)
+                                _py_tp = float(_impact_py) if _impact_py > 0 else float(_atr_pts_val) * 2.0
+                                dispatch_pyramid_broker(
+                                    parent_ticket=int(_p.ticket),
+                                    symbol=_p.symbol,
+                                    direction=_dir_str_py,
+                                    layer=_py_layer,
+                                    lot=_py_lot,
+                                    sl_pts=_py_sl,
+                                    tp_pts=_py_tp,
+                                    signal_tf=str(_fin_signal_tf),
+                                    reason=str(_py_dec.get("reason", "")),
+                                    pyramid_layers_sent=_pyramid_layers_sent,
+                                    source="FINALLY",
+                                )
+                    except Exception as _py_fin_err:
+                        log.warning("[PYRAMID] Erro broker #%d: %s", _p.ticket, _py_fin_err)
                 _ledger_pnl = sum(v.get("last_profit", 0) for v in _pos_ledger.values())
                 _ledger_n   = len(_pos_ledger)
                 log.info("[LEDGER] %d posicoes | realized=%d pnl_realizd=%.4f | float=%.4f",

@@ -29,8 +29,11 @@ $metrics = [ordered]@{
     partial_03atr        = Count-Pattern $Log 'TP1-0\.3ATR|0\.3x ATR'
     partial_broker_ok    = Count-Pattern $Log '\[MT5_CLOSE_PARTIAL\].*✅'
     pyramid_eval_add     = Count-Pattern $Log '\[PYRAMID_EVAL\].*add=True'
+    pyramid_dispatch     = Count-Pattern $Log '\[PYRAMID_DISPATCH\]'
+    mt5_ordersend_pyramid = Count-Pattern $Log '\[MT5_ORDERSEND\] pyramid'
     pyramid_broker_ok    = Count-Pattern $Log '\[PYRAMID\].*EXEC OK'
     pyramid_broker_fail  = Count-Pattern $Log '\[PYRAMID\].*EXEC FAIL'
+    impact_tp_floor      = Count-Pattern $Log 'FLOOR APPLIED'
     edge_bypass          = Count-Pattern $Log '\[EDGE_GATE\] BYPASS'
     dedup_scale_bypass   = Count-Pattern $Log '\[DEDUP\] BYPASS scale-entry'
     lot_metal_floor      = Count-Pattern $Log 'LOT0\.05|min_lot.*0\.05'
@@ -98,6 +101,22 @@ if (Test-Path (Join-Path $Root "audit\paper\omega_runner.lock")) {
     Write-Host "`nRunner lock PID: $(Get-Content (Join-Path $Root 'audit\paper\omega_runner.lock'))" -ForegroundColor Green
 } else {
     Write-Warning "Runner lock AUSENTE — runner pode ter parado"
+}
+
+Write-Host "`n=== BATIMENTO CARDIACO (CEO 2026-06-04) ===" -ForegroundColor Cyan
+if ($metrics.pyramid_dispatch -ge 1 -and $metrics.mt5_ordersend_pyramid -ge 1) {
+    Write-Host "BATIMENTO DETETADO: [PYRAMID_DISPATCH] -> [MT5_ORDERSEND] ocorreu." -ForegroundColor Green
+    if ($metrics.pyramid_broker_ok -ge 1) {
+        Write-Host "EXEC OK: pyramid chegou ao broker." -ForegroundColor Green
+    } elseif ($metrics.pyramid_broker_fail -ge 1) {
+        Write-Host "EXEC FAIL: tentativa broker registada (investigar retcode)." -ForegroundColor Yellow
+    } else {
+        Write-Host "Ordersend sem EXEC OK/FAIL ainda — aguardar resposta broker." -ForegroundColor Yellow
+    }
+} elseif ($metrics.pyramid_eval_add -gt 0 -and $metrics.pyramid_dispatch -eq 0) {
+    Write-Host "SILENCIO CARDIACO: $($metrics.pyramid_eval_add) EVAL add=True, 0 Dispatch." -ForegroundColor Red
+} else {
+    Write-Host "SEM EVAL pyramid nesta janela — aguardar trade vencedor." -ForegroundColor Yellow
 }
 
 Write-Host "`nReport saved: $OutDir"

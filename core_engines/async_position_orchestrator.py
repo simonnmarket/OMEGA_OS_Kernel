@@ -59,11 +59,16 @@ class FastLoopSignal:
     """Sinal de acção enviado do FastLoop para executor principal."""
     ticket: int
     symbol: str
-    action: str                  # "CLOSE_FULL" | "CLOSE_PARTIAL" | "FLIP"
+    action: str                  # "CLOSE_FULL" | "CLOSE_PARTIAL" | "FLIP" | "PYRAMID_ADD"
     reason: str
     points_context: float        # PnL actual em pontos
     confidence: float = 0.0      # AI confidence se aplicável
     partial_pct: float = 1.0     # percentagem a fechar (1.0 = total)
+    pyramid_lot: float = 0.0
+    pyramid_layer: int = 0
+    pyramid_sl_pts: float = 0.0
+    pyramid_tp_pts: float = 0.0
+    signal_tf: str = "H1"
     ts: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
@@ -212,12 +217,13 @@ class AsyncPositionOrchestrator:
                 _dir_str = "BUY" if peak.direction > 0 else "SELL"
                 _atr_i = sl_module.get_execution_tf_atr(peak.symbol, "H1", 0.70)
                 _trigger = float(_atr_i.get("atr_pts", 0) or 0) * 0.5
+                _prof = sl_module.ASSET_PROFILES.get(peak.symbol, sl_module._PROFILE_DEFAULT)
                 _dec = sl_module.check_pyramid_add(
                     symbol=peak.symbol,
                     direction=_dir_str,
                     open_positions=_pos_list,
                     pos_ledger={},
-                    prof={"lot_cap": 0.10},
+                    prof=_prof,
                     exec_atr={"atr_pts": _atr_i.get("atr_pts", 0)},
                     equity=0.0,
                 )
@@ -243,6 +249,42 @@ class AsyncPositionOrchestrator:
                         _dec.get("profit_pts"),
                         _trigger,
                     )
+                if _add:
+                    _layer_n = int(_dec.get("layer", 0) or 0)
+                    _dispatch_key = (peak.symbol, _layer_n)
+                    if not hasattr(self, "_pyramid_dispatch_sent"):
+                        self._pyramid_dispatch_sent = set()
+                    if _dispatch_key not in self._pyramid_dispatch_sent:
+                        log.info(
+                            "[PYRAMID_DISPATCH] Attempting to pass Order to MT5 Thread... "
+                            "parent=#%d symbol=%s layer=%d lot=%.2f",
+                            ticket,
+                            peak.symbol,
+                            _layer_n,
+                            float(_dec.get("lot", 0.05) or 0.05),
+                        )
+                        _led_sl = float(_dec.get("sl_pts", 0) or 0)
+                        _led_tp = float(_dec.get("tp_pts", 0) or 0)
+                        if _led_sl <= 0:
+                            _led_sl = float(_prof.get("cost_pts", 250) or 250)
+                        if _led_tp <= 0:
+                            _led_tp = float(_atr_i.get("atr_pts", 0) or 0) * 2.0
+                        self._emit(
+                            FastLoopSignal(
+                                ticket=ticket,
+                                symbol=peak.symbol,
+                                action="PYRAMID_ADD",
+                                reason=_reason,
+                                points_context=current_pts,
+                                partial_pct=0.0,
+                                pyramid_lot=float(_dec.get("lot", 0.05) or 0.05),
+                                pyramid_layer=_layer_n,
+                                pyramid_sl_pts=_led_sl,
+                                pyramid_tp_pts=_led_tp,
+                                signal_tf="H1",
+                            )
+                        )
+                        self._pyramid_dispatch_sent.add(_dispatch_key)
             except Exception as _pe:
                 log.warning("[PYRAMID_EVAL] %s #%d erro: %s", peak.symbol, ticket, _pe)
 
