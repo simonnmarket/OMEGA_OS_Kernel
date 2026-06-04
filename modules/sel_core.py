@@ -90,12 +90,16 @@ class SELCore:
         self.symbol = (symbol or "EURUSD").upper()
         self.asset_class = asset_class or classify_symbol(self.symbol)
         self._pip_val = 0.01
+        self._pt_size = 1e-5  # broker point size (default: 5-digit forex)
 
     def _load_pip(self) -> float:
         p = Path(__file__).resolve().parent.parent / "config" / "pip_value_cache.json"
         if p.is_file():
             raw = json.loads(p.read_text(encoding="utf-8"))
             v = float((raw.get("pip_value_lot") or {}).get(self.symbol, 0.0))
+            pt = float((raw.get("point_size") or {}).get(self.symbol, 0.0))
+            if pt > 0:
+                self._pt_size = pt
             if v > 0:
                 return v
         try:
@@ -104,6 +108,7 @@ class SELCore:
             if mt5.initialize():
                 sym = mt5.symbol_info(self.symbol)
                 if sym and sym.point and sym.ask:
+                    self._pt_size = float(sym.point)  # Fix Bug3: capture point size for impact_tp_pts scaling
                     pr = mt5.order_calc_profit(0, self.symbol, 1.0, sym.ask, sym.ask + 100 * sym.point)
                     if pr is not None:
                         return abs(float(pr)) / 100.0
@@ -209,7 +214,9 @@ class SELCore:
         persistence = float(np.mean(np.sign(delta.iloc[-8:]) == np.sign(delta.iloc[-1])))
         impact = amplitude * max(persistence, 0.1)
         impact_n = _norm01(impact, float(rng.quantile(0.95) + 1e-9))
-        impact_tp_pts = max(amplitude * 3.0, float(rng.iloc[-20:].sum() * 0.25))
+        # Fix Bug3 2026-06-04: convert price-units → broker points (/ pt_size)
+        _raw_impact = max(amplitude * 3.0, float(rng.iloc[-20:].sum() * 0.25))
+        impact_tp_pts = _raw_impact / max(self._pt_size, 1e-12)
 
         # Audit — L8 ruptura vs L1 energia baixa
         audit_div = abs(rp - _norm01(energy_z, 2.0))

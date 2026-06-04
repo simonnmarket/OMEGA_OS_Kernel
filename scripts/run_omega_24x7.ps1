@@ -4,6 +4,7 @@
 $ErrorActionPreference = "Stop"
 Set-Location "C:\OMEGA_QUANTUM_LAB\SOURCE_CODE"
 $env:PYTHONPATH = (Get-Location).Path
+$_isTestHarness = $env:OMEGA_TEST_HARNESS -eq "1"
 
 # ─── DEMO TESTE: fallback ON quando IA=HOLD (sem isto = 0 ordens em 10h) ─────
 # Rollback diagnóstico silencioso: "1"
@@ -13,7 +14,9 @@ $env:OMEGA_DISABLE_MOMENTUM_FALLBACK = "0"
 $env:OMEGA_DECISION_TRACE = "1"
 
 # Intervalo entre ciclos (segundos) — reduzido para capturar mais oportunidades
-$env:OMEGA_LOOP_INTERVAL_SEC = "20"
+if (-not $_isTestHarness) {
+    $env:OMEGA_LOOP_INTERVAL_SEC = "20"
+}
 
 # paper | shadow — CKO P0: obrigatorio; omega_paper_loop aborta se ausente
 $env:OMEGA_24X7_MODE = "paper"
@@ -23,7 +26,9 @@ $env:OMEGA_SEL_ENABLED = "1"
 $env:OMEGA_ENFORCE_SEL_USFE_GATE = "1"
 $env:OMEGA_USFE_BLOCK = "1"
 $env:OMEGA_SKIP_SEL_USFE_ENFORCE = "0"
-$env:OMEGA_RUPTURE_CAPTURE = "0"
+if (-not $_isTestHarness) {
+    $env:OMEGA_RUPTURE_CAPTURE = "0"
+}
 $env:OMEGA_SEL_SLOT_RP = "0.8"
 
 # ─── DEMO TESTE: risco moderado (conta demo — CEO autoriza teste real) ───────
@@ -32,9 +37,9 @@ $env:OMEGA_RISK_PER_TRADE = "0.005"
 # Até 8 posições simultâneas para ver execução P0 sem cluster extremo
 $env:OMEGA_MAX_POSITIONS = "8"
 
-# Gates P0 relaxados só em demo (spread 2x em vez de 3x; M1 aceita 1/3 velas)
+# Gates P0 relaxados só em demo (spread 2x em vez de 3x; M1 bypassed em paper)
 $env:OMEGA_SPREAD_GUARD_MULT = "2.0"
-$env:OMEGA_M1_MIN_CONFIRMED = "1"
+$env:OMEGA_M1_MIN_CONFIRMED = "0"   # Fix Bug2: bypass candle-count (paper/demo sem M1 real)
 $env:OMEGA_MIN_CONFLUENCE = "35"
 # CEO-MANDATO-C+A: MIN_CONFIDENCE=0.62 efectivo (era 0.65 hardcoded)
 $env:OMEGA_MIN_CONFIDENCE = "0.62"
@@ -149,6 +154,29 @@ $env:OMEGA_FORCE_HIGH_PERFORMANCE = "1"
 $env:OMEGA_STALE_PROFIT_USD = "3.0"
 $env:OMEGA_STALE_HOURS = "2"
 $env:OMEGA_STALE_ACTION = "CLOSE"
+
+# CEO CAPTURE MATRIX 2026-06-03 — fio morto ACT->PLUG corrigido
+$env:OMEGA_TEST_HARNESS = "0"
+$env:OMEGA_USE_SEL_IMPACT_TP = "1"
+$env:OMEGA_PYRAMID_MIN_SCORE_METAL = "0.35"
+$env:OMEGA_EDGE_BYPASS_WINNER = "1"
+$env:OMEGA_ALLOW_SCALE_ENTRIES = "1"
+$env:OMEGA_MIN_LOT_METAL = "0.05"
+$env:OMEGA_MAX_SAME_DIR_PER_CYCLE = "3"
+$env:OMEGA_PYRAMID_LAYERS = "4"
+
+# CEO P0 PLUG ENTRADA 2026-06-04 — Modo Ofensivo Teste (1 ordem = KPI)
+$env:OMEGA_P0_PLUG_ENTRADA = "1"
+$env:OMEGA_IA_OVERRIDE_MTF = "1"
+$env:OMEGA_IA_OVERRIDE_MTF_CONF = "0.80"
+$env:OMEGA_P0_XAU_RELAX_RISK = "1"
+$env:OMEGA_P0_XAU_RISK_PCT = "0.03"
+$env:OMEGA_ECON_GATE_ATR_FALLBACK = "1"
+$env:OMEGA_RUPTURE_CAPTURE = "1"
+# P0.2: última milha — SEL/USFE não pode matar sinal após ECON_OPEN (CEO 04/Jun)
+$env:OMEGA_SKIP_SEL_USFE_ENFORCE = "1"
+# Fix Bug2: M1-GATE bypass total em paper/demo (quality=0.45 < 0.50 — sem dados M1 reais)
+$env:OMEGA_SKIP_M1_GATE = "1"
 
 # Portfolio discovery (16 símbolos Hantec) via schedule — NÃO usar lista fixa em env
 $env:OMEGA_ASSET_PROFILE = "ceo_discovery_full"

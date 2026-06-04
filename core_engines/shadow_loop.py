@@ -1153,13 +1153,14 @@ def _load_pip_value_cache() -> Dict[str, float]:
     return _PIP_VALUE_CACHE
 
 
-def pip_value_per_lot_mt5(asset: str, sym=None, price: float = 0.0) -> float:
+def pip_value_per_lot_mt5(asset: str, sym=None, price: float = 0.0, *, force_live: bool = False) -> float:
     """USD por ponto MT5 por 1.0 lote — fonte: cache PSA ou order_calc_profit."""
     import MetaTrader5 as mt5
 
-    cached = _load_pip_value_cache().get((asset or "").upper())
-    if cached and cached > 0:
-        return cached
+    if not force_live:
+        cached = _load_pip_value_cache().get((asset or "").upper())
+        if cached and cached > 0:
+            return cached
     if sym is None:
         sym = mt5.symbol_info(asset)
     if sym is None:
@@ -1329,6 +1330,12 @@ def resync_impact_tp_for_position(pos, pos_ledger: dict | None = None) -> dict:
     if si is None:
         return {"applied": False, "reason": "symbol_info None"}
     pt = max(float(si.point), 1e-12)
+    # Fix Bug3: defensive guard — impact_pts must be >= 10 broker pts to be valid
+    # (prevents old pre-fix price-unit values like 1.5 from causing TP→entry)
+    if impact_pts < 10.0:
+        log.warning("[IMPACT_TP] [RESYNC] %s #%d skip — impact_pts=%.2f < 10 (escala errada?)",
+                    symbol, ticket, impact_pts)
+        return {"applied": False, "reason": f"impact_pts={impact_pts:.2f}<10_min"}
     entry = float(getattr(pos, "price_open", 0) or 0)
     cur_tp = float(getattr(pos, "tp", 0) or 0)
     direction = "BUY" if getattr(pos, "type", 0) == 0 else "SELL"
@@ -1753,6 +1760,15 @@ def mt5_send_order(asset: str, tf: str, lot: float,
                         asset, tf, _chk_rc)
 
     t0     = time.perf_counter()
+    log.info(
+        "[MT5_ORDERSEND] entry %s %s lot=%.2f sl_pts=%.0f tp_pts=%.0f price=%.5f",
+        asset,
+        direction,
+        lot,
+        final_sl_pts,
+        final_tp_pts,
+        price,
+    )
     result = mt5.order_send(request)
     lat_ms = round((time.perf_counter() - t0) * 1000, 1)
 
@@ -1807,6 +1823,15 @@ def mt5_send_order(asset: str, tf: str, lot: float,
             log.debug("[%s %s] verificação SL pós-fill ignorada: %s", asset, tf, _pv_err)
         log.info("[%s %s] ✅ ORDER DONE | deal=%d price=%.5f slip=%.2fpts lat=%dms",
                  asset, tf, out["deal"], out["fill_price"], out["slippage_pts"], lat_ms)
+        log.info(
+            "[%s %s] [EXEC OK] entry %s lot=%.2f deal=%d retcode=%s",
+            asset,
+            tf,
+            direction,
+            lot,
+            out["deal"],
+            retcode_str,
+        )
         # P0-ABC 20260522: Persist ticket em state para 1POS bypass comment cego
         try:
             from modules.mt5_position_tag import save_open_ticket
@@ -1826,6 +1851,15 @@ def mt5_send_order(asset: str, tf: str, lot: float,
     else:
         log.error("[%s %s] ❌ ORDER FAIL | retcode=%d (%s) | %s",
                   asset, tf, retcode, retcode_str, out["comment"])
+        log.info(
+            "[%s %s] [EXEC FAIL] entry %s lot=%.2f retcode=%d (%s)",
+            asset,
+            tf,
+            direction,
+            lot,
+            retcode,
+            retcode_str,
+        )
 
     return out
 
@@ -2557,6 +2591,7 @@ def check_pyramid_add(symbol: str, direction: str, open_positions: list,
                 "layer": current_layers}
     # Verificar tendência forte antes de pyramidar
     ts = get_trend_strength(symbol, direction)
+    _min_py_score = pyramid_min_score_for(symbol, profit_pts, trigger)  # Fix Bug1 NameError
     # CEO 2026-06-04: metais com profit>=trigger — pyramid executa independente de trend_score
     _metal_profit_proven = (
         str(symbol or "").upper() in _METAL_ASSETS and profit_pts >= trigger
@@ -3593,6 +3628,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                     signal_dir = None
                     signal_source = "MOMENTUM_MT5"
                     ia_signal = None
+                    ia_confidence = 0.0
                     ia_lot_override = None
                     ia_sl_pts = None
                     ia_tp_pts = None
@@ -3676,6 +3712,7 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                     if ia_signal and ia_signal.get('action') not in (None, 'HOLD'):
                         signal_dir = ia_signal.get('direction') or ia_signal.get('action')
                         signal_source = "AGENT_IA"
+                        ia_confidence = float(ia_signal.get('confidence', 0) or 0)
                         ia_lot_override = ia_signal.get('lot')
                         ia_sl_pts = ia_signal.get('stop_loss_pips')
                         ia_tp_pts = ia_signal.get('take_profit_pips')
@@ -3866,15 +3903,39 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                             if (_tf_bias["alignment"] >= MTF_ALIGN_THR
                                     and _tf_bias["bias"] != "NEUTRAL"
                                     and _tf_bias["bias"] != signal_dir):
-                                log.info("[%s %s] [MTF_BIAS] BLOCK macro=%s≠signal=%s align=%.0f%% | %s",
-                                         asset, tf, _tf_bias["bias"], signal_dir,
-                                         _tf_bias["alignment"] * 100, _tf_bias["detail"])
-                                results.append({"asset": asset, "timeframe": tf,
-                                               "status": "SKIP_MTF_BIAS",
-                                               "macro_bias": _tf_bias["bias"],
-                                               "signal_dir": signal_dir,
-                                               "alignment": _tf_bias["alignment"]})
-                                continue
+                                _p0_entry = os.getenv("OMEGA_P0_PLUG_ENTRADA", "0").strip() == "1"
+                                _ia_ov = os.getenv("OMEGA_IA_OVERRIDE_MTF", "0").strip() == "1"
+                                _ia_thr = float(os.getenv("OMEGA_IA_OVERRIDE_MTF_CONF", "0.80") or "0.80")
+                                _paper = os.getenv("OMEGA_24X7_MODE", "paper").strip().lower() == "paper"
+                                if (
+                                    _p0_entry
+                                    and _ia_ov
+                                    and _paper
+                                    and signal_source == "AGENT_IA"
+                                    and tf in ("M15", "M5")
+                                    and ia_confidence >= _ia_thr
+                                ):
+                                    log.info(
+                                        "[%s %s] [MTF_BIAS] IA_OVERRIDE conf=%.2f>=%.2f tf=%s "
+                                        "macro=%s signal=%s — fast brain wins (P0 demo)",
+                                        asset,
+                                        tf,
+                                        ia_confidence,
+                                        _ia_thr,
+                                        tf,
+                                        _tf_bias["bias"],
+                                        signal_dir,
+                                    )
+                                else:
+                                    log.info("[%s %s] [MTF_BIAS] BLOCK macro=%s≠signal=%s align=%.0f%% | %s",
+                                             asset, tf, _tf_bias["bias"], signal_dir,
+                                             _tf_bias["alignment"] * 100, _tf_bias["detail"])
+                                    results.append({"asset": asset, "timeframe": tf,
+                                                   "status": "SKIP_MTF_BIAS",
+                                                   "macro_bias": _tf_bias["bias"],
+                                                   "signal_dir": signal_dir,
+                                                   "alignment": _tf_bias["alignment"]})
+                                    continue
                             log.info("[%s %s] [MTF_BIAS] ok bias=%s align=%.0f%% %s",
                                      asset, tf, _tf_bias["bias"],
                                      _tf_bias["alignment"] * 100, _tf_bias["detail"])
@@ -4593,6 +4654,46 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                         eff_lot = min(float(eff_lot or 0), _lcap, _smax)
                         eff_lot = max(_smin, eff_lot)
 
+                        _p0_entry = os.getenv("OMEGA_P0_PLUG_ENTRADA", "0").strip() == "1"
+                        _p0_xau_relax = (
+                            _p0_entry
+                            and os.getenv("OMEGA_P0_XAU_RELAX_RISK", "1").strip() == "1"
+                            and asset in ("XAUUSD", "XAGUSD")
+                        )
+                        _risk_pct = (
+                            float(os.getenv("OMEGA_P0_XAU_RISK_PCT", "0.03") or "0.03")
+                            if _p0_xau_relax
+                            else float(RISK_PER_TRADE_PCT)
+                        )
+                        _max_risk_usd = float(equity) * _risk_pct
+                        _usd_per_lot_sl = float(eff_sl) * _pip_val
+                        if not _p0_xau_relax:
+                            if _usd_per_lot_sl * eff_lot > _max_risk_usd > 0:
+                                _lot_risk_cap = _max_risk_usd / max(_usd_per_lot_sl, 1e-12)
+                                eff_lot = min(eff_lot, _lot_risk_cap)
+                                eff_lot = max(_smin, eff_lot)
+                        elif _floor > 0 and float(eff_lot) + 1e-9 < _floor:
+                            eff_lot = _floor
+                            if _usd_per_lot_sl * eff_lot > _max_risk_usd > 0:
+                                _sl_fit = _max_risk_usd / max(_floor * _pip_val, 1e-12)
+                                if _sl_fit >= float(_min_pts_pre):
+                                    eff_sl = min(float(eff_sl), _sl_fit)
+                                    log.info(
+                                        "[%s %s] [LOT_GATE] P0_XAU SL->%.0fpts lot=%.2f "
+                                        "risk_cap=%.1f%% ($%.2f)",
+                                        asset,
+                                        tf,
+                                        eff_sl,
+                                        eff_lot,
+                                        _risk_pct * 100,
+                                        _max_risk_usd,
+                                    )
+                                else:
+                                    eff_lot = max(
+                                        _smin,
+                                        min(_max_risk_usd / max(_usd_per_lot_sl, 1e-12), _lcap, _smax),
+                                    )
+
                         _thr_tp_usd = min_expected_tp_usd_threshold(asset)
                         _scale_lot = os.getenv("OMEGA_SCALE_LOT_TO_MIN_TP_USD", "0").strip().lower() in (
                             "1", "true", "yes", "on",
@@ -4603,14 +4704,19 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                             eff_lot = min(eff_lot, _lcap, _smax)
                             eff_lot = max(_smin, eff_lot)
 
-                        _max_risk_usd = float(equity) * float(RISK_PER_TRADE_PCT)
-                        _usd_per_lot_sl = float(eff_sl) * _pip_val
-                        if _usd_per_lot_sl * eff_lot > _max_risk_usd > 0:
-                            _lot_risk_cap = _max_risk_usd / max(_usd_per_lot_sl, 1e-12)
-                            eff_lot = min(eff_lot, _lot_risk_cap)
-                            eff_lot = max(_smin, eff_lot)
+                        if not _p0_xau_relax:
+                            _max_risk_usd = float(equity) * float(RISK_PER_TRADE_PCT)
+                            _usd_per_lot_sl = float(eff_sl) * _pip_val
+                            if _usd_per_lot_sl * eff_lot > _max_risk_usd > 0:
+                                _lot_risk_cap = _max_risk_usd / max(_usd_per_lot_sl, 1e-12)
+                                eff_lot = min(eff_lot, _lot_risk_cap)
+                                eff_lot = max(_smin, eff_lot)
 
-                        if _floor > 0 and float(eff_lot) + 1e-9 < _floor:
+                        if (
+                            not _p0_xau_relax
+                            and _floor > 0
+                            and float(eff_lot) + 1e-9 < _floor
+                        ):
                             log.info(
                                 "[%s %s] [LOT_GATE] SKIP — piso_lote=%.4f incompatível com risco máx "
                                 "(%.2f%% equity ≈ $%.2f) ao SL=%.0fpts (sym_max=%.4f)",
@@ -4645,25 +4751,72 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
                             _tp_usd_est = eff_tp * _pip_val * (eff_lot or 0.01)
                             _tp_net_min = max(_thr_tp_usd, _cost_total * _mult)
                             if _tp_usd_est < _tp_net_min:
-                                log.info(
-                                    "[%s %s] [ECON_GATE] SKIP — TP_est=$%.2f < net_min=$%.2f "
-                                    "(thr=$%.2f cost=$%.2f mult=%.2f) "
-                                    "lot=%.4f pip_val=%.6f",
-                                    asset, tf, _tp_usd_est, _tp_net_min,
-                                    _thr_tp_usd, _cost_total, _mult,
-                                    eff_lot or 0, _pip_val,
-                                )
-                                results.append(
-                                    {
-                                        "asset": asset,
-                                        "timeframe": tf,
-                                        "status": "SKIP_NET_EDGE",
-                                        "tp_usd_est": round(_tp_usd_est, 4),
-                                        "net_min_usd": round(_tp_net_min, 4),
-                                        "cost_total": round(_cost_total, 4),
-                                    }
-                                )
-                                continue
+                                _econ_fb = os.getenv("OMEGA_ECON_GATE_ATR_FALLBACK", "1").strip() == "1"
+                                _absurd_tp = _tp_usd_est < 1.0
+                                if _p0_entry and _econ_fb and (_absurd_tp or _tp_usd_est < _tp_net_min):
+                                    _pip_live = pip_value_per_lot_mt5(asset, force_live=True)
+                                    if _pip_live > _pip_val * 2.0:
+                                        log.info(
+                                            "[%s %s] [ECON_GATE] PIP_RECALC live=%.6f (cache=%.6f)",
+                                            asset,
+                                            tf,
+                                            _pip_live,
+                                            _pip_val,
+                                        )
+                                        _pip_val = _pip_live
+                                    _eff_tp_fb = max(float(_pre_tp), float(eff_tp), _tp_rr_floor)
+                                    _tp_usd_est = _eff_tp_fb * _pip_val * (eff_lot or 0.01)
+                                    if _tp_usd_est >= _tp_net_min or (_absurd_tp and _tp_usd_est >= _thr_tp_usd):
+                                        eff_tp = _eff_tp_fb
+                                        log.info(
+                                            "[%s %s] [ECON_GATE] ATR_FALLBACK eff_tp=%.0fpts "
+                                            "TP_usd=$%.2f (net_min=$%.2f) — P0 entry pass",
+                                            asset,
+                                            tf,
+                                            eff_tp,
+                                            _tp_usd_est,
+                                            _tp_net_min,
+                                        )
+                                    else:
+                                        log.info(
+                                            "[%s %s] [ECON_GATE] SKIP — TP_est=$%.2f < net_min=$%.2f "
+                                            "(thr=$%.2f cost=$%.2f mult=%.2f) "
+                                            "lot=%.4f pip_val=%.6f",
+                                            asset, tf, _tp_usd_est, _tp_net_min,
+                                            _thr_tp_usd, _cost_total, _mult,
+                                            eff_lot or 0, _pip_val,
+                                        )
+                                        results.append(
+                                            {
+                                                "asset": asset,
+                                                "timeframe": tf,
+                                                "status": "SKIP_NET_EDGE",
+                                                "tp_usd_est": round(_tp_usd_est, 4),
+                                                "net_min_usd": round(_tp_net_min, 4),
+                                                "cost_total": round(_cost_total, 4),
+                                            }
+                                        )
+                                        continue
+                                else:
+                                    log.info(
+                                        "[%s %s] [ECON_GATE] SKIP — TP_est=$%.2f < net_min=$%.2f "
+                                        "(thr=$%.2f cost=$%.2f mult=%.2f) "
+                                        "lot=%.4f pip_val=%.6f",
+                                        asset, tf, _tp_usd_est, _tp_net_min,
+                                        _thr_tp_usd, _cost_total, _mult,
+                                        eff_lot or 0, _pip_val,
+                                    )
+                                    results.append(
+                                        {
+                                            "asset": asset,
+                                            "timeframe": tf,
+                                            "status": "SKIP_NET_EDGE",
+                                            "tp_usd_est": round(_tp_usd_est, 4),
+                                            "net_min_usd": round(_tp_net_min, 4),
+                                            "cost_total": round(_cost_total, 4),
+                                        }
+                                    )
+                                    continue
                         _tp_usd_log = eff_tp * _pip_val * (eff_lot or 0.01)
                         _net_edge_log = _tp_usd_log - _cost_total
                         log.info(
@@ -4984,7 +5137,11 @@ def _run_loop_body(ativos: List[str], timeframes: List[str], mode: str, equity: 
 
                         # ── MICRO ENTRY FILTER — M1 MANDATORY GATE (CEO 2026-05-12) ────
                         # REGRA: ordens SÓ se M1 confirmar. Sem confirmação M1 = sem ordem.
-                        if _MICRO_FILTER_AVAIL and _MICRO_FILTER is not None:
+                        # Fix Bug2 2026-06-04: OMEGA_SKIP_M1_GATE=1 → bypass total (paper mode)
+                        _skip_m1_gate = os.getenv("OMEGA_SKIP_M1_GATE", "0").strip() == "1"
+                        if _skip_m1_gate:
+                            log.info("[%s %s] [M1-GATE] BYPASS (OMEGA_SKIP_M1_GATE=1)", asset, tf)
+                        elif _MICRO_FILTER_AVAIL and _MICRO_FILTER is not None:
                             try:
                                 _mef_res = _MICRO_FILTER.evaluate(asset, signal_dir, tf)
                                 if not _mef_res.execute:
