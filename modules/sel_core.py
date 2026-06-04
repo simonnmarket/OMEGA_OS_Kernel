@@ -86,11 +86,21 @@ class SELState:
 class SELCore:
     """Motor SEL Grupo A — integrar via USFE / gate paralelo no shadow_loop."""
 
+    # Fallback point sizes by asset class (used when MT5 unavailable)
+    _PT_FALLBACK = {
+        "forex":     1e-5,   # 5-digit EURUSD, GBPUSD, etc.
+        "crypto":    0.01,   # BTCUSD, ETHUSD (most brokers)
+        "commodity": 0.01,   # XAUUSD, XAGUSD
+        "energy":    0.01,   # UKOIL+, USOIL
+        "index":     0.1,    # US500, GER40 (approximate)
+    }
+
     def __init__(self, symbol: str, asset_class: Optional[AssetClass] = None):
         self.symbol = (symbol or "EURUSD").upper()
         self.asset_class = asset_class or classify_symbol(self.symbol)
         self._pip_val = 0.01
-        self._pt_size = 1e-5  # broker point size (default: 5-digit forex)
+        # Fix Bug3b: per-class fallback (1e-5 was wrong for crypto/commodity)
+        self._pt_size = self._PT_FALLBACK.get(self.asset_class.value, 1e-5)
 
     def _load_pip(self) -> float:
         p = Path(__file__).resolve().parent.parent / "config" / "pip_value_cache.json"
@@ -217,6 +227,7 @@ class SELCore:
         # Fix Bug3 2026-06-04: convert price-units → broker points (/ pt_size)
         _raw_impact = max(amplitude * 3.0, float(rng.iloc[-20:].sum() * 0.25))
         impact_tp_pts = _raw_impact / max(self._pt_size, 1e-12)
+        impact_tp_pts = min(impact_tp_pts, 5000.0)  # cap: no asset needs TP > 5000 pts
 
         # Audit — L8 ruptura vs L1 energia baixa
         audit_div = abs(rp - _norm01(energy_z, 2.0))
