@@ -238,7 +238,7 @@ def main():
     )
     parser.add_argument("--symbol",     type=str,   required=True)
     parser.add_argument("--timeframe",  type=str,   required=True)
-    parser.add_argument("--base_path",  type=str,   default=r"C:\OMEGA_PROJETO\OHLCV_DATA")
+    parser.add_argument("--base_path",  type=str,   default=os.getenv("OMEGA_OHLCV_PATH", "./data/ohlcv"))
     parser.add_argument("--harm_fast",  type=int,   default=34)
     parser.add_argument("--harm_slow",  type=int,   default=134)
     parser.add_argument("--margin",     type=float, default=150.0)

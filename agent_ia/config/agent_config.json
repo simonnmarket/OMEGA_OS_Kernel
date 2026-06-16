@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "compliance": {
+    "EU_AI_Act": "high-risk",
+    "audit_trail": "enabled",
+    "fallback": "cpu-only"
+  },
+  "runtime": {
+    "use_agent_ia_default": false,
+    "latency_slo_ms_p95": 200
+  }
+}

@@ -1,0 +1,12 @@
+============================================================
+OMEGA POSICOES ABERTAS — 2026-05-25 17:02:58 UTC
+============================================================
+comment_mark='OV2|' legacy_magic=234001 scale_magic_range=999111..999130
+Total conta: 0 | OMEGA tracked: 0
+  Nenhuma posicao OMEGA rastreada.
+
+--- DEALS RECENTES (ultima 2h, OMEGA tracked) ---
+Deals tracked ultimas 2h: 0 (raw=0)
+
+Net P&L deals recentes: $0.0000 | Wins: 0 | Losses: 0
+============================================================

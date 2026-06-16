@@ -1,0 +1,6 @@
+=== PRE-SMOKE POSITIONS ===
+balance=10134.88 login=510075151
+positions=0
+=== POST-SMOKE POSITIONS ===
+balance=10134.88 login=510075151
+positions=0

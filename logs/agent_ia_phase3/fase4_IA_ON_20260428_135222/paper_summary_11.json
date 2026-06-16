@@ -1,0 +1,71 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-28T13:59:48.230096+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 0,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 0,
+    "executed": 0,
+    "skipped": 0,
+    "avg_hit_rate_134": 0,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 0.0,
+    "max_latency_ms": 0
+  },
+  "results": [],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260428_135948.log",
+  "positions_ledger": {
+    "n": 5,
+    "total_pnl": -2.56,
+    "positions": {
+      "180599423": {
+        "symbol": "BTCUSD",
+        "direction": "BUY",
+        "lot": 0.01,
+        "entry_price": 76176.77,
+        "entry_time": "2026-04-28T16:58:25+00:00",
+        "last_profit": 0.12,
+        "status": "open"
+      },
+      "180599750": {
+        "symbol": "BTCUSD",
+        "direction": "BUY",
+        "lot": 0.01,
+        "entry_price": 76216.1,
+        "entry_time": "2026-04-28T16:59:06+00:00",
+        "last_profit": -0.28,
+        "status": "open"
+      },
+      "180599803": {
+        "symbol": "XAUUSD",
+        "direction": "BUY",
+        "lot": 0.01,
+        "entry_price": 4579.61,
+        "entry_time": "2026-04-28T16:59:15+00:00",
+        "last_profit": 0.68,
+        "status": "open"
+      },
+      "180600063": {
+        "symbol": "XAUUSD",
+        "direction": "BUY",
+        "lot": 0.01,
+        "entry_price": 4582.18,
+        "entry_time": "2026-04-28T16:59:30+00:00",
+        "last_profit": -1.8900000000000001,
+        "status": "open"
+      },
+      "180600156": {
+        "symbol": "XAUUSD",
+        "direction": "BUY",
+        "lot": 0.01,
+        "entry_price": 4581.48,
+        "entry_time": "2026-04-28T16:59:34+00:00",
+        "last_profit": -1.19,
+        "status": "open"
+      }
+    }
+  },
+  "checksum": "503ce4df11f576dd76c687f40d55efe72feefbf9ee9875957a97e4ca66b84ea0"
+}

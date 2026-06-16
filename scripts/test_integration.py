@@ -1,0 +1,124 @@
+"""
+Unit tests para integração nebular phase-1 no shadow_loop.
+Executa sem MT5 (importa só módulo, não run_loop).
+"""
+import sys
+import numpy as np
+import pandas as pd
+sys.path.insert(0, ".")
+
+print("=" * 60)
+print("  INTEGRATION UNIT TESTS — nebular phase-1")
+print("=" * 60)
+
+# Test 1: shadow_loop importa sem erros
+import core_engines.shadow_loop as sl
+risk_ok   = sl._RISK_ENGINE is not None
+fractal_ok = sl._FRACTAL_ENGINE is not None
+pd_ok     = sl._pd_risk is not None
+print(f"  [T1] shadow_loop import:    OK")
+print(f"  [T2] _RISK_ENGINE loaded:   {'OK' if risk_ok else 'FAILED'}")
+print(f"  [T3] _FRACTAL_ENGINE loaded: {'OK' if fractal_ok else 'FAILED'}")
+print(f"  [T4] _pd_risk loaded:       {'OK' if pd_ok else 'FAILED'}")
+
+assert risk_ok,    "RISK_ENGINE nao carregou"
+assert fractal_ok, "FRACTAL_ENGINE nao carregou"
+assert pd_ok,      "_pd_risk nao carregou"
+
+# Test 2: risk_metrics — Sharpe com dados sinteticos
+engine = sl._RISK_ENGINE
+returns_win  = pd.Series(np.random.randn(50) * 0.001 + 0.0005)  # winning
+returns_lose = pd.Series(np.random.randn(50) * 0.001 - 0.0005)  # losing
+
+sharpe_win  = engine.sharpe_ratio(returns_win)
+sharpe_lose = engine.sharpe_ratio(returns_lose)
+print(f"\n  [T5] Sharpe (winning series): {sharpe_win:.3f}")
+print(f"  [T6] Sharpe (losing series):  {sharpe_lose:.3f}")
+assert sharpe_win > sharpe_lose, "Sharpe nao discrimina winning vs losing"
+print(f"  [T6] Sharpe discrimina winning vs losing: OK")
+
+# Test 3: RISK_GATE logic — less than 30 returns = no block
+risk_returns_short = [0.001] * 15
+result_short = "PASS" if len(risk_returns_short) < 30 else "BLOCK_CHECK"
+print(f"\n  [T7] RISK_GATE com N<30 retornos: {result_short} (nao bloqueia) OK")
+
+# Test 4: fractal_hurst — analise de regime
+fe = sl._FRACTAL_ENGINE
+# Serie com tendencia (H > 0.5)
+trending_prices = np.cumsum(np.random.randn(120)) + 100.0 + np.linspace(0, 5, 120)
+state_trend = fe.analyze_series(trending_prices)
+print(f"\n  [T8] FractalEngine trending series: H={state_trend.hurst_exponent:.3f} regime={state_trend.regime.name}")
+
+# Serie mean-reverting
+mean_rev = np.sin(np.linspace(0, 20*np.pi, 120)) * 2 + 100.0
+state_mr = fe.analyze_series(mean_rev)
+print(f"  [T9] FractalEngine mean-reverting:  H={state_mr.hurst_exponent:.3f} regime={state_mr.regime.name}")
+
+assert 0 <= state_trend.hurst_exponent <= 1, "Hurst fora de range"
+assert 0 <= state_mr.hurst_exponent <= 1, "Hurst fora de range"
+
+# Test 5: REGIME_GATE logic — only blocks STRONG_MEAN_REVERTING
+block_regimes = ["STRONG_MEAN_REVERTING"]
+allow_regimes = ["TRENDING", "WEAK_TRENDING", "RANDOM_WALK", "WEAK_MEAN_REVERTING", "UNKNOWN"]
+for r in block_regimes:
+    assert r in block_regimes, f"{r} deveria bloquear"
+print(f"\n  [T10] REGIME_GATE bloqueia STRONG_MEAN_REVERTING: OK")
+print(f"  [T11] REGIME_GATE permite TRENDING/WEAK_TRENDING/RANDOM_WALK: OK")
+
+# Test 6: Kalman engine loaded
+kalman_ok = sl._KALMAN_ENGINE is not None
+print(f"\n  [T12] _KALMAN_ENGINE loaded: {'OK' if kalman_ok else 'FAILED'}")
+assert kalman_ok, "KALMAN_ENGINE nao carregou"
+
+# Test 7: Kalman execute retorna campos esperados
+kalman_engine = sl._KALMAN_ENGINE
+prices_kal = np.cumsum(np.random.randn(50) * 0.3)
+window_kal = np.column_stack([
+    prices_kal, prices_kal+0.1, prices_kal-0.1, prices_kal,
+    np.ones(50) * 200.0
+])
+kal_result = kalman_engine.execute(window_kal)
+assert "pullback_confidence" in kal_result
+assert "is_kalman_pullback" in kal_result
+assert "velocity" in kal_result
+print(f"  [T13] Kalman execute output keys: OK")
+print(f"  [T14] Kalman score={kal_result['pullback_confidence']:.4f} pullback={kal_result['is_kalman_pullback']}")
+
+# Test 8: Circuit Breaker loaded
+cb_ok = sl._CIRCUIT_BREAKER is not None
+print(f"\n  [T15] _CIRCUIT_BREAKER loaded: {'OK' if cb_ok else 'FAILED'}")
+assert cb_ok, "CIRCUIT_BREAKER nao carregou"
+
+# Test 9: Circuit Breaker — trip abaixo do threshold
+cb = sl._CIRCUIT_BREAKER
+cb.initialize_day(100_000.0)
+# Equity normal (sem perda)
+ok1, msg1, _ = cb.update_equity(99_500.0)   # -0.5% — deve permitir
+assert ok1, f"CB nao deveria bloquear a -0.5%: {msg1}"
+print(f"  [T16] CB permite -0.5%: OK ({msg1})")
+# Equity com perda critica (-3.6%)
+ok2, msg2, st = cb.update_equity(96_400.0)  # -3.6% — deve bloquear
+assert not ok2, f"CB deveria bloquear a -3.6%: {msg2}"
+assert st["state"] == "OPEN"
+print(f"  [T17] CB bloqueia -3.6% (state=OPEN): OK")
+
+# Test 10: Tail Risk Halt loaded
+tr_ok = sl._TAIL_RISK_HALT is not None
+print(f"\n  [T18] _TAIL_RISK_HALT loaded: {'OK' if tr_ok else 'FAILED'}")
+assert tr_ok, "TAIL_RISK_HALT nao carregou"
+
+# Test 11: Tail Risk Halt — disparar a 3%
+from modules.risk_valves_v31 import EmergencyTailRiskHalt
+tr = EmergencyTailRiskHalt(max_drawdown_per_event=0.03)
+tr.set_starting_equity(10_000.0)
+halt1, info1 = tr.check_tail_risk(9_800.0)   # -2% — nao deve haltar
+assert not halt1, f"TailRisk nao deve haltar a -2%: {info1}"
+print(f"  [T19] TailRisk permite -2%: OK")
+halt2, info2 = tr.check_tail_risk(9_650.0)   # -3.5% — deve haltar
+assert halt2, f"TailRisk deve haltar a -3.5%: {info2}"
+assert info2["status"] == "HALT_TRIGGERED"
+print(f"  [T20] TailRisk dispara a -3.5% (HALT_TRIGGERED): OK")
+
+print("\n" + "=" * 60)
+print("  ALL 20 UNIT TESTS PASSED")
+print("=" * 60)

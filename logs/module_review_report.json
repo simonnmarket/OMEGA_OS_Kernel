@@ -1,0 +1,432 @@
+[
+  {
+    "name": "risk_metrics.py",
+    "size_kb": 29.4,
+    "priority": "CRITICAL",
+    "purpose": "Calcula VaR, CVaR, Sharpe, Calmar — preenche gap da avaliação institucional",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": false,
+      "standalone_capable": true,
+      "has_error_handling": true,
+      "no_secrets": true,
+      "documented": true
+    },
+    "issues": [
+      "Deps nao verificadas: ['__future__']"
+    ],
+    "notes": [],
+    "readiness": "NEEDS_REVIEW",
+    "already_in_source": true,
+    "external_deps": [
+      "__future__",
+      "omega_integration_gate",
+      "scipy",
+      "numpy",
+      "pandas"
+    ],
+    "needs_integration_gate": true,
+    "has_standalone_fallback": true
+  },
+  {
+    "name": "fractal_hurst.py",
+    "size_kb": 21.3,
+    "priority": "HIGH",
+    "purpose": "Hurst exponent para classificação de regime — melhora edge gate",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": true,
+      "standalone_capable": true,
+      "has_error_handling": true,
+      "no_secrets": true,
+      "documented": true
+    },
+    "issues": [],
+    "notes": [],
+    "readiness": "READY",
+    "already_in_source": true,
+    "external_deps": [
+      "scipy",
+      "statsmodels",
+      "numpy",
+      "omega_integration_gate"
+    ],
+    "needs_integration_gate": true,
+    "has_standalone_fallback": true
+  },
+  {
+    "name": "kalman_pullback_engine.py",
+    "size_kb": 4.8,
+    "priority": "HIGH",
+    "purpose": "Kalman pullback detection — melhora timing de entrada",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": true,
+      "standalone_capable": false,
+      "has_error_handling": false,
+      "no_secrets": true,
+      "documented": true
+    },
+    "issues": [
+      "Requer omega_integration_gate SEM fallback — precisa adaptação"
+    ],
+    "notes": [
+      "Copiar omega_integration_gate.py também, ou refatorar herança"
+    ],
+    "readiness": "READY_WITH_ADAPTER",
+    "already_in_source": true,
+    "external_deps": [
+      "numpy",
+      "omega_integration_gate"
+    ],
+    "needs_integration_gate": true,
+    "has_standalone_fallback": false
+  },
+  {
+    "name": "zone_navigator.py",
+    "size_kb": 34.4,
+    "priority": "HIGH",
+    "purpose": "Suporte/resistência institucional — confirmação de zona",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": false,
+      "standalone_capable": true,
+      "has_error_handling": true,
+      "no_secrets": true,
+      "documented": true
+    },
+    "issues": [
+      "Deps nao verificadas: ['__future__']"
+    ],
+    "notes": [],
+    "readiness": "NEEDS_REVIEW",
+    "already_in_source": true,
+    "external_deps": [
+      "__future__",
+      "numpy",
+      "omega_integration_gate"
+    ],
+    "needs_integration_gate": true,
+    "has_standalone_fallback": true
+  },
+  {
+    "name": "lot_calculator.py",
+    "size_kb": 28.7,
+    "priority": "MEDIUM",
+    "purpose": "LotCalc mais completo — comparar com LotCalculatorV2",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": false,
+      "standalone_capable": true,
+      "has_error_handling": false,
+      "no_secrets": true,
+      "documented": true
+    },
+    "issues": [
+      "Deps nao verificadas: ['__future__']"
+    ],
+    "notes": [],
+    "readiness": "NEEDS_REVIEW",
+    "already_in_source": true,
+    "external_deps": [
+      "__future__",
+      "numpy"
+    ],
+    "needs_integration_gate": false,
+    "has_standalone_fallback": false
+  },
+  {
+    "name": "momentum_physics.py",
+    "size_kb": 30.9,
+    "priority": "MEDIUM",
+    "purpose": "Análise física de momentum — signal refinement",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": false,
+      "standalone_capable": true,
+      "has_error_handling": true,
+      "no_secrets": true,
+      "documented": true
+    },
+    "issues": [
+      "Deps nao verificadas: ['__future__']"
+    ],
+    "notes": [],
+    "readiness": "NEEDS_REVIEW",
+    "already_in_source": true,
+    "external_deps": [
+      "__future__",
+      "numpy",
+      "omega_integration_gate"
+    ],
+    "needs_integration_gate": true,
+    "has_standalone_fallback": true
+  },
+  {
+    "name": "volume_profile.py",
+    "size_kb": 30.9,
+    "priority": "MEDIUM",
+    "purpose": "Volume profile — quality of entry",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": false,
+      "standalone_capable": true,
+      "has_error_handling": false,
+      "no_secrets": true,
+      "documented": true
+    },
+    "issues": [
+      "Deps nao verificadas: ['__future__']"
+    ],
+    "notes": [],
+    "readiness": "NEEDS_REVIEW",
+    "already_in_source": true,
+    "external_deps": [
+      "__future__",
+      "numpy"
+    ],
+    "needs_integration_gate": false,
+    "has_standalone_fallback": false
+  },
+  {
+    "name": "volume_physics.py",
+    "size_kb": 17.2,
+    "priority": "MEDIUM",
+    "purpose": "Microestrutura de volume",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": true,
+      "standalone_capable": true,
+      "has_error_handling": true,
+      "no_secrets": true,
+      "documented": true
+    },
+    "issues": [],
+    "notes": [],
+    "readiness": "READY",
+    "already_in_source": true,
+    "external_deps": [
+      "numpy",
+      "omega_integration_gate"
+    ],
+    "needs_integration_gate": true,
+    "has_standalone_fallback": true
+  },
+  {
+    "name": "anomaly_detector.py",
+    "size_kb": 31.8,
+    "priority": "MEDIUM",
+    "purpose": "Detecção de anomalias — complementa VAE do OmegaQuantumBrain",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": false,
+      "standalone_capable": true,
+      "has_error_handling": false,
+      "no_secrets": true,
+      "documented": true
+    },
+    "issues": [
+      "Deps nao verificadas: ['__future__']"
+    ],
+    "notes": [],
+    "readiness": "NEEDS_REVIEW",
+    "already_in_source": true,
+    "external_deps": [
+      "pandas",
+      "__future__",
+      "numpy"
+    ],
+    "needs_integration_gate": false,
+    "has_standalone_fallback": false
+  },
+  {
+    "name": "v_flow_microstructure.py",
+    "size_kb": 16.6,
+    "priority": "MEDIUM",
+    "purpose": "Order flow microstructure",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": true,
+      "standalone_capable": true,
+      "has_error_handling": false,
+      "no_secrets": true,
+      "documented": true
+    },
+    "issues": [],
+    "notes": [],
+    "readiness": "READY",
+    "already_in_source": true,
+    "external_deps": [
+      "pandas",
+      "numpy"
+    ],
+    "needs_integration_gate": false,
+    "has_standalone_fallback": false
+  },
+  {
+    "name": "risk_valves_v31.py",
+    "size_kb": 6.7,
+    "priority": "MEDIUM",
+    "purpose": "Válvulas dinâmicas de risco",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": true,
+      "standalone_capable": true,
+      "has_error_handling": false,
+      "no_secrets": true,
+      "documented": true
+    },
+    "issues": [],
+    "notes": [],
+    "readiness": "READY",
+    "already_in_source": true,
+    "external_deps": [
+      "numpy"
+    ],
+    "needs_integration_gate": false,
+    "has_standalone_fallback": false
+  },
+  {
+    "name": "squeeze_detector.py",
+    "size_kb": 4.3,
+    "priority": "LOW",
+    "purpose": "Squeeze de volatilidade — signal filter",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": true,
+      "standalone_capable": true,
+      "has_error_handling": false,
+      "no_secrets": true,
+      "documented": true
+    },
+    "issues": [],
+    "notes": [],
+    "readiness": "READY",
+    "already_in_source": true,
+    "external_deps": [
+      "numpy"
+    ],
+    "needs_integration_gate": false,
+    "has_standalone_fallback": false
+  },
+  {
+    "name": "fimathe_core.py",
+    "size_kb": 3.4,
+    "priority": "LOW",
+    "purpose": "Matemática Fibonacci — suporte aos harmônicos",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": true,
+      "standalone_capable": true,
+      "has_error_handling": false,
+      "no_secrets": true,
+      "documented": true
+    },
+    "issues": [],
+    "notes": [],
+    "readiness": "READY",
+    "already_in_source": true,
+    "external_deps": [
+      "pandas",
+      "numpy"
+    ],
+    "needs_integration_gate": false,
+    "has_standalone_fallback": false
+  },
+  {
+    "name": "backtest_engine.py",
+    "size_kb": 3.4,
+    "priority": "LOW",
+    "purpose": "Motor de backtest — avaliar separadamente",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": true,
+      "standalone_capable": true,
+      "has_error_handling": false,
+      "no_secrets": true,
+      "documented": true
+    },
+    "issues": [],
+    "notes": [],
+    "readiness": "READY",
+    "already_in_source": true,
+    "external_deps": [
+      "numpy"
+    ],
+    "needs_integration_gate": false,
+    "has_standalone_fallback": false
+  },
+  {
+    "name": "omega_confluence_engine.py",
+    "size_kb": 3.4,
+    "priority": "LOW",
+    "purpose": "Engine de confluência — verificar overlap com MFAEngine",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": true,
+      "standalone_capable": true,
+      "has_error_handling": false,
+      "no_secrets": true,
+      "documented": false
+    },
+    "issues": [],
+    "notes": [],
+    "readiness": "READY",
+    "already_in_source": true,
+    "external_deps": [
+      "scipy",
+      "pandas",
+      "numpy"
+    ],
+    "needs_integration_gate": false,
+    "has_standalone_fallback": false
+  },
+  {
+    "name": "omega_parr_f_engine.py",
+    "size_kb": 3.2,
+    "priority": "LOW",
+    "purpose": "PARR-F engine — já existe versão em SOURCE_CODE",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": true,
+      "standalone_capable": true,
+      "has_error_handling": false,
+      "no_secrets": true,
+      "documented": false
+    },
+    "issues": [],
+    "notes": [],
+    "readiness": "READY",
+    "already_in_source": true,
+    "external_deps": [
+      "scipy",
+      "pandas",
+      "numpy"
+    ],
+    "needs_integration_gate": false,
+    "has_standalone_fallback": false
+  },
+  {
+    "name": "omega_kernel_v5_1_refined.py",
+    "size_kb": 11.4,
+    "priority": "LOW",
+    "purpose": "Kernel v5.1 — pode sobrescrever lógica atual",
+    "checks": {
+      "syntax_ok": true,
+      "deps_safe": true,
+      "standalone_capable": true,
+      "has_error_handling": false,
+      "no_secrets": true,
+      "documented": true
+    },
+    "issues": [],
+    "notes": [],
+    "readiness": "READY",
+    "already_in_source": true,
+    "external_deps": [
+      "numpy"
+    ],
+    "needs_integration_gate": false,
+    "has_standalone_fallback": false
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-28T12:54:08.972115+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 2,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 2,
+    "executed": 2,
+    "skipped": 0,
+    "avg_hit_rate_134": 99.11,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 41.1,
+    "max_latency_ms": 51.8
+  },
+  "results": [
+    {
+      "asset": "GER40",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 99.53,
+      "ic_95": "[99.2852%, 99.6935%]",
+      "margin_used": 412.3,
+      "lot": 0.01,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "5c9e8644cdd1ff33c703969f"
+    },
+    {
+      "asset": "GER40",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 98.69,
+      "ic_95": "[98.2755%, 99.0039%]",
+      "margin_used": 548.0,
+      "lot": 0.01,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "0c0fbe0a80fb238b01c1b92a"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260428_125402.log",
+  "checksum": "ca4edd551d94ec91ab7ee74174bb07e497abb200994351a5e5b6b8822bc50ff8"
+}

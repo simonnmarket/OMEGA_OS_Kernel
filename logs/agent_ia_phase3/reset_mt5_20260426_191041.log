@@ -1,0 +1,45 @@
+=== RESET MT5 ALL POSITIONS + ORDERS ===
+ACCOUNT 510075151 server HantecMarketsMU-MT5 balance 3366.45 equity 3365.59
+BEFORE  positions= 4 pending_orders= 0
+CLOSED []
+CLOSE_FAILED [
+  {
+    "ticket": 179457210,
+    "symbol": "XAUUSD",
+    "volume": 0.01,
+    "magic": 234001,
+    "retcode": 10018,
+    "comment": "Market closed"
+  },
+  {
+    "ticket": 179457325,
+    "symbol": "GBPUSD",
+    "volume": 0.01,
+    "magic": 234001,
+    "retcode": 10018,
+    "comment": "Market closed"
+  },
+  {
+    "ticket": 179458077,
+    "symbol": "XAUUSD",
+    "volume": 0.01,
+    "magic": 234001,
+    "retcode": 10018,
+    "comment": "Market closed"
+  },
+  {
+    "ticket": 179458150,
+    "symbol": "EURUSD",
+    "volume": 0.01,
+    "magic": 234001,
+    "retcode": 10018,
+    "comment": "Market closed"
+  }
+]
+CANCELLED []
+CANCEL_FAILED []
+AFTER  positions= 4 pending_orders= 0
+  REMAIN_POS 179457210 XAUUSD 0.01 magic= 234001
+  REMAIN_POS 179457325 GBPUSD 0.01 magic= 234001
+  REMAIN_POS 179458077 XAUUSD 0.01 magic= 234001
+  REMAIN_POS 179458150 EURUSD 0.01 magic= 234001

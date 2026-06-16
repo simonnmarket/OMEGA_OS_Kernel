@@ -1,0 +1,209 @@
+{
+  "timestamp_utc": "2026-04-26T20:36:05.701781+00:00",
+  "current_session": "OVERLAP",
+  "session_config": {
+    "priority_assets": [
+      "US500",
+      "NAS100",
+      "BTCUSD",
+      "ETHUSD",
+      "XAUUSD",
+      "SOLUSD",
+      "DOGUSD"
+    ],
+    "active_strategies": [
+      "ADAPTIVE",
+      "ARBITRAGE",
+      "MEAN_REVERSION",
+      "SCALPING",
+      "MARKET_MAKING"
+    ],
+    "min_confidence": 0.7,
+    "max_lot": 0.01,
+    "max_positions": 2,
+    "max_spread_pips": 2.5,
+    "spoof_threshold": 0.7
+  },
+  "by_asset": [
+    {
+      "asset": "BTCUSD",
+      "gate1_in_priority": true,
+      "gate2_market_data_ok": true,
+      "market_data_summary": {
+        "current_price": 78352.41,
+        "ema_50": 77716.8048,
+        "ema_200": 76923.33929999999,
+        "ema_diff_pct": 1.0315016316510883,
+        "adx": 29.32150421375521,
+        "rsi_14": 61.15359391395589,
+        "atr_14": 228.37071428571133,
+        "spread": 1400.0,
+        "volume_ratio": 0.9389059910016576,
+        "roc_10": 0.4382099038899424,
+        "price_position": 0.8612775128548954
+      },
+      "gate3_agent": {
+        "error": "'CompetitiveAgent' object has no attribute 'q_value'"
+      },
+      "final_signal": {
+        "action": "HOLD",
+        "direction": null,
+        "confidence": 0.0,
+        "lot": 0.0,
+        "strategy": null,
+        "agent_id": null,
+        "reason": "MEAN_REVERSION: Sem condi\u00e7\u00f5es de entrada"
+      }
+    },
+    {
+      "asset": "ETHUSD",
+      "gate1_in_priority": true,
+      "gate2_market_data_ok": true,
+      "market_data_summary": {
+        "current_price": 2370.341,
+        "ema_50": 2324.47132,
+        "ema_200": 2329.861625,
+        "ema_diff_pct": -0.23135730217453965,
+        "adx": 61.850826951542274,
+        "rsi_14": 79.32629668125699,
+        "atr_14": 9.504142857142986,
+        "spread": 965.0000000001455,
+        "volume_ratio": 0.3351641682345087,
+        "roc_10": 1.5954186629223193,
+        "price_position": 0.9059783927271662
+      },
+      "gate3_agent": {
+        "error": "'CompetitiveAgent' object has no attribute 'q_value'"
+      },
+      "final_signal": {
+        "action": "HOLD",
+        "direction": null,
+        "confidence": 0.0,
+        "lot": 0.0,
+        "strategy": null,
+        "agent_id": null,
+        "reason": "Spread 965.0 > m\u00e1ximo 2.5"
+      }
+    },
+    {
+      "asset": "SOLUSD",
+      "gate1_in_priority": true,
+      "gate2_market_data_ok": true,
+      "market_data_summary": {
+        "current_price": 86.733,
+        "ema_50": 86.28634,
+        "ema_200": 86.009535,
+        "ema_diff_pct": 0.3218305970378754,
+        "adx": 7.936507936507867,
+        "rsi_14": 57.42416178818557,
+        "atr_14": 0.3415714285714283,
+        "spread": 92.99999999998931,
+        "volume_ratio": 1.1171797418073486,
+        "roc_10": 0.32387540050663494,
+        "price_position": 0.704741379310346
+      },
+      "gate3_agent": {
+        "error": "'CompetitiveAgent' object has no attribute 'q_value'"
+      },
+      "final_signal": {
+        "action": "HOLD",
+        "direction": null,
+        "confidence": 0.0,
+        "lot": 0.0,
+        "strategy": null,
+        "agent_id": null,
+        "reason": "MEAN_REVERSION: Sem condi\u00e7\u00f5es de entrada"
+      }
+    },
+    {
+      "asset": "DOGUSD",
+      "gate1_in_priority": true,
+      "gate2_market_data_ok": true,
+      "market_data_summary": {
+        "current_price": 0.09941,
+        "ema_50": 0.09820519999999998,
+        "ema_200": 0.09625629999999999,
+        "ema_diff_pct": 2.0246986431017966,
+        "adx": 4.132231404958991,
+        "rsi_14": 67.84565916398714,
+        "atr_14": 0.0006807142857142855,
+        "spread": 31.00000000000047,
+        "volume_ratio": 0.5691699604743083,
+        "roc_10": 0.9341049852776975,
+        "price_position": 0.8754448398576504
+      },
+      "gate3_agent": {
+        "error": "'CompetitiveAgent' object has no attribute 'q_value'"
+      },
+      "final_signal": {
+        "action": "HOLD",
+        "direction": null,
+        "confidence": 0.0,
+        "lot": 0.0,
+        "strategy": null,
+        "agent_id": null,
+        "reason": "MEAN_REVERSION: Sem condi\u00e7\u00f5es de entrada"
+      }
+    },
+    {
+      "asset": "XAUUSD",
+      "gate1_in_priority": true,
+      "gate2_market_data_ok": true,
+      "market_data_summary": {
+        "current_price": 4708.15,
+        "ema_50": 4710.015799999999,
+        "ema_200": 4774.14215,
+        "ema_diff_pct": -1.3432015215550375,
+        "adx": 48.257429976479074,
+        "rsi_14": 65.0728862973759,
+        "atr_14": 18.56642857142859,
+        "spread": 54.99999999992724,
+        "volume_ratio": 0.4410521559236797,
+        "roc_10": 0.6475183096544139,
+        "price_position": 0.6094753422997629
+      },
+      "gate3_agent": {
+        "error": "'CompetitiveAgent' object has no attribute 'q_value'"
+      },
+      "final_signal": {
+        "action": "HOLD",
+        "direction": null,
+        "confidence": 0.0,
+        "lot": 0.0,
+        "strategy": null,
+        "agent_id": null,
+        "reason": "MEAN_REVERSION: Sem condi\u00e7\u00f5es de entrada"
+      }
+    },
+    {
+      "asset": "EURUSD",
+      "gate1_in_priority": false,
+      "gate2_market_data_ok": true,
+      "market_data_summary": {
+        "current_price": 1.17217,
+        "ema_50": 1.1698362,
+        "ema_200": 1.17556095,
+        "ema_diff_pct": -0.4869802794997491,
+        "adx": 81.7223198594004,
+        "rsi_14": 76.99999999999773,
+        "atr_14": 0.0012428571428571647,
+        "spread": 10.999999999983244,
+        "volume_ratio": 0.5556098355316723,
+        "roc_10": 0.1580764235422711,
+        "price_position": 0.9799196787148616
+      },
+      "gate3_agent": {
+        "error": "'CompetitiveAgent' object has no attribute 'q_value'"
+      },
+      "final_signal": {
+        "action": "HOLD",
+        "direction": null,
+        "confidence": 0.0,
+        "lot": 0.0,
+        "strategy": null,
+        "agent_id": null,
+        "reason": "Ativo n\u00e3o priorit\u00e1rio para sess\u00e3o OVERLAP"
+      }
+    }
+  ]
+}

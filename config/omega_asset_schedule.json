@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "description": "Calendário 24/7 + perfil CEO discovery (16 símbolos broker Hantec). OMEGA_ASSET_PROFILE=ceo_discovery_full força portfolio completo em qualquer dia.",
+  "timezone": "Europe/Lisbon",
+  "profiles": {
+    "ceo_discovery_full": {
+      "class": "discovery_full",
+      "symbols": [
+        "EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD",
+        "XAUUSD", "US500", "US100",
+        "BTCUSD", "ETHUSD", "SOLUSD", "XRPUSD", "AVAXUSD", "ADAUSD", "LTCUSD", "BNBUSD"
+      ]
+    }
+  },
+  "no_cli": {
+    "weekday_mon_fri": {
+      "class": "discovery_full",
+      "symbols": [
+        "EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD",
+        "XAUUSD", "US500", "US100",
+        "BTCUSD", "ETHUSD", "SOLUSD", "XRPUSD", "AVAXUSD", "ADAUSD", "LTCUSD", "BNBUSD"
+      ]
+    },
+    "saturday": {
+      "class": "crypto_weekend",
+      "symbols": ["BTCUSD", "ETHUSD", "SOLUSD", "XRPUSD", "AVAXUSD", "ADAUSD", "LTCUSD", "BNBUSD", "EURUSD", "XAUUSD"]
+    },
+    "sunday": {
+      "class": "crypto_weekend",
+      "symbols": ["BTCUSD", "ETHUSD", "SOLUSD", "DOGUSD", "XRPUSD", "AVAXUSD", "EURUSD", "XAUUSD"]
+    }
+  }
+}

@@ -1,0 +1,23 @@
+signal_name,timestamp_utc,log_time_assumption,log_timestamp_offset_hours_applied,direction,strength,asset,timeframe,position_ticket,provenance,source_file
+SYNC_RECOVERY,2026-05-14 00:03:47,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,EURJPY,H4,186338369,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-14 00:19:11,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,XAUUSD,H4,186348752,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-14 21:45:28,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,USDJPY,H1,186781629,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-14 22:28:18,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,AUDJPY,H4,186790912,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-14 22:46:28,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,DOGUSD,H4,186794392,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-14 22:52:28,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,DOGUSD,H1,186795655,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-14 23:17:26,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,XRPUSD,H1,186800084,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-14 23:28:52,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,DOGUSD,M15,186802938,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-14 23:43:24,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,XAGUSD,M15,186810901,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-14 23:43:24,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,XAGUSD,M15,186810918,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-14 23:45:12,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,DOGUSD,H1,186811929,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-14 23:56:47,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,WIN,GBPUSD,H1,186814783,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-15 00:08:48,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,EURJPY,M15,186821659,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-15 00:08:48,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,EURJPY,M15,186821661,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-15 00:41:20,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,DOGUSD,H1,186842079,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-15 00:41:20,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,XRPUSD,H1,186842709,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-15 00:44:14,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,CHFJPY,M15,186846195,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-15 00:51:53,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,DOGUSD,M15,186849213,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-15 01:11:23,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,DOGUSD,H4,186863555,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-15 01:11:23,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,CADJPY,H4,186861862,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-15 01:30:54,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,DOGUSD,M15,186872798,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl
+SYNC_RECOVERY,2026-05-15 22:10:42,trade_feedback_iso_ts_converted_to_utc_naive,0,NA,LOSS,DOGUSD,H1,187272307,trade_feedback:position_closed;signal_source_SYNC_RECOVERY,audit/paper/trade_feedback.jsonl

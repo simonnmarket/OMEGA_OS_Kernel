@@ -1,0 +1,43 @@
+=== ROLLBACK TEST (git stash) ===
+--- before stash ---
+345E74984D78A06B49233C91D82FE16B6943572B1FE24BEF19E7DCFDA1978A01
+Saved working directory and index state On feature/agent-ia-m1-m6: FASE4_ROLLBACK_TEST
+<stdin>:40: trailing whitespace.
+                    
+<stdin>:93: trailing whitespace.
+                    
+<stdin>:113: trailing whitespace.
+                    
+warning: 3 lines add whitespace errors.
+--- after stash (should be CBD6...) ---
+CBD6704BB1F93C39F47A663EAFDD2BA97C31B010937F10CB9F1910BD3EC2017D
+ROLLBACK_OK_HASH_MATCHES_PRE
+PYCOMPILE_REVERTED_EXIT=0
+On branch feature/agent-ia-m1-m6
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   audit/paper/paper_summary.json
+	modified:   audit/paper/skip_table.json
+	modified:   core_engines/shadow_loop.py
+	modified:   logs/manifest.json
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	audit/paper/BTCUSD_H1/
+	audit/paper/BTCUSD_H4/
+	harmonic_events_BTCUSD_H1.json
+	logs/agent_ia_phase3/fase4_pre_20260426_213918.log
+	logs/agent_ia_phase3/fase4_rollback_test_20260426_214208.log
+	logs/agent_ia_phase3/fase4_validate_20260426_214137.log
+	logs/bias_audit/BIAS_20260426_193921.json
+	logs/bias_audit/BIAS_20260426_193921.sha3
+	logs/bias_audit/BIAS_20260426_194141.json
+	logs/bias_audit/BIAS_20260426_194141.sha3
+
+no changes added to commit (use "git add" and/or "git commit -a")
+Dropped refs/stash@{0} (1c47a657d6eaedd42bc795c5ede71ac9870272d5)
+--- after pop (should be 345E...) ---
+345E74984D78A06B49233C91D82FE16B6943572B1FE24BEF19E7DCFDA1978A01
+REAPPLY_OK_HASH_MATCHES_POS
+PYCOMPILE_REAPPLIED_EXIT=0

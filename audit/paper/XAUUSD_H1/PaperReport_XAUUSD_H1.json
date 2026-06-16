@@ -1,0 +1,88 @@
+{
+  "mission_id": "PAPER-XAUUSD-H1-20260430T081638",
+  "asset": "XAUUSD",
+  "timeframe": "H1",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-04-30T08:16:38.325495+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "XAUUSD",
+    "timeframe": "H1",
+    "tier": "T1",
+    "hit_rate_134": 99.92,
+    "mach": 1.0,
+    "margin_used": 150.0,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 4806,
+    "total": 4810,
+    "p_hat": 0.999168,
+    "lower_bound": 0.997864,
+    "upper_bound": 0.999677,
+    "interval": "[99.7864%, 99.9677%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 4958,
+          "hits": 4945,
+          "breaks": 13,
+          "hit_rate": 99.74,
+          "break_rate": 0.26
+        },
+        "134_stats": {
+          "total_touches": 4810,
+          "hits": 4806,
+          "breaks": 4,
+          "hit_rate": 99.92,
+          "break_rate": 0.08
+        }
+      }
+    },
+    "price": {
+      "price": 0.0,
+      "base_price": 0.0,
+      "flash_crash_adjustment": null,
+      "metadata": {}
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 150.0,
+    "tier": "T1"
+  },
+  "execution": {
+    "retcode": 10009,
+    "retcode_str": "DONE",
+    "success": true,
+    "deal": 185054965,
+    "order": 181516675,
+    "fill_price": 4618.68,
+    "ask_at_send": 4618.68,
+    "sl_price": 4616.18,
+    "tp_price": 4651.83,
+    "volume_confirmed": 0.05,
+    "slippage_pts": 0.0,
+    "comment": "Request executed",
+    "request_id": 1899992562,
+    "latency_ms": 128.9,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.01,
+    "risk_usd": 10.0,
+    "stop_pts": 300.0,
+    "pip_value_lot": 1.0,
+    "contract_size": 100.0,
+    "price_at_calc": 4618.68,
+    "sym_vol_min": 0.01
+  },
+  "latency_motor_s": 22.218,
+  "checksum": "be834ccb1bcfd85154f869c0253f0195c14fbfa624144161424ba259a5fb4a25"
+}

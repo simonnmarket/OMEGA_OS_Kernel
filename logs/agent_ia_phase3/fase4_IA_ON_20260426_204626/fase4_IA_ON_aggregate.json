@@ -1,0 +1,152 @@
+{
+  "cycles": 30,
+  "total_signals": 60,
+  "total_executed": 60,
+  "total_skipped": 0,
+  "total_trades_per_asset": {
+    "ETHUSD": 46,
+    "SOLUSD": 8,
+    "BTCUSD": 6
+  },
+  "total_trades": 60,
+  "by_action": {
+    "MT5_PAPER_EXECUTE": 60
+  },
+  "retcodes": {
+    "10009": 60
+  },
+  "hit_rate_avg": 96.0688,
+  "hit_rate_min": 94.92,
+  "latency_ms_avg": 113.91,
+  "latency_ms_max": 570.0,
+  "latency_ms_p95": 499.5,
+  "slippage_avg_pts": 5.8167,
+  "kill_switch_triggers": 0,
+  "max_concentration_pct": 76.67,
+  "max_concentration_asset": "ETHUSD",
+  "label": "IA_ON",
+  "timestamp_utc": "20260426_204626",
+  "cycles_requested": 30,
+  "closes_per_cycle": [
+    {
+      "cycle": 1,
+      "n_success": 2
+    },
+    {
+      "cycle": 2,
+      "n_success": 2
+    },
+    {
+      "cycle": 3,
+      "n_success": 2
+    },
+    {
+      "cycle": 4,
+      "n_success": 2
+    },
+    {
+      "cycle": 5,
+      "n_success": 2
+    },
+    {
+      "cycle": 6,
+      "n_success": 2
+    },
+    {
+      "cycle": 7,
+      "n_success": 2
+    },
+    {
+      "cycle": 8,
+      "n_success": 2
+    },
+    {
+      "cycle": 9,
+      "n_success": 2
+    },
+    {
+      "cycle": 10,
+      "n_success": 2
+    },
+    {
+      "cycle": 11,
+      "n_success": 2
+    },
+    {
+      "cycle": 12,
+      "n_success": 2
+    },
+    {
+      "cycle": 13,
+      "n_success": 2
+    },
+    {
+      "cycle": 14,
+      "n_success": 2
+    },
+    {
+      "cycle": 15,
+      "n_success": 2
+    },
+    {
+      "cycle": 16,
+      "n_success": 2
+    },
+    {
+      "cycle": 17,
+      "n_success": 2
+    },
+    {
+      "cycle": 18,
+      "n_success": 2
+    },
+    {
+      "cycle": 19,
+      "n_success": 2
+    },
+    {
+      "cycle": 20,
+      "n_success": 2
+    },
+    {
+      "cycle": 21,
+      "n_success": 2
+    },
+    {
+      "cycle": 22,
+      "n_success": 2
+    },
+    {
+      "cycle": 23,
+      "n_success": 2
+    },
+    {
+      "cycle": 24,
+      "n_success": 2
+    },
+    {
+      "cycle": 25,
+      "n_success": 2
+    },
+    {
+      "cycle": 26,
+      "n_success": 2
+    },
+    {
+      "cycle": 27,
+      "n_success": 2
+    },
+    {
+      "cycle": 28,
+      "n_success": 2
+    },
+    {
+      "cycle": 29,
+      "n_success": 2
+    },
+    {
+      "cycle": 30,
+      "n_success": 2
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-29T01:25:13.444313+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 0,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 0,
+    "executed": 0,
+    "skipped": 0,
+    "avg_hit_rate_134": 0,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 0.0,
+    "max_latency_ms": 0
+  },
+  "results": [],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260429_012513.log",
+  "positions_ledger": {
+    "n": 2,
+    "total_pnl": -12.39,
+    "realized_pnl": 0.0,
+    "realized_n": 0,
+    "positions": {
+      "180821354": {
+        "symbol": "XAUUSD",
+        "direction": "BUY",
+        "lot": 0.05,
+        "entry_price": 4585.94,
+        "entry_time": "2026-04-29T04:19:57+00:00",
+        "last_profit": -4.95,
+        "status": "open"
+      },
+      "180822500": {
+        "symbol": "XAUUSD",
+        "direction": "SELL",
+        "lot": 0.03,
+        "entry_price": 4582.84,
+        "entry_time": "2026-04-29T04:23:00+00:00",
+        "last_profit": -7.44,
+        "status": "open"
+      }
+    }
+  },
+  "lot_calc_v2": {
+    "perf_n": 0,
+    "perf_f": 1.0,
+    "perf_trend": "flat",
+    "lot_range": "0.05–0.25",
+    "kelly_on": false
+  },
+  "checksum": "a26345586e94c696f236abb1c0f90dec0048db9994bd127b8a939ac200ed1b2e"
+}

@@ -1,0 +1,105 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-28T13:59:35.514366+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 2,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 2,
+    "executed": 2,
+    "skipped": 0,
+    "avg_hit_rate_134": 99.94,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 200.9,
+    "max_latency_ms": 361.7
+  },
+  "results": [
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H1",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 99.92,
+      "ic_95": "[99.7864%, 99.9677%]",
+      "margin_used": 150.0,
+      "lot": 0.01,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "668be9deba002026c79069eb"
+    },
+    {
+      "asset": "XAUUSD",
+      "timeframe": "H4",
+      "status": "MT5_PAPER_EXECUTE",
+      "hit_rate_134": 99.96,
+      "ic_95": "[99.8494%, 99.9887%]",
+      "margin_used": 203.9,
+      "lot": 0.01,
+      "retcode": 10009,
+      "slippage_pts": 0.0,
+      "checksum": "b6d0856ebd979d5c183760a8"
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260428_135929.log",
+  "positions_ledger": {
+    "n": 5,
+    "total_pnl": -0.41,
+    "positions": {
+      "180599803": {
+        "symbol": "XAUUSD",
+        "direction": "BUY",
+        "lot": 0.01,
+        "entry_price": 4582.18,
+        "sl": 4579.18,
+        "tp": 4585.18,
+        "entry_deal": 183767079,
+        "entry_time": "2026-04-28T13:59:32.001687+00:00",
+        "last_profit": 1.47,
+        "status": "open"
+      },
+      "180600063": {
+        "symbol": "XAUUSD",
+        "direction": "BUY",
+        "lot": 0.01,
+        "entry_price": 4582.18,
+        "sl": 4579.18,
+        "tp": 4585.18,
+        "entry_deal": 183767079,
+        "entry_time": "2026-04-28T13:59:32.001687+00:00",
+        "last_profit": -1.1,
+        "status": "open"
+      },
+      "180600156": {
+        "symbol": "XAUUSD",
+        "direction": "BUY",
+        "lot": 0.01,
+        "entry_price": 4581.48,
+        "sl": 4577.4,
+        "tp": 4585.56,
+        "entry_deal": 183767188,
+        "entry_time": "2026-04-28T13:59:35.496818+00:00",
+        "last_profit": -0.4,
+        "status": "open"
+      },
+      "180599423": {
+        "symbol": "BTCUSD",
+        "direction": "BUY",
+        "lot": 0.01,
+        "entry_price": 76176.77,
+        "entry_time": "2026-04-28T16:58:25+00:00",
+        "last_profit": 0.01,
+        "status": "open"
+      },
+      "180599750": {
+        "symbol": "BTCUSD",
+        "direction": "BUY",
+        "lot": 0.01,
+        "entry_price": 76216.1,
+        "entry_time": "2026-04-28T16:59:06+00:00",
+        "last_profit": -0.39,
+        "status": "open"
+      }
+    }
+  },
+  "checksum": "4b5233de62d7d0e2e6a305735a8db2ff3dfa04ab8df471b14aaf6a555fd92129"
+}

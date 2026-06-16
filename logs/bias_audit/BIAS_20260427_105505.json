@@ -1,0 +1,47 @@
+{
+  "timestamp": "2026-04-27T10:55:05.902867",
+  "regime": "TRADICIONAL",
+  "windows": [
+    [
+      0,
+      24
+    ]
+  ],
+  "hora_atual": 12,
+  "em_janela": true,
+  "symbols_allowed_count": 523,
+  "symbols_blocked_count": 33,
+  "bias_report": [],
+  "alerts": [],
+  "cqo_validators": {
+    "crisis_probability": {
+      "status": "PASS",
+      "value": 0.8656850798206673,
+      "risk_level": "CRITICAL",
+      "ci_95": [
+        0.51131,
+        1.0
+      ],
+      "threshold": 0.7,
+      "inputs": {
+        "_comment": "Inputs para CrisisProbabilityValidator — actualizar diariamente",
+        "_updated": "2026-04-26",
+        "DXY_change_pct": -1.8,
+        "XAU_change_pct": 8.5,
+        "Buffett_cash_B": 325.0,
+        "BlackRock_equities_change_pct": -5.2
+      }
+    },
+    "slo_validator": {
+      "status": "PASS",
+      "rtt_ms": 1.66,
+      "adequate": true
+    }
+  },
+  "audit_trail": {
+    "sha3_256": "3f63976dc99469ee12f61a46209c9f0671bd043cc4f11166c5ed88d4f317a544",
+    "version": "bias_audit_v2.0_tier0",
+    "validator": "PSA-WIND + CQO"
+  },
+  "audit_id": "BIAS_20260427_105505"
+}

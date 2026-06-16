@@ -1,0 +1,4 @@
+[
+  {"symbol": "EURUSD", "timeframe": "H1", "direction": "BUY", "confidence": 0.9, "source": "UAT"},
+  {"symbol": "EURUSD", "timeframe": "H1", "direction": "SELL", "confidence": 0.95, "source": "UAT"}
+]

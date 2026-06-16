@@ -1,0 +1,87 @@
+{
+  "mission_id": "PAPER-DOGUSD-H4-20260426T230001",
+  "asset": "DOGUSD",
+  "timeframe": "H4",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-04-26T23:00:01.145841+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "DOGUSD",
+    "timeframe": "H4",
+    "tier": "T2",
+    "hit_rate_134": 100.0,
+    "mach": 1.0,
+    "margin_used": 150.0,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 2188,
+    "total": 2188,
+    "p_hat": 1.0,
+    "lower_bound": 0.998247,
+    "upper_bound": 1.0,
+    "interval": "[99.8247%, 100.0000%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 2188,
+          "hits": 2188,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        },
+        "134_stats": {
+          "total_touches": 2188,
+          "hits": 2188,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        }
+      }
+    },
+    "price": {
+      "price": 0.0,
+      "base_price": 0.0,
+      "flash_crash_adjustment": null,
+      "metadata": {}
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 150.0,
+    "tier": "T2"
+  },
+  "execution": {
+    "retcode": 10009,
+    "retcode_str": "DONE",
+    "success": true,
+    "deal": 182394382,
+    "order": 179579059,
+    "fill_price": 0.09931,
+    "ask_at_send": 0.09931,
+    "sl_price": 0.09631,
+    "tp_price": 0.10231,
+    "volume_confirmed": 0.1,
+    "slippage_pts": 0.0,
+    "comment": "Request executed",
+    "request_id": 2189354561,
+    "latency_ms": 58.5,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.1,
+    "risk_usd": 25.0,
+    "stop_pts": 300.0,
+    "pip_value_lot": 0.01,
+    "contract_size": 1000.0,
+    "price_at_calc": 0.09931
+  },
+  "latency_motor_s": 3.162,
+  "checksum": "d17287e9db83bf7fbe8c0921d9445e47057af6075e7b204d1d089eb0fc370760"
+}

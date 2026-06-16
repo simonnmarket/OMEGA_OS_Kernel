@@ -19,6 +19,16 @@ __pycache__/
 # Logs de execução pesados
 *.log
 
+# Logs de ciclo (gerados automaticamente — não versionar)
+logs/agent_ia_phase3/fase4_*/*.json
+logs/agent_ia_phase3/fase4_*/
+
+# Allowlist (Fix 6 PSA) — preservar audit trail no repo:
+!logs/agent_ia_phase3/*.log
+!logs/bias_audit/*.json
+!logs/bias_audit/*.sha3
+!logs/manifest.json
+
 # Node / Frontend
 node_modules/
 dist/
@@ -49,3 +59,24 @@ Thumbs.db
 
 # Especificação local / scratch
 .finsense_full_spec.txt
+
+# Banco de dados local (SQLite)
+*.db
+*.sqlite
+*.sqlite3
+
+# Artefatos de verificação/portabilidade (gerados, não versionar)
+path_analysis_report.txt
+portability_verification_output.txt
+
+# Dados locais (OHLCV copiados para ./data/)
+data/ohlcv/
+
+# Paper / shadow — estado regenerável (não versionar; ver runbook OIS)
+audit/paper/cycle_exit.json
+audit/paper/evaluation_timeline.jsonl
+audit/paper/omega_runner.lock
+
+# Fire-test / audit runtime (regeneráveis)
+audit/omega_audit/audit_baseline.json
+audit/omega_audit/logs/precheck_*.json

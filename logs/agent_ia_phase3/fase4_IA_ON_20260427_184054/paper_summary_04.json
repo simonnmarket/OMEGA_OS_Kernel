@@ -1,0 +1,157 @@
+{
+  "mode": "paper",
+  "generated": "2026-04-27T12:15:53.133897+00:00",
+  "equity_demo": 10000.0,
+  "total_cycles": 8,
+  "kill_switch": false,
+  "ks_reason": "",
+  "online_stats": {
+    "total_signals": 0,
+    "executed": 0,
+    "skipped": 0,
+    "avg_hit_rate_134": 0,
+    "avg_slippage_pts": 0.0,
+    "avg_latency_ms": 0.0,
+    "max_latency_ms": 0
+  },
+  "results": [
+    {
+      "asset": "SOLUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.060714,
+        "atr_pct": 0.000713,
+        "spread": 0.093,
+        "atr_over_spread": 0.653,
+        "adx": 16.61,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0|adx<20.0"
+      }
+    },
+    {
+      "asset": "SOLUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.060714,
+        "atr_pct": 0.000713,
+        "spread": 0.093,
+        "atr_over_spread": 0.653,
+        "adx": 16.61,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0|adx<20.0"
+      }
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 55.202143,
+        "atr_pct": 0.000709,
+        "spread": 8.0,
+        "atr_over_spread": 6.9,
+        "adx": 14.32,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|adx<20.0"
+      }
+    },
+    {
+      "asset": "BTCUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 55.202143,
+        "atr_pct": 0.000709,
+        "spread": 8.0,
+        "atr_over_spread": 6.9,
+        "adx": 14.32,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|adx<20.0"
+      }
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 2.108357,
+        "atr_pct": 0.000909,
+        "spread": 0.66,
+        "atr_over_spread": 3.194,
+        "adx": 14.81,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0|adx<20.0"
+      }
+    },
+    {
+      "asset": "ETHUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 2.108357,
+        "atr_pct": 0.000909,
+        "spread": 0.654,
+        "atr_over_spread": 3.224,
+        "adx": 14.81,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0|adx<20.0"
+      }
+    },
+    {
+      "asset": "DOGUSD",
+      "timeframe": "H1",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.000108,
+        "atr_pct": 0.001098,
+        "spread": 0.00033,
+        "atr_over_spread": 0.327,
+        "adx": 28.16,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0"
+      }
+    },
+    {
+      "asset": "DOGUSD",
+      "timeframe": "H4",
+      "status": "SKIP_EDGE_GATE",
+      "edge_metrics": {
+        "atr": 0.000108,
+        "atr_pct": 0.001098,
+        "spread": 0.00033,
+        "atr_over_spread": 0.327,
+        "adx": 28.16,
+        "thr_atr_pct": 0.0015,
+        "thr_atr_over_spr": 5.0,
+        "thr_adx": 20.0,
+        "ok": false,
+        "reason": "atr_pct<0.0015|atr/spr<5.0"
+      }
+    }
+  ],
+  "log_file": "C:\\OMEGA_QUANTUM_LAB\\SOURCE_CODE\\audit\\paper\\paper_loop_20260427_121539.log",
+  "checksum": "cd6e90693510acb08ab08b5118eb4d10c86f7d7433cafc436cdb92c8b84db9f6"
+}

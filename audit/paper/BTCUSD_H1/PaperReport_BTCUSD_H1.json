@@ -1,0 +1,88 @@
+{
+  "mission_id": "PAPER-BTCUSD-H1-20260430T081441",
+  "asset": "BTCUSD",
+  "timeframe": "H1",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-04-30T08:14:41.604906+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "BTCUSD",
+    "timeframe": "H1",
+    "tier": "T1",
+    "hit_rate_134": 94.52,
+    "mach": 1.0,
+    "margin_used": 1757.2,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 2931,
+    "total": 3101,
+    "p_hat": 0.945179,
+    "lower_bound": 0.936602,
+    "upper_bound": 0.952654,
+    "interval": "[93.6602%, 95.2654%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 4492,
+          "hits": 4220,
+          "breaks": 272,
+          "hit_rate": 93.94,
+          "break_rate": 6.06
+        },
+        "134_stats": {
+          "total_touches": 3101,
+          "hits": 2931,
+          "breaks": 170,
+          "hit_rate": 94.52,
+          "break_rate": 5.48
+        }
+      }
+    },
+    "price": {
+      "price": 0.0,
+      "base_price": 0.0,
+      "flash_crash_adjustment": null,
+      "metadata": {}
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 1757.2,
+    "tier": "T1"
+  },
+  "execution": {
+    "retcode": 10009,
+    "retcode_str": "DONE",
+    "success": true,
+    "deal": 185054014,
+    "order": 181515875,
+    "fill_price": 76059.46,
+    "ask_at_send": 76059.46,
+    "sl_price": 76042.96,
+    "tp_price": 76598.4,
+    "volume_confirmed": 0.25,
+    "slippage_pts": 0.0,
+    "comment": "Request executed",
+    "request_id": 1899992560,
+    "latency_ms": 63.9,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.01,
+    "risk_usd": 10.0,
+    "stop_pts": 3514.4,
+    "pip_value_lot": 0.01,
+    "contract_size": 1.0,
+    "price_at_calc": 76059.46,
+    "sym_vol_min": 0.01
+  },
+  "latency_motor_s": 5.1,
+  "checksum": "c7df982c40348689ba340c3b931f226f4284673f9a0200b3ad6c0af11176df62"
+}

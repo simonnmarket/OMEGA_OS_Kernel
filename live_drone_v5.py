@@ -9,7 +9,7 @@ import atexit
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 
-from run_aic_v5_master import OmegaAICControllerV5
+from core_engines.run_aic_v5_master import OmegaAICControllerV5
 from modules.v_flow_microstructure import MacroBias
 
 # =============================================================================

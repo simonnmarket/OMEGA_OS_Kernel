@@ -1,0 +1,90 @@
+DIRETIVA FINAL DE EXECUÇÃO — GABINETE DO CKO
+
+Caro CEO,
+
+O Tech Lead acabou de fazer o que define uma equipa de elite: corrigiu o CKO com elegância e precisão técnica. 
+
+A descoberta da mitigação P2-A BUG-5 (onde o omega_paper_loop_24x7.py sobrescreve o --equity 10000 se o MT5 responder) é brilhante. Significa que o sistema tinha uma rede de segurança que eu não tinha visto no script .ps1. No entanto, a conclusão do Tech Lead é impecável: confiar numa rede de segurança quando se pode simplesmente fechar o buraco é má engenharia. O --equity 10000 tem de morrer.
+Resolução do Conflito (Agressivo vs. Diagnóstico)
+
+Não há espaço para votação aqui. A resposta é Modo Diagnóstico CKO.
+
+Metáfora institucional: Pedir o modo agressivo (1%, 15 posições) numa corrida cujo único objetivo é gerar um decision_trace.jsonl limpo é como pedir um eletrocardiograma a um paciente enquanto ele corre uma maratona. O ruído destrói o sinal. O sistema vai dar HALT em 3 horas, e amanhã estaremos exatamente onde estamos hoje, mas com um ficheiro de trace inútil.
+
+Veredito CKO: O modo agressivo só volta a ser ligado após a análise do Cenário A/B/C das próximas 24h.
+AÇÃO IMEDIATA: Copie e cole isto para o Tech Lead / OPS
+
+Eles perguntaram: "Quer que eu aplique no código as 3 alterações do CKO após a sua confirmação?"
+
+A sua resposta é: SIM. APLIQUEM IMEDIATAMENTE.
+
+Envie-lhes exatamente este bloco. Substitui a secção de env vars e a linha de execução Python no ficheiro scripts/run_omega_24x7.ps1:
+
+# ─── CKO OVERRIDE: MODO DIAGNÓSTICO CIRÚRGICO 24H ─────────────────────────
+# Objetivo: Sobreviver 24h para extrair decision_trace.jsonl limpo.
+# Justificação: Evitar HALT prematuro por desalinhamento de risco ou cluster SL.
+
+# 1. Risco real baseado em conta ~$1250 (0.2% = ~$2.5 por trade)
+ $env:OMEGA_RISK_PER_TRADE = "0.002"
+
+# 2. Exposição controlada (evitar correlação instantânea em cluster SL)
+ $env:OMEGA_MAX_POSITIONS = "5"
+
+# 3. Manter DD em 10% (agora seguro, pois 5 pos x 0.2% = 1% risco teórico total)
+ $env:OMEGA_DD_DAILY_MAX = "0.10"
+
+# 4. D2 Ratificado: Fallback OFF
+ $env:OMEGA_DISABLE_MOMENTUM_FALLBACK = "1"
+
+# 5. Rastreio por componente/skip (Veredito 24h)
+ $env:OMEGA_DECISION_TRACE = "1"
+
+# 6. Intervalo entre ciclos (manter 20s para capturar micro-estrutura)
+ $env:OMEGA_LOOP_INTERVAL_SEC = "20"
+
+# 7. Modo Paper
+ $env:OMEGA_24X7_MODE = "paper"
+
+# ─── MANTER DEMO AGRESSIVO (PARÂMETROS SECUNDÁRIOS) ────────────────────────
+ $env:OMEGA_MAX_SAME_DIR_PER_CYCLE = "2"
+ $env:OMEGA_MAX_POS_PER_CLASS = "5"
+ $env:OMEGA_MAX_POS_PER_ASSET = "1"
+ $env:OMEGA_PYRAMID_LAYERS = "2"
+ $env:OMEGA_PYRAMID_LOT_SCALE = "1.5"
+ $env:OMEGA_PYRAMID_ATR = "0.5"
+ $env:OMEGA_MAX_TP_SL_RATIO = "3.0"
+ $env:OMEGA_LOT_MAX = "0.50"
+ $env:OMEGA_MTF_ALIGN_MIN = "0.20"
+ $env:OMEGA_MTF_W1_WEIGHT = "2"
+ $env:OMEGA_VOL_MIN_FOREX = "0.10"
+ $env:OMEGA_VOL_MIN_METAL = "0.10"
+ $env:OMEGA_VOL_MIN_INDEX = "0.10"
+ $env:OMEGA_VOL_MIN_CRYPTO = "0.12"
+ $env:OMEGA_VOL_MIN_CRYPTO_ALT = "0.08"
+ $env:OMEGA_EDGE_INDEX_ATR = "0.0005"
+ $env:OMEGA_EDGE_INDEX_ADX = "13.0"
+ $env:OMEGA_RUNNER_MAX_PARALLEL = "1"
+ $env:OMEGA_SCALE_LOT_TO_MIN_TP_USD = "1"
+ $env:OMEGA_24X7_ATIVOS = "EURUSD GBPUSD USDJPY AUDUSD NZDUSD USDCAD USDCHF EURJPY GBPJPY AUDJPY CADJPY CHFJPY XAUUSD XAGUSD UKOIL+ USOIL+ GER40 UK100 US500 US30 BTCUSD ETHUSD SOLUSD BNBUSD LTCUSD XRPUSD ADAUSD AVAXUSD DOGUSD DOTUSD UNIUSD XLMUSD"
+
+# ─── EXECUÇÃO PYTHON (EQUITY REAL DO BROKER, NÃO HARDCODED) ──────────────
+# NOTA: Removido --equity 10000. O motor vai buscar o equity real ao MT5.
+python -u scripts/omega_paper_loop_24x7.py `
+  --timeframes H1 M15 H4 `
+  --pre-sync-ohlcv
+
+E antes de rodarem o script, executem isto no terminal para a Âncora (Opção B):
+
+Copy-Item "C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\audit\risk\ks_daily_anchor.json" "C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\audit\risk\ks_daily_anchor_BACKUP_20260520.json"
+Remove-Item "C:\OMEGA_QUANTUM_LAB\SOURCE_CODE\audit\risk\ks_daily_anchor.json"
+
+Checkpoint de Validação (Minutos 0 a 5 pós-start)
+
+Diga à equipa para vigiar o log omega_24x7_runner.log no arranque. Eles precisam ver estas duas linhas para validar que a ciência está correta:
+
+    [EQUITY] Equity MT5 real: $1250.xx (Prova que o bug do 10k foi resolvido e o P2-A BUG-5 funcionou corretamente).
+    [MOMENTUM_FALLBACK] DISABLED (Prova que a diretiva D2 está ativa).
+
+Se virem estas duas linhas, podem deixar o sistema a rodar. Daqui a 24 horas, teremos o raio-X definitivo do cérebro do OMEGA. 
+
+Estamos prontos. Dê a ordem de start.

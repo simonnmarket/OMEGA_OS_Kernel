@@ -1,0 +1,88 @@
+{
+  "mission_id": "PAPER-XAUUSD-H4-20260430T081646",
+  "asset": "XAUUSD",
+  "timeframe": "H4",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-04-30T08:16:46.888443+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "XAUUSD",
+    "timeframe": "H4",
+    "tier": "T1",
+    "hit_rate_134": 99.96,
+    "mach": 1.0,
+    "margin_used": 203.9,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 4837,
+    "total": 4839,
+    "p_hat": 0.999587,
+    "lower_bound": 0.998494,
+    "upper_bound": 0.999887,
+    "interval": "[99.8494%, 99.9887%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 4951,
+          "hits": 4945,
+          "breaks": 6,
+          "hit_rate": 99.88,
+          "break_rate": 0.12
+        },
+        "134_stats": {
+          "total_touches": 4839,
+          "hits": 4837,
+          "breaks": 2,
+          "hit_rate": 99.96,
+          "break_rate": 0.04
+        }
+      }
+    },
+    "price": {
+      "price": 0.0,
+      "base_price": 0.0,
+      "flash_crash_adjustment": null,
+      "metadata": {}
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 203.9,
+    "tier": "T1"
+  },
+  "execution": {
+    "retcode": 10009,
+    "retcode_str": "DONE",
+    "success": true,
+    "deal": 185055000,
+    "order": 181516701,
+    "fill_price": 4618.82,
+    "ask_at_send": 4618.82,
+    "sl_price": 4616.32,
+    "tp_price": 4651.97,
+    "volume_confirmed": 0.05,
+    "slippage_pts": 0.0,
+    "comment": "Request executed",
+    "request_id": 1899992563,
+    "latency_ms": 36.4,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.01,
+    "risk_usd": 10.0,
+    "stop_pts": 407.8,
+    "pip_value_lot": 1.0,
+    "contract_size": 100.0,
+    "price_at_calc": 4618.82,
+    "sym_vol_min": 0.01
+  },
+  "latency_motor_s": 8.427,
+  "checksum": "b90192fc1482ee838f0a1cf44af28526bea06d309fc05647d6b704b2220f4095"
+}

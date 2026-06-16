@@ -1,0 +1,88 @@
+{
+  "mission_id": "PAPER-GBPJPY-H1-20260430T075254",
+  "asset": "GBPJPY",
+  "timeframe": "H1",
+  "status": "COMPLETED",
+  "mode": "paper",
+  "created_at": "2026-04-30T07:52:54.539086+00:00",
+  "agent_version": "shadow_loop_v3.0",
+  "omega_integration": true,
+  "guardrail": {
+    "asset": "GBPJPY",
+    "timeframe": "H1",
+    "tier": "T1",
+    "hit_rate_134": 100.0,
+    "mach": 1.0,
+    "margin_used": 150.0,
+    "skip": false,
+    "skip_reasons": []
+  },
+  "binomial_ic_95": {
+    "hits": 2414,
+    "total": 2414,
+    "p_hat": 1.0,
+    "lower_bound": 0.998411,
+    "upper_bound": 1.0,
+    "interval": "[99.8411%, 100.0000%]"
+  },
+  "engines": {
+    "harmonic": {
+      "metrics": {
+        "34_stats": {
+          "total_touches": 2414,
+          "hits": 2414,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        },
+        "134_stats": {
+          "total_touches": 2414,
+          "hits": 2414,
+          "breaks": 0,
+          "hit_rate": 100.0,
+          "break_rate": 0.0
+        }
+      }
+    },
+    "price": {
+      "price": 0.0,
+      "base_price": 0.0,
+      "flash_crash_adjustment": null,
+      "metadata": {}
+    }
+  },
+  "signal": {
+    "action": "MT5_PAPER_EXECUTE",
+    "skip_reasons": [],
+    "margin_used": 150.0,
+    "tier": "T1"
+  },
+  "execution": {
+    "retcode": 10009,
+    "retcode_str": "DONE",
+    "success": true,
+    "deal": 185027051,
+    "order": 181497469,
+    "fill_price": 216.572,
+    "ask_at_send": 216.572,
+    "sl_price": 216.486,
+    "tp_price": 216.83,
+    "volume_confirmed": 0.12,
+    "slippage_pts": 0.0,
+    "comment": "Request executed",
+    "request_id": 1899992538,
+    "latency_ms": 90.4,
+    "mode": "MT5_DEMO_REAL"
+  },
+  "lot_info": {
+    "lot": 0.01,
+    "risk_usd": 10.0,
+    "stop_pts": 300.0,
+    "pip_value_lot": 0.622708,
+    "contract_size": 100000.0,
+    "price_at_calc": 216.572,
+    "sym_vol_min": 0.01
+  },
+  "latency_motor_s": 2.878,
+  "checksum": "1c1c3a7eeb1930c879bf06ac36e76c41e2c728fe4dd963b389ff7ed7cb635e97"
+}
